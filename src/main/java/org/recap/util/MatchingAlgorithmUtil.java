@@ -13,12 +13,14 @@ import org.apache.solr.common.SolrDocumentList;
 import org.recap.PropertyKeyConstants;
 import org.recap.ScsbCommonConstants;
 import org.recap.ScsbConstants;
+import org.recap.controller.SolrIndexController;
 import org.recap.matchingalgorithm.MatchingCounter;
 import org.recap.model.jpa.BibliographicEntity;
 import org.recap.model.jpa.MatchingBibEntity;
 import org.recap.model.jpa.MatchingMatchPointsEntity;
 import org.recap.model.jpa.ReportDataEntity;
 import org.recap.model.jpa.ReportEntity;
+import org.recap.model.solr.SolrIndexRequest;
 import org.recap.repository.jpa.BibliographicDetailsRepository;
 import org.recap.repository.jpa.MatchingBibDetailsRepository;
 import org.recap.repository.jpa.MatchingMatchPointsDetailsRepository;
@@ -48,6 +50,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 import static org.recap.ScsbConstants.MATCHING_COUNTER_OPEN;
@@ -98,6 +101,9 @@ public class MatchingAlgorithmUtil {
     private CommonUtil commonUtil;
     @Autowired
     private BibliographicDetailsRepository bibliographicDetailsRepository;
+
+    @Autowired
+    private SolrIndexController bibItemIndexExecutorService;
 
     /**
      * Gets report detail repository.
@@ -907,7 +913,18 @@ public class MatchingAlgorithmUtil {
                     return bibliographicEntity;
                 })
                 .collect(Collectors.toList());
-        bibliographicDetailsRepository.saveAll(bibliographicEntitiesToUpdate);
-        bibliographicEntitiesToUpdate.forEach(bibliographicEntity->solrIndexService.indexByBibliographicId(bibliographicEntity.getId()));
+        if(!bibliographicEntitiesToUpdate.isEmpty()){
+            logger.info("No of grouped bibs to save and index : {}",bibliographicEntitiesToUpdate.stream().count());
+            bibliographicDetailsRepository.saveAll(bibliographicEntitiesToUpdate);
+            SolrIndexRequest solrIndexRequest=new SolrIndexRequest();
+            solrIndexRequest.setNumberOfThreads(5);
+            solrIndexRequest.setNumberOfDocs(1000);
+            solrIndexRequest.setCommitInterval(1000);
+            solrIndexRequest.setPartialIndexType("BibIdList");
+            String bibIds = bibliographicEntitiesToUpdate.stream().map(bibliographicEntity -> String.valueOf(bibliographicEntity.getId())).collect(Collectors.joining(","));
+            logger.info("BibIds to index : {}",bibIds);
+            solrIndexRequest.setBibIds(bibIds);
+            CompletableFuture.supplyAsync(()->bibItemIndexExecutorService.partialIndex(solrIndexRequest));
+        }
     }
 }
