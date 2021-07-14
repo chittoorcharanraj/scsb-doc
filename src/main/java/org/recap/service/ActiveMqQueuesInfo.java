@@ -39,6 +39,7 @@ public class ActiveMqQueuesInfo {
     public Integer getActivemqQueuesInfo(String queueName){
         Integer queueSizeCount = 0;
         String[] activemqUrls = serviceUrl.split(",");
+        String queueValue;
         for (String activemqUrl : activemqUrls) {
             try {
                 HttpHeaders headers = new HttpHeaders();
@@ -47,7 +48,10 @@ public class ActiveMqQueuesInfo {
                 String searchUrl = String.format(activemqUrl + activeMqApiUrl + "%s" + searchAttribute, queueName);
                 ResponseEntity<String> response = new RestTemplate().exchange(searchUrl, HttpMethod.GET, stringHttpEntity, String.class);
                 QueueSizeInfoJson queueInfo = new ObjectMapper().readValue(response.getBody(), QueueSizeInfoJson.class);
-                queueSizeCount = Integer.valueOf(queueInfo.getValue());
+                queueValue = queueInfo.getValue();
+                if (queueValue != null) {
+                    queueSizeCount = Integer.valueOf(queueValue);
+                }
                 break;
             } catch (ResourceAccessException e) {
                 logger.error("ActiveMq slave url called to get queues info ----> {} ",activemqUrl);

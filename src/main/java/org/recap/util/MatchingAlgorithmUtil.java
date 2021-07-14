@@ -315,18 +315,20 @@ public class MatchingAlgorithmUtil {
         int index=0;
         for (Iterator<Integer> iterator = bibIdList.iterator(); iterator.hasNext(); ) {
             Integer bibId = iterator.next();
-            MatchingBibEntity matchingBibEntity = matchingBibEntityMap.get(bibId);
-            owningInstSet.add(matchingBibEntity.getOwningInstitution());
-            owningInstList.add(matchingBibEntity.getOwningInstitution());
-            owningInstBibIds.add(matchingBibEntity.getOwningInstBibId());
-            bibIds.add(bibId);
-            materialTypeList.add(matchingBibEntity.getMaterialType());
-            materialTypeSet.add(matchingBibEntity.getMaterialType());
-            index = index + 1;
-            if(StringUtils.isNotBlank(matchingBibEntity.getTitle())) {
-                String titleHeader = ScsbCommonConstants.TITLE + index;
-                getReportDataEntity(titleHeader, matchingBibEntity.getTitle(), reportDataEntities);
-                titleMap.put(titleHeader, matchingBibEntity.getTitle());
+                MatchingBibEntity matchingBibEntity = matchingBibEntityMap.get(bibId);
+            if (matchingBibEntity != null) {
+                owningInstSet.add(matchingBibEntity.getOwningInstitution());
+                owningInstList.add(matchingBibEntity.getOwningInstitution());
+                owningInstBibIds.add(matchingBibEntity.getOwningInstBibId());
+                bibIds.add(bibId);
+                materialTypeList.add(matchingBibEntity.getMaterialType());
+                materialTypeSet.add(matchingBibEntity.getMaterialType());
+                index = index + 1;
+                if (StringUtils.isNotBlank(matchingBibEntity.getTitle())) {
+                    String titleHeader = ScsbCommonConstants.TITLE + index;
+                    getReportDataEntity(titleHeader, matchingBibEntity.getTitle(), reportDataEntities);
+                    titleMap.put(titleHeader, matchingBibEntity.getTitle());
+                }
             }
         }
 
@@ -643,6 +645,10 @@ public class MatchingAlgorithmUtil {
      */
     public void getReportDataEntity(String headerName, String headerValues, List<ReportDataEntity> reportDataEntities) {
         ReportDataEntity criteriaReportDataEntity = new ReportDataEntity();
+        if (headerValues.length() > 10000) {
+            logger.info(" Length of the header name with size greater than 10000- {} - Value - {} - size - {}",headerName, headerValues, headerValues.length());
+            headerValues = headerValues.substring(0,9996)+"...";
+        }
         criteriaReportDataEntity.setHeaderName(headerName);
         criteriaReportDataEntity.setHeaderValue(headerValues);
         reportDataEntities.add(criteriaReportDataEntity);
