@@ -254,19 +254,35 @@ public class MatchingAlgorithmController {
     @ResponseBody
     @PostMapping(value = "/matchingAlgorithm/groupMonographs")
     public String groupMonographs(){
-        return matchingAlgorithmHelperService.groupBibsForMonograph(Integer.valueOf(getMatchingAlgoBatchSize()), true);
+        StopWatch stopWatch=new StopWatch();
+        stopWatch.start();
+        matchingAlgorithmHelperService.groupBibsForMonograph(Integer.valueOf(getMatchingAlgoBatchSize()), true);
+        matchingAlgorithmHelperService.groupBibsForMonograph(Integer.valueOf(getMatchingAlgoBatchSize()), false);
+        stopWatch.stop();
+        long totalTimeMillis = stopWatch.getTotalTimeMillis();
+        return "Total time taken : "+totalTimeMillis;
     }
 
     @ResponseBody
     @PostMapping(value = "/matchingAlgorithm/groupMVMs")
     public String groupMVMs(){
-        return matchingAlgorithmHelperService.groupBibsForMVMS(Integer.valueOf(getMatchingAlgoBatchSize()));
+        StopWatch stopWatch=new StopWatch();
+        stopWatch.start();
+        matchingAlgorithmHelperService.groupBibsForMVMS(Integer.valueOf(getMatchingAlgoBatchSize()));
+        stopWatch.stop();
+        long totalTimeMillis = stopWatch.getTotalTimeMillis();
+        return "Total time taken : "+totalTimeMillis;
     }
 
     @ResponseBody
     @PostMapping(value = "/matchingAlgorithm/groupSerials")
     public String groupSerials(){
-        return matchingAlgorithmHelperService.groupBibsForSerials(Integer.valueOf(getMatchingAlgoBatchSize()));
+        StopWatch stopWatch=new StopWatch();
+        stopWatch.start();
+         matchingAlgorithmHelperService.groupBibsForSerials(Integer.valueOf(getMatchingAlgoBatchSize()));
+        stopWatch.stop();
+        long totalTimeMillis = stopWatch.getTotalTimeMillis();
+        return "Total time taken : "+totalTimeMillis;
     }
 
     /**
