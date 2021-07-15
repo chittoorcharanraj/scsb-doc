@@ -251,6 +251,24 @@ public class MatchingAlgorithmController {
         return status.toString();
     }
 
+    @ResponseBody
+    @PostMapping(value = "/matchingAlgorithm/groupMonographs")
+    public String groupMonographs(){
+        return matchingAlgorithmHelperService.groupBibsForMonograph(Integer.valueOf(getMatchingAlgoBatchSize()), true);
+    }
+
+    @ResponseBody
+    @PostMapping(value = "/matchingAlgorithm/groupMVMs")
+    public String groupMVMs(){
+        return matchingAlgorithmHelperService.groupBibsForMVMS(Integer.valueOf(getMatchingAlgoBatchSize()));
+    }
+
+    @ResponseBody
+    @PostMapping(value = "/matchingAlgorithm/groupSerials")
+    public String groupSerials(){
+        return matchingAlgorithmHelperService.groupBibsForSerials(Integer.valueOf(getMatchingAlgoBatchSize()));
+    }
+
     /**
      * This method is used to update cgd for Monographs in database.
      *

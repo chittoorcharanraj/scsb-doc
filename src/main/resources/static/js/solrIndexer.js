@@ -159,6 +159,15 @@ function saveReport() {
     } else if (criteria === 'GroupBibs') {
         url = "/matchingAlgorithm/groupBibs";
     }
+    else if (criteria === 'GroupMonographs') {
+            url = "/matchingAlgorithm/groupMonographs";
+    }
+    else if (criteria === 'GroupMVMs') {
+            url = "/matchingAlgorithm/groupMVMs";
+    }
+    else if (criteria === 'GroupSerials') {
+            url = "/matchingAlgorithm/groupSerials";
+    }
     else if (criteria === 'UpdateMonographCGDInDB') {
         url = "/matchingAlgorithm/updateMonographCGDInDB";
     } else if (criteria === 'UpdateSerialCGDInDB') {

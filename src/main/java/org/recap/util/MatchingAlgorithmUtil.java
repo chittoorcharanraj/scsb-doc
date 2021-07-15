@@ -33,6 +33,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.solr.core.SolrTemplate;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StopWatch;
 
 import javax.annotation.Resource;
@@ -50,9 +51,11 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toSet;
 import static org.recap.ScsbConstants.MATCHING_COUNTER_OPEN;
 import static org.recap.ScsbConstants.MATCHING_COUNTER_SHARED;
 import static org.recap.ScsbConstants.MATCHING_COUNTER_UPDATED_OPEN;
@@ -908,7 +911,33 @@ public class MatchingAlgorithmUtil {
         }
     }
 
-    public void updateBibForMatchingIdentifier(List<Integer> bibIdList) {
+    public Map<Integer, BibliographicEntity> getBibIdAndBibEntityMap(List<String> bibIdsList){
+        List<BibliographicEntity> bibliographicEntityList = bibliographicDetailsRepository.findByIdIn(bibIdsList.stream().map(s -> Integer.valueOf(s)).collect(toList()));
+        Map<Integer, BibliographicEntity> bibliographicEntityMap = bibliographicEntityList.stream().collect(Collectors.toMap(BibliographicEntity::getId, Function.identity()));
+        return bibliographicEntityMap;
+    }
+
+    public Optional<Map<Integer,BibliographicEntity>> updateBibsForMatchingIdentifier(List<BibliographicEntity> bibliographicEntityList) {
+
+        Optional<BibliographicEntity> existingIdentifier = bibliographicEntityList.stream().filter(bibliographicEntity -> StringUtils.isNotEmpty(bibliographicEntity.getMatchingIdentity())).findFirst();
+        String matchingIdentity = existingIdentifier.map(BibliographicEntity::getMatchingIdentity).orElseGet(() -> UUID.randomUUID().toString());
+        List<BibliographicEntity> bibliographicEntitiesToUpdate = bibliographicEntityList.stream()
+                .filter(bibliographicEntity -> StringUtils.isEmpty(bibliographicEntity.getMatchingIdentity()))
+                .map(bibliographicEntity -> {
+                    bibliographicEntity.setMatchingIdentity(matchingIdentity);
+                    bibliographicEntity.setLastUpdatedBy("GroupingCGDProcess");
+                    bibliographicEntity.setLastUpdatedDate(new Date());
+                    return bibliographicEntity;
+                })
+                .collect(toList());
+        /* if(!bibliographicEntitiesToUpdate.isEmpty()){
+            logger.info("No of grouped bibs to save and index : {}",bibliographicEntitiesToUpdate.stream().count());
+            bibliographicDetailsRepository.saveAll(bibliographicEntitiesToUpdate);
+        }*/
+        return Optional.ofNullable(bibliographicEntitiesToUpdate.stream().collect(Collectors.toMap(BibliographicEntity::getId,Function.identity())));
+    }
+
+    public Optional<Set<Integer>> updateBibForMatchingIdentifier(List<Integer> bibIdList) {
         List<BibliographicEntity> bibliographicEntityList = bibliographicDetailsRepository.findByIdIn(bibIdList);
         Optional<BibliographicEntity> existingIdentifier = bibliographicEntityList.stream().filter(bibliographicEntity -> StringUtils.isNotEmpty(bibliographicEntity.getMatchingIdentity())).findFirst();
         String matchingIdentity = existingIdentifier.map(BibliographicEntity::getMatchingIdentity).orElseGet(() -> UUID.randomUUID().toString());
@@ -918,19 +947,45 @@ public class MatchingAlgorithmUtil {
                     bibliographicEntity.setMatchingIdentity(matchingIdentity);
                     return bibliographicEntity;
                 })
-                .collect(Collectors.toList());
+                .collect(toList());
         if(!bibliographicEntitiesToUpdate.isEmpty()){
             logger.info("No of grouped bibs to save and index : {}",bibliographicEntitiesToUpdate.stream().count());
             bibliographicDetailsRepository.saveAll(bibliographicEntitiesToUpdate);
-            SolrIndexRequest solrIndexRequest=new SolrIndexRequest();
-            solrIndexRequest.setNumberOfThreads(5);
-            solrIndexRequest.setNumberOfDocs(1000);
-            solrIndexRequest.setCommitInterval(1000);
-            solrIndexRequest.setPartialIndexType("BibIdList");
-            String bibIds = bibliographicEntitiesToUpdate.stream().map(bibliographicEntity -> String.valueOf(bibliographicEntity.getId())).collect(Collectors.joining(","));
-            logger.info("BibIds to index : {}",bibIds);
-            solrIndexRequest.setBibIds(bibIds);
-            CompletableFuture.supplyAsync(()->bibItemIndexExecutorService.partialIndex(solrIndexRequest));
         }
+        return Optional.ofNullable(bibliographicEntitiesToUpdate.stream().map(BibliographicEntity::getId).collect(toSet()));
+    }
+
+/*
+    public void indexGroupedBibIds(Set<BibliographicEntity> bibliographicEntitiesToUpdate) {
+        SolrIndexRequest solrIndexRequest=new SolrIndexRequest();
+        solrIndexRequest.setNumberOfThreads(5);
+        solrIndexRequest.setNumberOfDocs(1000);
+        solrIndexRequest.setCommitInterval(1000);
+        solrIndexRequest.setPartialIndexType("BibIdList");
+        String bibIds = bibliographicEntitiesToUpdate.stream().map(bibliographicEntity -> String.valueOf(bibliographicEntity.getId())).collect(Collectors.joining(","));
+        logger.info("BibIds to index : {}",bibIds);
+        solrIndexRequest.setBibIds(bibIds);
+        CompletableFuture.supplyAsync(()->bibItemIndexExecutorService.partialIndex(solrIndexRequest));
+    }
+*/
+
+    public void indexGroupedBibIds(Set<Integer> bibIds) {
+        SolrIndexRequest solrIndexRequest=new SolrIndexRequest();
+        solrIndexRequest.setNumberOfThreads(5);
+        solrIndexRequest.setNumberOfDocs(1000);
+        solrIndexRequest.setCommitInterval(1000);
+        solrIndexRequest.setPartialIndexType("BibIdList");
+        logger.info("BibIds to index : {}",bibIds);
+        String collect = bibIds.stream().map(bibId -> String.valueOf(bibId)).collect(Collectors.joining(","));
+        solrIndexRequest.setBibIds(collect);
+//        CompletableFuture.supplyAsync(()->bibItemIndexExecutorService.partialIndex(solrIndexRequest));
+        String status = bibItemIndexExecutorService.partialIndex(solrIndexRequest);
+        logger.info("Status for indexing grouped Bib Ids : {}",status);
+    }
+
+    @Transactional
+    public void saveGroupedBibsToDb(Collection<BibliographicEntity> bibliographicEntities) {
+        logger.info("Saving grouped Bibliographic entities to DB . Total size of bibs : {}",bibliographicEntities.size());
+        bibliographicDetailsRepository.saveAll(bibliographicEntities);
     }
 }
