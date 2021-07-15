@@ -920,6 +920,7 @@ public class MatchingAlgorithmUtil {
     public Optional<Map<Integer,BibliographicEntity>> updateBibsForMatchingIdentifier(List<BibliographicEntity> bibliographicEntityList) {
 
         Optional<BibliographicEntity> existingIdentifier = bibliographicEntityList.stream().filter(bibliographicEntity -> StringUtils.isNotEmpty(bibliographicEntity.getMatchingIdentity())).findFirst();
+        existingIdentifier.ifPresent(existingMatchingBibId->logger.info("existing matching id : {} for bibIds : {}",existingMatchingBibId.getMatchingIdentity(),bibliographicEntityList.stream().map(BibliographicEntity::getId).collect(toList()).toString()));
         String matchingIdentity = existingIdentifier.map(BibliographicEntity::getMatchingIdentity).orElseGet(() -> UUID.randomUUID().toString());
         List<BibliographicEntity> bibliographicEntitiesToUpdate = bibliographicEntityList.stream()
                 .filter(bibliographicEntity -> StringUtils.isEmpty(bibliographicEntity.getMatchingIdentity()))

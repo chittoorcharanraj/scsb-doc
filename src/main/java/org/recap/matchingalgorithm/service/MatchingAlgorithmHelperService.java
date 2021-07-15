@@ -509,6 +509,7 @@ public class MatchingAlgorithmHelperService {
             //matchingAlgorithmUtil.indexGroupedBibIds(bibIdsToIndex);
             reportDataEntities.clear();
             bibIdsToIndex.clear();
+            bibIdAndBibEntityMap.clear();
             logger.info("Total BibIds after index and clear : {}",bibIdsToIndex.size());
         }
         return "Success";
@@ -547,6 +548,7 @@ public class MatchingAlgorithmHelperService {
            // matchingAlgorithmUtil.indexGroupedBibIds(bibIdsToIndex);
             reportDataEntities.clear();
             bibIdsToIndex.clear();
+            bibIdAndBibEntityMap.clear();
             logger.info("Total BibIds after index and clear : {}",bibIdsToIndex.size());
         }
         return "Success";
@@ -587,6 +589,7 @@ public class MatchingAlgorithmHelperService {
            // matchingAlgorithmUtil.indexGroupedBibIds(bibIdsToIndex);
             reportDataEntities.clear();
             bibIdsToIndex.clear();
+            bibIdAndBibEntityMap.clear();
             logger.info("Total BibIds after index and clear : {}",bibIdsToIndex.size());
         }
         return "Success";
