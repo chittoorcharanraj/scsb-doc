@@ -45,7 +45,6 @@ public class MatchingAlgorithmProcessor {
      * @param matchingMatchPointsEntities the matching match points entities
      */
     public void saveMatchingMatchPointEntity(List<MatchingMatchPointsEntity> matchingMatchPointsEntities){
-        logger.info("Listening and Saving the match point entries");
         matchingMatchPointsDetailsRepository.saveAll(matchingMatchPointsEntities);
     }
 
@@ -56,7 +55,6 @@ public class MatchingAlgorithmProcessor {
      */
     public void saveMatchingBibEntity(List<MatchingBibEntity> matchingBibEntities){
         try {
-            logger.info("Listening and Saving the matching bib entries");
             matchingBibDetailsRepository.saveAll(matchingBibEntities);
         } catch (Exception ex) {
             logger.info("Exception : {0}",ex);
