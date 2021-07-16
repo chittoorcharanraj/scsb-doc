@@ -988,5 +988,6 @@ public class MatchingAlgorithmUtil {
     public void saveGroupedBibsToDb(Collection<BibliographicEntity> bibliographicEntities) {
         logger.info("Saving grouped Bibliographic entities to DB . Total size of bibs : {}",bibliographicEntities.size());
         bibliographicDetailsRepository.saveAll(bibliographicEntities);
+        bibliographicDetailsRepository.flush();
     }
 }
