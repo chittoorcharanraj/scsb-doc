@@ -37,6 +37,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StopWatch;
 
 import javax.annotation.Resource;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import java.io.IOException;
 import java.text.Normalizer;
 import java.util.ArrayList;
@@ -107,6 +109,9 @@ public class MatchingAlgorithmUtil {
 
     @Autowired
     private SolrIndexController bibItemIndexExecutorService;
+
+    @PersistenceContext
+    EntityManager entityManager;
 
     /**
      * Gets report detail repository.
@@ -989,5 +994,6 @@ public class MatchingAlgorithmUtil {
         logger.info("Saving grouped Bibliographic entities to DB . Total size of bibs : {}",bibliographicEntities.size());
         bibliographicDetailsRepository.saveAll(bibliographicEntities);
         bibliographicDetailsRepository.flush();
+        entityManager.clear();
     }
 }

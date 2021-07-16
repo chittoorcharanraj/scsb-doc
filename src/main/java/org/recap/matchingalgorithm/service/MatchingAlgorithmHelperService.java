@@ -31,8 +31,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StopWatch;
 
 import javax.annotation.Resource;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -94,9 +92,6 @@ public class MatchingAlgorithmHelperService {
 
     @Autowired
     ReportDataDetailsRepository reportDataDetailsRepository;
-
-    @PersistenceContext
-    EntityManager entityManager;
 
     /**
      * Gets logger.
@@ -515,8 +510,6 @@ public class MatchingAlgorithmHelperService {
             reportDataEntities.clear();
             bibIdsToIndex.clear();
             bibIdAndBibEntityMap.clear();
-            entityManager.flush();
-            entityManager.clear();
             logger.info("Total BibIds after index and clear : {}",bibIdsToIndex.size());
         }
         return "Success";
@@ -556,8 +549,6 @@ public class MatchingAlgorithmHelperService {
             reportDataEntities.clear();
             bibIdsToIndex.clear();
             bibIdAndBibEntityMap.clear();
-            entityManager.flush();
-            entityManager.clear();
             logger.info("Total BibIds after index and clear : {}",bibIdsToIndex.size());
         }
         return "Success";
@@ -599,8 +590,6 @@ public class MatchingAlgorithmHelperService {
             reportDataEntities.clear();
             bibIdsToIndex.clear();
             bibIdAndBibEntityMap.clear();
-            entityManager.flush();
-            entityManager.clear();
             logger.info("Total BibIds after index and clear : {}",bibIdsToIndex.size());
         }
         return "Success";
