@@ -232,8 +232,9 @@ public class SolrQueryBuilder {
                 String[] fieldValues = fieldValue.split("\\s+");
 
                 if(fieldName.equalsIgnoreCase(ScsbCommonConstants.TITLE_STARTS_WITH)) {
-                    stringBuilder.append(fieldName).append(":").append("(");
-                    stringBuilder.append("\"").append(fieldValues[0]).append("\"").append(")");
+                    String fieldValueTitleBrowse = fieldValue.replaceAll("\\s+", "\\\\ ");
+                    stringBuilder.append(ScsbConstants.TITLE_DISPLAY).append(":").append("(");
+                    stringBuilder.append(fieldValueTitleBrowse).append("*").append(")");
                 } else {
                     if(fieldValues.length > 1) {
                         List<String> fieldValuesList = Arrays.asList(fieldValues);
@@ -288,7 +289,8 @@ public class SolrQueryBuilder {
                     || fieldName.equalsIgnoreCase(ScsbCommonConstants.ISBN_CRITERIA) || fieldName.equalsIgnoreCase(ScsbCommonConstants.OCLC_NUMBER) || fieldName.equalsIgnoreCase(ScsbCommonConstants.ISSN_CRITERIA))) {
                 String[] fieldValues = fieldValue.split("\\s+");
                 if(fieldName.equalsIgnoreCase(ScsbCommonConstants.TITLE_STARTS_WITH)) {
-                    stringBuilder.append(parentQuery).append(fieldName).append(":").append(fieldValues[0]);
+                    String fieldValueTitleBrowse = fieldValue.replaceAll("\\s+", "\\\\ ");
+                    stringBuilder.append(parentQuery).append(ScsbConstants.TITLE_DISPLAY).append(":").append("(").append(fieldValueTitleBrowse).append("*").append(")");
                 } else {
                     if(fieldValues.length > 1) {
                         List<String> fieldValuesList = Arrays.asList(fieldValues);
