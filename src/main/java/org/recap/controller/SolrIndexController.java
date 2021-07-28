@@ -143,7 +143,7 @@ public class SolrIndexController {
     public String partialIndexDataFromUI(@Valid @ModelAttribute("solrIndexRequest") SolrIndexRequest solrIndexRequest,
                             BindingResult result,
                             Model model) throws Exception {
-        return report(partialIndexData(solrIndexRequest));
+        return report(partialIndex(solrIndexRequest));
     }
 
     /**
