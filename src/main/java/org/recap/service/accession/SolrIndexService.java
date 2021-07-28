@@ -156,7 +156,7 @@ public class SolrIndexService {
             for(BibliographicEntity bibliographicEntity:bibliographicEntityList){
                 if(owningInstBibIdList.contains(bibliographicEntity.getOwningInstitutionBibId()) && bibliographicEntity.getId() != null){
                     bibliographicIdList.add(bibliographicEntity.getId());
-                    logger.info("Upded Dummy record scsb bibid to index--->{}",bibliographicEntity.getId());
+                    logger.info("Updated Dummy record scsb bibid to index--->{}",bibliographicEntity.getId());
                 }
             }
         }
