@@ -103,6 +103,7 @@ public class SolrQueryBuilder {
         StringBuilder stringBuilder = new StringBuilder();
         List<String> owningInstitutions = searchRecordsRequest.getOwningInstitutions();
         List<String> materialTypes = searchRecordsRequest.getMaterialTypes();
+        List<String> titleMatch = searchRecordsRequest.getTitleMatch();
 
         if (CollectionUtils.isNotEmpty(owningInstitutions)) {
             stringBuilder.append(buildQueryForParentGivenChild(ScsbCommonConstants.BIB_OWNING_INSTITUTION, owningInstitutions, coreChildFilterQuery));
@@ -111,6 +112,15 @@ public class SolrQueryBuilder {
             stringBuilder.append(and).append(buildQueryForParentGivenChild(ScsbCommonConstants.LEADER_MATERIAL_TYPE, materialTypes, coreChildFilterQuery));
         } else if (CollectionUtils.isNotEmpty(materialTypes)) {
             stringBuilder.append(buildQueryForParentGivenChild(ScsbCommonConstants.LEADER_MATERIAL_TYPE, materialTypes, coreChildFilterQuery));
+        }
+        if (titleMatch.size() == 1) {
+            StringBuilder stringBuilderTemp = new StringBuilder();
+            stringBuilderTemp.append(coreChildFilterQuery).append(ScsbConstants.MATCHING_IDENTIFIER).append(":").append("*");
+            if (ScsbConstants.TITLE_MATCHED.equalsIgnoreCase(titleMatch.get(0))) {
+                stringBuilder.append(or).append("(").append(stringBuilderTemp).append(")");
+            } else {
+                stringBuilder.append(or).append("-").append("(").append(stringBuilderTemp).append(")");
+            }
         }
         return stringBuilder.toString();
     }
@@ -129,7 +139,18 @@ public class SolrQueryBuilder {
         }
 
         List<String> materialTypes = searchRecordsRequest.getMaterialTypes();
-        return buildQueryByFieldType(stringBuilder, materialTypes, ScsbCommonConstants.LEADER_MATERIAL_TYPE);
+        List<String> titleMatch = searchRecordsRequest.getTitleMatch();
+        buildQueryByFieldType(stringBuilder, materialTypes, ScsbCommonConstants.LEADER_MATERIAL_TYPE);
+        if (titleMatch.size() == 1) {
+            StringBuilder stringBuilderTemp = new StringBuilder();
+            stringBuilderTemp.append(ScsbConstants.MATCHING_IDENTIFIER).append(":").append("*");
+            if (ScsbConstants.TITLE_MATCHED.equalsIgnoreCase(titleMatch.get(0))) {
+                stringBuilder.append(and).append("(").append(stringBuilderTemp).append(")");
+            } else {
+                stringBuilder.append(and).append("-").append("(").append(stringBuilderTemp).append(")");
+            }
+        }
+        return stringBuilder.toString();
     }
 
     private String buildQueryByFieldType(StringBuilder stringBuilder, List<String> materialTypes, String leaderMaterialType) {
