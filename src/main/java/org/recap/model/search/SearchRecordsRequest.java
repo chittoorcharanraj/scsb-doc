@@ -12,7 +12,8 @@ import java.util.List;
  * Created by rajeshbabuk on 6/7/16.
  */
 @ApiModel(value="SearchRecordsRequest", description="Model for showing user details")
-public class SearchRecordsRequest implements Serializable {
+public class
+SearchRecordsRequest implements Serializable {
 
 
     @ApiModelProperty(name= "fieldValue", value= "Search Value",  position = 0)
@@ -32,58 +33,61 @@ public class SearchRecordsRequest implements Serializable {
     @ApiModelProperty(name= "materialTypes", value= "Material Types",position = 5)
     private List<String> materialTypes = null;
 
-    @ApiModelProperty(name= "useRestrictions", value= "Book Use Restrictions",position = 6)
+    @ApiModelProperty(name= "titleMatch", value= "Title Matches",position = 6)
+    private List<String> titleMatch = null;
+
+    @ApiModelProperty(name= "useRestrictions", value= "Book Use Restrictions",position = 7)
     private List<String> useRestrictions = null;
 
-    @ApiModelProperty(name= "searchResultRows", value= "Search Response",position = 7)
+    @ApiModelProperty(name= "searchResultRows", value= "Search Response",position = 8)
     private List<SearchResultRow> searchResultRows = new ArrayList<>();
 
-    @ApiModelProperty(name= "totalPageCount", value= "Total Page Count",position = 8)
+    @ApiModelProperty(name= "totalPageCount", value= "Total Page Count",position = 9)
     private Integer totalPageCount = 0;
 
-    @ApiModelProperty(name= "totalBibRecordsCount", value= "Total Bibliograph Records Count",position = 9)
+    @ApiModelProperty(name= "totalBibRecordsCount", value= "Total Bibliograph Records Count",position = 10)
     private String totalBibRecordsCount = "0";
 
-    @ApiModelProperty(name= "totalItemRecordsCount", value= "Total Item Count",position = 10)
+    @ApiModelProperty(name= "totalItemRecordsCount", value= "Total Item Count",position = 11)
     private String totalItemRecordsCount = "0";
 
-    @ApiModelProperty(name= "totalRecordsCount", value= "Total Records Count",position = 11)
+    @ApiModelProperty(name= "totalRecordsCount", value= "Total Records Count",position = 12)
     private String totalRecordsCount = "0";
 
-    @ApiModelProperty(name= "pageNumber", value= "Current Page Number",position = 12)
+    @ApiModelProperty(name= "pageNumber", value= "Current Page Number",position = 13)
     private Integer pageNumber = 0;
 
-    @ApiModelProperty(name= "pageSize", value= "Total records to show is page",position = 13)
+    @ApiModelProperty(name= "pageSize", value= "Total records to show is page",position = 14)
     private Integer pageSize = 10;
 
-    @ApiModelProperty(name= "showResults", value= "Show Results",position = 14)
+    @ApiModelProperty(name= "showResults", value= "Show Results",position = 15)
     private boolean showResults = false;
 
-    @ApiModelProperty(name= "selectAll", value= "select All Fields",position = 15)
+    @ApiModelProperty(name= "selectAll", value= "select All Fields",position = 16)
     private boolean selectAll = false;
 
-    @ApiModelProperty(name= "selectAllFacets", value= "Select All Facets",position = 16)
+    @ApiModelProperty(name= "selectAllFacets", value= "Select All Facets",position = 17)
     private boolean selectAllFacets = false;
 
-    @ApiModelProperty(name= "showTotalCount", value= "Show Total Count",position = 17)
+    @ApiModelProperty(name= "showTotalCount", value= "Show Total Count",position = 18)
     private boolean showTotalCount = false;
 
-    @ApiModelProperty(name= "index", value= "index",position = 18)
+    @ApiModelProperty(name= "index", value= "index",position = 19)
     private Integer index;
 
-    @ApiModelProperty(name= "errorMessage", value= "Error Message",position = 19)
+    @ApiModelProperty(name= "errorMessage", value= "Error Message",position = 20)
     private String errorMessage;
 
-    @ApiModelProperty(name= "isDeleted", value= "Is Deleted",position = 20)
+    @ApiModelProperty(name= "isDeleted", value= "Is Deleted",position = 21)
     private boolean isDeleted = false;
 
-    @ApiModelProperty(name= "catalogingStatus", value= "Cataloging Status",position = 21)
+    @ApiModelProperty(name= "catalogingStatus", value= "Cataloging Status",position = 22)
     private String catalogingStatus;
 
-    @ApiModelProperty(name= "requestingInstitution", value= "Requesting Institution",position = 22)
+    @ApiModelProperty(name= "requestingInstitution", value= "Requesting Institution",position = 23)
     private String requestingInstitution = "";
 
-    @ApiModelProperty(name= "imsDepositoryCodes", value= "IMS Depository Codes",position = 23)
+    @ApiModelProperty(name= "imsDepositoryCodes", value= "IMS Depository Codes",position = 24)
     private List<String> imsDepositoryCodes = null;
 
     private boolean sortIncompleteRecords = false;
@@ -604,5 +608,16 @@ public class SearchRecordsRequest implements Serializable {
 
     public void setImsDepositoryCodes(List<String> imsDepositoryCodes) {
         this.imsDepositoryCodes = imsDepositoryCodes;
+    }
+
+    public List<String> getTitleMatch() {
+        if(null == titleMatch){
+            titleMatch = new ArrayList<>();
+        }
+        return titleMatch;
+    }
+
+    public void setTitleMatch(List<String> titleMatch) {
+        this.titleMatch = titleMatch;
     }
 }
