@@ -27,6 +27,7 @@ public class SolrQueryBuilder {
 
     private String and = " AND ";
     private String or = " OR ";
+    private String to = " TO ";
     private String coreParentFilterQuery = "{!parent which=\"ContentType:parent\"}";
     private String coreChildFilterQuery = "{!child of=\"ContentType:parent\"}";
 
@@ -102,6 +103,7 @@ public class SolrQueryBuilder {
         StringBuilder stringBuilder = new StringBuilder();
         List<String> owningInstitutions = searchRecordsRequest.getOwningInstitutions();
         List<String> materialTypes = searchRecordsRequest.getMaterialTypes();
+        List<String> titleMatch = searchRecordsRequest.getTitleMatch();
 
         if (CollectionUtils.isNotEmpty(owningInstitutions)) {
             stringBuilder.append(buildQueryForParentGivenChild(ScsbCommonConstants.BIB_OWNING_INSTITUTION, owningInstitutions, coreChildFilterQuery));
@@ -110,6 +112,15 @@ public class SolrQueryBuilder {
             stringBuilder.append(and).append(buildQueryForParentGivenChild(ScsbCommonConstants.LEADER_MATERIAL_TYPE, materialTypes, coreChildFilterQuery));
         } else if (CollectionUtils.isNotEmpty(materialTypes)) {
             stringBuilder.append(buildQueryForParentGivenChild(ScsbCommonConstants.LEADER_MATERIAL_TYPE, materialTypes, coreChildFilterQuery));
+        }
+        if (titleMatch.size() == 1) {
+            StringBuilder stringBuilderTemp = new StringBuilder();
+            stringBuilderTemp.append(coreChildFilterQuery).append(ScsbConstants.MATCHING_IDENTIFIER).append(":").append("*");
+            if (ScsbConstants.TITLE_MATCHED.equalsIgnoreCase(titleMatch.get(0))) {
+                stringBuilder.append(or).append("(").append(stringBuilderTemp).append(")");
+            } else {
+                stringBuilder.append(or).append("-").append("(").append(stringBuilderTemp).append(")");
+            }
         }
         return stringBuilder.toString();
     }
@@ -128,7 +139,18 @@ public class SolrQueryBuilder {
         }
 
         List<String> materialTypes = searchRecordsRequest.getMaterialTypes();
-        return buildQueryByFieldType(stringBuilder, materialTypes, ScsbCommonConstants.LEADER_MATERIAL_TYPE);
+        List<String> titleMatch = searchRecordsRequest.getTitleMatch();
+        buildQueryByFieldType(stringBuilder, materialTypes, ScsbCommonConstants.LEADER_MATERIAL_TYPE);
+        if (titleMatch.size() == 1) {
+            StringBuilder stringBuilderTemp = new StringBuilder();
+            stringBuilderTemp.append(ScsbConstants.MATCHING_IDENTIFIER).append(":").append("*");
+            if (ScsbConstants.TITLE_MATCHED.equalsIgnoreCase(titleMatch.get(0))) {
+                stringBuilder.append(and).append("(").append(stringBuilderTemp).append(")");
+            } else {
+                stringBuilder.append(and).append("-").append("(").append(stringBuilderTemp).append(")");
+            }
+        }
+        return stringBuilder.toString();
     }
 
     private String buildQueryByFieldType(StringBuilder stringBuilder, List<String> materialTypes, String leaderMaterialType) {
@@ -647,6 +669,24 @@ public class SolrQueryBuilder {
         StringBuilder query = new StringBuilder();
         query.append("(").append(ScsbConstants.BIB_CREATED_DATE).append(":").append("[").append(date).append("]")
                 .append(or).append(ScsbConstants.BIB_LAST_UPDATED_DATE).append(":").append("[").append(date).append("]").append(")")
+                .append(and).append(ScsbCommonConstants.IS_DELETED_BIB).append(":").append(ScsbConstants.FALSE)
+                .append(and).append(ScsbConstants.BIB_CATALOGING_STATUS).append(":").append(ScsbCommonConstants.COMPLETE_STATUS);
+        query.append(and).append(coreParentFilterQuery).append(ScsbCommonConstants.COLLECTION_GROUP_DESIGNATION).append(":").append(ScsbCommonConstants.SHARED_CGD)
+                .append(and).append(coreParentFilterQuery).append(ScsbCommonConstants.IS_DELETED_ITEM).append(":").append(ScsbConstants.FALSE)
+                .append(and).append(coreParentFilterQuery).append(ScsbConstants.ITEM_CATALOGING_STATUS).append(":").append(ScsbCommonConstants.COMPLETE_STATUS);
+        return query.toString();
+    }
+
+    /**
+     * This query is used to Fetch bibs based on Bib Id Range.
+     *
+     * @param fromBibId the from Bib Id
+     * @param toBibId the to Bib Id
+     * @return the string
+     */
+    public String fetchBibsByBibIdRange(String fromBibId, String toBibId) {
+        StringBuilder query = new StringBuilder();
+        query.append(ScsbConstants.BIB_ID).append(":").append("[").append(fromBibId).append(to).append(toBibId).append("]")
                 .append(and).append(ScsbCommonConstants.IS_DELETED_BIB).append(":").append(ScsbConstants.FALSE)
                 .append(and).append(ScsbConstants.BIB_CATALOGING_STATUS).append(":").append(ScsbCommonConstants.COMPLETE_STATUS);
         query.append(and).append(coreParentFilterQuery).append(ScsbCommonConstants.COLLECTION_GROUP_DESIGNATION).append(":").append(ScsbCommonConstants.SHARED_CGD)

@@ -511,7 +511,6 @@ public class MatchingAlgorithmUtil {
 
     private void setTrimmedHeaderValue(String headerName, ReportDataEntity bibIdReportDataEntity, String joinedHeaderValue) {
         int headerValueLength = joinedHeaderValue.length();
-        logger.info("Matching header value length : {}",headerValueLength);
         if (headerValueLength <= matchingHeaderValueLength){
             bibIdReportDataEntity.setHeaderValue(joinedHeaderValue);
         }else {
