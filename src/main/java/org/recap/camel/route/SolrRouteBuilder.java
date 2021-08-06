@@ -5,11 +5,14 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.solr.SolrConstants;
 import org.recap.PropertyKeyConstants;
 import org.recap.ScsbCommonConstants;
+import org.recap.camel.processor.MatchingAlgorithmProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+
+import static org.recap.ScsbConstants.MATCHING_ALGORITHM_GROUPING_INDEX;
 
 /**
  * Created by rajeshbabuk on 30/8/16.
@@ -38,6 +41,15 @@ public class SolrRouteBuilder {
                     from(ScsbCommonConstants.SOLR_QUEUE).setHeader(SolrConstants.OPERATION, constant(SolrConstants.OPERATION_INSERT))
                             .setHeader(SolrConstants.FIELD + "id", body())
                             .to("solr:" + solrUri + "/" + solrCore);
+                }
+            });
+
+            camelContext.addRoutes(new RouteBuilder() {
+                @Override
+                public void configure() throws Exception {
+                    from(MATCHING_ALGORITHM_GROUPING_INDEX+"?concurrentConsumers=10")
+                            .routeId("matchingAlgorithmGroupIndex")
+                            .bean(MatchingAlgorithmProcessor.class, "matchingAlgorithmGroupIndex");
                 }
             });
         } catch (Exception e) {

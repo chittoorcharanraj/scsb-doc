@@ -251,6 +251,40 @@ public class MatchingAlgorithmController {
         return status.toString();
     }
 
+    @ResponseBody
+    @PostMapping(value = "/matchingAlgorithm/groupMonographs")
+    public String groupMonographs(){
+        StopWatch stopWatch=new StopWatch();
+        stopWatch.start();
+        matchingAlgorithmHelperService.groupBibsForMonograph(Integer.valueOf(getMatchingAlgoBatchSize()), true);
+        matchingAlgorithmHelperService.groupBibsForMonograph(Integer.valueOf(getMatchingAlgoBatchSize()), false);
+        stopWatch.stop();
+        long totalTimeMillis = stopWatch.getTotalTimeMillis();
+        return "Total time taken : "+totalTimeMillis;
+    }
+
+    @ResponseBody
+    @PostMapping(value = "/matchingAlgorithm/groupMVMs")
+    public String groupMVMs(){
+        StopWatch stopWatch=new StopWatch();
+        stopWatch.start();
+        matchingAlgorithmHelperService.groupBibsForMVMS(Integer.valueOf(getMatchingAlgoBatchSize()));
+        stopWatch.stop();
+        long totalTimeMillis = stopWatch.getTotalTimeMillis();
+        return "Total time taken : "+totalTimeMillis;
+    }
+
+    @ResponseBody
+    @PostMapping(value = "/matchingAlgorithm/groupSerials")
+    public String groupSerials(){
+        StopWatch stopWatch=new StopWatch();
+        stopWatch.start();
+         matchingAlgorithmHelperService.groupBibsForSerials(Integer.valueOf(getMatchingAlgoBatchSize()));
+        stopWatch.stop();
+        long totalTimeMillis = stopWatch.getTotalTimeMillis();
+        return "Total time taken : "+totalTimeMillis;
+    }
+
     /**
      * This method is used to update cgd for Monographs in database.
      *

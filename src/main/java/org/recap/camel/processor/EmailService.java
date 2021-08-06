@@ -82,6 +82,11 @@ public class EmailService {
         producerTemplate.sendBodyAndHeader(ScsbConstants.EMAIL_Q, getEmailPayLoadForMatching(exchange), ScsbConstants.EMAIL_FOR, headerValue);
     }
 
+    public void sendEmailForMatchingCGDReports(Exchange exchange) {
+        logger.info("matching algorithm reports email started ");
+        String headerValue=Optional.ofNullable(exchange.getIn().getHeader(ScsbConstants.SUBJECT)).orElse("").equals(cgdReportEmailSubject)?cgdReportEmailSubject:ScsbConstants.MATCHING_REPORTS;
+        producerTemplate.sendBodyAndHeader(ScsbConstants.EMAIL_Q, getEmailPayLoadForMatchingCGDReports(exchange), ScsbConstants.EMAIL_FOR, headerValue);
+    }
     /**
      * Send email for accession reports.
      *
@@ -104,10 +109,23 @@ public class EmailService {
         File file = FileUtils.getFile(fileNameWithPath);
         String path = file.getParent();
         emailPayLoad.setTo(recapSupportEmailTo);
-        getCc(emailPayLoad);
+        setEmailRecipients(emailPayLoad);
         String subject = (String) exchange.getIn().getHeader(ScsbConstants.SUBJECT);
         Optional.ofNullable(subject).ifPresent(ins->emailPayLoad.setSubject(subject));
-        emailPayLoad.setMessage("The Reports for Matching Algorithm is available at the s3 location " + path);
+        emailPayLoad.setMessage(ScsbConstants.SUBJECT_MESSAGE_FOR_MATCHING_ALGORITHM + path);
+        logger.info("Matching Algorithm Reports email has been sent to : {} and cc : {} ",emailPayLoad.getTo(),emailPayLoad.getCc());
+        return emailPayLoad;
+    }
+
+    public EmailPayLoad getEmailPayLoadForMatchingCGDReports(Exchange exchange){
+        EmailPayLoad emailPayLoad = new EmailPayLoad();
+        String fileNameWithPath = (String)exchange.getIn().getHeader("CamelAwsS3Key");
+        File file = FileUtils.getFile(fileNameWithPath);
+        String path = file.getParent();
+        setEmailRecipients(emailPayLoad,(String) exchange.getIn().getHeader(ScsbConstants.INSTITUTION));
+        String subject = (String) exchange.getIn().getHeader(ScsbConstants.SUBJECT);
+        Optional.ofNullable(subject).ifPresent(ins->emailPayLoad.setSubject(subject));
+        emailPayLoad.setMessage(ScsbConstants.SUBJECT_MESSAGE_FOR_MATCHING_ALGORITHM + path);
         logger.info("Matching Algorithm Reports email has been sent to : {} and cc : {} ",emailPayLoad.getTo(),emailPayLoad.getCc());
         return emailPayLoad;
     }
@@ -132,16 +150,21 @@ public class EmailService {
         return emailPayLoad;
     }
 
-    public void getCc(EmailPayLoad emailPayLoad) {
+    public void setEmailRecipients(EmailPayLoad emailPayLoad) {
         StringBuilder cc = new StringBuilder();
         List<String> institutionCodes = commonUtil.findAllInstitutionCodesExceptSupportInstitution();
         String matchingEmailTo="";
         for (String institution : institutionCodes) {
-             matchingEmailTo = propertyUtil.getPropertyByInstitutionAndKey(institution, PropertyKeyConstants.ILS.ILS_EMAIL_MATCHING_REPORTS_TO);
+             matchingEmailTo = propertyUtil.getPropertyByInstitutionAndKey(institution, PropertyKeyConstants.ILS.ILS_EMAIL_MATCHING_CGD_REPORTS_TO);
              cc.append(StringUtils.isNotBlank(matchingEmailTo) ? matchingEmailTo + "," : "");
 
         }
         emailPayLoad.setCc(cc.toString());
+    }
+
+    public void setEmailRecipients(EmailPayLoad emailPayLoad, String institutionCode) {
+        emailPayLoad.setTo(propertyUtil.getPropertyByInstitutionAndKey(institutionCode, PropertyKeyConstants.ILS.ILS_EMAIL_MATCHING_CGD_REPORTS_TO));
+        emailPayLoad.setCc(propertyUtil.getPropertyByInstitutionAndKey(institutionCode, PropertyKeyConstants.ILS.ILS_EMAIL_MATCHING_CGD_REPORTS_CC));
     }
 
     private void getCcBasedOnInstitution(EmailPayLoad emailPayLoad) {

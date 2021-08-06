@@ -203,14 +203,14 @@ public class SolrIndexControllerUT extends BaseTestCaseUT {
         SolrIndexRequest solrIndexRequest = getSolrIndexRequest();
         solrIndexRequest.setOwningInstitutionCode("PUL");
         solrIndexRequest.setCommitInterval(5000);
-        String response =solrIndexController.partialIndex(solrIndexRequest,bindingResult,model);
+        String response =solrIndexController.partialIndex(solrIndexRequest);
         assertNotNull(response);
         assertTrue(response.contains("Total number of records processed :"));
     }
 
     @Test
     public void partialIndex_else()throws Exception{
-        String response =solrIndexController.partialIndex(getSolrIndexRequest(),bindingResult,model);
+        String response =solrIndexController.partialIndex(getSolrIndexRequest());
         assertNotNull(response);
         assertTrue(response.contains("Total number of records processed :"));
     }

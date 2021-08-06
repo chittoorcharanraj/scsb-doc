@@ -2,10 +2,12 @@ package org.recap.camel.processor;
 
 import org.recap.ScsbCommonConstants;
 import org.recap.ScsbConstants;
+import org.recap.executors.BibItemIndexExecutorService;
 import org.recap.model.jpa.ItemEntity;
 import org.recap.model.jpa.MatchingBibEntity;
 import org.recap.model.jpa.MatchingMatchPointsEntity;
 import org.recap.model.jpa.ReportEntity;
+import org.recap.model.solr.SolrIndexRequest;
 import org.recap.repository.jpa.ItemDetailsRepository;
 import org.recap.repository.jpa.MatchingBibDetailsRepository;
 import org.recap.repository.jpa.MatchingMatchPointsDetailsRepository;
@@ -14,10 +16,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Created by angelind on 27/10/16.
@@ -38,6 +40,9 @@ public class MatchingAlgorithmProcessor {
 
     @Autowired
     private ItemDetailsRepository itemDetailsRepository;
+
+    @Autowired
+    private BibItemIndexExecutorService bibItemIndexExecutorService;
 
     /**
      * This method is used to save matching match-point in the database.
@@ -100,5 +105,18 @@ public class MatchingAlgorithmProcessor {
         } catch (Exception e) {
             logger.info("Exception while updating matching Bib entity status : " , e);
         }
+    }
+
+    public void matchingAlgorithmGroupIndex(List<Integer> bibIds){
+        SolrIndexRequest solrIndexRequest=new SolrIndexRequest();
+        solrIndexRequest.setNumberOfThreads(5);
+        solrIndexRequest.setNumberOfDocs(1000);
+        solrIndexRequest.setCommitInterval(1000);
+        solrIndexRequest.setPartialIndexType("BibIdList");
+        logger.info("BibIds to index : {}",bibIds);
+        String collect = bibIds.stream().map(bibId -> String.valueOf(bibId)).collect(Collectors.joining(","));
+        solrIndexRequest.setBibIds(collect);
+        Integer bibsIndexed = bibItemIndexExecutorService.partialIndex(solrIndexRequest);
+        logger.info("Status for indexing grouped Bib Ids : {}",bibsIndexed);
     }
 }
