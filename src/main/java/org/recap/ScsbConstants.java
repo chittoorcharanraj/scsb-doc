@@ -34,6 +34,7 @@ public final class ScsbConstants {
     public static final String FTP_SERIAL_MVM_REPORT_Q = "scsbactivemq:queue:ftpSerialMvmReportsQ";
     public static final String FTP_MATCHING_SUMMARY_REPORT_Q = "scsbactivemq:queue:ftpMatchingSummaryReportQ";
     public static final String S3_ONGOING_MATCHING_CGD_REPORT_Q = "scsbactivemq:queue:s3OngoingMatchingCGDReportQ";
+    public static final String MATCHING_ALGORITHM_GROUPING_INDEX = "scsbactivemq:queue:matchingAlgorithmGroupIndex";
 
     //Camel Route Id Constants
     public static final String FS_SUBMIT_COLLECTION_REJECTION_REPORT_ID = "fsSubmitCollectionRejectionReport";
@@ -66,6 +67,7 @@ public final class ScsbConstants {
     public static final String CSV_EXTENSION = ".csv";
     public static final String MATCHING_BIB_IDS = "matchingBibIds";
     public static final String MATCHING_REPORTS_SEND_EMAIL = "sendEmailForMatchingReports";
+    public static final String MATCHING_CGD_REPORTS_SEND_EMAIL = "sendEmailForMatchingCGDReports";
     public static final String ACCESSION_REPORTS_SEND_EMAIL = "sendEmailForAccessionReports";
 
     public static final String DATE_FORMAT_FOR_FILE_NAME = "yyyyMMdd_HHmmss";
@@ -228,6 +230,8 @@ public final class ScsbConstants {
     public static final String EXCEPTION_TITLE_MATCH_REPORT = "Exception Occured while pulling records for TitleMatchReports:: {}";
     public static final String EXCEPTION_TITLE_MATCH_COUNT = "Exception Occured while pulling records for TitleMatchCount:: {} ";
     public static final String EXCEPTION_TITLE_MATCH_EXPORT = "Exception Occured while pulling records for TitleMatchExportReports:: {}";
+    public static final String SINGLE_MATCH_TITLE_EXCEPTION = "SingleMatch-TitleException";
+
     public static class ServicePath {
         private ServicePath() {}
         public static final String REPLACE_REQUEST = "requestItem/replaceRequest";
@@ -294,6 +298,7 @@ public final class ScsbConstants {
     public static final String TOTAL_PAGES = "Total Pages : ";
     public static final String UPDATE_ITEMS_Q = "updateItemsQ";
     public static final String SUBJECT = "subject";
+    public static final String SUBJECT_MESSAGE_FOR_MATCHING_ALGORITHM = "The Reports for Matching Algorithm is available at the s3 location ";
     public static final String SMTPS_PREFIX = "smtps://";
     public static final String SMTPS_USERNAME = "?username=";
     public static final String SMTPS_PASSWORD = "&password=";

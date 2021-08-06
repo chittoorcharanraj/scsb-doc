@@ -49,8 +49,10 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
+import static org.recap.ScsbConstants.MATCHING_ALGORITHM_GROUPING_INDEX;
 
 
 /**
@@ -485,16 +487,22 @@ public class MatchingAlgorithmHelperService {
                     reportDataEntities = reportDataDetailsRepository.getReportDataEntityForMatchingMonographs(ScsbCommonConstants.BIB_ID, from, batchSize);
                 }
             Set<Integer> bibIdsToIndex=new HashSet<>();
-            List<String> bibIdsList = reportDataEntities.stream().flatMap(reportDataEntity -> Arrays.stream(reportDataEntity.getHeaderValue().split(","))).map(String::trim).collect(toList());
+
+                Set<String> bibIdsList = reportDataEntities.stream()
+                    .flatMap(reportDataEntity -> Arrays.stream(reportDataEntity.getHeaderValue().split(",")))
+                    .map(String::trim)
+                    .collect(Collectors.toSet());
+
             Map<Integer, BibliographicEntity> bibIdAndBibEntityMap = matchingAlgorithmUtil.getBibIdAndBibEntityMap(bibIdsList);
-            for (ReportDataEntity reportDataEntity : reportDataEntities) { //10k
-                List<Integer> bibIdList = getBibIdListFromString(reportDataEntity);
-                List<BibliographicEntity> reportBibEntities=new ArrayList<>();
+
+            for (ReportDataEntity reportDataEntity : reportDataEntities) {                 List<Integer> bibIdList = getBibIdListFromString(reportDataEntity);
+                List<BibliographicEntity> bibToupdate=new ArrayList<>();
                 for (Integer bibId : bibIdList) {
                     BibliographicEntity bibliographicEntity = bibIdAndBibEntityMap.get(bibId);
-                    reportBibEntities.add(bibliographicEntity);
+                    bibToupdate.add(bibliographicEntity);
                 }
-                Optional<Map<Integer, BibliographicEntity>> bibliographicEntityMap = matchingAlgorithmUtil.updateBibsForMatchingIdentifier(reportBibEntities);
+                Optional<Map<Integer, BibliographicEntity>> bibliographicEntityMap = matchingAlgorithmUtil.updateBibsForMatchingIdentifier(bibToupdate);
+
                 bibliographicEntityMap.ifPresentOrElse(entry->bibIdsToIndex.addAll(entry.keySet()),() -> logger.info("No bib ids found to group for indexing"));
                 bibliographicEntityMap.ifPresent(entityMap -> {
                     Map<Integer, BibliographicEntity> integerBibliographicEntityMap = entityMap;
@@ -506,7 +514,7 @@ public class MatchingAlgorithmHelperService {
             logger.info("Total BibIds grouped to index : {}",bibIdsToIndex.size());
             Collection<BibliographicEntity> bibliographicEntities = bibIdAndBibEntityMap.values();
             matchingAlgorithmUtil.saveGroupedBibsToDb(bibliographicEntities);
-            //matchingAlgorithmUtil.indexGroupedBibIds(bibIdsToIndex);
+            producerTemplate.sendBody(MATCHING_ALGORITHM_GROUPING_INDEX,bibIdsToIndex);
             reportDataEntities.clear();
             bibIdsToIndex.clear();
             bibIdAndBibEntityMap.clear();
@@ -524,16 +532,17 @@ public class MatchingAlgorithmHelperService {
             long from = pageNum * Long.valueOf(batchSize);
             List<ReportDataEntity> reportDataEntities =  reportDataDetailsRepository.getReportDataEntityForMatchingMVMs(ScsbCommonConstants.BIB_ID, from, batchSize);
             Set<Integer> bibIdsToIndex=new HashSet<>();
-            List<String> bibIdsList = reportDataEntities.stream().flatMap(reportDataEntity -> Arrays.stream(reportDataEntity.getHeaderValue().split(","))).map(String::trim).collect(toList());
+            Set<String> bibIdsList = reportDataEntities.stream().flatMap(reportDataEntity -> Arrays.stream(reportDataEntity.getHeaderValue().split(","))).map(String::trim).collect(Collectors.toSet());
             Map<Integer, BibliographicEntity> bibIdAndBibEntityMap = matchingAlgorithmUtil.getBibIdAndBibEntityMap(bibIdsList);
-            for (ReportDataEntity reportDataEntity : reportDataEntities) { //10k
-                List<Integer> bibIdList = getBibIdListFromString(reportDataEntity);
-                List<BibliographicEntity> reportBibEntities=new ArrayList<>();
+
+            for (ReportDataEntity reportDataEntity : reportDataEntities) {                 List<Integer> bibIdList = getBibIdListFromString(reportDataEntity);
+                List<BibliographicEntity> bibToupdate=new ArrayList<>();
                 for (Integer bibId : bibIdList) {
                     BibliographicEntity bibliographicEntity = bibIdAndBibEntityMap.get(bibId);
-                    reportBibEntities.add(bibliographicEntity);
+                    bibToupdate.add(bibliographicEntity);
                 }
-                Optional<Map<Integer, BibliographicEntity>> bibliographicEntityMap = matchingAlgorithmUtil.updateBibsForMatchingIdentifier(reportBibEntities);
+                Optional<Map<Integer, BibliographicEntity>> bibliographicEntityMap = matchingAlgorithmUtil.updateBibsForMatchingIdentifier(bibToupdate);
+
                 bibliographicEntityMap.ifPresentOrElse(entry->bibIdsToIndex.addAll(entry.keySet()),() -> logger.info("No bib ids found to group for indexing"));
                 bibliographicEntityMap.ifPresent(entityMap -> {
                     Map<Integer, BibliographicEntity> integerBibliographicEntityMap = entityMap;
@@ -563,7 +572,7 @@ public class MatchingAlgorithmHelperService {
             long from = pageNum * Long.valueOf(batchSize);
             List<ReportDataEntity> reportDataEntities =  reportDataDetailsRepository.getReportDataEntityForMatchingSerials(ScsbCommonConstants.BIB_ID, from, batchSize);
             Set<Integer> bibIdsToIndex=new HashSet<>();
-            List<String> bibIdsList = reportDataEntities.stream().flatMap(reportDataEntity -> Arrays.stream(reportDataEntity.getHeaderValue().split(","))).map(String::trim).collect(toList());
+            Set<String> bibIdsList = reportDataEntities.stream().flatMap(reportDataEntity -> Arrays.stream(reportDataEntity.getHeaderValue().split(","))).map(String::trim).collect(Collectors.toSet());
             Map<Integer, BibliographicEntity> bibIdAndBibEntityMap = matchingAlgorithmUtil.getBibIdAndBibEntityMap(bibIdsList);
             for (ReportDataEntity reportDataEntity : reportDataEntities) { //10k
                 String bibId = reportDataEntity.getHeaderValue();

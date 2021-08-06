@@ -369,8 +369,12 @@ public class MatchingAlgorithmUtil {
             if(materialTypeSet.size() != 1) {
                 reportEntity.setType(ScsbConstants.MATERIAL_TYPE_EXCEPTION);
             } else {
-                reportEntity.setType(ScsbConstants.SINGLE_MATCH);
+                if(CollectionUtils.isNotEmpty(unMatchingTitleHeaderSet)){
+                    reportEntity.setType(ScsbConstants.SINGLE_MATCH_TITLE_EXCEPTION);
+                }else{
+                    reportEntity.setType(ScsbConstants.SINGLE_MATCH);
                 owningInstList.forEach(owningInst -> institutionCounterMap.replace(owningInst, +1));
+                }
             }
 
             getReportDataEntityList(reportDataEntities, owningInstList, bibIds, materialTypeList, owningInstBibIds);
@@ -915,7 +919,7 @@ public class MatchingAlgorithmUtil {
         }
     }
 
-    public Map<Integer, BibliographicEntity> getBibIdAndBibEntityMap(List<String> bibIdsList){
+    public Map<Integer, BibliographicEntity> getBibIdAndBibEntityMap(Set<String> bibIdsList){
         List<BibliographicEntity> bibliographicEntityList = bibliographicDetailsRepository.findByIdIn(bibIdsList.stream().map(s -> Integer.valueOf(s)).collect(toList()));
         Map<Integer, BibliographicEntity> bibliographicEntityMap = bibliographicEntityList.stream().collect(Collectors.toMap(BibliographicEntity::getId, Function.identity()));
         return bibliographicEntityMap;
@@ -923,7 +927,9 @@ public class MatchingAlgorithmUtil {
 
     public Optional<Map<Integer,BibliographicEntity>> updateBibsForMatchingIdentifier(List<BibliographicEntity> bibliographicEntityList) {
 
-        Optional<BibliographicEntity> existingIdentifier = bibliographicEntityList.stream().filter(bibliographicEntity -> StringUtils.isNotEmpty(bibliographicEntity.getMatchingIdentity())).findFirst();
+        Optional<BibliographicEntity> existingIdentifier = bibliographicEntityList.stream()
+                .filter(bibliographicEntity -> StringUtils.isNotEmpty(bibliographicEntity.getMatchingIdentity()))
+                .findFirst();
         existingIdentifier.ifPresent(existingMatchingBibId->logger.info("existing matching id : {} for bibIds : {}",existingMatchingBibId.getMatchingIdentity(),bibliographicEntityList.stream().map(BibliographicEntity::getId).collect(toList()).toString()));
         String matchingIdentity = existingIdentifier.map(BibliographicEntity::getMatchingIdentity).orElseGet(() -> UUID.randomUUID().toString());
         List<BibliographicEntity> bibliographicEntitiesToUpdate = bibliographicEntityList.stream()
