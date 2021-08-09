@@ -92,6 +92,8 @@ SearchRecordsRequest implements Serializable {
 
     private boolean sortIncompleteRecords = false;
 
+    private boolean barcodeSearch = false;
+
 
     /**
      * Instantiates a new search records request.
@@ -619,5 +621,13 @@ SearchRecordsRequest implements Serializable {
 
     public void setTitleMatch(List<String> titleMatch) {
         this.titleMatch = titleMatch;
+    }
+
+    public boolean isBarcodeSearch() {
+        return barcodeSearch;
+    }
+
+    public void setBarcodeSearch(boolean barcodeSearch) {
+        this.barcodeSearch = barcodeSearch;
     }
 }
