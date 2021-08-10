@@ -255,8 +255,25 @@ public class SolrQueryBuilder {
 
                 if(fieldName.equalsIgnoreCase(ScsbCommonConstants.TITLE_STARTS_WITH)) {
                     String fieldValueTitleBrowse = fieldValue.replaceAll("\\s+", "\\\\ ");
-                    stringBuilder.append(ScsbConstants.TITLE_DISPLAY).append(":").append("(");
+                    stringBuilder.append("(");
+                    stringBuilder.append(ScsbConstants.TITLE_245).append(":").append("(");
                     stringBuilder.append(fieldValueTitleBrowse).append("*").append(")");
+                    stringBuilder.append(or);
+                    stringBuilder.append(ScsbConstants.TITLE_246).append(":").append("(");
+                    stringBuilder.append(fieldValueTitleBrowse).append("*").append(")");
+                    stringBuilder.append(or);
+                    stringBuilder.append(ScsbConstants.TITLE_130).append(":").append("(");
+                    stringBuilder.append(fieldValueTitleBrowse).append("*").append(")");
+                    stringBuilder.append(or);
+                    stringBuilder.append(ScsbConstants.TITLE_730).append(":").append("(");
+                    stringBuilder.append(fieldValueTitleBrowse).append("*").append(")");
+                    stringBuilder.append(or);
+                    stringBuilder.append(ScsbConstants.TITLE_740).append(":").append("(");
+                    stringBuilder.append(fieldValueTitleBrowse).append("*").append(")");
+                    stringBuilder.append(or);
+                    stringBuilder.append(ScsbConstants.TITLE_830).append(":").append("(");
+                    stringBuilder.append(fieldValueTitleBrowse).append("*").append(")");
+                    stringBuilder.append(")");
                 } else {
                     if(fieldValues.length > 1) {
                         List<String> fieldValuesList = Arrays.asList(fieldValues);

@@ -43,6 +43,24 @@ public class Bib {
     @Field("Title_subfield_a")
     private String titleSubFieldA;
 
+    @Field("Title_245")
+    private String title245;
+
+    @Field("Title_246")
+    private String title246;
+
+    @Field("Title_130")
+    private String title130;
+
+    @Field("Title_730")
+    private String title730;
+
+    @Field("Title_740")
+    private String title740;
+
+    @Field("Title_830")
+    private String title830;
+
     @Field("Author_display")
     private String authorDisplay;
 

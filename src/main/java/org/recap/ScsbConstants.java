@@ -187,6 +187,12 @@ public final class ScsbConstants {
     public static final String BIB_DOC_TYPE = "DocType:Bib";
     public static final String SOLR_BIB_ID = "BibId:";
     public static final String TITLE_DISPLAY = "Title_display";
+    public static final String TITLE_245 = "Title_245";
+    public static final String TITLE_246 = "Title_246";
+    public static final String TITLE_130 = "Title_130";
+    public static final String TITLE_730 = "Title_730";
+    public static final String TITLE_740 = "Title_740";
+    public static final String TITLE_830 = "Title_830";
 
     public static final String EMAIL_FOR = "emailFor";
     public static final String UPDATECGD = "updateCgd";
