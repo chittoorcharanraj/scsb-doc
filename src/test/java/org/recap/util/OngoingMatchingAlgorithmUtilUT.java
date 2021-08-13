@@ -14,7 +14,6 @@ import org.mockito.Mockito;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
-import org.recap.BaseTestCaseUT;
 import org.recap.BaseTestCaseUT4;
 import org.recap.ScsbCommonConstants;
 import org.recap.ScsbConstants;
@@ -430,8 +429,8 @@ public class OngoingMatchingAlgorithmUtilUT extends BaseTestCaseUT4 {
         return collectionGroupEntities;
     }
 
-    public ReportEntity buildReportEntity(String fileName) {
-        ReportEntity unMatchReportEntity = new ReportEntity();
+    public MatchingAlgorithmReportEntity buildReportEntity(String fileName) {
+        MatchingAlgorithmReportEntity unMatchReportEntity = new MatchingAlgorithmReportEntity();
         unMatchReportEntity.setType("TitleException");
         unMatchReportEntity.setCreatedDate(new Date());
         unMatchReportEntity.setInstitutionName(ScsbCommonConstants.ALL_INST);

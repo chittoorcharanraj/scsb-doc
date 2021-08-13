@@ -5,13 +5,9 @@ import org.recap.ScsbCommonConstants;
 import org.recap.ScsbConstants;
 import org.recap.matchingalgorithm.MatchingAlgorithmCGDProcessor;
 import org.recap.model.jpa.ItemEntity;
+import org.recap.model.jpa.MatchingAlgorithmReportDataEntity;
 import org.recap.model.jpa.ReportDataEntity;
-import org.recap.repository.jpa.BibliographicDetailsRepository;
-import org.recap.repository.jpa.CollectionGroupDetailsRepository;
-import org.recap.repository.jpa.InstitutionDetailsRepository;
-import org.recap.repository.jpa.ItemDetailsRepository;
-import org.recap.repository.jpa.ItemChangeLogDetailsRepository;
-import org.recap.repository.jpa.ReportDataDetailsRepository;
+import org.recap.repository.jpa.*;
 
 import java.util.HashMap;
 import java.util.List;
@@ -23,7 +19,7 @@ import java.util.concurrent.Callable;
  */
 public class MatchingAlgorithmMVMsCGDCallable extends  CommonCallable implements Callable {
 
-    private ReportDataDetailsRepository reportDataDetailsRepository;
+    private MatchingAlgorithmReportDataDetailsRepository matchingAlgorithmReportDataDetailsRepository;
     private BibliographicDetailsRepository bibliographicDetailsRepository;
     private int pageNum;
     private Integer batchSize;
@@ -35,10 +31,10 @@ public class MatchingAlgorithmMVMsCGDCallable extends  CommonCallable implements
     private ItemDetailsRepository itemDetailsRepository;
     private InstitutionDetailsRepository institutionDetailsRepository;
 
-    public MatchingAlgorithmMVMsCGDCallable(ReportDataDetailsRepository reportDataDetailsRepository, BibliographicDetailsRepository bibliographicDetailsRepository, int pageNum, Integer batchSize,
+    public MatchingAlgorithmMVMsCGDCallable(MatchingAlgorithmReportDataDetailsRepository matchingAlgorithmReportDataDetailsRepository, BibliographicDetailsRepository bibliographicDetailsRepository, int pageNum, Integer batchSize,
                                             ProducerTemplate producerTemplate, Map collectionGroupMap, Map institutionMap, ItemChangeLogDetailsRepository itemChangeLogDetailsRepository,
-                                            CollectionGroupDetailsRepository collectionGroupDetailsRepository, ItemDetailsRepository itemDetailsRepository,InstitutionDetailsRepository institutionDetailsRepository) {
-        this.reportDataDetailsRepository = reportDataDetailsRepository;
+                                            CollectionGroupDetailsRepository collectionGroupDetailsRepository, ItemDetailsRepository itemDetailsRepository, InstitutionDetailsRepository institutionDetailsRepository) {
+        this.matchingAlgorithmReportDataDetailsRepository = matchingAlgorithmReportDataDetailsRepository;
         this.bibliographicDetailsRepository = bibliographicDetailsRepository;
         this.pageNum = pageNum;
         this.batchSize = batchSize;
@@ -54,8 +50,8 @@ public class MatchingAlgorithmMVMsCGDCallable extends  CommonCallable implements
     @Override
     public Object call() throws Exception {
         long from = pageNum * Long.valueOf(batchSize);
-        List<ReportDataEntity> reportDataEntities =  reportDataDetailsRepository.getReportDataEntityForMatchingMVMs(ScsbCommonConstants.BIB_ID, from, batchSize);
-        for(ReportDataEntity reportDataEntity : reportDataEntities) {
+        List<MatchingAlgorithmReportDataEntity> reportDataEntities =  matchingAlgorithmReportDataDetailsRepository.getReportDataEntityForMatchingMVMs(ScsbCommonConstants.BIB_ID, from, batchSize);
+        for(MatchingAlgorithmReportDataEntity reportDataEntity : reportDataEntities) {
             Map<Integer, ItemEntity> itemEntityMap = new HashMap<>();
             List<Integer> bibIdList = getBibIdListFromString(reportDataEntity);
             MatchingAlgorithmCGDProcessor matchingAlgorithmCGDProcessor = new MatchingAlgorithmCGDProcessor(bibliographicDetailsRepository, producerTemplate, collectionGroupMap,
