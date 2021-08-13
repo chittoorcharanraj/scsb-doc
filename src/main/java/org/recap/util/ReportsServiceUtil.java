@@ -465,11 +465,17 @@ public class ReportsServiceUtil {
             titleMatchedReports.setDuplicateCode(bibItem.getMatchingIdentifier());
             titleMatchedReports.setCreatedDate(bibItem.getBibCreatedDate());
             titleMatchedReports.setScsbId(bibItem.getBibId());
+            titleMatchedReports.setCgd(setCGD(bibItem));
             titleMatchedReportsList.add(titleMatchedReports);
         }
         titleMatchedReport.setTitleMatchedReports(titleMatchedReportsList);
         return titleMatchedReport;
     }
+
+    private String setCGD(BibItem bibItem) {
+        return (bibItem.getItems().size() == 1) ? bibItem.getItems().get(0).getCollectionGroupDesignation() : "";
+    }
+
     private StringBuilder appendInsts(TitleMatchedReport titleMatchedReport){
         StringBuilder owningInstAppend = new StringBuilder();
         for (String owningInstitution : titleMatchedReport.getOwningInst()) {
@@ -533,6 +539,7 @@ public class ReportsServiceUtil {
         titleMatchedReports.setDuplicateCode(bibItem.getMatchingIdentifier());
         titleMatchedReports.setCreatedDate(bibItem.getBibCreatedDate());
         titleMatchedReports.setScsbId(bibItem.getBibId());
+        titleMatchedReports.setCgd(setCGD(bibItem));
         return titleMatchedReports;
     }
 
