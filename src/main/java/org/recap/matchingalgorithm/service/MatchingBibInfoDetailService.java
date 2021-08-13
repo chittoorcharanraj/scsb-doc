@@ -4,11 +4,9 @@ import org.apache.commons.collections.CollectionUtils;
 import org.recap.PropertyKeyConstants;
 import org.recap.ScsbCommonConstants;
 import org.recap.ScsbConstants;
+import org.recap.model.jpa.MatchingAlgorithmReportDataEntity;
 import org.recap.model.jpa.MatchingBibInfoDetail;
-import org.recap.model.jpa.ReportDataEntity;
-import org.recap.repository.jpa.MatchingBibInfoDetailRepository;
-import org.recap.repository.jpa.ReportDataDetailsRepository;
-import org.recap.repository.jpa.ReportDetailRepository;
+import org.recap.repository.jpa.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,27 +32,27 @@ public class MatchingBibInfoDetailService {
     private static final Logger logger = LoggerFactory.getLogger(MatchingBibInfoDetailService.class);
 
     @Autowired
-    private ReportDetailRepository reportDetailRepository;
+    private MatchingAlgorithmReportDetailRepository matchingAlgorithmReportDetailRepository;
+
+    @Autowired
+    private MatchingAlgorithmReportDataDetailsRepository matchingAlgorithmReportDataDetailsRepository ;
 
     @Autowired
     private MatchingBibInfoDetailRepository matchingBibInfoDetailRepository;
 
-    @Autowired
-    private ReportDataDetailsRepository reportDataDetailsRepository;
-
     @Value("${" + PropertyKeyConstants.MATCHING_ALGORITHM_BIBINFO_BATCHSIZE + "}")
     private Integer batchSize;
 
-    public ReportDetailRepository getReportDetailRepository() {
-        return reportDetailRepository;
+    public MatchingAlgorithmReportDetailRepository getMatchingAlgorithmReportDetailRepository() {
+        return matchingAlgorithmReportDetailRepository;
     }
 
     public MatchingBibInfoDetailRepository getMatchingBibInfoDetailRepository() {
         return matchingBibInfoDetailRepository;
     }
 
-    public ReportDataDetailsRepository getReportDataDetailsRepository() {
-        return reportDataDetailsRepository;
+    public MatchingAlgorithmReportDataDetailsRepository getMatchingAlgorithmReportDataDetailsRepository() {
+        return matchingAlgorithmReportDataDetailsRepository;
     }
 
     public Integer getBatchSize() {
@@ -76,7 +74,7 @@ public class MatchingBibInfoDetailService {
         headerNameList.add(ScsbCommonConstants.BIB_ID);
         headerNameList.add(ScsbCommonConstants.OWNING_INSTITUTION);
         headerNameList.add(ScsbCommonConstants.OWNING_INSTITUTION_BIB_ID);
-        Integer matchingCount = getReportDetailRepository().getCountByTypeAndFileNameAndDateRange(typeList, ScsbCommonConstants.ONGOING_MATCHING_ALGORITHM, fromDate, toDate);
+        Integer matchingCount = getMatchingAlgorithmReportDetailRepository().getCountByTypeAndFileNameAndDateRange(typeList, ScsbCommonConstants.ONGOING_MATCHING_ALGORITHM, fromDate, toDate);
         logger.info("matchingReports Count ------> {} ",matchingCount);
         Integer pageCount = getPageCount(matchingCount,getBatchSize());
         logger.info("Total pages ---> {}",pageCount);
@@ -86,13 +84,13 @@ public class MatchingBibInfoDetailService {
             logger.info("Current page ---> {}", pageNum);
             StopWatch stopWatch = new StopWatch();
             stopWatch.start();
-            Page<Integer> recordNumbers = getReportDetailRepository().getRecordNumByTypeAndFileNameAndDateRange(PageRequest.of(pageNum, getBatchSize()), typeList,
+            Page<Integer> recordNumbers = getMatchingAlgorithmReportDetailRepository().getRecordNumByTypeAndFileNameAndDateRange(PageRequest.of(pageNum, getBatchSize()), typeList,
                     ScsbCommonConstants.ONGOING_MATCHING_ALGORITHM, fromDate, toDate);
             List<Integer> recordNumberList = recordNumbers.getContent();
             logger.info("recordNumberList size -----> {}", recordNumberList.size());
             List<String> stringList = getStringList(recordNumberList);
-            List<ReportDataEntity> reportDataEntityList = getReportDataDetailsRepository().getRecordsForMatchingBibInfo(stringList,headerNameList);
-            Map<String,List<ReportDataEntity>> reportDataEntityMap = getRecordNumReportDataEntityMap(reportDataEntityList);
+            List<MatchingAlgorithmReportDataEntity> reportDataEntityList = getMatchingAlgorithmReportDataDetailsRepository().getRecordsForMatchingBibInfo(stringList,headerNameList);
+            Map<String,List<MatchingAlgorithmReportDataEntity>> reportDataEntityMap = getRecordNumReportDataEntityMap(reportDataEntityList);
             List<MatchingBibInfoDetail> matchingBibInfoDetailList = findAndPopulateMatchingBibInfoDetail(reportDataEntityMap);
             getMatchingBibInfoDetailRepository().saveAll(matchingBibInfoDetailList);
             getMatchingBibInfoDetailRepository().flush();
@@ -118,7 +116,7 @@ public class MatchingBibInfoDetailService {
         headerNameList.add(ScsbCommonConstants.BIB_ID);
         headerNameList.add(ScsbCommonConstants.OWNING_INSTITUTION);
         headerNameList.add(ScsbCommonConstants.OWNING_INSTITUTION_BIB_ID);
-        Integer matchingCount = getReportDetailRepository().getCountByType(typeList);
+        Integer matchingCount = getMatchingAlgorithmReportDetailRepository().getCountByType(typeList);
         logger.info("matchingCount------> {}", matchingCount);
         Integer pageCount = getPageCount(matchingCount,getBatchSize());
         logger.info("pageCount---> {} ", pageCount);
@@ -128,11 +126,11 @@ public class MatchingBibInfoDetailService {
             logger.info("Current page---> {}", count);
             StopWatch stopWatch = new StopWatch();
             stopWatch.start();
-            Page<Integer> recordNumbers = getReportDetailRepository().getRecordNumByType(PageRequest.of(count, getBatchSize()),typeList);
+            Page<Integer> recordNumbers = getMatchingAlgorithmReportDetailRepository().getRecordNumByType(PageRequest.of(count, getBatchSize()),typeList);
             List<Integer> recordNumberList = recordNumbers.getContent();
             logger.info("recordNumberList size-----> {}", recordNumberList.size());
-            List<ReportDataEntity> reportDataEntityList = getReportDataDetailsRepository().getRecordsForMatchingBibInfo(getStringList(recordNumberList),headerNameList);
-            Map<String,List<ReportDataEntity>> reportDataEntityMap = getRecordNumReportDataEntityMap(reportDataEntityList);
+            List<MatchingAlgorithmReportDataEntity> reportDataEntityList = getMatchingAlgorithmReportDataDetailsRepository().getRecordsForMatchingBibInfo(getStringList(recordNumberList),headerNameList);
+            Map<String, List<MatchingAlgorithmReportDataEntity>> reportDataEntityMap = getRecordNumReportDataEntityMap(reportDataEntityList);
             List<MatchingBibInfoDetail> matchingBibInfoDetailList = populateMatchingBibInfoDetail(reportDataEntityMap);
             getMatchingBibInfoDetailRepository().saveAll(matchingBibInfoDetailList);
             getMatchingBibInfoDetailRepository().flush();
@@ -166,13 +164,13 @@ public class MatchingBibInfoDetailService {
         return stringList;
     }
 
-    private  Map<String,List<ReportDataEntity>> getRecordNumReportDataEntityMap(List<ReportDataEntity> reportDataEntityList){
-        Map<String,List<ReportDataEntity>> reportDataEntityMap = new HashMap<>();
-        for(ReportDataEntity reportDataEntity:reportDataEntityList){
+    private  Map<String,List<MatchingAlgorithmReportDataEntity>> getRecordNumReportDataEntityMap(List<MatchingAlgorithmReportDataEntity> reportDataEntityList){
+        Map<String,List<MatchingAlgorithmReportDataEntity>> reportDataEntityMap = new HashMap<>();
+        for(MatchingAlgorithmReportDataEntity reportDataEntity:reportDataEntityList){
             if(reportDataEntityMap.containsKey(reportDataEntity.getRecordNum())){
                 reportDataEntityMap.get(reportDataEntity.getRecordNum()).add(reportDataEntity);
             }else{
-                List<ReportDataEntity> reportDataEntityListForRowNum = new ArrayList<>();
+                List<MatchingAlgorithmReportDataEntity> reportDataEntityListForRowNum = new ArrayList<>();
                 reportDataEntityListForRowNum.add(reportDataEntity);
                 reportDataEntityMap.put(reportDataEntity.getRecordNum(),reportDataEntityListForRowNum);
             }
@@ -180,9 +178,9 @@ public class MatchingBibInfoDetailService {
         return reportDataEntityMap;
     }
 
-    private List<MatchingBibInfoDetail> populateMatchingBibInfoDetail(Map<String,List<ReportDataEntity>> reportDataEntityMap){
+    private List<MatchingBibInfoDetail> populateMatchingBibInfoDetail(Map<String, List<MatchingAlgorithmReportDataEntity>> reportDataEntityMap){
         List<MatchingBibInfoDetail> matchingBibInfoDetailList = new ArrayList<>();
-        for(Map.Entry<String,List<ReportDataEntity>> entry:reportDataEntityMap.entrySet()){
+        for(Map.Entry<String,List<MatchingAlgorithmReportDataEntity>> entry:reportDataEntityMap.entrySet()){
             Map<String, String[]> dataArrayMap = populateDataArrays(entry.getValue());
             String[] bibIdArray = dataArrayMap.get(ScsbCommonConstants.BIB_ID);
             String[] institutionArray = dataArrayMap.get(ScsbCommonConstants.OWNING_INSTITUTION);
@@ -204,9 +202,9 @@ public class MatchingBibInfoDetailService {
      * @param reportDataEntityMap
      * @return
      */
-    private List<MatchingBibInfoDetail> findAndPopulateMatchingBibInfoDetail(Map<String,List<ReportDataEntity>> reportDataEntityMap){
+    private List<MatchingBibInfoDetail> findAndPopulateMatchingBibInfoDetail(Map<String, List<MatchingAlgorithmReportDataEntity>> reportDataEntityMap){
         List<MatchingBibInfoDetail> matchingBibInfoDetailList = new ArrayList<>();
-        for(Map.Entry<String,List<ReportDataEntity>> entry:reportDataEntityMap.entrySet()){
+        for(Map.Entry<String, List<MatchingAlgorithmReportDataEntity>> entry:reportDataEntityMap.entrySet()){
             Integer recordNum = Integer.valueOf(entry.getKey());
             Map<String, String[]> dataArrayMap = populateDataArrays(entry.getValue());
             String[] bibIdArray = dataArrayMap.get(ScsbCommonConstants.BIB_ID);
@@ -244,9 +242,9 @@ public class MatchingBibInfoDetailService {
         return matchingBibInfoDetailList;
     }
 
-    private Map<String, String[]> populateDataArrays(List<ReportDataEntity> reportDataEntities) {
+    private Map<String, String[]> populateDataArrays(List<MatchingAlgorithmReportDataEntity> reportDataEntities) {
         Map<String, String[]> dataArrayMap = new HashMap<>();
-        for(ReportDataEntity reportDataEntity : reportDataEntities) {
+        for(MatchingAlgorithmReportDataEntity reportDataEntity : reportDataEntities) {
             if (ScsbCommonConstants.BIB_ID.equals(reportDataEntity.getHeaderName())) {
                 dataArrayMap.put(ScsbCommonConstants.BIB_ID, reportDataEntity.getHeaderValue().split(","));
             } else if (ScsbCommonConstants.OWNING_INSTITUTION.equals(reportDataEntity.getHeaderName())) {

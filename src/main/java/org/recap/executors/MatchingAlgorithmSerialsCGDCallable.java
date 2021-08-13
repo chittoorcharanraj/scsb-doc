@@ -5,13 +5,8 @@ import org.recap.ScsbCommonConstants;
 import org.recap.ScsbConstants;
 import org.recap.matchingalgorithm.MatchingAlgorithmCGDProcessor;
 import org.recap.model.jpa.ItemEntity;
-import org.recap.model.jpa.ReportDataEntity;
-import org.recap.repository.jpa.BibliographicDetailsRepository;
-import org.recap.repository.jpa.CollectionGroupDetailsRepository;
-import org.recap.repository.jpa.InstitutionDetailsRepository;
-import org.recap.repository.jpa.ItemDetailsRepository;
-import org.recap.repository.jpa.ItemChangeLogDetailsRepository;
-import org.recap.repository.jpa.ReportDataDetailsRepository;
+import org.recap.model.jpa.MatchingAlgorithmReportDataEntity;
+import org.recap.repository.jpa.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -24,7 +19,7 @@ import java.util.concurrent.Callable;
  */
 public class MatchingAlgorithmSerialsCGDCallable implements Callable {
 
-    private ReportDataDetailsRepository reportDataDetailsRepository;
+    private MatchingAlgorithmReportDataDetailsRepository matchingAlgorithmReportDataDetailsRepository;
     private BibliographicDetailsRepository bibliographicDetailsRepository;
     private int pageNum;
     private Integer batchSize;
@@ -36,10 +31,10 @@ public class MatchingAlgorithmSerialsCGDCallable implements Callable {
     private ItemDetailsRepository itemDetailsRepository;
     private InstitutionDetailsRepository institutionDetailsRepository;
 
-    public MatchingAlgorithmSerialsCGDCallable(ReportDataDetailsRepository reportDataDetailsRepository, BibliographicDetailsRepository bibliographicDetailsRepository, int pageNum, Integer batchSize,
+    public MatchingAlgorithmSerialsCGDCallable(MatchingAlgorithmReportDataDetailsRepository matchingAlgorithmReportDataDetailsRepository, BibliographicDetailsRepository bibliographicDetailsRepository, int pageNum, Integer batchSize,
                                                ProducerTemplate producerTemplate, Map collectionGroupMap, Map institutionMap, ItemChangeLogDetailsRepository itemChangeLogDetailsRepository,
-                                               CollectionGroupDetailsRepository collectionGroupDetailsRepository, ItemDetailsRepository itemDetailsRepository,InstitutionDetailsRepository institutionDetailsRepository) {
-        this.reportDataDetailsRepository = reportDataDetailsRepository;
+                                               CollectionGroupDetailsRepository collectionGroupDetailsRepository, ItemDetailsRepository itemDetailsRepository, InstitutionDetailsRepository institutionDetailsRepository) {
+        this.matchingAlgorithmReportDataDetailsRepository = matchingAlgorithmReportDataDetailsRepository;
         this.bibliographicDetailsRepository = bibliographicDetailsRepository;
         this.pageNum = pageNum;
         this.batchSize = batchSize;
@@ -55,8 +50,8 @@ public class MatchingAlgorithmSerialsCGDCallable implements Callable {
     @Override
     public Object call() throws Exception {
         long from = pageNum * Long.valueOf(batchSize);
-        List<ReportDataEntity> reportDataEntities =  reportDataDetailsRepository.getReportDataEntityForMatchingSerials(ScsbCommonConstants.BIB_ID, from, batchSize);
-        for(ReportDataEntity reportDataEntity : reportDataEntities) {
+        List<MatchingAlgorithmReportDataEntity> reportDataEntities =  matchingAlgorithmReportDataDetailsRepository.getReportDataEntityForMatchingSerials(ScsbCommonConstants.BIB_ID, from, batchSize);
+        for(MatchingAlgorithmReportDataEntity reportDataEntity : reportDataEntities) {
             Map<Integer, ItemEntity> itemEntityMap = new HashMap<>();
             String bibId = reportDataEntity.getHeaderValue();
             String[] bibIds = bibId.split(",");

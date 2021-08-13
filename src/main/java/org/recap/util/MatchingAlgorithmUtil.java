@@ -15,17 +15,9 @@ import org.recap.ScsbCommonConstants;
 import org.recap.ScsbConstants;
 import org.recap.controller.SolrIndexController;
 import org.recap.matchingalgorithm.MatchingCounter;
-import org.recap.model.jpa.BibliographicEntity;
-import org.recap.model.jpa.MatchingBibEntity;
-import org.recap.model.jpa.MatchingMatchPointsEntity;
-import org.recap.model.jpa.ReportDataEntity;
-import org.recap.model.jpa.ReportEntity;
+import org.recap.model.jpa.*;
 import org.recap.model.solr.SolrIndexRequest;
-import org.recap.repository.jpa.BibliographicDetailsRepository;
-import org.recap.repository.jpa.MatchingBibDetailsRepository;
-import org.recap.repository.jpa.MatchingMatchPointsDetailsRepository;
-import org.recap.repository.jpa.ReportDataDetailsRepository;
-import org.recap.repository.jpa.ReportDetailRepository;
+import org.recap.repository.jpa.*;
 import org.recap.service.accession.SolrIndexService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -87,10 +79,10 @@ public class MatchingAlgorithmUtil {
     private SolrQueryBuilder solrQueryBuilder;
 
     @Autowired
-    private ReportDetailRepository reportDetailRepository;
+    private MatchingAlgorithmReportDetailRepository matchingAlgorithmReportDetailRepository;
 
     @Autowired
-    private ReportDataDetailsRepository reportDataDetailsRepository;
+    private MatchingAlgorithmReportDataDetailsRepository matchingAlgorithmReportDataDetailsRepository ;
 
     @Autowired
     SolrIndexService solrIndexService;
@@ -113,13 +105,14 @@ public class MatchingAlgorithmUtil {
     @PersistenceContext
     EntityManager entityManager;
 
+
     /**
-     * Gets report detail repository.
+     * Gets matching algorithm report detail repository.
      *
      * @return the report detail repository
      */
-    public ReportDetailRepository getReportDetailRepository() {
-        return reportDetailRepository;
+    public MatchingAlgorithmReportDetailRepository getMatchingAlgorithmReportDetailRepository() {
+        return matchingAlgorithmReportDetailRepository;
     }
 
     /**
@@ -315,14 +308,14 @@ public class MatchingAlgorithmUtil {
      * @return the map
      */
     public Map<String, Integer> saveReportForSingleMatch(String criteriaValue, List<Integer> bibIdList, String criteria, Map<Integer, MatchingBibEntity> matchingBibEntityMap, boolean isPendingBibs, Map<String, Integer> institutionCounterMap) {
-        List<ReportDataEntity> reportDataEntities = new ArrayList<>();
+        List<MatchingAlgorithmReportDataEntity> reportDataEntities = new ArrayList<>();
         Set<String> owningInstSet = new HashSet<>();
         Set<String> materialTypeSet = new HashSet<>();
         List<Integer> bibIds = new ArrayList<>();
         List<String> owningInstList = new ArrayList<>();
         List<String> materialTypeList = new ArrayList<>();
         Map<String,String> titleMap = new HashMap<>();
-        List<ReportEntity> reportEntitiesToSave = new ArrayList<>();
+        List<MatchingAlgorithmReportEntity> reportEntitiesToSave = new ArrayList<>();
         List<String> owningInstBibIds = new ArrayList<>();
 
 
@@ -347,7 +340,7 @@ public class MatchingAlgorithmUtil {
         }
 
         if(owningInstSet.size() > 1) {
-            ReportEntity reportEntity = new ReportEntity();
+            MatchingAlgorithmReportEntity reportEntity = new MatchingAlgorithmReportEntity();
             String fileName;
             String criteriaForFileName = criteria.equalsIgnoreCase(ScsbCommonConstants.MATCH_POINT_FIELD_OCLC) ? ScsbCommonConstants.OCLC_CRITERIA : criteria;
             if(isPendingBibs) {
@@ -473,23 +466,22 @@ public class MatchingAlgorithmUtil {
 
     /**
      * This method gets a list of report data entities for matching algorithm reports.
-     *
      * @param reportDataEntities the report data entities
      * @param owningInstSet      the owning inst set
      * @param bibIds             the bib ids
      * @param materialTypes      the material types
      * @param owningInstBibIds   the owning inst bib ids
      */
-    public void getReportDataEntityList(List<ReportDataEntity> reportDataEntities, Collection owningInstSet, Collection bibIds, Collection materialTypes, List<String> owningInstBibIds) {
+    public void getReportDataEntityList(List<MatchingAlgorithmReportDataEntity> reportDataEntities, Collection owningInstSet, Collection bibIds, Collection materialTypes, List<String> owningInstBibIds) {
         checkAndAddReportDataEntities(reportDataEntities, bibIds, ScsbCommonConstants.BIB_ID);
         checkAndAddReportDataEntities(reportDataEntities, owningInstSet, ScsbCommonConstants.OWNING_INSTITUTION);
         checkAndAddReportDataEntities(reportDataEntities, materialTypes, ScsbConstants.MATERIAL_TYPE);
         checkAndAddReportDataEntities(reportDataEntities, owningInstBibIds, ScsbCommonConstants.OWNING_INSTITUTION_BIB_ID);
     }
 
-    private void checkAndAddReportDataEntities(List<ReportDataEntity> reportDataEntities, Collection bibIds, String bibId) {
+    private void checkAndAddReportDataEntities(List<MatchingAlgorithmReportDataEntity> reportDataEntities, Collection bibIds, String bibId) {
         if (CollectionUtils.isNotEmpty(bibIds)) {
-            ReportDataEntity bibIdReportDataEntity = getReportDataEntityForCollectionValues(bibIds, bibId);
+            MatchingAlgorithmReportDataEntity bibIdReportDataEntity = getReportDataEntityForCollectionValues(bibIds, bibId);
             reportDataEntities.add(bibIdReportDataEntity);
         }
     }
@@ -501,8 +493,8 @@ public class MatchingAlgorithmUtil {
      * @param headerName   the header name
      * @return the report data entity for collection values
      */
-    public ReportDataEntity getReportDataEntityForCollectionValues(Collection headerValues, String headerName) {
-        ReportDataEntity bibIdReportDataEntity = new ReportDataEntity();
+    public MatchingAlgorithmReportDataEntity getReportDataEntityForCollectionValues(Collection headerValues, String headerName) {
+        MatchingAlgorithmReportDataEntity bibIdReportDataEntity = new MatchingAlgorithmReportDataEntity();
         bibIdReportDataEntity.setHeaderName(headerName);
         String joinedHeaderValue = StringUtils.join(headerValues, ",");
         if (StringUtils.isNotBlank(joinedHeaderValue)){
@@ -513,7 +505,7 @@ public class MatchingAlgorithmUtil {
         return bibIdReportDataEntity;
     }
 
-    private void setTrimmedHeaderValue(String headerName, ReportDataEntity bibIdReportDataEntity, String joinedHeaderValue) {
+    private void setTrimmedHeaderValue(String headerName, MatchingAlgorithmReportDataEntity bibIdReportDataEntity, String joinedHeaderValue) {
         int headerValueLength = joinedHeaderValue.length();
         if (headerValueLength <= matchingHeaderValueLength){
             bibIdReportDataEntity.setHeaderValue(joinedHeaderValue);
@@ -606,9 +598,9 @@ public class MatchingAlgorithmUtil {
      * @return the map
      */
     public Map<String,Integer> populateAndSaveReportEntity(Set<Integer> bibIds, Map<Integer, MatchingBibEntity> bibEntityMap, String header1, String header2, String oclcNumbers, String isbns,Map<String, Integer> institutionCounterMap) {
-        ReportEntity reportEntity = new ReportEntity();
+        MatchingAlgorithmReportEntity reportEntity = new MatchingAlgorithmReportEntity();
         Set<String> owningInstSet = new HashSet<>();
-        List<ReportDataEntity> reportDataEntities = new ArrayList<>();
+        List<MatchingAlgorithmReportDataEntity> reportDataEntities = new ArrayList<>();
         reportEntity.setFileName(header1 + "," + header2);
         reportEntity.setCreatedDate(new Date());
         reportEntity.setInstitutionName(ScsbCommonConstants.ALL_INST);
@@ -655,13 +647,12 @@ public class MatchingAlgorithmUtil {
 
     /**
      * This method gets report data entity.
-     *
-     * @param headerName         the header 1
+     *  @param headerName         the header 1
      * @param headerValues       the header values
      * @param reportDataEntities the report data entities
      */
-    public void getReportDataEntity(String headerName, String headerValues, List<ReportDataEntity> reportDataEntities) {
-        ReportDataEntity criteriaReportDataEntity = new ReportDataEntity();
+    public void getReportDataEntity(String headerName, String headerValues, List<MatchingAlgorithmReportDataEntity> reportDataEntities) {
+        MatchingAlgorithmReportDataEntity criteriaReportDataEntity = new MatchingAlgorithmReportDataEntity();
         if (headerValues.length() > 10000) {
             logger.info(" Length of the header name with size greater than 10000- {} - Value - {} - size - {}",headerName, headerValues, headerValues.length());
             headerValues = headerValues.substring(0,9996)+"...";
@@ -684,10 +675,10 @@ public class MatchingAlgorithmUtil {
      * @param unMatchingTitleHeaderSet the un matching title header set
      * @return the report entity
      */
-    public ReportEntity processReportsForUnMatchingTitles(String fileName, Map<String, String> titleMap, List<Integer> bibIds, List<String> materialTypes, List<String> owningInstitutions,
+    public MatchingAlgorithmReportEntity processReportsForUnMatchingTitles(String fileName, Map<String, String> titleMap, List<Integer> bibIds, List<String> materialTypes, List<String> owningInstitutions,
                                                           List<String> owningInstBibIds, String matchPointValue, Set<String> unMatchingTitleHeaderSet) {
-        ReportEntity unMatchReportEntity = buildReportEntity(fileName);
-        List<ReportDataEntity> reportDataEntityList = new ArrayList<>();
+        MatchingAlgorithmReportEntity unMatchReportEntity = buildReportEntity(fileName);
+        List<MatchingAlgorithmReportDataEntity> reportDataEntityList = new ArrayList<>();
         List<String> bibIdList = new ArrayList<>();
         List<String> materialTypeList = new ArrayList<>();
         List<String> owningInstitutionList = new ArrayList<>();
@@ -704,8 +695,8 @@ public class MatchingAlgorithmUtil {
         return unMatchReportEntity;
     }
 
-    public ReportEntity buildReportEntity(String fileName) {
-        ReportEntity unMatchReportEntity = new ReportEntity();
+    public MatchingAlgorithmReportEntity buildReportEntity(String fileName) {
+        MatchingAlgorithmReportEntity unMatchReportEntity = new MatchingAlgorithmReportEntity();
         unMatchReportEntity.setType("TitleException");
         unMatchReportEntity.setCreatedDate(new Date());
         unMatchReportEntity.setInstitutionName(ScsbCommonConstants.ALL_INST);
@@ -715,8 +706,7 @@ public class MatchingAlgorithmUtil {
 
     /**
      * This method prepares reports for the bibs which came into matching algorithm but differs in title
-     *
-     * @param titleMap                 the title map
+     *  @param titleMap                 the title map
      * @param bibIds                   the bib ids
      * @param materialTypes            the material types
      * @param owningInstitutions       the owning institutions
@@ -729,7 +719,7 @@ public class MatchingAlgorithmUtil {
      * @param owningInstBibIdList      the owning inst bib id list
      */
     public void prepareReportForUnMatchingTitles(Map<String, String> titleMap, List<Integer> bibIds, List<String> materialTypes, List<String> owningInstitutions, List<String> owningInstBibIds,
-                                                 Set<String> unMatchingTitleHeaderSet, List<ReportDataEntity> reportDataEntityList, List<String> bibIdList,
+                                                 Set<String> unMatchingTitleHeaderSet, List<MatchingAlgorithmReportDataEntity> reportDataEntityList, List<String> bibIdList,
                                                  List<String> materialTypeList, List<String> owningInstitutionList, List<String> owningInstBibIdList) {
         for (Iterator<String> stringIterator = unMatchingTitleHeaderSet.iterator(); stringIterator.hasNext(); ) {
             String titleHeader = stringIterator.next();
@@ -746,7 +736,7 @@ public class MatchingAlgorithmUtil {
             if(owningInstBibIds != null) {
                 owningInstBibIdList.add(owningInstBibIds.get(i-1));
             }
-            ReportDataEntity titleReportDataEntity = new ReportDataEntity();
+            MatchingAlgorithmReportDataEntity titleReportDataEntity = new MatchingAlgorithmReportDataEntity();
             titleReportDataEntity.setHeaderName(titleHeader);
             titleReportDataEntity.setHeaderValue(titleMap.get(titleHeader));
             reportDataEntityList.add(titleReportDataEntity);
@@ -840,11 +830,11 @@ public class MatchingAlgorithmUtil {
         if(CollectionUtils.isNotEmpty(exceptionRecordNums)) {
             List<List<Integer>> exceptionRecordNumbers = Lists.partition(exceptionRecordNums, batchSize);
             for(List<Integer> exceptionRecordNumberList : exceptionRecordNumbers) {
-                List<ReportEntity> reportEntities = reportDetailRepository.findByIdIn(exceptionRecordNumberList);
-                for(ReportEntity reportEntity : reportEntities) {
+                List<MatchingAlgorithmReportEntity> reportEntities = matchingAlgorithmReportDetailRepository.findByIdIn(exceptionRecordNumberList);
+                for(MatchingAlgorithmReportEntity reportEntity : reportEntities) {
                     reportEntity.setType(ScsbConstants.MATERIAL_TYPE_EXCEPTION);
                 }
-                reportDetailRepository.saveAll(reportEntities);
+                matchingAlgorithmReportDetailRepository.saveAll(reportEntities);
             }
         }
     }
@@ -859,9 +849,9 @@ public class MatchingAlgorithmUtil {
         if(CollectionUtils.isNotEmpty(nonMonographRecordNums)) {
             List<List<Integer>> monographicSetRecordNumbers = Lists.partition(nonMonographRecordNums, batchSize);
             for(List<Integer> monographicSetRecordNumberList : monographicSetRecordNumbers) {
-                List<ReportDataEntity> reportDataEntitiesToUpdate = reportDataDetailsRepository.getReportDataEntityByRecordNumIn(monographicSetRecordNumberList, ScsbConstants.MATERIAL_TYPE);
+                List<MatchingAlgorithmReportDataEntity> reportDataEntitiesToUpdate = matchingAlgorithmReportDataDetailsRepository.getReportDataEntityByRecordNumIn(monographicSetRecordNumberList, ScsbConstants.MATERIAL_TYPE);
                 if(CollectionUtils.isNotEmpty(reportDataEntitiesToUpdate)) {
-                    for(ReportDataEntity reportDataEntity : reportDataEntitiesToUpdate) {
+                    for(MatchingAlgorithmReportDataEntity reportDataEntity : reportDataEntitiesToUpdate) {
                         String headerValue = reportDataEntity.getHeaderValue();
                         String[] materialTypes = headerValue.split(",");
                         List<String> modifiedMaterialTypes = new ArrayList<>();
@@ -870,7 +860,7 @@ public class MatchingAlgorithmUtil {
                         }
                         reportDataEntity.setHeaderValue(StringUtils.join(modifiedMaterialTypes, ","));
                     }
-                    reportDataDetailsRepository.saveAll(reportDataEntitiesToUpdate);
+                    matchingAlgorithmReportDataDetailsRepository.saveAll(reportDataEntitiesToUpdate);
                 }
             }
         }
@@ -882,12 +872,12 @@ public class MatchingAlgorithmUtil {
      * @param type the type
      */
     public void saveCGDUpdatedSummaryReport(String type) {
-        ReportEntity reportEntity = new ReportEntity();
+        MatchingAlgorithmReportEntity reportEntity = new MatchingAlgorithmReportEntity();
         reportEntity.setType(type);
         reportEntity.setFileName(ScsbConstants.SUMMARY_REPORT_FILE_NAME);
         reportEntity.setCreatedDate(new Date());
         reportEntity.setInstitutionName(ScsbCommonConstants.ALL_INST);
-        List<ReportDataEntity> reportDataEntities = new ArrayList<>();
+        List<MatchingAlgorithmReportDataEntity> reportDataEntities = new ArrayList<>();
         List<String> allInstitutionCodesExceptSupportInstitution = commonUtil.findAllInstitutionCodesExceptSupportInstitution();
         for (String institutionCode : allInstitutionCodesExceptSupportInstitution) {
             logger.info("{} Final Counter Value:{} " ,institutionCode, MatchingCounter.getSpecificInstitutionCounterMap(institutionCode).get(MATCHING_COUNTER_SHARED));
@@ -895,7 +885,7 @@ public class MatchingAlgorithmUtil {
             getReportDataEntity(institutionCode+"OpenCount", String.valueOf(MatchingCounter.getSpecificInstitutionCounterMap(institutionCode).get(MATCHING_COUNTER_UPDATED_OPEN)), reportDataEntities);
         }
         reportEntity.addAll(reportDataEntities);
-        getReportDetailRepository().save(reportEntity);
+        getMatchingAlgorithmReportDetailRepository().save(reportEntity);
     }
 
     /**
