@@ -316,6 +316,7 @@ public final class ScsbConstants {
     public static final String MATCHING_ALGORITHM_UPDATE_CGD_MESSAGE = "updateCGDBasedOnMaterialTypes, Match type is Single Match, TileException Found";
 
     public static final String ONGOING_MATCHING_DATE_FORMAT = "yyyy/MM/dd";
+    public static final String ONGOING_MATCHING_DATE_TIME_FORMAT = "dd-MM-yyyy hh:mm";
     public static final String CURRENT_PAGE = "Current Page";
 
     private ScsbConstants(){}

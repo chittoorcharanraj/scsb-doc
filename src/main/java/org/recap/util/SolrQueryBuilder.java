@@ -695,6 +695,25 @@ public class SolrQueryBuilder {
     }
 
     /**
+     * This query is used to Fetch created or updated bibs based on the date range.
+     *
+     * @param fromDate the from date
+     * @param toDate the to date
+     * @return the string
+     */
+    public String fetchCreatedOrUpdatedBibsByDateRange(String fromDate, String toDate) {
+        StringBuilder query = new StringBuilder();
+        query.append("(").append(ScsbConstants.BIB_CREATED_DATE).append(":").append("[").append(fromDate).append(to).append(toDate).append("]")
+                .append(or).append(ScsbConstants.BIB_LAST_UPDATED_DATE).append(":").append("[").append(fromDate).append(to).append(toDate).append("]").append(")")
+                .append(and).append(ScsbCommonConstants.IS_DELETED_BIB).append(":").append(ScsbConstants.FALSE)
+                .append(and).append(ScsbConstants.BIB_CATALOGING_STATUS).append(":").append(ScsbCommonConstants.COMPLETE_STATUS);
+        query.append(and).append(coreParentFilterQuery).append(ScsbCommonConstants.COLLECTION_GROUP_DESIGNATION).append(":").append(ScsbCommonConstants.SHARED_CGD)
+                .append(and).append(coreParentFilterQuery).append(ScsbCommonConstants.IS_DELETED_ITEM).append(":").append(ScsbConstants.FALSE)
+                .append(and).append(coreParentFilterQuery).append(ScsbConstants.ITEM_CATALOGING_STATUS).append(":").append(ScsbCommonConstants.COMPLETE_STATUS);
+        return query.toString();
+    }
+
+    /**
      * This query is used to Fetch bibs based on Bib Id Range.
      *
      * @param fromBibId the from Bib Id
@@ -704,6 +723,24 @@ public class SolrQueryBuilder {
     public String fetchBibsByBibIdRange(String fromBibId, String toBibId) {
         StringBuilder query = new StringBuilder();
         query.append(ScsbConstants.BIB_ID).append(":").append("[").append(fromBibId).append(to).append(toBibId).append("]")
+                .append(and).append(ScsbCommonConstants.IS_DELETED_BIB).append(":").append(ScsbConstants.FALSE)
+                .append(and).append(ScsbConstants.BIB_CATALOGING_STATUS).append(":").append(ScsbCommonConstants.COMPLETE_STATUS);
+        query.append(and).append(coreParentFilterQuery).append(ScsbCommonConstants.COLLECTION_GROUP_DESIGNATION).append(":").append(ScsbCommonConstants.SHARED_CGD)
+                .append(and).append(coreParentFilterQuery).append(ScsbCommonConstants.IS_DELETED_ITEM).append(":").append(ScsbConstants.FALSE)
+                .append(and).append(coreParentFilterQuery).append(ScsbConstants.ITEM_CATALOGING_STATUS).append(":").append(ScsbCommonConstants.COMPLETE_STATUS);
+        return query.toString();
+    }
+
+    /**
+     * This query is used to Fetch bibs based on Bib Ids.
+     *
+     * @param bibIds the Bib Ids
+     * @return the string
+     */
+    public String fetchBibsByBibIds(String bibIds) {
+        StringBuilder query = new StringBuilder();
+        String[] fieldValues = bibIds.split(",");
+        query.append(buildQueryForMatchChildReturnParent(ScsbConstants.BIB_ID, Arrays.asList(fieldValues)))
                 .append(and).append(ScsbCommonConstants.IS_DELETED_BIB).append(":").append(ScsbConstants.FALSE)
                 .append(and).append(ScsbConstants.BIB_CATALOGING_STATUS).append(":").append(ScsbCommonConstants.COMPLETE_STATUS);
         query.append(and).append(coreParentFilterQuery).append(ScsbCommonConstants.COLLECTION_GROUP_DESIGNATION).append(":").append(ScsbCommonConstants.SHARED_CGD)
