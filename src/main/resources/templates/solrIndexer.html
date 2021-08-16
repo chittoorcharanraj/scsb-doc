@@ -446,11 +446,24 @@
                                                                    onclick="showOngoingMatchFromDate()" th:field="*{matchBy}"/>
                                                             Date From
                                                         </label>
+                                                        <label for="ongoingMatchBibIdList" accesskey="C" class="radio-inline report-hide-shadow" style="padding-right: 30px;" tabindex="0">
+                                                            <input type="radio" name="OngoingMatchBibIdList"
+                                                                   id="ongoingMatchBibIdList" value="BibIdList"
+                                                                   onclick="showOngoingMatchBibIdList()" th:field="*{matchBy}"/>
+                                                            Bib Id List
+                                                        </label>
                                                         <label for="ongoingMatchBibIdRange" accesskey="A" class="radio-inline report-hide-shadow" style="padding-right: 30px;" tabindex="0">
                                                             <input type="radio" name="OngoingMatchBibIdRange"
                                                                    id="ongoingMatchBibIdRange" value="BibIdRange"
                                                                    onclick="showOngoingMatchBibIdRange()" th:field="*{matchBy}"/>
                                                             Bib Id Range
+                                                        </label>
+                                                        <label for="ongoingMatchDateRange" accesskey="D" class="radio-inline report-hide-shadow" style="padding-right: 30px" tabindex="0">
+                                                            <input type="radio" name="OngoingMatchDateRange"
+                                                                   id="ongoingMatchDateRange"
+                                                                   value="DateRange"
+                                                                   onclick="showOngoingMatchBibIdDateRange()" th:field="*{matchBy}"/>
+                                                            Bib Id Date Range
                                                         </label>
                                                     </div>
 
@@ -466,6 +479,22 @@
                                                             <div style="margin-top: 30px; padding-left: 200px;">
                                                                 <button class="btn btn-info active"
                                                                         id="ongoingMatchFromDateSubmit"
+                                                                        type="submit"> Submit
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div>
+                                                        <div id="OngoingMatchBibIdListView" style="display:none">
+                                                            <div id="OngoingMatchBibIds" style="margin-top: 30px;">
+                                                                <label>Enter Bib Id's</label>
+                                                                <input class="form-control input-lg" type="text" id="OngoingMatchBibIdListInput" th:field="*{bibIds}"
+                                                                       placeholder="Enter values separated by comma"/>
+                                                            </div>
+                                                            <div style="margin-top: 30px; padding-left: 200px;">
+                                                                <button class="btn btn-info active"
+                                                                        id="OngoingMatchBibIdListSubmit"
                                                                         type="submit"> Submit
                                                                 </button>
                                                             </div>
@@ -490,6 +519,39 @@
                                                             </div>
                                                         </div>
                                                     </div>
+
+                                                    <div>
+                                                        <div id="OngoingMatchDateRangeView" style="display:none">
+                                                            <div id="OngoingMatchDateRangeFrom" style="margin-top: 30px;">
+                                                                <label>Date From</label>
+                                                                <input type="text"
+                                                                       class="form-control date"
+                                                                       id="ongoingMatchDateRangeFromDate"
+                                                                       placeholder="From Date" th:field="*{dateFrom}"/>
+                                                                <span class="add-on">
+                                                                        <i data-time-icon="icon-time" data-date-icon="icon-calendar"></i>
+                                                                    </span>
+                                                            </div>
+
+                                                            <div id="OngoingMatchDateRangeTo" style="margin-top: 30px;">
+                                                                <label>Date To</label>
+                                                                <input type="text"
+                                                                       class="form-control date"
+                                                                       id="ongoingMatchDateRangeToDate"
+                                                                       placeholder="To Date" th:field="*{dateTo}"/>
+                                                                <span class="add-on">
+                                                                        <i data-time-icon="icon-time" data-date-icon="icon-calendar"></i>
+                                                                    </span>
+                                                            </div>
+                                                            <div style="margin-top: 30px; padding-left: 200px;">
+                                                                <button class="btn btn-info active"
+                                                                        id="ongoingMatchBibIdDateRangeSubmit"
+                                                                        type="submit"> Submit
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
                                                 </fieldset>
                                             </form>
                                         </div>
