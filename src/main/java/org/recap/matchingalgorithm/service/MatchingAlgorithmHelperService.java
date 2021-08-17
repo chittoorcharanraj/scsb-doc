@@ -339,17 +339,17 @@ public class MatchingAlgorithmHelperService {
      * @param institutionCounterMap  institutionsMatchingCount
      */
     public void saveMatchingSummaryCount(Map<String, Integer> institutionCounterMap) {
-        ReportEntity reportEntity = new ReportEntity();
+        MatchingAlgorithmReportEntity reportEntity = new MatchingAlgorithmReportEntity();
         reportEntity.setType("MatchingCount");
         reportEntity.setCreatedDate(new Date());
         reportEntity.setFileName("MatchingSummaryCount");
-        reportEntity.setInstitutionName(ScsbCommonConstants.LCCN_CRITERIA);
-        List<ReportDataEntity> reportDataEntities = new ArrayList<>();
+        reportEntity.setInstitutionName("ALL");
+        List<MatchingAlgorithmReportDataEntity> reportDataEntities = new ArrayList<>();
 
 
         List<String> allInstitutionCodesExceptSupportInstitution = commonUtil.findAllInstitutionCodesExceptSupportInstitution();
         for (String institution : allInstitutionCodesExceptSupportInstitution) {
-            ReportDataEntity reportDataEntity = new ReportDataEntity();
+            MatchingAlgorithmReportDataEntity reportDataEntity = new MatchingAlgorithmReportDataEntity();
             reportDataEntity.setHeaderName(institution.toLowerCase()+"MatchingCount");
             reportDataEntity.setHeaderValue(String.valueOf(institutionCounterMap.get(institution)));
             reportDataEntities.add(reportDataEntity);
