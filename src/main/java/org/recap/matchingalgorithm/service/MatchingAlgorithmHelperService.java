@@ -554,7 +554,7 @@ public class MatchingAlgorithmHelperService {
             logger.info("Total BibIds grouped to index : {}",bibIdsToIndex.size());
             Collection<BibliographicEntity> bibliographicEntities = bibIdAndBibEntityMap.values();
             matchingAlgorithmUtil.saveGroupedBibsToDb(bibliographicEntities);
-           // matchingAlgorithmUtil.indexGroupedBibIds(bibIdsToIndex);
+            producerTemplate.sendBody(MATCHING_ALGORITHM_GROUPING_INDEX,bibIdsToIndex);
             reportDataEntities.clear();
             bibIdsToIndex.clear();
             bibIdAndBibEntityMap.clear();
@@ -595,7 +595,7 @@ public class MatchingAlgorithmHelperService {
             logger.info("Total BibIds grouped to index : {}",bibIdsToIndex.size());
             Collection<BibliographicEntity> bibliographicEntities = bibIdAndBibEntityMap.values();
             matchingAlgorithmUtil.saveGroupedBibsToDb(bibliographicEntities);
-           // matchingAlgorithmUtil.indexGroupedBibIds(bibIdsToIndex);
+            producerTemplate.sendBody(MATCHING_ALGORITHM_GROUPING_INDEX,bibIdsToIndex);
             reportDataEntities.clear();
             bibIdsToIndex.clear();
             bibIdAndBibEntityMap.clear();
