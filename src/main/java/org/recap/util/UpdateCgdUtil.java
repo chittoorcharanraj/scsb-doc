@@ -101,6 +101,15 @@ public class UpdateCgdUtil {
                 updateCGDForItemInDB(itemBarcode, newCollectionGroupDesignation, userName, lastUpdatedDate);
                 itemEntities = itemDetailsRepository.findByBarcode(itemBarcode);
                 setCGDChangeLogToItemEntity(cgdChangeLog, itemEntities);
+                for(ItemEntity itemEntity : itemEntities) {
+                    if (itemEntity != null && CollectionUtils.isNotEmpty(itemEntity.getBibliographicEntities())) {
+                        for (BibliographicEntity bibliographicEntity : itemEntity.getBibliographicEntities()) {
+                            bibliographicEntity.setLastUpdatedBy(userName);
+                            bibliographicEntity.setLastUpdatedDate(lastUpdatedDate);
+                            bibliographicDetailsRepository.save(bibliographicEntity);
+                        }
+                    }
+                }
                 updateCGDForItemInSolr(itemEntities);
                 saveItemChangeLogEntity(itemEntities, userName, lastUpdatedDate, ScsbCommonConstants.UPDATE_CGD, cgdChangeNotes);
                 sendEmail(itemBarcode, owningInstitution, oldCollectionGroupDesignation, newCollectionGroupDesignation, cgdChangeNotes);
