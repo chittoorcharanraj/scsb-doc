@@ -16,6 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Map;
@@ -58,6 +59,7 @@ public class MatchingAlgorithmProcessor {
      *
      * @param matchingBibEntities the matching bib entities
      */
+    @Transactional
     public void saveMatchingBibEntity(List<MatchingBibEntity> matchingBibEntities){
         try {
             matchingBibDetailsRepository.saveAll(matchingBibEntities);
@@ -79,6 +81,7 @@ public class MatchingAlgorithmProcessor {
      *
      * @param reportEntityList the report entity list
      */
+    @Transactional
     public void saveMatchingReportEntity(List<ReportEntity> reportEntityList) {
         reportDetailRepository.saveAll(reportEntityList);
     }
