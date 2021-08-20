@@ -10,11 +10,11 @@ import org.mockito.MockitoAnnotations;
 import org.recap.BaseTestCaseUT;
 import org.recap.ScsbCommonConstants;
 import org.recap.ScsbConstants;
+import org.recap.model.jpa.BibliographicEntity;
+import org.recap.model.jpa.MatchingAlgorithmReportDataEntity;
 import org.recap.model.jpa.MatchingBibEntity;
 import org.recap.model.jpa.MatchingMatchPointsEntity;
-import org.recap.repository.jpa.InstitutionDetailsRepository;
-import org.recap.repository.jpa.MatchingBibDetailsRepository;
-import org.recap.repository.jpa.MatchingMatchPointsDetailsRepository;
+import org.recap.repository.jpa.*;
 import org.recap.service.ActiveMqQueuesInfo;
 import org.recap.util.CommonUtil;
 import org.recap.util.MatchingAlgorithmUtil;
@@ -26,20 +26,15 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.solr.core.SolrTemplate;
+import org.springframework.test.util.ReflectionTestUtils;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import javax.persistence.EntityManager;
+import java.util.*;
 import java.util.function.Function;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * Created by premkb on 3/8/16.
@@ -83,9 +78,76 @@ public class MatchingAlgorithmHelperServiceUT extends BaseTestCaseUT {
     @Mock
     InstitutionDetailsRepository institutionDetailsRepository;
 
+    @Mock
+    MatchingAlgorithmReportDataDetailsRepository matchingAlgorithmReportDataDetailsRepository;
+
+    @Mock
+    MatchingAlgorithmReportDataEntity matchingAlgorithmReportDataEntity;
+
+    @Mock
+    BibliographicEntity bibliographicEntity;
+
+    @Mock
+    BibliographicDetailsRepository bibliographicDetailsRepository;
+
+    @Mock
+    EntityManager entityManager;
+
+
     @BeforeEach
     public void setup() throws Exception {
         MockitoAnnotations.initMocks(this);
+    }
+
+    @Test
+    public void groupBibsForMonographPendingMatch() throws Exception {
+        List<MatchingAlgorithmReportDataEntity> reportDataEntities=new ArrayList<>();
+        reportDataEntities.add(matchingAlgorithmReportDataEntity);
+        Mockito.when(matchingAlgorithmReportDataEntity.getHeaderValue()).thenReturn("1");
+        Mockito.when(matchingAlgorithmReportDataDetailsRepository.getCountOfRecordNumForMatchingPendingMonograph(ScsbCommonConstants.BIB_ID)).thenReturn(1l);
+        Mockito.when(matchingAlgorithmReportDataDetailsRepository.getReportDataEntityForPendingMatchingMonographs(ScsbCommonConstants.BIB_ID,0,1)).thenReturn(reportDataEntities);
+        Map<Integer, BibliographicEntity> bibliographicEntityMap=new HashMap<>();
+        bibliographicEntityMap.put(1,bibliographicEntity);
+        Mockito.when(matchingAlgorithmUtil.updateBibsForMatchingIdentifier(Mockito.anyList())).thenReturn(Optional.of(bibliographicEntityMap));
+        ReflectionTestUtils.setField(matchingAlgorithmUtil,"bibliographicDetailsRepository",bibliographicDetailsRepository);
+        ReflectionTestUtils.setField(matchingAlgorithmUtil,"entityManager",entityManager);
+        Mockito.doCallRealMethod().when(matchingAlgorithmUtil).saveGroupedBibsToDb(Mockito.any());
+        String status= matchingAlgorithmHelperService.groupBibsForMonograph(1,true);
+        assertEquals("Success",status);
+    }
+
+    @Test
+    public void groupBibsForMonograph() throws Exception {
+        String status= matchingAlgorithmHelperService.groupBibsForMonograph(1,false);
+        assertEquals("Success",status);
+    }
+
+    @Test
+    public void groupBibsForMVMS() throws Exception {
+        Map<Integer, BibliographicEntity> bibliographicEntityMap=new HashMap<>();
+        bibliographicEntityMap.put(1,bibliographicEntity);
+        Mockito.when(matchingAlgorithmUtil.updateBibsForMatchingIdentifier(Mockito.anyList())).thenReturn(Optional.of(bibliographicEntityMap));
+        List<MatchingAlgorithmReportDataEntity> reportDataEntities=new ArrayList<>();
+        reportDataEntities.add(matchingAlgorithmReportDataEntity);
+        Mockito.when(matchingAlgorithmReportDataEntity.getHeaderValue()).thenReturn("1");
+        Mockito.when(matchingAlgorithmReportDataDetailsRepository.getCountOfRecordNumForMatchingMVMs(ScsbCommonConstants.BIB_ID)).thenReturn(1l);
+        Mockito.when(matchingAlgorithmReportDataDetailsRepository.getReportDataEntityForMatchingMVMs(ScsbCommonConstants.BIB_ID,0,1)).thenReturn(reportDataEntities);
+        String status= matchingAlgorithmHelperService.groupBibsForMVMS(1);
+        assertEquals("Success",status);
+    }
+
+    @Test
+    public void groupBibsForSerials() throws Exception {
+        Map<Integer, BibliographicEntity> bibliographicEntityMap=new HashMap<>();
+        bibliographicEntityMap.put(1,bibliographicEntity);
+        Mockito.when(matchingAlgorithmUtil.updateBibsForMatchingIdentifier(Mockito.anyList())).thenReturn(Optional.of(bibliographicEntityMap));
+        List<MatchingAlgorithmReportDataEntity> reportDataEntities=new ArrayList<>();
+        reportDataEntities.add(matchingAlgorithmReportDataEntity);
+        Mockito.when(matchingAlgorithmReportDataEntity.getHeaderValue()).thenReturn("1");
+        Mockito.when(matchingAlgorithmReportDataDetailsRepository.getCountOfRecordNumForMatchingSerials(ScsbCommonConstants.BIB_ID)).thenReturn(1l);
+        Mockito.when(matchingAlgorithmReportDataDetailsRepository.getReportDataEntityForMatchingSerials(ScsbCommonConstants.BIB_ID,0,1)).thenReturn(reportDataEntities);
+        String status= matchingAlgorithmHelperService.groupBibsForSerials(1);
+        assertEquals("Success",status);
     }
 
     private MatchingMatchPointsEntity getMatchingMatchPointEntity() {

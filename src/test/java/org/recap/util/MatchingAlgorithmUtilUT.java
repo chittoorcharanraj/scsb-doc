@@ -22,23 +22,15 @@ import org.recap.BaseTestCaseUT;
 import org.recap.BaseTestCaseUT4;
 import org.recap.ScsbCommonConstants;
 import org.recap.ScsbConstants;
+import org.recap.controller.SolrIndexController;
 import org.recap.model.jpa.*;
-import org.recap.repository.jpa.InstitutionDetailsRepository;
-import org.recap.repository.jpa.MatchingBibDetailsRepository;
-import org.recap.repository.jpa.ReportDataDetailsRepository;
-import org.recap.repository.jpa.ReportDetailRepository;
+import org.recap.repository.jpa.*;
 import org.springframework.data.solr.core.SolrTemplate;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.util.ReflectionTestUtils;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import javax.persistence.EntityManager;
+import java.util.*;
 
 import static org.junit.Assert.assertNotNull;
 
@@ -64,7 +56,7 @@ public class MatchingAlgorithmUtilUT extends BaseTestCaseUT4 {
     ProducerTemplate producerTemplate;
 
     @Mock
-    ReportDataDetailsRepository reportDataDetailsRepository;
+    MatchingAlgorithmReportDataDetailsRepository matchingAlgorithmReportDataDetailsRepository;
 
     @Mock
     ReportDetailRepository reportDetailRepository;
@@ -75,6 +67,18 @@ public class MatchingAlgorithmUtilUT extends BaseTestCaseUT4 {
     @Mock
     InstitutionDetailsRepository institutionDetailsRepository;
 
+    @Mock
+    MatchingAlgorithmReportDetailRepository matchingAlgorithmReportDetailRepository;
+
+    @Mock
+    BibliographicDetailsRepository bibliographicDetailsRepository;
+
+    @Mock
+    BibliographicEntity bibliographicEntity;
+
+    @Mock
+    SolrIndexController bibItemIndexExecutorService;
+
     @Before
     public void setup() throws Exception {
         MockitoAnnotations.initMocks(this);
@@ -82,6 +86,47 @@ public class MatchingAlgorithmUtilUT extends BaseTestCaseUT4 {
         ReflectionTestUtils.setField(commonUtil,"institutionDetailsRepository",institutionDetailsRepository);
     }
 
+    @Test
+    public void updateBibForMatchingIdentifier() throws Exception {
+        List<Integer> bibIdList=new ArrayList<>();
+        bibIdList.add(1);
+        List<BibliographicEntity> bibliographicEntityList=new ArrayList<>();
+        bibliographicEntityList.add(bibliographicEntity);
+        Mockito.when(bibliographicEntity.getMatchingIdentity()).thenReturn("");
+        Mockito.when(bibliographicDetailsRepository.findByIdIn(Mockito.anyList())).thenReturn(bibliographicEntityList);
+        Optional<Set<Integer>> id= mockMatchingAlgorithmUtil.updateBibForMatchingIdentifier(bibIdList);
+        assertNotNull(id);
+    }
+
+    @Test
+    public void updateBibsForMatchingIdentifier() throws Exception {
+        List<Integer> bibIdList=new ArrayList<>();
+        bibIdList.add(1);
+        List<BibliographicEntity> bibliographicEntityList=new ArrayList<>();
+        bibliographicEntityList.add(bibliographicEntity);
+        Mockito.when(bibliographicEntity.getMatchingIdentity()).thenReturn("");
+        Mockito.when(bibliographicDetailsRepository.findByIdIn(Mockito.anyList())).thenReturn(bibliographicEntityList);
+        Optional<Map<Integer,BibliographicEntity>> id= mockMatchingAlgorithmUtil.updateBibsForMatchingIdentifier(bibliographicEntityList);
+        assertNotNull(id);
+    }
+
+    @Test
+    public void indexGroupedBibIds() throws Exception {
+        Set<Integer> bibIdList=new HashSet<>();
+        bibIdList.add(1);
+        mockMatchingAlgorithmUtil.indexGroupedBibIds(bibIdList);
+    }
+
+    @Test
+    public void getBibIdAndBibEntityMap() throws Exception {
+        Set<String> bibIdsList=new HashSet<>();
+        bibIdsList.add("1");
+        List<BibliographicEntity> bibliographicEntityList=new ArrayList<>();
+        bibliographicEntityList.add(bibliographicEntity);
+        Mockito.when(bibliographicEntity.getId()).thenReturn(1);
+        Mockito.when(bibliographicDetailsRepository.findByIdIn(Mockito.anyList())).thenReturn(bibliographicEntityList);
+        mockMatchingAlgorithmUtil.getBibIdAndBibEntityMap(bibIdsList);
+    }
     @Test
     public void getSingleMatchBibsAndSaveReport() throws Exception {
         Map<String, Set<Integer>> criteriaMap = getStringSetMap();
@@ -124,10 +169,10 @@ public class MatchingAlgorithmUtilUT extends BaseTestCaseUT4 {
     }
 
     @Test
-    public void updateMonographicSetRecords() throws Exception {
+    public void updateMonographicSetRecords() {
         List<Integer> nonMonographRecordNums=Arrays.asList(1,2,3);
-        List<ReportDataEntity> reportDataEntitiesToUpdate=new ArrayList<>();
-        ReportDataEntity reportDataEntity = new ReportDataEntity();
+        List<MatchingAlgorithmReportDataEntity> reportDataEntitiesToUpdate=new ArrayList<>();
+        MatchingAlgorithmReportDataEntity reportDataEntity = new MatchingAlgorithmReportDataEntity();
         reportDataEntity.setHeaderName("Test");
         reportDataEntity.setHeaderValue("Test");
         reportDataEntitiesToUpdate.add(reportDataEntity);
@@ -135,16 +180,16 @@ public class MatchingAlgorithmUtilUT extends BaseTestCaseUT4 {
         MatchingMatchPointsEntity matchingMatchPointsEntity=new MatchingMatchPointsEntity();
         matchingMatchPointsEntity.setCriteriaValue("test");
         matchingMatchPointsEntities.add(matchingMatchPointsEntity);
-        List<ReportEntity> reportEntities=new ArrayList<>();
-        ReportEntity reportEntity=new ReportEntity();
+        List<MatchingAlgorithmReportEntity> reportEntities=new ArrayList<>();
+        MatchingAlgorithmReportEntity reportEntity=new MatchingAlgorithmReportEntity();
         reportEntities.add(reportEntity);
         Collection headerValues=new ArrayList();
         headerValues.add("test");
         ReflectionTestUtils.setField(mockMatchingAlgorithmUtil,"matchingHeaderValueLength",3);
         MatchingAlgorithmReportDataEntity reportDataEntityEmpty=mockMatchingAlgorithmUtil.getReportDataEntityForCollectionValues(Arrays.asList(""),"test");
         MatchingAlgorithmReportDataEntity reportDataEntity1=mockMatchingAlgorithmUtil.getReportDataEntityForCollectionValues(headerValues,"test");
-        Mockito.when(reportDetailRepository.findByIdIn(Mockito.anyList())).thenReturn(reportEntities);
-        Mockito.when(reportDataDetailsRepository.getReportDataEntityByRecordNumIn(Mockito.anyList(),Mockito.anyString())).thenReturn(reportDataEntitiesToUpdate);
+        Mockito.when(matchingAlgorithmReportDetailRepository.findByIdIn(Mockito.anyList())).thenReturn(reportEntities);
+        Mockito.when(matchingAlgorithmReportDataDetailsRepository.getReportDataEntityByRecordNumIn(Mockito.anyList(),Mockito.anyString())).thenReturn(reportDataEntitiesToUpdate);
         mockMatchingAlgorithmUtil.updateMonographicSetRecords(nonMonographRecordNums,1);
         mockMatchingAlgorithmUtil.saveMatchingMatchPointEntities(matchingMatchPointsEntities);
         mockMatchingAlgorithmUtil.updateExceptionRecords(Arrays.asList(1,2,3),1);
