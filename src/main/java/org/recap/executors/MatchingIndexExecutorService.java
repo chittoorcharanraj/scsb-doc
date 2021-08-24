@@ -83,6 +83,7 @@ public abstract class MatchingIndexExecutorService {
         try {
             ExecutorService executorService = Executors.newFixedThreadPool(numThreads);
             Integer totalDocCount = getTotalDocCount(operationType, fromDate, currentDate);
+            logger.info("Total doc count -> {}" , totalDocCount);
             if(totalDocCount > 0) {
                 int quotient = totalDocCount / (docsPerThread);
                 int remainder = totalDocCount % (docsPerThread);
