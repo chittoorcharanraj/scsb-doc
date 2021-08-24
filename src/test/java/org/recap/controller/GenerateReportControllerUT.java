@@ -10,6 +10,7 @@ import org.recap.ScsbCommonConstants;
 import org.recap.ScsbConstants;
 import org.recap.model.jpa.ReportDataEntity;
 import org.recap.model.jpa.ReportEntity;
+import org.recap.model.reports.TitleMatchedReport;
 import org.recap.model.solr.SolrIndexRequest;
 import org.recap.model.submitCollection.SubmitCollectionReport;
 import org.recap.report.ReportGenerator;
@@ -55,6 +56,34 @@ public class GenerateReportControllerUT extends BaseTestCaseUT {
 
     @Mock
     ReportEntity reportEntity;
+
+    @Mock
+    TitleMatchedReport titleMatchedReport;
+
+
+    @Test
+    @DisplayName("Test title Match count")
+    public void testTitleMatchCount() throws Exception{
+        Mockito.when(reportGenerator.getItemMatchCount(Mockito.any())).thenCallRealMethod();
+        ResponseEntity<TitleMatchedReport> reportResponseEntity=generateReportController.titleMatchCount(titleMatchedReport);
+        assertNotNull(reportResponseEntity);
+    }
+
+    @Test
+    @DisplayName("Test title Match Report")
+    public void testTitleMatchReport() throws Exception{
+        Mockito.when(reportGenerator.getItemMatchReport(Mockito.any())).thenCallRealMethod();
+        ResponseEntity<TitleMatchedReport> reportResponseEntity=generateReportController.titleMatchReport(titleMatchedReport);
+        assertNotNull(reportResponseEntity);
+    }
+
+    @Test
+    @DisplayName("Test title Match Report Export")
+    public void testTitleMatchReportExport() throws Exception{
+        Mockito.when(reportGenerator.getItemMatchReportExport(Mockito.any())).thenCallRealMethod();
+        ResponseEntity<TitleMatchedReport> reportResponseEntity=generateReportController.titleMatchReportExport(titleMatchedReport);
+        assertNotNull(reportResponseEntity);
+    }
 
 
     @Test

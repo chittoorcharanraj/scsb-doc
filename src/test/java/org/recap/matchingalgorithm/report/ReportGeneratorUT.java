@@ -11,6 +11,7 @@ import org.recap.ScsbCommonConstants;
 import org.recap.ScsbConstants;
 import org.recap.model.jpa.ReportDataEntity;
 import org.recap.model.jpa.ReportEntity;
+import org.recap.model.reports.TitleMatchedReport;
 import org.recap.model.submitCollection.SubmitCollectionReport;
 import org.recap.report.FSAccessionReportGenerator;
 import org.recap.report.FSSubmitCollectionFailureReportGenerator;
@@ -22,7 +23,7 @@ import org.recap.report.S3AccessionReportGenerator;
 import org.recap.report.S3SubmitCollectionExceptionReportGenerator;
 import org.recap.report.S3SubmitCollectionRejectionReportGenerator;
 import org.recap.repository.jpa.ReportDetailRepository;
-import org.recap.util.DateUtil;
+import org.recap.util.ReportsServiceUtil;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.test.util.ReflectionTestUtils;
@@ -60,9 +61,6 @@ public class ReportGeneratorUT extends BaseTestCaseUT {
     String reportsDirectory;
 
     @Mock
-    DateUtil dateUtil;
-
-    @Mock
     ReportEntity reportEntity;
 
     @Mock
@@ -85,6 +83,33 @@ public class ReportGeneratorUT extends BaseTestCaseUT {
 
     @Mock
     FSSubmitCollectionSummaryReportGenerator FSSubmitCollectionSummaryReportGenerator;
+
+    @Mock
+    TitleMatchedReport titleMatchedReport;
+
+    @Mock
+    ReportsServiceUtil reportsServiceUtil;
+
+    @Test
+    public void testGetItemMatchCount() throws Exception {
+        Mockito.when(reportsServiceUtil.titleMatchCount(Mockito.any())).thenReturn(titleMatchedReport);
+        TitleMatchedReport titleMatchedReport1=reportGenerator.getItemMatchCount(titleMatchedReport);
+        assertEquals(titleMatchedReport,titleMatchedReport1);
+    }
+
+    @Test
+    public void getItemMatchReport() throws Exception {
+        Mockito.when(reportsServiceUtil.titleMatchReports(Mockito.any())).thenReturn(titleMatchedReport);
+        TitleMatchedReport titleMatchedReport1=reportGenerator.getItemMatchReport(titleMatchedReport);
+        assertEquals(titleMatchedReport,titleMatchedReport1);
+    }
+
+    @Test
+    public void getItemMatchReportExport() throws Exception {
+        Mockito.when(reportsServiceUtil.titleMatchReportsExport(Mockito.any())).thenReturn(titleMatchedReport);
+        TitleMatchedReport titleMatchedReport1=reportGenerator.getItemMatchReportExport(titleMatchedReport);
+        assertEquals(titleMatchedReport,titleMatchedReport1);
+    }
 
     @Test
     public void testSubmitCollectionExceptionReportLCCN() {

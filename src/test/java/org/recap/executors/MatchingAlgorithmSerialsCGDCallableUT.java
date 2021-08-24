@@ -6,22 +6,12 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.recap.BaseTestCaseUT;
 import org.recap.BaseTestCaseUT4;
 import org.recap.ScsbCommonConstants;
 import org.recap.matchingalgorithm.MatchingAlgorithmCGDProcessor;
 import org.recap.matchingalgorithm.MatchingCounter;
-import org.recap.model.jpa.BibliographicEntity;
-import org.recap.model.jpa.HoldingsEntity;
-import org.recap.model.jpa.InstitutionEntity;
-import org.recap.model.jpa.ItemEntity;
-import org.recap.model.jpa.ReportDataEntity;
-import org.recap.repository.jpa.BibliographicDetailsRepository;
-import org.recap.repository.jpa.CollectionGroupDetailsRepository;
-import org.recap.repository.jpa.InstitutionDetailsRepository;
-import org.recap.repository.jpa.ItemChangeLogDetailsRepository;
-import org.recap.repository.jpa.ItemDetailsRepository;
-import org.recap.repository.jpa.ReportDataDetailsRepository;
+import org.recap.model.jpa.*;
+import org.recap.repository.jpa.*;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.ArrayList;
@@ -43,7 +33,7 @@ import static org.junit.Assert.assertNotNull;
 public class MatchingAlgorithmSerialsCGDCallableUT extends BaseTestCaseUT4 {
 
     @Mock
-    private ReportDataDetailsRepository reportDataDetailsRepository;
+    private MatchingAlgorithmReportDataDetailsRepository reportDataDetailsRepository;
     @Mock
     private BibliographicDetailsRepository mockedBibliographicDetailsRepository;
     @Mock
@@ -99,9 +89,9 @@ public class MatchingAlgorithmSerialsCGDCallableUT extends BaseTestCaseUT4 {
         assertNotNull(afterUpdate);
     }
 
-    public List<ReportDataEntity> getReportDataEntity(){
-        List<ReportDataEntity> reportDataEntityList = new ArrayList<>();
-        ReportDataEntity reportDataEntity = new ReportDataEntity();
+    public List<MatchingAlgorithmReportDataEntity> getReportDataEntity(){
+        List<MatchingAlgorithmReportDataEntity> reportDataEntityList = new ArrayList<>();
+        MatchingAlgorithmReportDataEntity reportDataEntity = new MatchingAlgorithmReportDataEntity();
         reportDataEntity.setHeaderValue("1134");
         reportDataEntityList.add(reportDataEntity);
         return reportDataEntityList;

@@ -4,7 +4,7 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.solr.common.SolrInputDocument;
 import org.recap.ScsbCommonConstants;
 import org.recap.model.jpa.BibliographicEntity;
-import org.recap.model.jpa.ReportDataEntity;
+import org.recap.model.jpa.MatchingAlgorithmReportDataEntity;
 import org.recap.repository.jpa.BibliographicDetailsRepository;
 import org.recap.repository.jpa.HoldingsDetailsRepository;
 import org.slf4j.Logger;
@@ -53,7 +53,7 @@ public class CommonCallable {
         return solrInputDocumentsToIndex;
     }
 
-    public List<Integer> getBibIdListFromString(ReportDataEntity reportDataEntity) {
+    public List<Integer> getBibIdListFromString(MatchingAlgorithmReportDataEntity reportDataEntity) {
         String bibId = reportDataEntity.getHeaderValue();
         String[] bibIds = bibId.split(",");
         List<Integer> bibIdList = new ArrayList<>();

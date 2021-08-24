@@ -48,6 +48,14 @@ jQuery(document).ready(function ($) {
         format: "yyyy/mm/dd"
     });
 
+    $('#ongoingMatchDateRangeFromDate').datepicker({
+        format: "yyyy/mm/dd"
+    });
+
+    $('#ongoingMatchDateRangeToDate').datepicker({
+        format: "yyyy/mm/dd"
+    });
+
     $('#partialIndexFromDate').datetimepicker({
         format: "dd-mm-yyyy hh:ii"
     });
@@ -311,8 +319,24 @@ function getInstitutions(selectId) {
 function showOngoingMatchFromDate(){
     $("#OngoingMatchFromDateView").show();
     $("#OngoingMatchBibIdRangeView").hide();
+    $("#OngoingMatchBibIdListView").hide();
+    $("#OngoingMatchDateRangeView").hide();
 }
 function showOngoingMatchBibIdRange(){
     $("#OngoingMatchFromDateView").hide();
+    $("#OngoingMatchBibIdListView").hide();
+    $("#OngoingMatchDateRangeView").hide();
     $("#OngoingMatchBibIdRangeView").show();
+}
+function showOngoingMatchBibIdList(){
+    $("#OngoingMatchBibIdListView").show();
+    $("#OngoingMatchFromDateView").hide();
+    $("#OngoingMatchBibIdRangeView").hide();
+    $("#OngoingMatchDateRangeView").hide();
+}
+function showOngoingMatchBibIdDateRange(){
+    $("#OngoingMatchDateRangeView").show();
+    $("#OngoingMatchBibIdListView").hide();
+    $("#OngoingMatchFromDateView").hide();
+    $("#OngoingMatchBibIdRangeView").hide();
 }

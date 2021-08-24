@@ -16,20 +16,9 @@ import org.recap.matchingalgorithm.MatchingCounter;
 import org.recap.matchingalgorithm.service.MatchingAlgorithmHelperService;
 import org.recap.matchingalgorithm.service.MatchingAlgorithmUpdateCGDService;
 import org.recap.matchingalgorithm.service.MatchingBibInfoDetailService;
-import org.recap.model.jpa.BibliographicEntity;
-import org.recap.model.jpa.HoldingsEntity;
-import org.recap.model.jpa.ItemEntity;
-import org.recap.model.jpa.InstitutionEntity;
-import org.recap.model.jpa.ReportDataEntity;
+import org.recap.model.jpa.*;
 import org.recap.report.ReportGenerator;
-import org.recap.repository.jpa.BibliographicDetailsRepository;
-import org.recap.repository.jpa.CollectionGroupDetailsRepository;
-import org.recap.repository.jpa.InstitutionDetailsRepository;
-import org.recap.repository.jpa.ItemChangeLogDetailsRepository;
-import org.recap.repository.jpa.ItemDetailsRepository;
-import org.recap.repository.jpa.MatchingBibInfoDetailRepository;
-import org.recap.repository.jpa.ReportDataDetailsRepository;
-import org.recap.repository.jpa.ReportDetailRepository;
+import org.recap.repository.jpa.*;
 import org.recap.service.ActiveMqQueuesInfo;
 import org.recap.util.CommonUtil;
 import org.recap.util.MatchingAlgorithmUtil;
@@ -96,7 +85,7 @@ public class MatchingAlgorithmControllerUT extends BaseTestCaseUT4 {
     MatchingAlgorithmUtil matchingAlgorithmUtil;
 
     @Mock
-    ReportDataDetailsRepository reportDataDetailsRepository;
+    MatchingAlgorithmReportDataDetailsRepository reportDataDetailsRepository;
 
     @Mock
     BibliographicDetailsRepository mockedBibliographicDetailsRepository;
@@ -162,6 +151,47 @@ public class MatchingAlgorithmControllerUT extends BaseTestCaseUT4 {
         Mockito.when(matchingAlgoController.getLogger()).thenCallRealMethod();
         Mockito.when(matchingAlgoController.getMatchingAlgoBatchSize()).thenReturn(String.valueOf(batchSize));
         Mockito.when(matchingAlgoController.getMatchingAlgoBatchSize()).thenReturn(String.valueOf(batchSize));
+    }
+
+    @Test
+    public void groupMatchingBibs() {
+        ReflectionTestUtils.setField(matchingAlgoController,"matchingAlgorithmHelperService",matchingAlgorithmHelperService);
+        Mockito.when(matchingAlgoController.groupMatchingBibs()).thenCallRealMethod();
+        String response = matchingAlgoController.groupMatchingBibs();
+        assertTrue(response.contains(ScsbConstants.STATUS_DONE));
+    }
+
+    @Test
+    public void groupSerials() {
+        ReflectionTestUtils.setField(matchingAlgoController,"matchingAlgorithmHelperService",matchingAlgorithmHelperService);
+        Mockito.when(matchingAlgoController.groupSerials()).thenCallRealMethod();
+        String response = matchingAlgoController.groupSerials();
+        assertNotNull(response);
+    }
+
+    @Test
+    public void groupMVMs() {
+        ReflectionTestUtils.setField(matchingAlgoController,"matchingAlgorithmHelperService",matchingAlgorithmHelperService);
+        Mockito.when(matchingAlgoController.groupMVMs()).thenCallRealMethod();
+        String response = matchingAlgoController.groupMVMs();
+        assertNotNull(response);
+    }
+
+    @Test
+    public void groupMonographs() {
+        ReflectionTestUtils.setField(matchingAlgoController,"matchingAlgorithmHelperService",matchingAlgorithmHelperService);
+        Mockito.doCallRealMethod().when(matchingAlgoController).setReportGenerator(reportGenerator);
+        matchingAlgoController.setReportGenerator(reportGenerator);
+        Mockito.when(matchingAlgoController.groupMonographs()).thenCallRealMethod();
+        String response = matchingAlgoController.groupMonographs();
+        assertNotNull(response);
+    }
+
+    @Test
+    public void groupMatchingBibs_Exception() {
+        Mockito.when(matchingAlgoController.groupMatchingBibs()).thenCallRealMethod();
+        String response = matchingAlgoController.groupMatchingBibs();
+        assertTrue(response.contains(ScsbConstants.STATUS_FAILED));
     }
 
     @Test
@@ -417,7 +447,7 @@ public class MatchingAlgorithmControllerUT extends BaseTestCaseUT4 {
 
     @Test
     public void testItemCountForSerials() throws Exception {
-        ReportDataEntity reportDataEntity = new ReportDataEntity();
+        MatchingAlgorithmReportDataEntity reportDataEntity = new MatchingAlgorithmReportDataEntity();
         reportDataEntity.setHeaderValue("1234");
         int totalPagesCount = 1;
         List<String> allInstitutionCodeExceptSupportInstitution=Arrays.asList(ScsbCommonConstants.COLUMBIA,ScsbCommonConstants.PRINCETON,ScsbCommonConstants.NYPL);
@@ -426,15 +456,15 @@ public class MatchingAlgorithmControllerUT extends BaseTestCaseUT4 {
 
         Mockito.when(matchingAlgoController.getMatchingAlgorithmUpdateCGDService()).thenReturn(matchingAlgorithmUpdateCGDService);
         Mockito.doCallRealMethod().when(matchingAlgorithmUpdateCGDService).getItemsCountForSerialsMatching(batchSize);
-        Mockito.when(matchingAlgorithmUpdateCGDService.getReportDataDetailsRepository()).thenReturn(reportDataDetailsRepository);
+        Mockito.when(matchingAlgorithmUpdateCGDService.getMatchingAlgorithmReportDataDetailsRepository()).thenReturn(reportDataDetailsRepository);
         Mockito.when(matchingAlgorithmUpdateCGDService.getBibliographicDetailsRepository()).thenReturn(mockedBibliographicDetailsRepository);
         Mockito.when(matchingAlgorithmUpdateCGDService.getCollectionGroupMap()).thenReturn(collectionGroupMap);
         Mockito.when(matchingAlgorithmUpdateCGDService.getCollectionGroupMap().get(ScsbCommonConstants.SHARED_CGD)).thenReturn(1);
         Mockito.when(matchingAlgorithmUpdateCGDService.getBibliographicDetailsRepository().findByIdIn(Mockito.any())).thenReturn(Arrays.asList(saveBibSingleHoldingsSingleItem()));
-        Mockito.when(matchingAlgorithmUpdateCGDService.getReportDataDetailsRepository().getCountOfRecordNumForMatchingSerials(ScsbCommonConstants.BIB_ID)).thenReturn(Long.valueOf(10000));
+        Mockito.when(matchingAlgorithmUpdateCGDService.getMatchingAlgorithmReportDataDetailsRepository().getCountOfRecordNumForMatchingSerials(ScsbCommonConstants.BIB_ID)).thenReturn(Long.valueOf(10000));
         for(int pageNum = 0; pageNum < totalPagesCount + 1; pageNum++) {
             long from = pageNum * Long.valueOf(batchSize);
-            Mockito.when(matchingAlgorithmUpdateCGDService.getReportDataDetailsRepository().getReportDataEntityForMatchingSerials(ScsbCommonConstants.BIB_ID, from, batchSize)).thenReturn(Arrays.asList(reportDataEntity));
+            Mockito.when(matchingAlgorithmUpdateCGDService.getMatchingAlgorithmReportDataDetailsRepository().getReportDataEntityForMatchingSerials(ScsbCommonConstants.BIB_ID, from, batchSize)).thenReturn(Arrays.asList(reportDataEntity));
         }
         Mockito.when(matchingAlgoController.itemCountForSerials()).thenCallRealMethod();
         String response = matchingAlgoController.itemCountForSerials();
