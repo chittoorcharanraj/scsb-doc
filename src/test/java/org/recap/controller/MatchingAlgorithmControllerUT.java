@@ -154,6 +154,47 @@ public class MatchingAlgorithmControllerUT extends BaseTestCaseUT4 {
     }
 
     @Test
+    public void groupMatchingBibs() {
+        ReflectionTestUtils.setField(matchingAlgoController,"matchingAlgorithmHelperService",matchingAlgorithmHelperService);
+        Mockito.when(matchingAlgoController.groupMatchingBibs()).thenCallRealMethod();
+        String response = matchingAlgoController.groupMatchingBibs();
+        assertTrue(response.contains(ScsbConstants.STATUS_DONE));
+    }
+
+    @Test
+    public void groupSerials() {
+        ReflectionTestUtils.setField(matchingAlgoController,"matchingAlgorithmHelperService",matchingAlgorithmHelperService);
+        Mockito.when(matchingAlgoController.groupSerials()).thenCallRealMethod();
+        String response = matchingAlgoController.groupSerials();
+        assertNotNull(response);
+    }
+
+    @Test
+    public void groupMVMs() {
+        ReflectionTestUtils.setField(matchingAlgoController,"matchingAlgorithmHelperService",matchingAlgorithmHelperService);
+        Mockito.when(matchingAlgoController.groupMVMs()).thenCallRealMethod();
+        String response = matchingAlgoController.groupMVMs();
+        assertNotNull(response);
+    }
+
+    @Test
+    public void groupMonographs() {
+        ReflectionTestUtils.setField(matchingAlgoController,"matchingAlgorithmHelperService",matchingAlgorithmHelperService);
+        Mockito.doCallRealMethod().when(matchingAlgoController).setReportGenerator(reportGenerator);
+        matchingAlgoController.setReportGenerator(reportGenerator);
+        Mockito.when(matchingAlgoController.groupMonographs()).thenCallRealMethod();
+        String response = matchingAlgoController.groupMonographs();
+        assertNotNull(response);
+    }
+
+    @Test
+    public void groupMatchingBibs_Exception() {
+        Mockito.when(matchingAlgoController.groupMatchingBibs()).thenCallRealMethod();
+        String response = matchingAlgoController.groupMatchingBibs();
+        assertTrue(response.contains(ScsbConstants.STATUS_FAILED));
+    }
+
+    @Test
     public void matchingAlgorithmFullTest() throws Exception {
         Date matchingAlgoDate = new Date();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
