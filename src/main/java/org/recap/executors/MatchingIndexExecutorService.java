@@ -130,19 +130,6 @@ public abstract class MatchingIndexExecutorService {
                             logger.error(ScsbCommonConstants.LOG_ERROR, e);
                         }
                     }
-
-/*                    JmsQueueEndpoint solrQJmsEndPoint = (JmsQueueEndpoint) producerTemplate.getCamelContext().getEndpoint(ScsbCommonConstants.SOLR_QUEUE);
-                    Integer solrQSize = solrQJmsEndPoint.getExchanges().size();
-                    logger.info("Solr Queue size : {}",solrQSize);
-                    while (solrQSize != 0) {
-                        solrQSize = solrQJmsEndPoint.getExchanges().size();
-                    }
-                    Future<Object> future = producerTemplate.asyncRequestBodyAndHeader(solrRouterURI + "://" + solrUrl + "/" + coreName, "", SolrConstants.OPERATION, SolrConstants.OPERATION_COMMIT);
-                    while (!future.isDone()) {
-                        //NoOp.
-                    }
-                    logger.info("Commit future done : {}",future.isDone());*/
-
                     logger.info("Num of Bibs Processed and indexed to core{} on commit interval : {} ",coreName,numOfBibsProcessed);
                     logger.info("Total Num of Bibs Processed and indexed to core {} : {}",coreName, totalBibsProcessed);
                 }

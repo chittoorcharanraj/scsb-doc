@@ -80,7 +80,6 @@ public class MatchingBibItemIndexCallable extends CommonCallable implements Call
         bibliographicEntities = bibliographicDetailsRepository.getBibliographicEntitiesForChangedItems(PageRequest.of(pageNum, docsPerPage), operationType, from, to);
         List<SolrInputDocument> solrInputDocumentsToIndex = setSolrInputDocuments(bibliographicEntities, solrTemplate, bibliographicDetailsRepository, holdingsDetailsRepository, producerTemplate, logger,nonHoldingInstitutionList);
         if (!CollectionUtils.isEmpty(solrInputDocumentsToIndex)) {
-           // producerTemplate.sendBodyAndHeader(ScsbCommonConstants.SOLR_QUEUE, solrInputDocumentsToIndex, ScsbCommonConstants.SOLR_CORE, coreName);
             SolrTemplate templateForSolr = new SolrTemplate(new HttpSolrClient.Builder(solrURL + File.separator).build());
             templateForSolr.saveDocuments(coreName, solrInputDocumentsToIndex);
             templateForSolr.commit(coreName);
