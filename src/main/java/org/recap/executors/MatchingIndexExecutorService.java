@@ -2,8 +2,6 @@ package org.recap.executors;
 
 import com.google.common.collect.Lists;
 import org.apache.camel.ProducerTemplate;
-import org.apache.camel.component.jms.JmsQueueEndpoint;
-import org.apache.camel.component.solr.SolrConstants;
 import org.recap.PropertyKeyConstants;
 import org.recap.ScsbCommonConstants;
 import org.recap.admin.SolrAdmin;
@@ -83,6 +81,7 @@ public abstract class MatchingIndexExecutorService {
         try {
             ExecutorService executorService = Executors.newFixedThreadPool(numThreads);
             Integer totalDocCount = getTotalDocCount(operationType, fromDate, currentDate);
+            logger.info("Total doc count -> {}" , totalDocCount);
             if(totalDocCount > 0) {
                 int quotient = totalDocCount / (docsPerThread);
                 int remainder = totalDocCount % (docsPerThread);
@@ -131,19 +130,6 @@ public abstract class MatchingIndexExecutorService {
                             logger.error(ScsbCommonConstants.LOG_ERROR, e);
                         }
                     }
-
-                    JmsQueueEndpoint solrQJmsEndPoint = (JmsQueueEndpoint) producerTemplate.getCamelContext().getEndpoint(ScsbCommonConstants.SOLR_QUEUE);
-                    Integer solrQSize = solrQJmsEndPoint.getExchanges().size();
-                    logger.info("Solr Queue size : {}",solrQSize);
-                    while (solrQSize != 0) {
-                        solrQSize = solrQJmsEndPoint.getExchanges().size();
-                    }
-                    Future<Object> future = producerTemplate.asyncRequestBodyAndHeader(solrRouterURI + "://" + solrUrl + "/" + coreName, "", SolrConstants.OPERATION, SolrConstants.OPERATION_COMMIT);
-                    while (!future.isDone()) {
-                        //NoOp.
-                    }
-                    logger.info("Commit future done : {}",future.isDone());
-
                     logger.info("Num of Bibs Processed and indexed to core{} on commit interval : {} ",coreName,numOfBibsProcessed);
                     logger.info("Total Num of Bibs Processed and indexed to core {} : {}",coreName, totalBibsProcessed);
                 }

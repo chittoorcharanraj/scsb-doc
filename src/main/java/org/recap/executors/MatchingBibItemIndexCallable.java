@@ -1,8 +1,8 @@
 package org.recap.executors;
 
 import org.apache.camel.ProducerTemplate;
+import org.apache.solr.client.solrj.impl.HttpSolrClient;
 import org.apache.solr.common.SolrInputDocument;
-import org.recap.ScsbCommonConstants;
 import org.recap.model.jpa.BibliographicEntity;
 import org.recap.repository.jpa.BibliographicDetailsRepository;
 import org.recap.repository.jpa.HoldingsDetailsRepository;
@@ -13,6 +13,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.solr.core.SolrTemplate;
 import org.springframework.util.CollectionUtils;
 
+import java.io.File;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -35,6 +36,7 @@ public class MatchingBibItemIndexCallable extends CommonCallable implements Call
     private Date from;
     private Date to;
     private List<String> nonHoldingInstitutionList;
+    private String solrURL;
 
     /**
      * This method instantiates a new matching bib item index callable.
@@ -52,7 +54,7 @@ public class MatchingBibItemIndexCallable extends CommonCallable implements Call
      */
     public MatchingBibItemIndexCallable(String coreName, int pageNum, int docsPerPage, BibliographicDetailsRepository bibliographicDetailsRepository,
                                         HoldingsDetailsRepository holdingsDetailsRepository, ProducerTemplate producerTemplate, SolrTemplate solrTemplate, String operationType,
-                                        Date from, Date to,List<String> nonHoldingInstitutionList) {
+                                        Date from, Date to,List<String> nonHoldingInstitutionList, String solrURL) {
         this.coreName = coreName;
         this.pageNum = pageNum;
         this.docsPerPage = docsPerPage;
@@ -64,6 +66,7 @@ public class MatchingBibItemIndexCallable extends CommonCallable implements Call
         this.from = from;
         this.to = to;
         this.nonHoldingInstitutionList = nonHoldingInstitutionList;
+        this.solrURL = solrURL;
     }
 
     /**
@@ -77,7 +80,9 @@ public class MatchingBibItemIndexCallable extends CommonCallable implements Call
         bibliographicEntities = bibliographicDetailsRepository.getBibliographicEntitiesForChangedItems(PageRequest.of(pageNum, docsPerPage), operationType, from, to);
         List<SolrInputDocument> solrInputDocumentsToIndex = setSolrInputDocuments(bibliographicEntities, solrTemplate, bibliographicDetailsRepository, holdingsDetailsRepository, producerTemplate, logger,nonHoldingInstitutionList);
         if (!CollectionUtils.isEmpty(solrInputDocumentsToIndex)) {
-            producerTemplate.sendBodyAndHeader(ScsbCommonConstants.SOLR_QUEUE, solrInputDocumentsToIndex, ScsbCommonConstants.SOLR_CORE, coreName);
+            SolrTemplate templateForSolr = new SolrTemplate(new HttpSolrClient.Builder(solrURL + File.separator).build());
+            templateForSolr.saveDocuments(coreName, solrInputDocumentsToIndex);
+            templateForSolr.commit(coreName);
         }
         return solrInputDocumentsToIndex.size();
     }
