@@ -2,8 +2,6 @@ package org.recap.executors;
 
 import com.google.common.collect.Lists;
 import org.apache.camel.ProducerTemplate;
-import org.apache.camel.component.jms.JmsQueueEndpoint;
-import org.apache.camel.component.solr.SolrConstants;
 import org.recap.PropertyKeyConstants;
 import org.recap.ScsbCommonConstants;
 import org.recap.admin.SolrAdmin;
@@ -133,7 +131,7 @@ public abstract class MatchingIndexExecutorService {
                         }
                     }
 
-                    JmsQueueEndpoint solrQJmsEndPoint = (JmsQueueEndpoint) producerTemplate.getCamelContext().getEndpoint(ScsbCommonConstants.SOLR_QUEUE);
+/*                    JmsQueueEndpoint solrQJmsEndPoint = (JmsQueueEndpoint) producerTemplate.getCamelContext().getEndpoint(ScsbCommonConstants.SOLR_QUEUE);
                     Integer solrQSize = solrQJmsEndPoint.getExchanges().size();
                     logger.info("Solr Queue size : {}",solrQSize);
                     while (solrQSize != 0) {
@@ -143,7 +141,7 @@ public abstract class MatchingIndexExecutorService {
                     while (!future.isDone()) {
                         //NoOp.
                     }
-                    logger.info("Commit future done : {}",future.isDone());
+                    logger.info("Commit future done : {}",future.isDone());*/
 
                     logger.info("Num of Bibs Processed and indexed to core{} on commit interval : {} ",coreName,numOfBibsProcessed);
                     logger.info("Total Num of Bibs Processed and indexed to core {} : {}",coreName, totalBibsProcessed);
