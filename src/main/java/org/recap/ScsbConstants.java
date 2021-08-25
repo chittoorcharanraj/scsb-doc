@@ -237,6 +237,7 @@ public final class ScsbConstants {
     public static final String EXCEPTION_TITLE_MATCH_COUNT = "Exception Occured while pulling records for TitleMatchCount:: {} ";
     public static final String EXCEPTION_TITLE_MATCH_EXPORT = "Exception Occured while pulling records for TitleMatchExportReports:: {}";
     public static final String SINGLE_MATCH_TITLE_EXCEPTION = "SingleMatch-TitleException";
+    public static final String MATCH_SCORE = "MatchScore";
 
     public static class ServicePath {
         private ServicePath() {}
