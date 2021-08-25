@@ -424,6 +424,7 @@ public class OngoingMatchingAlgorithmUtil {
                 // Multi Match
                 logger.info("Multi Match Found for Bib Id: {}", bibId);
                 try {
+                    //TODO to add MatchScore
                     itemIds = saveReportAndUpdateCGDForMultiMatch(bibItemMap, serialMvmBibIds);
                 } catch (IOException | SolrServerException e) {
                     logger.error(ScsbCommonConstants.LOG_ERROR, e);
@@ -434,6 +435,7 @@ public class OngoingMatchingAlgorithmUtil {
                 logger.info("Single Match Found for Bib Id: {}", bibId);
                 try {
                     if(checkIfReportForSingleMatchExists(solrDocument, bibItemMap, matchPointString)){
+                        //TODO to add MatchScore
                         itemIds = saveReportAndUpdateCGDForSingleMatch(bibItemMap, matchPointString.iterator().next(), serialMvmBibIds);
                     }
                 } catch (Exception e) {
@@ -556,7 +558,7 @@ public class OngoingMatchingAlgorithmUtil {
             } else {
                 reportEntity.setType(ScsbConstants.MATERIAL_TYPE_EXCEPTION);
             }
-            matchingAlgorithmUtil.getReportDataEntityList(reportDataEntities, owningInstList, bibIds, materialTypeList, owningInstBibIds);
+            matchingAlgorithmUtil.getReportDataEntityList(reportDataEntities, owningInstList, bibIds, materialTypeList, owningInstBibIds,0);
             matchingAlgorithmUtil.getReportDataEntity(matchPointString.equalsIgnoreCase(ScsbCommonConstants.OCLC_NUMBER) ? ScsbCommonConstants.OCLC_CRITERIA : matchPointString, criteriaValueString, reportDataEntities);
             reportEntity.addAll(reportDataEntities);
             reportEntitiesToSave.add(reportEntity);
@@ -596,7 +598,7 @@ public class OngoingMatchingAlgorithmUtil {
             String bibId = iterator.next();
             bibliographicIds.add(Integer.valueOf(bibId));
         }
-        matchingAlgorithmUtil.getReportDataEntityList(reportDataEntityList, owningInstitutionList, bibIdList, materialTypeList, owningInstBibIdList);
+        matchingAlgorithmUtil.getReportDataEntityList(reportDataEntityList, owningInstitutionList, bibIdList, materialTypeList, owningInstBibIdList,0);
         matchingAlgorithmUtil.getReportDataEntity(matchPointString.equalsIgnoreCase(ScsbCommonConstants.OCLC_NUMBER) ? ScsbCommonConstants.OCLC_CRITERIA : matchPointString, matchPointValue, reportDataEntityList);
         unMatchReportEntity.addAll(reportDataEntityList);
         return unMatchReportEntity;
@@ -652,7 +654,7 @@ public class OngoingMatchingAlgorithmUtil {
             parameterMap.put(ScsbConstants.MATERIAL_TYPE, materialTypeList);
             itemIds = updateCGDBasedOnMaterialTypes(reportEntity, materialTypes, serialMvmBibIds, ScsbConstants.MULTI_MATCH, parameterMap, new ArrayList<>(), null);
             materialTypeList = (List<String>) parameterMap.get(ScsbConstants.MATERIAL_TYPE);
-            matchingAlgorithmUtil.getReportDataEntityList(reportDataEntities, owningInstList, bibIdList, materialTypeList, owningInstBibIds);
+            matchingAlgorithmUtil.getReportDataEntityList(reportDataEntities, owningInstList, bibIdList, materialTypeList, owningInstBibIds,0);
 
             checkAndAddReportEntities(reportDataEntities, oclcNumbers, ScsbCommonConstants.OCLC_CRITERIA);
             checkAndAddReportEntities(reportDataEntities, isbns, ScsbCommonConstants.ISBN_CRITERIA);

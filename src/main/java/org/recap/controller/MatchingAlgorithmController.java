@@ -5,6 +5,7 @@ import org.recap.PropertyKeyConstants;
 import org.recap.ScsbCommonConstants;
 import org.recap.ScsbConstants;
 import org.recap.executors.MatchingBibItemIndexExecutorService;
+import org.recap.matchingalgorithm.MatchScoreUtil;
 import org.recap.matchingalgorithm.MatchingCounter;
 import org.recap.matchingalgorithm.service.MatchingAlgorithmHelperService;
 import org.recap.matchingalgorithm.service.MatchingAlgorithmUpdateCGDService;
@@ -238,8 +239,8 @@ public class MatchingAlgorithmController {
             stopWatch.start();
             matchingAlgorithmHelperService.groupBibsForMonograph(Integer.valueOf(getMatchingAlgoBatchSize()), true);
             matchingAlgorithmHelperService.groupBibsForMonograph(Integer.valueOf(getMatchingAlgoBatchSize()), false);
-            matchingAlgorithmHelperService.groupBibsForMVMS(Integer.valueOf(getMatchingAlgoBatchSize()));
-            matchingAlgorithmHelperService.groupBibsForSerials(Integer.valueOf(getMatchingAlgoBatchSize()));
+            matchingAlgorithmHelperService.groupBibsForMVMs(Integer.valueOf(getMatchingAlgoBatchSize()));
+            matchingAlgorithmHelperService.groupForSerialBibs(Integer.valueOf(getMatchingAlgoBatchSize()));
             stopWatch.stop();
             getLogger().info("Total Time taken to group matching bibs :{} " , stopWatch.getTotalTimeSeconds());
             status.append(ScsbConstants.STATUS_DONE ).append("\n");
@@ -268,7 +269,7 @@ public class MatchingAlgorithmController {
     public String groupMVMs(){
         StopWatch stopWatch=new StopWatch();
         stopWatch.start();
-        matchingAlgorithmHelperService.groupBibsForMVMS(Integer.valueOf(getMatchingAlgoBatchSize()));
+        matchingAlgorithmHelperService.groupBibsForMVMs(Integer.valueOf(getMatchingAlgoBatchSize()));
         stopWatch.stop();
         long totalTimeMillis = stopWatch.getTotalTimeMillis();
         return "Total time taken : "+totalTimeMillis;
@@ -279,7 +280,7 @@ public class MatchingAlgorithmController {
     public String groupSerials(){
         StopWatch stopWatch=new StopWatch();
         stopWatch.start();
-         matchingAlgorithmHelperService.groupBibsForSerials(Integer.valueOf(getMatchingAlgoBatchSize()));
+         matchingAlgorithmHelperService.groupForSerialBibs(Integer.valueOf(getMatchingAlgoBatchSize()));
         stopWatch.stop();
         long totalTimeMillis = stopWatch.getTotalTimeMillis();
         return "Total time taken : "+totalTimeMillis;
@@ -414,12 +415,12 @@ public class MatchingAlgorithmController {
         List<String> allInstitutionCodeExceptSupportInstitution = commonUtil.findAllInstitutionCodesExceptSupportInstitution();
         Map<String, Integer> institutionCounterMap = allInstitutionCodeExceptSupportInstitution.stream().collect(Collectors.toMap(Function.identity(), institution -> 0));
 
-        getMatchingAlgorithmHelperService().populateReportsForMatchPoints(batchSize, ScsbCommonConstants.MATCH_POINT_FIELD_OCLC, ScsbCommonConstants.MATCH_POINT_FIELD_ISBN, institutionCounterMap);
-        getMatchingAlgorithmHelperService().populateReportsForMatchPoints(batchSize, ScsbCommonConstants.MATCH_POINT_FIELD_OCLC, ScsbCommonConstants.MATCH_POINT_FIELD_ISSN, institutionCounterMap);
-        getMatchingAlgorithmHelperService().populateReportsForMatchPoints(batchSize, ScsbCommonConstants.MATCH_POINT_FIELD_OCLC, ScsbCommonConstants.MATCH_POINT_FIELD_LCCN, institutionCounterMap);
-        getMatchingAlgorithmHelperService().populateReportsForMatchPoints(batchSize, ScsbCommonConstants.MATCH_POINT_FIELD_ISBN, ScsbCommonConstants.MATCH_POINT_FIELD_ISSN, institutionCounterMap);
-        getMatchingAlgorithmHelperService().populateReportsForMatchPoints(batchSize, ScsbCommonConstants.MATCH_POINT_FIELD_ISBN, ScsbCommonConstants.MATCH_POINT_FIELD_LCCN, institutionCounterMap);
-        getMatchingAlgorithmHelperService().populateReportsForMatchPoints(batchSize, ScsbCommonConstants.MATCH_POINT_FIELD_ISSN, ScsbCommonConstants.MATCH_POINT_FIELD_LCCN, institutionCounterMap);
+        getMatchingAlgorithmHelperService().populateReportsForMatchPoints(batchSize, ScsbCommonConstants.MATCH_POINT_FIELD_OCLC, ScsbCommonConstants.MATCH_POINT_FIELD_ISBN, institutionCounterMap,MatchScoreUtil.OCLC_ISBN_SCORE);
+        getMatchingAlgorithmHelperService().populateReportsForMatchPoints(batchSize, ScsbCommonConstants.MATCH_POINT_FIELD_OCLC, ScsbCommonConstants.MATCH_POINT_FIELD_ISSN, institutionCounterMap,MatchScoreUtil.OCLC_ISSN_SCORE);
+        getMatchingAlgorithmHelperService().populateReportsForMatchPoints(batchSize, ScsbCommonConstants.MATCH_POINT_FIELD_OCLC, ScsbCommonConstants.MATCH_POINT_FIELD_LCCN, institutionCounterMap,MatchScoreUtil.OCLC_LCCN_SCORE);
+        getMatchingAlgorithmHelperService().populateReportsForMatchPoints(batchSize, ScsbCommonConstants.MATCH_POINT_FIELD_ISBN, ScsbCommonConstants.MATCH_POINT_FIELD_ISSN, institutionCounterMap,MatchScoreUtil.ISBN_ISSN_SCORE);
+        getMatchingAlgorithmHelperService().populateReportsForMatchPoints(batchSize, ScsbCommonConstants.MATCH_POINT_FIELD_ISBN, ScsbCommonConstants.MATCH_POINT_FIELD_LCCN, institutionCounterMap,MatchScoreUtil.ISBN_LCCN_SCORE);
+        getMatchingAlgorithmHelperService().populateReportsForMatchPoints(batchSize, ScsbCommonConstants.MATCH_POINT_FIELD_ISSN, ScsbCommonConstants.MATCH_POINT_FIELD_LCCN, institutionCounterMap,MatchScoreUtil.ISSN_LCCN_SCORE);
         getMatchingAlgorithmHelperService().populateReportsForSingleMatch(batchSize,institutionCounterMap);
         getMatchingAlgorithmHelperService().saveMatchingSummaryCount(institutionCounterMap);
     }
