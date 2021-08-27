@@ -321,6 +321,8 @@ public class BibJSONUtil extends MarcUtil {
             bib.setDeletedBib(bibliographicEntity.isDeleted());
             bib.setBibCatalogingStatus(bibliographicEntity.getCatalogingStatus());
             bib.setMatchingIdentifier(bibliographicEntity.getMatchingIdentity());
+            bib.setMatchScore(bibliographicEntity.getMatchScore());
+            bib.setAnamolyFlag(bibliographicEntity.getAnamolyFlag());
             return bib;
         } catch (Exception e) {
             saveExceptionReportForBib(bibliographicEntity, e);
