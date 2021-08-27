@@ -104,6 +104,12 @@ public class SolrQueryBuilderUT extends BaseTestCaseUT {
     }
 
     @Test
+    public void fetchBibsByBibIdRange(){
+        String fetchBibsByBibIdRange = solrQueryBuilder.fetchBibsByBibIdRange("1","2");
+        assertNotNull(fetchBibsByBibIdRange);
+    }
+
+    @Test
     public void getQueryForParentAndChildCriteriaForDataDump(){
         SearchRecordsRequest searchRecordsRequest=new SearchRecordsRequest();
         searchRecordsRequest.setFieldName("BibLastUpdatedDate");

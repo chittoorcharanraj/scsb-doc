@@ -130,7 +130,7 @@ public class SolrIndexController {
     }
 
     /**
-     * Partial index string.
+     * Partial index string from UI.
      *
      * @param solrIndexRequest the solr index request
      * @return the string
@@ -138,20 +138,34 @@ public class SolrIndexController {
      */
     @ResponseBody
     @PostMapping(value = "/solrIndexer/partialIndex")
-    public String partialIndex(@Valid @ModelAttribute("solrIndexRequest") SolrIndexRequest solrIndexRequest) {
+      public String partialIndexDataFromUI(@Valid @ModelAttribute("solrIndexRequest") SolrIndexRequest solrIndexRequest,
+                            BindingResult result,
+                            Model model) throws Exception {
+        return report(partialIndex(solrIndexRequest));
+    }
+
+    /**
+     * Partial index string.
+     *
+     * @param solrIndexRequest the solr index request
+     * @return the string
+     */
+    @ResponseBody
+    @PostMapping(value = "/solrIndexer/partialIndexData")
+    public String partialIndexData(@RequestBody SolrIndexRequest solrIndexRequest) {
+        return partialIndex(solrIndexRequest);
+    }
+
+    public String partialIndex(SolrIndexRequest solrIndexRequest) {
         Integer numberOfThread = solrIndexRequest.getNumberOfThreads();
         Integer numberOfDoc = solrIndexRequest.getNumberOfDocs();
         if (solrIndexRequest.getCommitInterval() == null) {
             solrIndexRequest.setCommitInterval(commitIndexesInterval);
         }
         Integer commitInterval = solrIndexRequest.getCommitInterval();
-
-        logger.info("Number of Threads : {} Number of Docs : {} Commit Interval : {} From Date : {}",numberOfThread,numberOfDoc,commitInterval,solrIndexRequest.getDateFrom());
-
+        logger.info("Number of Threads : {} Number of Docs : {} Commit Interval : {} From Date : {}", numberOfThread, numberOfDoc, commitInterval, solrIndexRequest.getDateFrom());
         Integer totalProcessedRecords = bibItemIndexExecutorService.partialIndex(solrIndexRequest);
-        String status = "Total number of records processed : " + totalProcessedRecords;
-
-        return report(status);
+        return "Total number of records processed : " + totalProcessedRecords;
     }
 
     /**

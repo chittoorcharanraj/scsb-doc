@@ -132,6 +132,7 @@ public class OngoingMatchingAlgorithmJobControllerUT extends BaseTestCaseUT {
         return solrIndexRequest;
     }
 
+
     @Test
     public void startOngoingMatchingAlgorithmJobForBibIdRange() throws Exception {
         SolrIndexRequest solrIndexRequest = getSolrIndexRequest();
