@@ -148,6 +148,12 @@ public class Bib {
     @Field("MatchingIdentifier")
     private String matchingIdentifier;
 
+    @Field("MatchScore")
+    private Integer matchScore;
+
+    @Field("AnamolyFlag")
+    private Boolean anamolyFlag;
+
     @Override
     public boolean equals(Object o) {
         if (this == o)
@@ -215,6 +221,10 @@ public class Bib {
             return false;
         if (getMatchingIdentifier() != null ? !getMatchingIdentifier().equals(bib.getMatchingIdentifier()) : bib.getMatchingIdentifier() != null)
             return false;
+        if (getMatchScore() != null ? !getMatchScore().equals(bib.getMatchScore()) : bib.getMatchScore() != null)
+            return false;
+        if (getAnamolyFlag() != null ? !getAnamolyFlag().equals(bib.getAnamolyFlag()) : bib.getAnamolyFlag() != null)
+            return false;
         return getTitleSort() != null ? getTitleSort().equals(bib.getTitleSort()) : bib.getTitleSort() == null;
 
     }
@@ -251,6 +261,8 @@ public class Bib {
         result = 31 * result + (getBibCatalogingStatus() != null ? getBibCatalogingStatus().hashCode() : 0);
         result = 31 * result + (getTitleSort() != null ? getTitleSort().hashCode() : 0);
         result = 31 * result + (getMatchingIdentifier() != null ? getMatchingIdentifier().hashCode() : 0);
+        result = 31 * result + (getMatchScore() != null ? getMatchScore().hashCode() : 0);
+        result = 31 * result + (getAnamolyFlag() != null ? getAnamolyFlag().hashCode() : 0);
         return result;
     }
 }
