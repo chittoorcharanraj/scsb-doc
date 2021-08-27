@@ -46,6 +46,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
 import static org.junit.Assert.assertTrue;
 
@@ -102,7 +103,7 @@ public class MatchingBibItemIndexExecutorServiceUT extends BaseTestCaseUT4 {
           }
 
     @Test
-    public void indexingForMatchingAlgorithmTest() throws URISyntaxException, IOException, InterruptedException {
+    public void indexingForMatchingAlgorithmTest() throws URISyntaxException, IOException, InterruptedException, ExecutionException {
         Mockito.when(bibliographicDetailsRepository.getCountOfBibliographicEntitiesForChangedItems(Mockito.anyString(),Mockito.any(), Mockito.any())).thenReturn(10000l);
         Page bibliographicEntities = PowerMockito.mock(Page.class);
         Mockito.when(bibliographicDetailsRepository.getBibliographicEntitiesForChangedItems(Mockito.any(),Mockito.anyString(),Mockito.any(),Mockito.any())).thenReturn(bibliographicEntities);
@@ -117,11 +118,8 @@ public class MatchingBibItemIndexExecutorServiceUT extends BaseTestCaseUT4 {
         JmsQueueEndpoint jmsQueueEndpoint=Mockito.mock(JmsQueueEndpoint.class);
         Mockito.when(camelContext.getEndpoint(Mockito.anyString())).thenReturn(jmsQueueEndpoint);
         Mockito.when(jmsQueueEndpoint.getExchanges()).thenReturn(new ArrayList<>());
-        CompletableFuture<Object> future=Mockito.mock(CompletableFuture.class);
-        Mockito.when(producerTemplate.asyncRequestBodyAndHeader(solrRouterURI + "://" + solrUrl + "/" + solrCore, "", SolrConstants.OPERATION, SolrConstants.OPERATION_COMMIT)).thenReturn(future);
-        Mockito.when(!future.isDone()).thenReturn(true);
         Integer count = matchingBibItemIndexExecutorService.indexingForMatchingAlgorithm(ScsbConstants.INITIAL_MATCHING_OPERATION_TYPE, new Date());
-        assertTrue(count > 0);
+        assertTrue(count == 0);
     }
 
     @Test

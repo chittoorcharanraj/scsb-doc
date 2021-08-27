@@ -21,7 +21,6 @@ import org.powermock.modules.junit4.PowerMockRunnerDelegate;
 import org.recap.BaseTestCaseUT4;
 import org.recap.ScsbCommonConstants;
 import org.recap.ScsbConstants;
-import org.recap.matchingalgorithm.MatchScoreUtil;
 import org.recap.controller.SolrIndexController;
 import org.recap.model.jpa.BibliographicEntity;
 import org.recap.model.jpa.MatchingAlgorithmReportDataEntity;
@@ -95,6 +94,9 @@ public class MatchingAlgorithmUtilUT extends BaseTestCaseUT4 {
     @Mock
     SolrIndexController bibItemIndexExecutorService;
 
+    @Mock
+    MatchingAlgorithmReportDataEntity matchingAlgorithmReportDataEntity;
+
     @Before
     public void setup() throws Exception {
         MockitoAnnotations.initMocks(this);
@@ -122,11 +124,18 @@ public class MatchingAlgorithmUtilUT extends BaseTestCaseUT4 {
         bibliographicEntityList.add(bibliographicEntity);
         Mockito.when(bibliographicEntity.getMatchingIdentity()).thenReturn("");
         Mockito.when(bibliographicDetailsRepository.findByIdIn(Mockito.anyList())).thenReturn(bibliographicEntityList);
-        Optional<Map<Integer,BibliographicEntity>> id= mockMatchingAlgorithmUtil.updateBibsForMatchingIdentifier(bibliographicEntityList,Mockito.anyInt());
+        Optional<Map<Integer,BibliographicEntity>> id= mockMatchingAlgorithmUtil.updateBibsForMatchingIdentifier(bibliographicEntityList,1);
         assertNotNull(id);
     }
 
-
+    @Test
+    public void getReportDataEntity() throws Exception {
+        List<MatchingAlgorithmReportDataEntity> reportDataEntities=new ArrayList<>();
+        reportDataEntities.add(matchingAlgorithmReportDataEntity);
+        String headerValues = new String(new char[10005]);
+        mockMatchingAlgorithmUtil.getReportDataEntity("headerName",headerValues,reportDataEntities);
+        mockMatchingAlgorithmUtil.getTitleToMatch("an an an an an");
+    }
 
     @Test
     public void getBibIdAndBibEntityMap() throws Exception {
@@ -154,7 +163,7 @@ public class MatchingAlgorithmUtilUT extends BaseTestCaseUT4 {
         matchingBibEntities.addAll(Arrays.asList(getMatchingBibEntity(ScsbCommonConstants.MATCH_POINT_FIELD_ISBN,1,"PUL","Middleware for SCSB"),getMatchingBibEntity(ScsbCommonConstants.MATCH_POINT_FIELD_ISBN,2,"CUL","Middleware for SCSB"),getMatchingBibEntity(ScsbCommonConstants.MATCH_POINT_FIELD_ISBN,3,"NYPL","Middleware for SCSB")));
         Mockito.when(matchingBibDetailsRepository.getSingleMatchBibIdsBasedOnMatching(Mockito.anyString())).thenReturn(bibIds);
         Mockito.when(matchingBibDetailsRepository.getBibEntityBasedOnBibIds(Mockito.anyList())).thenReturn(matchingBibEntities);
-        Map countsMap= mockMatchingAlgorithmUtil.getSingleMatchBibsAndSaveReport(1,ScsbCommonConstants.MATCH_POINT_FIELD_ISBN, getStringIntegerMap(), MatchScoreUtil.LCCN_SCORE);
+        Map countsMap= mockMatchingAlgorithmUtil.getSingleMatchBibsAndSaveReport(1,ScsbCommonConstants.MATCH_POINT_FIELD_ISBN, getStringIntegerMap(),1);
         assertNotNull(countsMap);
     }
 
@@ -215,7 +224,7 @@ public class MatchingAlgorithmUtilUT extends BaseTestCaseUT4 {
         bibIdSet.addAll(bibIds);
         Map<Integer, MatchingBibEntity> matchingBibEntityMap = getIntegerMatchingBibEntityMap();
         Map countsMap= mockMatchingAlgorithmUtil.populateAndSaveReportEntity(bibIdSet,matchingBibEntityMap, ScsbCommonConstants.OCLC_CRITERIA, ScsbCommonConstants.MATCH_POINT_FIELD_ISBN,
-               "2939384", "883939",getStringIntegerMap(), Mockito.anyInt());
+               "2939384", "883939",getStringIntegerMap(),1);
         assertNotNull(countsMap);
     }
 

@@ -27,6 +27,7 @@ import org.recap.model.jpa.HoldingsEntity;
 import org.recap.model.jpa.InstitutionEntity;
 import org.recap.model.jpa.ItemEntity;
 import org.recap.model.jpa.ItemStatusEntity;
+import org.recap.model.jpa.MatchingAlgorithmReportEntity;
 import org.recap.model.jpa.ReportDataEntity;
 import org.recap.model.jpa.ReportEntity;
 import org.recap.model.solr.BibItem;
@@ -46,6 +47,7 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -117,6 +119,21 @@ public class OngoingMatchingAlgorithmUtilUT extends BaseTestCaseUT4 {
 
     @Mock
     MatchingAlgorithmReportDetailRepository matchingAlgorithmReportDetailRepository;
+
+    @Mock
+    MatchingAlgorithmReportEntity unMatchReportEntity;
+
+    @Test
+    public void processCGDAndReportsForUnMatchingTitles() throws Exception {
+        Map<String, String> titleMap=new HashMap<>();
+        Set<String> unMatchingTitleHeaderSet=new HashSet<>();
+        unMatchingTitleHeaderSet.add("1");
+        ReflectionTestUtils.setField(ongoingMatchingAlgorithmUtil,"matchingAlgorithmUtil",matchingAlgorithmUtil);
+        Mockito.doCallRealMethod().when(matchingAlgorithmUtil).prepareReportForUnMatchingTitles(Mockito.anyMap(),Mockito.anyList(),Mockito.anyList(),Mockito.anyList(),Mockito.anyList(),Mockito.anySet(),Mockito.anyList(),Mockito.anyList(),Mockito.anyList(),Mockito.anyList(),Mockito.anyList());
+        Mockito.when(matchingAlgorithmUtil.buildReportEntity(Mockito.anyString())).thenReturn(unMatchReportEntity);
+        MatchingAlgorithmReportEntity unMatchReportEntity1= ongoingMatchingAlgorithmUtil.processCGDAndReportsForUnMatchingTitles("filename",titleMap,Arrays.asList(1),Arrays.asList("shared"),Arrays.asList("pul"),Arrays.asList("1"),"matchPointValue",unMatchingTitleHeaderSet,"matchPointString");
+        assertNotNull(unMatchReportEntity1);
+    }
 
     @Test
     public void fetchUpdatedRecordsByDateRangeAndStartProcess() throws Exception {
