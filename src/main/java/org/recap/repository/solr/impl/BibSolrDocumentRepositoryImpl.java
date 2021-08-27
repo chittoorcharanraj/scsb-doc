@@ -52,8 +52,11 @@ public class BibSolrDocumentRepositoryImpl implements CustomDocumentRepository {
     @Autowired
     private CommonUtil commonUtil;
 
+    private boolean isBarcodeSearch = false;
+
     @Override
     public Map<String,Object> search(SearchRecordsRequest searchRecordsRequest) {
+        this.isBarcodeSearch = searchRecordsRequest.isBarcodeSearch();
         List<BibItem> bibItems = new ArrayList<>();
         Map<String, Object> response = new HashMap<>();
         try {
@@ -139,10 +142,13 @@ public class BibSolrDocumentRepositoryImpl implements CustomDocumentRepository {
                     String bibCatalogingStatus = (String) solrDocument.getFieldValue(ScsbConstants.BIB_CATALOGING_STATUS);
                     if (isDeletedBib == isDeleted && catalogingStatus.equals(bibCatalogingStatus)) {
                         populateBibItem(solrDocument, bibItem);
-                        bibItem.setItems(Collections.singletonList(item));
+                        if(!isBarcodeSearch)
+                            bibItem.setItems(Collections.singletonList(item));
                     }
                 }
                 addHoldingsToBibItem(isDeleted, bibItem, solrDocument, docType);
+                if(isBarcodeSearch)
+                    addItemToBibItem(bibItem, isDeleted, catalogingStatus, solrDocument, docType);
             }
             bibItems.add(bibItem);
         } catch (IOException|SolrServerException e) {
@@ -175,18 +181,22 @@ public class BibSolrDocumentRepositoryImpl implements CustomDocumentRepository {
             for (Iterator<SolrDocument> iterator = solrDocuments.iterator(); iterator.hasNext(); ) {
                 SolrDocument solrDocument = iterator.next();
                 String docType = (String) solrDocument.getFieldValue(ScsbCommonConstants.DOCTYPE);
-                if(docType.equalsIgnoreCase(ScsbCommonConstants.ITEM)) {
-                    boolean isDeletedItem = (boolean) solrDocument.getFieldValue(ScsbCommonConstants.IS_DELETED_ITEM);
-                    String itemCatalogingStatus = (String) solrDocument.getFieldValue(ScsbConstants.ITEM_CATALOGING_STATUS);
-                    if (isDeletedItem == isDeleted && catalogingStatus.equals(itemCatalogingStatus)) {
-                        Item item = commonUtil.getItem(solrDocument);
-                        bibItem.addItem(item);
-                    }
-                }
+                addItemToBibItem(bibItem, isDeleted, catalogingStatus, solrDocument, docType);
                 addHoldingsToBibItem(isDeleted, bibItem, solrDocument, docType);
             }
         } catch (IOException|SolrServerException e) {
             logger.error(ScsbCommonConstants.LOG_ERROR,e);
+        }
+    }
+
+    private void addItemToBibItem(BibItem bibItem, boolean isDeleted, String catalogingStatus, SolrDocument solrDocument, String docType) {
+        if (docType.equalsIgnoreCase(ScsbCommonConstants.ITEM)) {
+            boolean isDeletedItem = (boolean) solrDocument.getFieldValue(ScsbCommonConstants.IS_DELETED_ITEM);
+            String itemCatalogingStatus = (String) solrDocument.getFieldValue(ScsbConstants.ITEM_CATALOGING_STATUS);
+            if (isDeletedItem == isDeleted && catalogingStatus.equals(itemCatalogingStatus)) {
+                Item item = commonUtil.getItem(solrDocument);
+                bibItem.addItem(item);
+            }
         }
     }
 

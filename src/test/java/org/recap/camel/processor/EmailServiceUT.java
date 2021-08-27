@@ -57,8 +57,10 @@ public class EmailServiceUT extends BaseTestCaseUT {
             emailService.setInstitutionCode(ScsbCommonConstants.NYPL);
             emailService.sendEmailForMatchingReports(exchange);
             emailService.sendEmailForAccessionReports(exchange);
+            emailService.sendEmailForMatchingCGDReports(exchange);
             assertEquals(ScsbCommonConstants.NYPL,emailService.getInstitutionCode());
     }
+
 
     private Exchange getExchange(String names) {
         Exchange exchange=new Exchange() {

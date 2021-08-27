@@ -15,6 +15,7 @@ import org.recap.matchingalgorithm.service.MatchingBibInfoDetailService;
 import org.recap.model.solr.SolrIndexRequest;
 import org.recap.util.DateUtil;
 import org.recap.util.OngoingMatchingAlgorithmUtil;
+import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.ui.Model;
 
 import java.util.Date;
@@ -50,6 +51,56 @@ public class OngoingMatchingAlgorithmJobControllerUT extends BaseTestCaseUT {
     private String batchSize="1000";
 
     @Test
+    public void startMatchingAlgorithmJobForFetchUpdatedRecordsByBibIdsAndStartProcess() throws Exception {
+        SolrIndexRequest solrIndexRequest = getSolrIndexRequest();
+        solrIndexRequest.setMatchBy(ScsbConstants.BIB_ID_LIST);
+        solrIndexRequest.setBibIds("1");
+        Mockito.when(ongoingMatchingAlgoJobController.getBatchSize()).thenCallRealMethod();
+        ReflectionTestUtils.setField(ongoingMatchingAlgoJobController,"batchSize",batchSize);
+        Mockito.when(ongoingMatchingAlgoJobController.getLogger()).thenCallRealMethod();
+        Mockito.when(ongoingMatchingAlgoJobController.getOngoingMatchingAlgorithmUtil()).thenReturn(ongoingMatchingAlgorithmUtil);
+        Mockito.when(ongoingMatchingAlgorithmUtil.fetchUpdatedRecordsByBibIdsAndStartProcess(Mockito.anyString(),Mockito.anyInt())).thenReturn(ScsbCommonConstants.SUCCESS);
+        Mockito.when(ongoingMatchingAlgoJobController.startMatchingAlgorithmJob(solrIndexRequest)).thenCallRealMethod();
+        String status = ongoingMatchingAlgoJobController.startMatchingAlgorithmJob(solrIndexRequest);
+        assertTrue(status.contains(ScsbCommonConstants.SUCCESS));
+    }
+
+    @Test
+    public void startMatchingAlgorithmJobForFetchUpdatedRecordsByDateRangeAndStartProcess() throws Exception {
+        SolrIndexRequest solrIndexRequest = getSolrIndexRequest();
+        solrIndexRequest.setMatchBy(ScsbConstants.DATE_RANGE);
+        solrIndexRequest.setBibIds("1");
+        solrIndexRequest.setDateFrom("06-06-2020 00:00");
+        solrIndexRequest.setDateTo("06-06-2020 00:00");
+        Mockito.when(ongoingMatchingAlgoJobController.getBatchSize()).thenCallRealMethod();
+        ReflectionTestUtils.setField(ongoingMatchingAlgoJobController,"batchSize",batchSize);
+        Mockito.when(ongoingMatchingAlgoJobController.getLogger()).thenCallRealMethod();
+        Mockito.when(ongoingMatchingAlgoJobController.getOngoingMatchingAlgorithmUtil()).thenReturn(ongoingMatchingAlgorithmUtil);
+        Mockito.when(ongoingMatchingAlgorithmUtil.fetchUpdatedRecordsByDateRangeAndStartProcess(Mockito.any(),Mockito.any(),Mockito.anyInt())).thenReturn(ScsbCommonConstants.SUCCESS);
+        Mockito.when(ongoingMatchingAlgoJobController.startMatchingAlgorithmJob(solrIndexRequest)).thenCallRealMethod();
+        String status = ongoingMatchingAlgoJobController.startMatchingAlgorithmJob(solrIndexRequest);
+        assertTrue(status.contains(ScsbCommonConstants.SUCCESS));
+    }
+
+    @Test
+    public void startMatchingAlgorithmJobForFetchUpdatedRecordsByDateRangeAndStartProcessEmptyDate() throws Exception {
+        SolrIndexRequest solrIndexRequest = getSolrIndexRequest();
+        solrIndexRequest.setMatchBy(ScsbConstants.DATE_RANGE);
+        solrIndexRequest.setBibIds("1");
+        Mockito.when(ongoingMatchingAlgoJobController.getBatchSize()).thenCallRealMethod();
+        Mockito.when(ongoingMatchingAlgoJobController.getDateUtil()).thenReturn(dateUtil);
+        Mockito.when(dateUtil.getFromDate(Mockito.any())).thenCallRealMethod();
+        Mockito.when(dateUtil.getToDate(Mockito.any())).thenCallRealMethod();
+        ReflectionTestUtils.setField(ongoingMatchingAlgoJobController,"batchSize",batchSize);
+        Mockito.when(ongoingMatchingAlgoJobController.getLogger()).thenCallRealMethod();
+        Mockito.when(ongoingMatchingAlgoJobController.getOngoingMatchingAlgorithmUtil()).thenReturn(ongoingMatchingAlgorithmUtil);
+        Mockito.when(ongoingMatchingAlgorithmUtil.fetchUpdatedRecordsByDateRangeAndStartProcess(Mockito.any(),Mockito.any(),Mockito.anyInt())).thenReturn(ScsbCommonConstants.SUCCESS);
+        Mockito.when(ongoingMatchingAlgoJobController.startMatchingAlgorithmJob(solrIndexRequest)).thenCallRealMethod();
+        String status = ongoingMatchingAlgoJobController.startMatchingAlgorithmJob(solrIndexRequest);
+        assertTrue(status.contains(ScsbCommonConstants.SUCCESS));
+    }
+
+    @Test
     public void startOngoingMatchingAlgorithmJob() throws Exception {
         SolrIndexRequest solrIndexRequest = getSolrIndexRequest();
         solrIndexRequest.setMatchBy(ScsbConstants.FROM_DATE);
@@ -80,6 +131,7 @@ public class OngoingMatchingAlgorithmJobControllerUT extends BaseTestCaseUT {
         solrIndexRequest.setProcessType(ScsbCommonConstants.ONGOING_MATCHING_ALGORITHM_JOB);
         return solrIndexRequest;
     }
+
 
     @Test
     public void startOngoingMatchingAlgorithmJobForBibIdRange() throws Exception {
@@ -138,18 +190,6 @@ public class OngoingMatchingAlgorithmJobControllerUT extends BaseTestCaseUT {
         Mockito.when(ongoingMatchingAlgoJobController.matchingJob(model)).thenCallRealMethod();
         String job=ongoingMatchingAlgoJobController.matchingJob(model);
         assertEquals("ongoingMatchingJob",job);
-    }
-
-    @Test
-    public void checkGetterServices(){
-        Mockito.when(ongoingMatchingAlgoJobController.getMatchingBibInfoDetailService()).thenCallRealMethod();
-        Mockito.when(ongoingMatchingAlgoJobController.getOngoingMatchingAlgorithmUtil()).thenCallRealMethod();
-        Mockito.when(ongoingMatchingAlgoJobController.getBatchSize()).thenCallRealMethod();
-        Mockito.when(ongoingMatchingAlgoJobController.getDateUtil()).thenCallRealMethod();
-        assertNotEquals(matchingBibInfoDetailService,ongoingMatchingAlgoJobController.getMatchingBibInfoDetailService());
-        assertNotEquals(ongoingMatchingAlgorithmUtil,ongoingMatchingAlgoJobController.getOngoingMatchingAlgorithmUtil());
-        assertNotEquals(batchSize,ongoingMatchingAlgoJobController.getBatchSize());
-        assertNotEquals(dateUtil,ongoingMatchingAlgoJobController.getDateUtil());
     }
 
 }

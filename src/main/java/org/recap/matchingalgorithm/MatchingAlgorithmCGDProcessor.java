@@ -208,7 +208,7 @@ public class MatchingAlgorithmCGDProcessor {
      * @param bibIdList         the bib id list
      * @return the boolean
      */
-    public boolean checkForMonographAndPopulateValues(Set<String> materialTypeSet,Map<Integer, ItemEntity> itemEntityMap, List<Integer> bibIdList) {
+    public boolean checkForMonographAndPopulateValues(Set<String> materialTypeSet,Map<Integer, ItemEntity> itemEntityMap, List<Integer> bibIdList,String matchingAlgorithmType) {
         boolean isMonograph = true;
         List<BibliographicEntity> bibliographicEntities = bibliographicDetailsRepository.findByIdIn(bibIdList);
         for(BibliographicEntity bibliographicEntity : bibliographicEntities) {
@@ -217,7 +217,10 @@ public class MatchingAlgorithmCGDProcessor {
             //Check for Monograph - (Single Bib & Single Item)
             if(itemEntities != null && itemEntities.size() == 1) {
                 ItemEntity itemEntity = itemEntities.get(0);
-                if(isItemCommittedOrShared(itemEntity)) {
+                if(ScsbConstants.INITIAL_MATCHING_OPERATION_TYPE.equals(matchingAlgorithmType)&&isItemShared(itemEntity)) {
+                    populateValues(itemEntityMap, itemEntity);
+                }
+                else if(ScsbConstants.ONGOING_MATCHING_OPERATION_TYPE.equals(matchingAlgorithmType)&&isItemCommittedOrShared(itemEntity)){
                     populateValues(itemEntityMap, itemEntity);
                 }
                 materialTypeSet.add(ScsbCommonConstants.MONOGRAPH);
@@ -269,6 +272,11 @@ public class MatchingAlgorithmCGDProcessor {
         Predicate<ItemEntity> isItemCGDShared=item->item.getCollectionGroupId().equals(collectionGroupMap.get(ScsbCommonConstants.SHARED_CGD));
         Predicate<ItemEntity> isItemCGDCommitted=item->item.getCollectionGroupId()==collectionGroupMap.get(ScsbConstants.COMMITTED);
         return isItemCGDShared.or(isItemCGDCommitted).test(itemEntity);
+    }
+
+    private boolean isItemShared(ItemEntity itemEntity) {
+        Predicate<ItemEntity> isItemCGDShared=item->item.getCollectionGroupId().equals(collectionGroupMap.get(ScsbCommonConstants.SHARED_CGD));
+        return isItemCGDShared.test(itemEntity);
     }
 
     /**

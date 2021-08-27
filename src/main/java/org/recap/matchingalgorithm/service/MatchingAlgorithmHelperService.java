@@ -8,13 +8,10 @@ import org.apache.solr.client.solrj.SolrServerException;
 import org.recap.ScsbCommonConstants;
 import org.recap.ScsbConstants;
 import org.recap.executors.SaveMatchingBibsCallable;
-import org.recap.model.jpa.MatchingBibEntity;
-import org.recap.model.jpa.MatchingMatchPointsEntity;
-import org.recap.model.jpa.ReportDataEntity;
-import org.recap.model.jpa.ReportEntity;
-import org.recap.repository.jpa.InstitutionDetailsRepository;
-import org.recap.repository.jpa.MatchingBibDetailsRepository;
-import org.recap.repository.jpa.MatchingMatchPointsDetailsRepository;
+import org.recap.matchingalgorithm.MatchScoreReport;
+import org.recap.matchingalgorithm.MatchScoreUtil;
+import org.recap.model.jpa.*;
+import org.recap.repository.jpa.*;
 import org.recap.service.ActiveMqQueuesInfo;
 import org.recap.util.CommonUtil;
 import org.recap.util.MatchingAlgorithmUtil;
@@ -31,6 +28,7 @@ import org.springframework.util.StopWatch;
 import javax.annotation.Resource;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -38,6 +36,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
@@ -45,6 +44,9 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.toList;
+import static org.recap.ScsbConstants.MATCHING_ALGORITHM_GROUPING_INDEX;
 
 
 /**
@@ -83,6 +85,9 @@ public class MatchingAlgorithmHelperService {
 
     @Autowired
     private CommonUtil commonUtil;
+
+    @Autowired
+    MatchingAlgorithmReportDataDetailsRepository matchingAlgorithmReportDataDetailsRepository;
 
     /**
      * Gets logger.
@@ -207,7 +212,7 @@ public class MatchingAlgorithmHelperService {
         }
     }
 
-    public Map<String, Integer> populateReportsForMatchPoints(Integer batchSize, String matchPoint1, String matchPoint2, Map<String, Integer> institutionCounterMap) {
+    public Map<String, Integer> populateReportsForMatchPoints(Integer batchSize, String matchPoint1, String matchPoint2, Map<String, Integer> institutionCounterMap, Integer matchScore) {
 
         List<Integer> multiMatchBibIdsForMatchPoint1AndMatchPoint2 = null;
         StopWatch stopWatch = new StopWatch();
@@ -263,9 +268,9 @@ public class MatchingAlgorithmHelperService {
                     tempBibIds.addAll(getMatchingAlgorithmUtil().getBibIdsForCriteriaValue(matchPoint1AndBibIdMap, matchPoint1Set, matchPoint, matchPoint1, matchPoint1List, bibEntityMap, matchPoints1));
                 }
                 if (matchPoint1.equalsIgnoreCase(ScsbCommonConstants.MATCH_POINT_FIELD_OCLC)) {
-                    getMatchingAlgorithmUtil().populateAndSaveReportEntity(tempBibIds, bibEntityMap, ScsbCommonConstants.OCLC_CRITERIA, matchPoint2, matchPoints1.toString(), matchPoints2.toString(), institutionCounterMap);
+                    getMatchingAlgorithmUtil().populateAndSaveReportEntity(tempBibIds, bibEntityMap, ScsbCommonConstants.OCLC_CRITERIA, matchPoint2, matchPoints1.toString(), matchPoints2.toString(), institutionCounterMap,matchScore);
                 } else {
-                    getMatchingAlgorithmUtil().populateAndSaveReportEntity(tempBibIds, bibEntityMap, matchPoint1, matchPoint2, matchPoints1.toString(), matchPoints2.toString(), institutionCounterMap);
+                    getMatchingAlgorithmUtil().populateAndSaveReportEntity(tempBibIds, bibEntityMap, matchPoint1, matchPoint2, matchPoints1.toString(), matchPoints2.toString(), institutionCounterMap,matchScore);
                 }
             }
         }
@@ -284,10 +289,10 @@ public class MatchingAlgorithmHelperService {
     public Map<String,Integer> populateReportsForSingleMatch(Integer batchSize, Map<String, Integer> institutionCounterMap) {
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
-        getMatchingAlgorithmUtil().getSingleMatchBibsAndSaveReport(batchSize, ScsbCommonConstants.MATCH_POINT_FIELD_OCLC,institutionCounterMap);
-        getMatchingAlgorithmUtil().getSingleMatchBibsAndSaveReport(batchSize, ScsbCommonConstants.MATCH_POINT_FIELD_ISBN, institutionCounterMap);
-        getMatchingAlgorithmUtil().getSingleMatchBibsAndSaveReport(batchSize, ScsbCommonConstants.MATCH_POINT_FIELD_ISSN, institutionCounterMap);
-        getMatchingAlgorithmUtil().getSingleMatchBibsAndSaveReport(batchSize, ScsbCommonConstants.MATCH_POINT_FIELD_LCCN, institutionCounterMap);
+        getMatchingAlgorithmUtil().getSingleMatchBibsAndSaveReport(batchSize, ScsbCommonConstants.MATCH_POINT_FIELD_OCLC,institutionCounterMap, MatchScoreUtil.OCLC_SCORE);
+        getMatchingAlgorithmUtil().getSingleMatchBibsAndSaveReport(batchSize, ScsbCommonConstants.MATCH_POINT_FIELD_ISBN, institutionCounterMap,MatchScoreUtil.ISBN_SCORE);
+        getMatchingAlgorithmUtil().getSingleMatchBibsAndSaveReport(batchSize, ScsbCommonConstants.MATCH_POINT_FIELD_ISSN, institutionCounterMap,MatchScoreUtil.ISSN_SCORE);
+        getMatchingAlgorithmUtil().getSingleMatchBibsAndSaveReport(batchSize, ScsbCommonConstants.MATCH_POINT_FIELD_LCCN, institutionCounterMap,MatchScoreUtil.LCCN_SCORE);
         Integer saveMatchingBibsQ = getActiveMqQueuesInfo().getActivemqQueuesInfo("updateMatchingBibEntityQ");
         if(saveMatchingBibsQ != null) {
             while (saveMatchingBibsQ != 0) {
@@ -335,17 +340,17 @@ public class MatchingAlgorithmHelperService {
      * @param institutionCounterMap  institutionsMatchingCount
      */
     public void saveMatchingSummaryCount(Map<String, Integer> institutionCounterMap) {
-        ReportEntity reportEntity = new ReportEntity();
+        MatchingAlgorithmReportEntity reportEntity = new MatchingAlgorithmReportEntity();
         reportEntity.setType("MatchingCount");
         reportEntity.setCreatedDate(new Date());
         reportEntity.setFileName("MatchingSummaryCount");
-        reportEntity.setInstitutionName(ScsbCommonConstants.LCCN_CRITERIA);
-        List<ReportDataEntity> reportDataEntities = new ArrayList<>();
+        reportEntity.setInstitutionName("ALL");
+        List<MatchingAlgorithmReportDataEntity> reportDataEntities = new ArrayList<>();
 
 
         List<String> allInstitutionCodesExceptSupportInstitution = commonUtil.findAllInstitutionCodesExceptSupportInstitution();
         for (String institution : allInstitutionCodesExceptSupportInstitution) {
-            ReportDataEntity reportDataEntity = new ReportDataEntity();
+            MatchingAlgorithmReportDataEntity reportDataEntity = new MatchingAlgorithmReportDataEntity();
             reportDataEntity.setHeaderName(institution.toLowerCase()+"MatchingCount");
             reportDataEntity.setHeaderValue(String.valueOf(institutionCounterMap.get(institution)));
             reportDataEntities.add(reportDataEntity);
@@ -383,6 +388,18 @@ public class MatchingAlgorithmHelperService {
         return size;
     }
 
+    public List<Integer> getBibIdListFromString(MatchingAlgorithmReportDataEntity reportDataEntity) {
+        List<Integer> bibIdList = new ArrayList<>();
+        if(reportDataEntity.getHeaderName().equals(ScsbConstants.BIB_ID)) {
+            String bibId = reportDataEntity.getHeaderValue();
+            String[] bibIds = bibId.split(",");
+            for (int i = 0; i < bibIds.length; i++) {
+                bibIdList.add(Integer.valueOf(bibIds[i]));
+            }
+        }
+        return bibIdList;
+    }
+
     private Integer executeCallables(Integer size, ExecutorService executorService, List<Callable<Integer>> callables) {
         List<Future<Integer>> futures = null;
         try {
@@ -416,7 +433,7 @@ public class MatchingAlgorithmHelperService {
             } catch (Exception e) {
                 throw new IllegalStateException(e);
             }
-        }).collect(Collectors.toList());
+        }).collect(toList());
         logger.info("No of Futures Collected : {}", collectedFutures.size());
         return collectedFutures;
     }
@@ -440,5 +457,146 @@ public class MatchingAlgorithmHelperService {
                 getMatchingAlgorithmUtil().populateBibIdWithMatchingCriteriaValue(matchPoint1AndBibIdMap, bibEntitiesBasedOnBibIds, matchPoint1, bibEntityMap);
             }
         }
+    }
+
+    public void groupBibsForMonograph(Integer batchSize, Boolean isPendingMatch) {
+        int totalPagesCount = getTotalPagesCountForMonographs(batchSize, isPendingMatch);
+        for (int pageNum = 0; pageNum < totalPagesCount + 1; pageNum++) {
+            long from = pageNum * Long.valueOf(batchSize);
+            logger.info("Quering report data query for Monograph where page number is : {} from is : {} and to is : {}", pageNum, from, batchSize);
+            Optional<List<MatchingAlgorithmReportDataEntity>> reportDataEntities = getMonographDataEntitiesFromDB(batchSize, isPendingMatch, from);
+            reportDataEntities.ifPresent(this::groupBibsAndAssignMatchScore);
+        }
+    }
+
+    public void groupBibsForMVMs(Integer batchSize) {
+        int totalPagesCount = getTotalPagesCountForMVMs(batchSize);
+        for (int pageNum = 0; pageNum < totalPagesCount + 1; pageNum++) {
+            long from = pageNum * Long.valueOf(batchSize);
+            logger.info("Quering report data query for MVMs where page number is : {} from is : {} and to is : {}", pageNum, from, batchSize);
+            Optional<List<MatchingAlgorithmReportDataEntity>> reportDataEntities = getMVMReportDataEntitiesFromDB(batchSize, from);
+            reportDataEntities.ifPresent(this::groupBibsAndAssignMatchScore);
+        }
+    }
+
+    public void groupForSerialBibs(Integer batchSize) {
+        int totalPagesCount = getTotalPagesCountForSerialBibs(batchSize);
+        for (int pageNum = 0; pageNum < totalPagesCount + 1; pageNum++) {
+            long from = pageNum * Long.valueOf(batchSize);
+            logger.info("Quering report data query for Serials where page number is : {} from is : {} and to is : {}", pageNum, from, batchSize);
+            Optional<List<MatchingAlgorithmReportDataEntity>> reportDataEntities = getSerialReportDataEntitiesFromDB(batchSize, from);
+            reportDataEntities.ifPresent(this::groupBibsAndAssignMatchScore);
+        }
+    }
+
+    private int getTotalPagesCountForMVMs(Integer batchSize) {
+        long countOfRecordNum = matchingAlgorithmReportDataDetailsRepository.getCountOfRecordNumForMatchingMVMs(ScsbCommonConstants.BIB_ID);
+        logger.info(ScsbConstants.TOTAL_RECORDS + "{}", countOfRecordNum);
+        int totalPagesCount = (int) ((countOfRecordNum*2) / batchSize);
+        logger.info(ScsbConstants.TOTAL_PAGES + "{}" , totalPagesCount/2);
+        return totalPagesCount;
+    }
+
+    private int getTotalPagesCountForSerialBibs(Integer batchSize) {
+        long countOfRecordNum = matchingAlgorithmReportDataDetailsRepository.getCountOfRecordNumForMatchingSerials(ScsbCommonConstants.BIB_ID);
+        logger.info(ScsbConstants.TOTAL_RECORDS + "{}", countOfRecordNum);
+        int totalPagesCount = (int) ((countOfRecordNum*2) / batchSize);
+        logger.info(ScsbConstants.TOTAL_PAGES + "{}" , totalPagesCount/2);
+        return totalPagesCount;
+    }
+
+    private Optional<List<MatchingAlgorithmReportDataEntity>> getMVMReportDataEntitiesFromDB(Integer batchSize, long from) {
+        List<MatchingAlgorithmReportDataEntity> reportDataEntityForMatchingMVMs = matchingAlgorithmReportDataDetailsRepository.getReportDataEntityForMatchingMVMs(Arrays.asList(ScsbCommonConstants.BIB_ID, ScsbConstants.MATCH_SCORE), from, batchSize);
+        return Optional.ofNullable(CollectionUtils.isNotEmpty(reportDataEntityForMatchingMVMs)?reportDataEntityForMatchingMVMs:null);
+    }
+
+    private Optional<List<MatchingAlgorithmReportDataEntity>> getSerialReportDataEntitiesFromDB(Integer batchSize, long from) {
+        List<MatchingAlgorithmReportDataEntity> reportDataEntityForMatchingSerials = matchingAlgorithmReportDataDetailsRepository.getReportDataEntityForMatchingSerials(Arrays.asList(ScsbCommonConstants.BIB_ID, ScsbConstants.MATCH_SCORE), from, batchSize);
+        return Optional.ofNullable(CollectionUtils.isNotEmpty(reportDataEntityForMatchingSerials)?reportDataEntityForMatchingSerials:null);
+    }
+
+    private void clearAllCollection(List<MatchingAlgorithmReportDataEntity> dataEntities, Map<Integer, BibliographicEntity> bibIdAndBibEntityMap, Set<Integer> bibIdsToIndex) {
+        bibIdsToIndex.clear();
+        bibIdAndBibEntityMap.clear();
+        dataEntities.clear();
+    }
+
+    private void saveAndIndexGroupedBibs(Map<Integer, BibliographicEntity> bibIdAndBibEntityMap, Set<Integer> bibIdsToIndex) {
+        logger.info("Total BibIds grouped to index : {}", bibIdsToIndex.size());
+        matchingAlgorithmUtil.saveGroupedBibsToDb(bibIdAndBibEntityMap.values());
+        producerTemplate.sendBody(MATCHING_ALGORITHM_GROUPING_INDEX, bibIdsToIndex);
+    }
+
+    private Map<Integer, BibliographicEntity> getBibIdAndBibliographicEntityMap(List<MatchScoreReport> matchScoreReportList) {
+        Set<Integer> bibIdsList = matchingAlgorithmUtil.extractBibIdsFromMatchScoreReports(matchScoreReportList);
+        Map<Integer, BibliographicEntity> bibIdAndBibEntityMap = matchingAlgorithmUtil.getbibIdAndBibMap(bibIdsList);
+        return bibIdAndBibEntityMap;
+    }
+
+    private List<MatchScoreReport> prepareMatchScoreReportList(Map<String, List<MatchingAlgorithmReportDataEntity>> reportDatasGroupedByRecordNum) {
+        List<MatchScoreReport> matchScoreReports=new ArrayList<>();
+        reportDatasGroupedByRecordNum.values().forEach(value -> {
+            MatchScoreReport matchScoreReport = new MatchScoreReport();
+            value.forEach(reportDataEntity -> {
+                if (reportDataEntity.getHeaderName().equals(ScsbConstants.BIB_ID)) {
+                    matchScoreReport.setBibIds(getBibIdListFromString(reportDataEntity));
+                } else if (reportDataEntity.getHeaderName().equals(ScsbConstants.MATCH_SCORE)) {
+                    matchScoreReport.setMatchScore(Integer.valueOf(reportDataEntity.getHeaderValue()));
+                }
+            });
+            matchScoreReports.add(matchScoreReport);
+        });
+        return matchScoreReports;
+    }
+
+    private Optional<List<MatchingAlgorithmReportDataEntity>> getMonographDataEntitiesFromDB(Integer batchSize, Boolean isPendingMatch, long from) {
+        List<MatchingAlgorithmReportDataEntity> reportDataEntities;
+        if (isPendingMatch) {
+            reportDataEntities = matchingAlgorithmReportDataDetailsRepository.getReportDataEntityForPendingMatchingMonographs(Arrays.asList(ScsbCommonConstants.BIB_ID, ScsbConstants.MATCH_SCORE), from, batchSize);
+        } else {
+            reportDataEntities = matchingAlgorithmReportDataDetailsRepository.getReportDataEntityForMatchingMonographs(Arrays.asList(ScsbCommonConstants.BIB_ID, ScsbConstants.MATCH_SCORE), from, batchSize);
+        }
+        return Optional.ofNullable(!CollectionUtils.isEmpty(reportDataEntities) ? reportDataEntities : null);
+    }
+
+    private int getTotalPagesCountForMonographs(Integer batchSize, Boolean isPendingMatch) {
+        logger.info("Starting grouping process for Monographs");
+        long countOfRecordNum = getCountsOfRecordNumForMonograph(isPendingMatch);
+        logger.info(ScsbConstants.TOTAL_RECORDS + "{}", countOfRecordNum);
+        int totalPagesCount = (int) ((countOfRecordNum*2) / batchSize);
+        logger.info(ScsbConstants.TOTAL_PAGES + "{}", totalPagesCount/2);
+        return totalPagesCount;
+    }
+
+    private long getCountsOfRecordNumForMonograph(Boolean isPendingMatch) {
+        long countOfRecordNum = 0;
+        if (isPendingMatch) {
+            countOfRecordNum = matchingAlgorithmReportDataDetailsRepository.getCountOfRecordNumForMatchingPendingMonograph(ScsbCommonConstants.BIB_ID);
+            logger.info("Starting grouping process for Monographs which is in Pending Status which has a total count of :{}", countOfRecordNum);
+        } else {
+            countOfRecordNum = matchingAlgorithmReportDataDetailsRepository.getCountOfRecordNumForMatchingMonograph(ScsbCommonConstants.BIB_ID);
+            logger.info("Starting grouping process for Monographs which has pendingMatch as false which has a total count of : {}", countOfRecordNum);
+        }
+        return countOfRecordNum;
+    }
+
+    private void groupBibsAndAssignMatchScore(List<MatchingAlgorithmReportDataEntity> reportDataEntityList) { //10k
+        Map<String, List<MatchingAlgorithmReportDataEntity>> reportDatasGroupedByRecordNum = reportDataEntityList.stream().collect(Collectors.groupingBy(MatchingAlgorithmReportDataEntity::getRecordNum));
+        List<MatchScoreReport> matchScoreReportList = prepareMatchScoreReportList(reportDatasGroupedByRecordNum); //10k mS list
+        Map<Integer, BibliographicEntity> bibIdAndBibEntityMap = getBibIdAndBibliographicEntityMap(matchScoreReportList); // 10-30K bibs
+        Set<Integer> bibIdsToIndex = new HashSet<>();
+        matchScoreReportList.forEach(matchScoreReport -> {
+            List<BibliographicEntity> bibToupdate = matchScoreReport.getBibIds().stream().map(bibIdAndBibEntityMap::get).collect(toList());
+            Optional<Map<Integer, BibliographicEntity>> bibliographicEntityMap = matchingAlgorithmUtil.updateBibsForMatchingIdentifier(bibToupdate, matchScoreReport.getMatchScore());
+            bibliographicEntityMap.ifPresentOrElse(entry -> bibIdsToIndex.addAll(entry.keySet()), () -> logger.info("No bib ids found to group for indexing"));
+           /* bibliographicEntityMap.ifPresent(entityMap -> {
+                Map<Integer, BibliographicEntity> integerBibliographicEntityMap = entityMap;
+                for (Map.Entry<Integer, BibliographicEntity> integerBibliographicEntityEntry : integerBibliographicEntityMap.entrySet()) {
+                    bibIdAndBibEntityMap.replace(integerBibliographicEntityEntry.getKey(), integerBibliographicEntityEntry.getValue());
+                }
+            });*/
+        });
+        saveAndIndexGroupedBibs(bibIdAndBibEntityMap, bibIdsToIndex);
+        clearAllCollection(reportDataEntityList, bibIdAndBibEntityMap, bibIdsToIndex);
     }
 }

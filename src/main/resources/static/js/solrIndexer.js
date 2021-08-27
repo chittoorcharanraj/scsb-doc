@@ -48,6 +48,14 @@ jQuery(document).ready(function ($) {
         format: "yyyy/mm/dd"
     });
 
+    $('#ongoingMatchDateRangeFromDate').datepicker({
+        format: "yyyy/mm/dd"
+    });
+
+    $('#ongoingMatchDateRangeToDate').datepicker({
+        format: "yyyy/mm/dd"
+    });
+
     $('#partialIndexFromDate').datetimepicker({
         format: "dd-mm-yyyy hh:ii"
     });
@@ -160,7 +168,19 @@ function saveReport() {
         url = "/matchingAlgorithm/findMatchingAndSaveReports";
     } else if (criteria === 'Reports') {
         url = "/matchingAlgorithm/reports";
-    } else if (criteria === 'UpdateMonographCGDInDB') {
+    } else if (criteria === 'GroupBibs') {
+        url = "/matchingAlgorithm/groupBibs";
+    }
+    else if (criteria === 'GroupMonographs') {
+            url = "/matchingAlgorithm/groupMonographs";
+    }
+    else if (criteria === 'GroupMVMs') {
+            url = "/matchingAlgorithm/groupMVMs";
+    }
+    else if (criteria === 'GroupSerials') {
+            url = "/matchingAlgorithm/groupSerials";
+    }
+    else if (criteria === 'UpdateMonographCGDInDB') {
         url = "/matchingAlgorithm/updateMonographCGDInDB";
     } else if (criteria === 'UpdateSerialCGDInDB') {
         url = "/matchingAlgorithm/updateSerialCGDInDB";
@@ -299,8 +319,24 @@ function getInstitutions(selectId) {
 function showOngoingMatchFromDate(){
     $("#OngoingMatchFromDateView").show();
     $("#OngoingMatchBibIdRangeView").hide();
+    $("#OngoingMatchBibIdListView").hide();
+    $("#OngoingMatchDateRangeView").hide();
 }
 function showOngoingMatchBibIdRange(){
     $("#OngoingMatchFromDateView").hide();
+    $("#OngoingMatchBibIdListView").hide();
+    $("#OngoingMatchDateRangeView").hide();
     $("#OngoingMatchBibIdRangeView").show();
+}
+function showOngoingMatchBibIdList(){
+    $("#OngoingMatchBibIdListView").show();
+    $("#OngoingMatchFromDateView").hide();
+    $("#OngoingMatchBibIdRangeView").hide();
+    $("#OngoingMatchDateRangeView").hide();
+}
+function showOngoingMatchBibIdDateRange(){
+    $("#OngoingMatchDateRangeView").show();
+    $("#OngoingMatchBibIdListView").hide();
+    $("#OngoingMatchFromDateView").hide();
+    $("#OngoingMatchBibIdRangeView").hide();
 }

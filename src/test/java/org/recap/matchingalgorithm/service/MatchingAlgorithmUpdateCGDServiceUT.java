@@ -11,17 +11,8 @@ import org.recap.BaseTestCaseUT;
 import org.recap.BaseTestCaseUT4;
 import org.recap.ScsbCommonConstants;
 import org.recap.matchingalgorithm.MatchingCounter;
-import org.recap.model.jpa.BibliographicEntity;
-import org.recap.model.jpa.CollectionGroupEntity;
-import org.recap.model.jpa.InstitutionEntity;
-import org.recap.model.jpa.ItemEntity;
-import org.recap.model.jpa.ItemStatusEntity;
-import org.recap.model.jpa.ReportDataEntity;
-import org.recap.repository.jpa.BibliographicDetailsRepository;
-import org.recap.repository.jpa.CollectionGroupDetailsRepository;
-import org.recap.repository.jpa.InstitutionDetailsRepository;
-import org.recap.repository.jpa.ItemChangeLogDetailsRepository;
-import org.recap.repository.jpa.ReportDataDetailsRepository;
+import org.recap.model.jpa.*;
+import org.recap.repository.jpa.*;
 import org.recap.service.ActiveMqQueuesInfo;
 import org.recap.util.CommonUtil;
 import org.recap.util.MatchingAlgorithmUtil;
@@ -57,7 +48,7 @@ public class MatchingAlgorithmUpdateCGDServiceUT extends BaseTestCaseUT4 {
     InstitutionDetailsRepository institutionDetailsRepository;
 
     @Mock
-    ReportDataDetailsRepository reportDataDetailsRepository;
+    MatchingAlgorithmReportDataDetailsRepository reportDataDetailsRepository;
 
     @Mock
     BibliographicDetailsRepository bibliographicDetailsRepository;
@@ -114,8 +105,8 @@ public class MatchingAlgorithmUpdateCGDServiceUT extends BaseTestCaseUT4 {
         @Test
     public void getItemsCountForSerialsMatching(){
         Mockito.when(reportDataDetailsRepository.getCountOfRecordNumForMatchingSerials(Mockito.anyString())).thenReturn(1l);
-        List<ReportDataEntity> reportDataEntities=new ArrayList<>();
-        ReportDataEntity reportDataEntity=new ReportDataEntity();
+        List<MatchingAlgorithmReportDataEntity> reportDataEntities=new ArrayList<>();
+            MatchingAlgorithmReportDataEntity reportDataEntity=new MatchingAlgorithmReportDataEntity();
         reportDataEntity.setHeaderName(ScsbCommonConstants.ONGOING_MATCHING_ALGORITHM);
         reportDataEntity.setHeaderValue("123");
         reportDataEntities.add(reportDataEntity);

@@ -6,13 +6,8 @@ import org.recap.ScsbCommonConstants;
 import org.recap.ScsbConstants;
 import org.recap.matchingalgorithm.MatchingAlgorithmCGDProcessor;
 import org.recap.model.jpa.ItemEntity;
-import org.recap.model.jpa.ReportDataEntity;
-import org.recap.repository.jpa.BibliographicDetailsRepository;
-import org.recap.repository.jpa.CollectionGroupDetailsRepository;
-import org.recap.repository.jpa.InstitutionDetailsRepository;
-import org.recap.repository.jpa.ItemDetailsRepository;
-import org.recap.repository.jpa.ItemChangeLogDetailsRepository;
-import org.recap.repository.jpa.ReportDataDetailsRepository;
+import org.recap.model.jpa.MatchingAlgorithmReportDataEntity;
+import org.recap.repository.jpa.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,7 +23,7 @@ import java.util.concurrent.Callable;
 public class MatchingAlgorithmMonographCGDCallable extends  CommonCallable implements Callable {
 
     private InstitutionDetailsRepository institutionDetailsRepository;
-    private ReportDataDetailsRepository reportDataDetailsRepository;
+    private MatchingAlgorithmReportDataDetailsRepository matchingAlgorithmReportDataDetailsRepository;
     private BibliographicDetailsRepository bibliographicDetailsRepository;
     private int pageNum;
     private Integer batchSize;
@@ -42,7 +37,7 @@ public class MatchingAlgorithmMonographCGDCallable extends  CommonCallable imple
 
     /**
      * This method instantiates a new matching algorithm cgd callable.
-     *  @param reportDataDetailsRepository      the report data details repository
+     *  @param matchingAlgorithmReportDataDetailsRepository      the report data details repository
      * @param bibliographicDetailsRepository   the bibliographic details repository
      * @param pageNum                          the page num
      * @param batchSize                        the batch size
@@ -55,11 +50,11 @@ public class MatchingAlgorithmMonographCGDCallable extends  CommonCallable imple
      * @param isPendingMatch                   the is pending match
      * @param institutionDetailsRepository
      */
-    public MatchingAlgorithmMonographCGDCallable(ReportDataDetailsRepository reportDataDetailsRepository, BibliographicDetailsRepository bibliographicDetailsRepository,
+    public MatchingAlgorithmMonographCGDCallable(MatchingAlgorithmReportDataDetailsRepository matchingAlgorithmReportDataDetailsRepository, BibliographicDetailsRepository bibliographicDetailsRepository,
                                                  int pageNum, Integer batchSize, ProducerTemplate producerTemplate, Map collectionGroupMap, Map institutionMap,
                                                  ItemChangeLogDetailsRepository itemChangeLogDetailsRepository, CollectionGroupDetailsRepository collectionGroupDetailsRepository,
                                                  ItemDetailsRepository itemDetailsRepository, boolean isPendingMatch, InstitutionDetailsRepository institutionDetailsRepository) {
-        this.reportDataDetailsRepository = reportDataDetailsRepository;
+        this.matchingAlgorithmReportDataDetailsRepository = matchingAlgorithmReportDataDetailsRepository;
         this.bibliographicDetailsRepository = bibliographicDetailsRepository;
         this.pageNum = pageNum;
         this.batchSize = batchSize;
@@ -82,22 +77,22 @@ public class MatchingAlgorithmMonographCGDCallable extends  CommonCallable imple
     public Object call() throws Exception {
 
         long from = pageNum * Long.valueOf(batchSize);
-        List<ReportDataEntity> reportDataEntities;
+        List<MatchingAlgorithmReportDataEntity> reportDataEntities;
         if(isPendingMatch) {
-            reportDataEntities = reportDataDetailsRepository.getReportDataEntityForPendingMatchingMonographs(ScsbCommonConstants.BIB_ID, from, batchSize);
+            reportDataEntities = matchingAlgorithmReportDataDetailsRepository.getReportDataEntityForPendingMatchingMonographs(ScsbCommonConstants.BIB_ID, from, batchSize);
         } else {
-            reportDataEntities =  reportDataDetailsRepository.getReportDataEntityForMatchingMonographs(ScsbCommonConstants.BIB_ID, from, batchSize);
+            reportDataEntities =  matchingAlgorithmReportDataDetailsRepository.getReportDataEntityForMatchingMonographs(ScsbCommonConstants.BIB_ID, from, batchSize);
         }
         List<Integer> nonMonographRecordNums = new ArrayList<>();
         List<Integer> exceptionRecordNums = new ArrayList<>();
         Map<String, List<Integer>> unProcessedRecordNumMap = new HashMap<>();
-        for(ReportDataEntity reportDataEntity : reportDataEntities) {
+        for(MatchingAlgorithmReportDataEntity reportDataEntity : reportDataEntities) {
             Map<Integer, ItemEntity> itemEntityMap = new HashMap<>();
             List<Integer> bibIdList = getBibIdListFromString(reportDataEntity);
             Set<String> materialTypeSet = new HashSet<>();
             MatchingAlgorithmCGDProcessor matchingAlgorithmCGDProcessor = new MatchingAlgorithmCGDProcessor(bibliographicDetailsRepository, producerTemplate, collectionGroupMap,
                     institutionMap, itemChangeLogDetailsRepository, ScsbConstants.INITIAL_MATCHING_OPERATION_TYPE, collectionGroupDetailsRepository, itemDetailsRepository,institutionDetailsRepository);
-            boolean isMonograph = matchingAlgorithmCGDProcessor.checkForMonographAndPopulateValues(materialTypeSet, itemEntityMap, bibIdList);
+            boolean isMonograph = matchingAlgorithmCGDProcessor.checkForMonographAndPopulateValues(materialTypeSet, itemEntityMap, bibIdList,ScsbConstants.INITIAL_MATCHING_OPERATION_TYPE);
             if(isMonograph) {
                 matchingAlgorithmCGDProcessor.updateCGDProcess(itemEntityMap);
             } else {

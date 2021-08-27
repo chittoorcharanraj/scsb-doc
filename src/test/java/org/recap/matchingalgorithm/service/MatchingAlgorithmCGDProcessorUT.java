@@ -206,7 +206,7 @@ public class MatchingAlgorithmCGDProcessorUT extends BaseTestCaseUT {
         Map collectionGroupMap=new HashMap();
         collectionGroupMap.put(ScsbCommonConstants.SHARED_CGD,1);
         ReflectionTestUtils.setField(matchingAlgorithmCGDProcessor,"collectionGroupMap",collectionGroupMap);
-        boolean checkForMonographAndPopulateValues=matchingAlgorithmCGDProcessor.checkForMonographAndPopulateValues(materialTypeSet,itemEntityMap,bibIdList);
+        boolean checkForMonographAndPopulateValues=matchingAlgorithmCGDProcessor.checkForMonographAndPopulateValues(materialTypeSet,itemEntityMap,bibIdList,ScsbConstants.ONGOING_MATCHING_OPERATION_TYPE);
         assertEquals(true,checkForMonographAndPopulateValues);
     }
 
@@ -246,7 +246,7 @@ public class MatchingAlgorithmCGDProcessorUT extends BaseTestCaseUT {
         Map institutionMap=new HashMap();
         institutionMap.put("NYPL",3);
         ReflectionTestUtils.setField(matchingAlgorithmCGDProcessor,"institutionMap",institutionMap);
-        boolean checkForMonographAndPopulateValues=matchingAlgorithmCGDProcessor.checkForMonographAndPopulateValues(materialTypeSet,itemEntityMap,bibIdList);
+        boolean checkForMonographAndPopulateValues=matchingAlgorithmCGDProcessor.checkForMonographAndPopulateValues(materialTypeSet,itemEntityMap,bibIdList,ScsbConstants.ONGOING_MATCHING_OPERATION_TYPE);
         assertEquals(true,checkForMonographAndPopulateValues);
     }
 
@@ -286,7 +286,7 @@ public class MatchingAlgorithmCGDProcessorUT extends BaseTestCaseUT {
         Map institutionMap=new HashMap();
         institutionMap.put("CUL",2);
         ReflectionTestUtils.setField(matchingAlgorithmCGDProcessor,"institutionMap",institutionMap);
-        boolean checkForMonographAndPopulateValues=matchingAlgorithmCGDProcessor.checkForMonographAndPopulateValues(materialTypeSet,itemEntityMap,bibIdList);
+        boolean checkForMonographAndPopulateValues=matchingAlgorithmCGDProcessor.checkForMonographAndPopulateValues(materialTypeSet,itemEntityMap,bibIdList,ScsbConstants.ONGOING_MATCHING_OPERATION_TYPE);
         assertEquals(true,checkForMonographAndPopulateValues);
     }
 
@@ -324,7 +324,7 @@ public class MatchingAlgorithmCGDProcessorUT extends BaseTestCaseUT {
         Map institutionMap=new HashMap();
         institutionMap.put("PUL",1);
         ReflectionTestUtils.setField(matchingAlgorithmCGDProcessor,"institutionMap",institutionMap);
-        boolean checkForMonographAndPopulateValues=matchingAlgorithmCGDProcessor.checkForMonographAndPopulateValues(materialTypeSet,itemEntityMap,bibIdList);
+        boolean checkForMonographAndPopulateValues=matchingAlgorithmCGDProcessor.checkForMonographAndPopulateValues(materialTypeSet,itemEntityMap,bibIdList,ScsbConstants.ONGOING_MATCHING_OPERATION_TYPE);
         assertEquals(false,checkForMonographAndPopulateValues);
     }
 

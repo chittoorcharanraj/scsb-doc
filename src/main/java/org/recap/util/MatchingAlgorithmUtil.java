@@ -13,37 +13,47 @@ import org.apache.solr.common.SolrDocumentList;
 import org.recap.PropertyKeyConstants;
 import org.recap.ScsbCommonConstants;
 import org.recap.ScsbConstants;
+import org.recap.controller.SolrIndexController;
+import org.recap.matchingalgorithm.MatchScoreReport;
+import org.recap.matchingalgorithm.MatchScoreUtil;
 import org.recap.matchingalgorithm.MatchingCounter;
-import org.recap.model.jpa.MatchingBibEntity;
-import org.recap.model.jpa.MatchingMatchPointsEntity;
-import org.recap.model.jpa.ReportDataEntity;
-import org.recap.model.jpa.ReportEntity;
-import org.recap.repository.jpa.MatchingBibDetailsRepository;
-import org.recap.repository.jpa.MatchingMatchPointsDetailsRepository;
-import org.recap.repository.jpa.ReportDataDetailsRepository;
-import org.recap.repository.jpa.ReportDetailRepository;
+import org.recap.model.jpa.*;
+import org.recap.model.solr.SolrIndexRequest;
+import org.recap.repository.jpa.*;
+import org.recap.service.accession.SolrIndexService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.solr.core.SolrTemplate;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StopWatch;
 
 import javax.annotation.Resource;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import java.io.IOException;
 import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
+import java.util.UUID;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
+import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toSet;
 import static org.recap.ScsbConstants.MATCHING_COUNTER_OPEN;
 import static org.recap.ScsbConstants.MATCHING_COUNTER_SHARED;
 import static org.recap.ScsbConstants.MATCHING_COUNTER_UPDATED_OPEN;
@@ -73,10 +83,13 @@ public class MatchingAlgorithmUtil {
     private SolrQueryBuilder solrQueryBuilder;
 
     @Autowired
-    private ReportDetailRepository reportDetailRepository;
+    private MatchingAlgorithmReportDetailRepository matchingAlgorithmReportDetailRepository;
 
     @Autowired
-    private ReportDataDetailsRepository reportDataDetailsRepository;
+    private MatchingAlgorithmReportDataDetailsRepository matchingAlgorithmReportDataDetailsRepository ;
+
+    @Autowired
+    SolrIndexService solrIndexService;
 
     private String and = " AND ";
 
@@ -87,14 +100,23 @@ public class MatchingAlgorithmUtil {
 
     @Autowired
     private CommonUtil commonUtil;
+    @Autowired
+    private BibliographicDetailsRepository bibliographicDetailsRepository;
+
+    @Autowired
+    private SolrIndexController bibItemIndexExecutorService;
+
+    @PersistenceContext
+    EntityManager entityManager;
+
 
     /**
-     * Gets report detail repository.
+     * Gets matching algorithm report detail repository.
      *
      * @return the report detail repository
      */
-    public ReportDetailRepository getReportDetailRepository() {
-        return reportDetailRepository;
+    public MatchingAlgorithmReportDetailRepository getMatchingAlgorithmReportDetailRepository() {
+        return matchingAlgorithmReportDetailRepository;
     }
 
     /**
@@ -103,9 +125,10 @@ public class MatchingAlgorithmUtil {
      * @param batchSize the batch size
      * @param matching  the matching
      * @param institutionCounterMap
+     * @param singleMatchScore
      * @return the single match bibs and save report
      */
-    public Map<String,Integer> getSingleMatchBibsAndSaveReport(Integer batchSize, String matching, Map<String, Integer> institutionCounterMap) {
+    public Map<String,Integer> getSingleMatchBibsAndSaveReport(Integer batchSize, String matching, Map<String, Integer> institutionCounterMap, Integer singleMatchScore) {
         Map<String, Set<Integer>> criteriaMap = new HashMap<>();
         Map<Integer, MatchingBibEntity> bibEntityMap = new HashMap<>();
         StopWatch stopWatch = new StopWatch();
@@ -149,7 +172,7 @@ public class MatchingAlgorithmUtil {
                         tempBibIds.addAll(getBibIdsForCriteriaValue(criteriaMap, criteriaValueSet, criteriaValue, matching, criteriaValueList, bibEntityMap, matchPointValue));
                     }
                     List<Integer> tempBibIdList = new ArrayList<>(tempBibIds);
-                    saveReportForSingleMatch(matchPointValue.toString(), tempBibIdList, matching, bibEntityMap, false,institutionCounterMap);
+                    saveReportForSingleMatch(matchPointValue.toString(), tempBibIdList, matching, bibEntityMap, false,institutionCounterMap,singleMatchScore);
                 }
             }
         }
@@ -165,6 +188,7 @@ public class MatchingAlgorithmUtil {
      * @return the map
      */
     public Map processPendingMatchingBibs(List<MatchingBibEntity> matchingBibEntityList, Set<Integer> matchingBibIds, Map<String, Integer> institutionCounterMap) {
+        Integer singleMatchScore=0;
         if(CollectionUtils.isNotEmpty(matchingBibEntityList)) {
             for(MatchingBibEntity matchingBibEntity : matchingBibEntityList) {
                 if(!matchingBibIds.contains(matchingBibEntity.getId())) {
@@ -172,18 +196,22 @@ public class MatchingAlgorithmUtil {
                     String matchPointValue = "";
                     String query = "";
                     if(matchingBibEntity.getMatching().equalsIgnoreCase(ScsbCommonConstants.MATCH_POINT_FIELD_OCLC)) {
+                        singleMatchScore=MatchScoreUtil.OCLC_SCORE;
                         matchPointValue = matchingBibEntity.getOclc();
                         if(StringUtils.isNotBlank(matchPointValue))
                             query = solrQueryBuilder.solrQueryForInitialMatching(ScsbCommonConstants.MATCH_POINT_FIELD_OCLC, Arrays.asList(matchPointValue.split(",")));
                     } else if(matchingBibEntity.getMatching().equalsIgnoreCase(ScsbCommonConstants.MATCH_POINT_FIELD_ISBN)) {
+                        singleMatchScore=MatchScoreUtil.ISBN_SCORE;
                         matchPointValue = matchingBibEntity.getIsbn();
                         if(StringUtils.isNotBlank(matchPointValue))
                             query = solrQueryBuilder.solrQueryForInitialMatching(ScsbCommonConstants.MATCH_POINT_FIELD_ISBN, Arrays.asList(matchPointValue.split(",")));
                     } else if(matchingBibEntity.getMatching().equalsIgnoreCase(ScsbCommonConstants.MATCH_POINT_FIELD_ISSN)) {
+                        singleMatchScore=MatchScoreUtil.ISSN_SCORE;
                         matchPointValue = matchingBibEntity.getIssn();
                         if(StringUtils.isNotBlank(matchPointValue))
                             query = solrQueryBuilder.solrQueryForInitialMatching(ScsbCommonConstants.MATCH_POINT_FIELD_ISSN, Arrays.asList(matchPointValue.split(",")));
                     } else if(matchingBibEntity.getMatching().equalsIgnoreCase(ScsbCommonConstants.MATCH_POINT_FIELD_LCCN)) {
+                        singleMatchScore=MatchScoreUtil.LCCN_SCORE;
                         matchPointValue = matchingBibEntity.getLccn();
                         query = solrQueryBuilder.solrQueryForInitialMatching(ScsbCommonConstants.MATCH_POINT_FIELD_LCCN, matchPointValue);
                     }
@@ -194,7 +222,7 @@ public class MatchingAlgorithmUtil {
                             matchingBibEntityMap.put(bibEntity.getBibId(), bibEntity);
                             matchingBibIds.add(bibEntity.getId());
                         }
-                        saveReportForSingleMatch(matchPointValue, bibIds, matchingBibEntity.getMatching(), matchingBibEntityMap, true, institutionCounterMap);
+                        saveReportForSingleMatch(matchPointValue, bibIds, matchingBibEntity.getMatching(), matchingBibEntityMap, true, institutionCounterMap, singleMatchScore);
                     }
                 }
             }
@@ -287,40 +315,43 @@ public class MatchingAlgorithmUtil {
      * @param matchingBibEntityMap the matching bib entity map
      * @param isPendingBibs        the is pending bibs
      * @param institutionCounterMap
+     * @param singleMatchScore
      * @return the map
      */
-    public Map<String, Integer> saveReportForSingleMatch(String criteriaValue, List<Integer> bibIdList, String criteria, Map<Integer, MatchingBibEntity> matchingBibEntityMap, boolean isPendingBibs, Map<String, Integer> institutionCounterMap) {
-        List<ReportDataEntity> reportDataEntities = new ArrayList<>();
+    public Map<String, Integer> saveReportForSingleMatch(String criteriaValue, List<Integer> bibIdList, String criteria, Map<Integer, MatchingBibEntity> matchingBibEntityMap, boolean isPendingBibs, Map<String, Integer> institutionCounterMap, Integer singleMatchScore) {
+        List<MatchingAlgorithmReportDataEntity> reportDataEntities = new ArrayList<>();
         Set<String> owningInstSet = new HashSet<>();
         Set<String> materialTypeSet = new HashSet<>();
         List<Integer> bibIds = new ArrayList<>();
         List<String> owningInstList = new ArrayList<>();
         List<String> materialTypeList = new ArrayList<>();
         Map<String,String> titleMap = new HashMap<>();
-        List<ReportEntity> reportEntitiesToSave = new ArrayList<>();
+        List<MatchingAlgorithmReportEntity> reportEntitiesToSave = new ArrayList<>();
         List<String> owningInstBibIds = new ArrayList<>();
 
 
         int index=0;
         for (Iterator<Integer> iterator = bibIdList.iterator(); iterator.hasNext(); ) {
             Integer bibId = iterator.next();
-            MatchingBibEntity matchingBibEntity = matchingBibEntityMap.get(bibId);
-            owningInstSet.add(matchingBibEntity.getOwningInstitution());
-            owningInstList.add(matchingBibEntity.getOwningInstitution());
-            owningInstBibIds.add(matchingBibEntity.getOwningInstBibId());
-            bibIds.add(bibId);
-            materialTypeList.add(matchingBibEntity.getMaterialType());
-            materialTypeSet.add(matchingBibEntity.getMaterialType());
-            index = index + 1;
-            if(StringUtils.isNotBlank(matchingBibEntity.getTitle())) {
-                String titleHeader = ScsbCommonConstants.TITLE + index;
-                getReportDataEntity(titleHeader, matchingBibEntity.getTitle(), reportDataEntities);
-                titleMap.put(titleHeader, matchingBibEntity.getTitle());
+                MatchingBibEntity matchingBibEntity = matchingBibEntityMap.get(bibId);
+            if (matchingBibEntity != null) {
+                owningInstSet.add(matchingBibEntity.getOwningInstitution());
+                owningInstList.add(matchingBibEntity.getOwningInstitution());
+                owningInstBibIds.add(matchingBibEntity.getOwningInstBibId());
+                bibIds.add(bibId);
+                materialTypeList.add(matchingBibEntity.getMaterialType());
+                materialTypeSet.add(matchingBibEntity.getMaterialType());
+                index = index + 1;
+                if (StringUtils.isNotBlank(matchingBibEntity.getTitle())) {
+                    String titleHeader = ScsbCommonConstants.TITLE + index;
+                    getReportDataEntity(titleHeader, matchingBibEntity.getTitle(), reportDataEntities);
+                    titleMap.put(titleHeader, matchingBibEntity.getTitle());
+                }
             }
         }
 
         if(owningInstSet.size() > 1) {
-            ReportEntity reportEntity = new ReportEntity();
+            MatchingAlgorithmReportEntity reportEntity = new MatchingAlgorithmReportEntity();
             String fileName;
             String criteriaForFileName = criteria.equalsIgnoreCase(ScsbCommonConstants.MATCH_POINT_FIELD_OCLC) ? ScsbCommonConstants.OCLC_CRITERIA : criteria;
             if(isPendingBibs) {
@@ -342,11 +373,16 @@ public class MatchingAlgorithmUtil {
             if(materialTypeSet.size() != 1) {
                 reportEntity.setType(ScsbConstants.MATERIAL_TYPE_EXCEPTION);
             } else {
-                reportEntity.setType(ScsbConstants.SINGLE_MATCH);
+                if(CollectionUtils.isNotEmpty(unMatchingTitleHeaderSet)){
+                    reportEntity.setType(ScsbConstants.SINGLE_MATCH_TITLE_EXCEPTION);
+                }else{
+                    reportEntity.setType(ScsbConstants.SINGLE_MATCH);
                 owningInstList.forEach(owningInst -> institutionCounterMap.replace(owningInst, +1));
+                    singleMatchScore=MatchScoreUtil.getMatchScoreForSingleMatchAndTitle(singleMatchScore);
+                }
             }
 
-            getReportDataEntityList(reportDataEntities, owningInstList, bibIds, materialTypeList, owningInstBibIds);
+            getReportDataEntityList(reportDataEntities, owningInstList, bibIds, materialTypeList, owningInstBibIds,singleMatchScore);
 
             getReportDataEntity(criteriaForFileName, criteriaValue, reportDataEntities);
 
@@ -442,23 +478,23 @@ public class MatchingAlgorithmUtil {
 
     /**
      * This method gets a list of report data entities for matching algorithm reports.
-     *
      * @param reportDataEntities the report data entities
      * @param owningInstSet      the owning inst set
      * @param bibIds             the bib ids
      * @param materialTypes      the material types
      * @param owningInstBibIds   the owning inst bib ids
      */
-    public void getReportDataEntityList(List<ReportDataEntity> reportDataEntities, Collection owningInstSet, Collection bibIds, Collection materialTypes, List<String> owningInstBibIds) {
+    public void getReportDataEntityList(List<MatchingAlgorithmReportDataEntity> reportDataEntities, Collection owningInstSet, Collection bibIds, Collection materialTypes, List<String> owningInstBibIds,Integer matchScore) {
         checkAndAddReportDataEntities(reportDataEntities, bibIds, ScsbCommonConstants.BIB_ID);
         checkAndAddReportDataEntities(reportDataEntities, owningInstSet, ScsbCommonConstants.OWNING_INSTITUTION);
         checkAndAddReportDataEntities(reportDataEntities, materialTypes, ScsbConstants.MATERIAL_TYPE);
         checkAndAddReportDataEntities(reportDataEntities, owningInstBibIds, ScsbCommonConstants.OWNING_INSTITUTION_BIB_ID);
+        checkAndAddReportDataEntities(reportDataEntities, Collections.singleton(matchScore), ScsbConstants.MATCH_SCORE);
     }
 
-    private void checkAndAddReportDataEntities(List<ReportDataEntity> reportDataEntities, Collection bibIds, String bibId) {
+    private void checkAndAddReportDataEntities(List<MatchingAlgorithmReportDataEntity> reportDataEntities, Collection bibIds, String bibId) {
         if (CollectionUtils.isNotEmpty(bibIds)) {
-            ReportDataEntity bibIdReportDataEntity = getReportDataEntityForCollectionValues(bibIds, bibId);
+            MatchingAlgorithmReportDataEntity bibIdReportDataEntity = getReportDataEntityForCollectionValues(bibIds, bibId);
             reportDataEntities.add(bibIdReportDataEntity);
         }
     }
@@ -470,8 +506,8 @@ public class MatchingAlgorithmUtil {
      * @param headerName   the header name
      * @return the report data entity for collection values
      */
-    public ReportDataEntity getReportDataEntityForCollectionValues(Collection headerValues, String headerName) {
-        ReportDataEntity bibIdReportDataEntity = new ReportDataEntity();
+    public MatchingAlgorithmReportDataEntity getReportDataEntityForCollectionValues(Collection headerValues, String headerName) {
+        MatchingAlgorithmReportDataEntity bibIdReportDataEntity = new MatchingAlgorithmReportDataEntity();
         bibIdReportDataEntity.setHeaderName(headerName);
         String joinedHeaderValue = StringUtils.join(headerValues, ",");
         if (StringUtils.isNotBlank(joinedHeaderValue)){
@@ -482,7 +518,7 @@ public class MatchingAlgorithmUtil {
         return bibIdReportDataEntity;
     }
 
-    private void setTrimmedHeaderValue(String headerName, ReportDataEntity bibIdReportDataEntity, String joinedHeaderValue) {
+    private void setTrimmedHeaderValue(String headerName, MatchingAlgorithmReportDataEntity bibIdReportDataEntity, String joinedHeaderValue) {
         int headerValueLength = joinedHeaderValue.length();
         if (headerValueLength <= matchingHeaderValueLength){
             bibIdReportDataEntity.setHeaderValue(joinedHeaderValue);
@@ -572,12 +608,13 @@ public class MatchingAlgorithmUtil {
      * @param header2      the header 2
      * @param oclcNumbers  the oclc numbers
      * @param isbns        the isbns
+     * @param matchScore
      * @return the map
      */
-    public Map<String,Integer> populateAndSaveReportEntity(Set<Integer> bibIds, Map<Integer, MatchingBibEntity> bibEntityMap, String header1, String header2, String oclcNumbers, String isbns,Map<String, Integer> institutionCounterMap) {
-        ReportEntity reportEntity = new ReportEntity();
+    public Map<String,Integer> populateAndSaveReportEntity(Set<Integer> bibIds, Map<Integer, MatchingBibEntity> bibEntityMap, String header1, String header2, String oclcNumbers, String isbns, Map<String, Integer> institutionCounterMap, Integer matchScore) {
+        MatchingAlgorithmReportEntity reportEntity = new MatchingAlgorithmReportEntity();
         Set<String> owningInstSet = new HashSet<>();
-        List<ReportDataEntity> reportDataEntities = new ArrayList<>();
+        List<MatchingAlgorithmReportDataEntity> reportDataEntities = new ArrayList<>();
         reportEntity.setFileName(header1 + "," + header2);
         reportEntity.setCreatedDate(new Date());
         reportEntity.setInstitutionName(ScsbCommonConstants.ALL_INST);
@@ -604,7 +641,7 @@ public class MatchingAlgorithmUtil {
             reportEntity.setType(ScsbConstants.MATERIAL_TYPE_EXCEPTION);
         }
         if(owningInstSet.size() > 1) {
-            getReportDataEntityList(reportDataEntities, owningInstList, bibIdList, materialTypeList, owningInstBibIds);
+            getReportDataEntityList(reportDataEntities, owningInstList, bibIdList, materialTypeList, owningInstBibIds,matchScore);
             owningInstList.forEach(owningInst -> institutionCounterMap.replace(owningInst, +1));
             if(StringUtils.isNotBlank(oclcNumbers)) {
                 getReportDataEntity(header1, oclcNumbers, reportDataEntities);
@@ -624,13 +661,16 @@ public class MatchingAlgorithmUtil {
 
     /**
      * This method gets report data entity.
-     *
-     * @param headerName         the header 1
+     *  @param headerName         the header 1
      * @param headerValues       the header values
      * @param reportDataEntities the report data entities
      */
-    public void getReportDataEntity(String headerName, String headerValues, List<ReportDataEntity> reportDataEntities) {
-        ReportDataEntity criteriaReportDataEntity = new ReportDataEntity();
+    public void getReportDataEntity(String headerName, String headerValues, List<MatchingAlgorithmReportDataEntity> reportDataEntities) {
+        MatchingAlgorithmReportDataEntity criteriaReportDataEntity = new MatchingAlgorithmReportDataEntity();
+        if (headerValues.length() > 10000) {
+            logger.info(" Length of the header name with size greater than 10000- {} - Value - {} - size - {}",headerName, headerValues, headerValues.length());
+            headerValues = headerValues.substring(0,9996)+"...";
+        }
         criteriaReportDataEntity.setHeaderName(headerName);
         criteriaReportDataEntity.setHeaderValue(headerValues);
         reportDataEntities.add(criteriaReportDataEntity);
@@ -649,10 +689,10 @@ public class MatchingAlgorithmUtil {
      * @param unMatchingTitleHeaderSet the un matching title header set
      * @return the report entity
      */
-    public ReportEntity processReportsForUnMatchingTitles(String fileName, Map<String, String> titleMap, List<Integer> bibIds, List<String> materialTypes, List<String> owningInstitutions,
+    public MatchingAlgorithmReportEntity processReportsForUnMatchingTitles(String fileName, Map<String, String> titleMap, List<Integer> bibIds, List<String> materialTypes, List<String> owningInstitutions,
                                                           List<String> owningInstBibIds, String matchPointValue, Set<String> unMatchingTitleHeaderSet) {
-        ReportEntity unMatchReportEntity = buildReportEntity(fileName);
-        List<ReportDataEntity> reportDataEntityList = new ArrayList<>();
+        MatchingAlgorithmReportEntity unMatchReportEntity = buildReportEntity(fileName);
+        List<MatchingAlgorithmReportDataEntity> reportDataEntityList = new ArrayList<>();
         List<String> bibIdList = new ArrayList<>();
         List<String> materialTypeList = new ArrayList<>();
         List<String> owningInstitutionList = new ArrayList<>();
@@ -660,7 +700,7 @@ public class MatchingAlgorithmUtil {
 
         prepareReportForUnMatchingTitles(titleMap, bibIds, materialTypes, owningInstitutions, owningInstBibIds, unMatchingTitleHeaderSet, reportDataEntityList, bibIdList, materialTypeList, owningInstitutionList, owningInstBibIdList);
 
-        getReportDataEntityList(reportDataEntityList, owningInstitutionList, bibIdList, materialTypeList, owningInstBibIdList);
+        getReportDataEntityList(reportDataEntityList, owningInstitutionList, bibIdList, materialTypeList, owningInstBibIdList,0);
 
         if(StringUtils.isNotBlank(matchPointValue)) {
             getReportDataEntity(fileName, matchPointValue, reportDataEntityList);
@@ -669,8 +709,8 @@ public class MatchingAlgorithmUtil {
         return unMatchReportEntity;
     }
 
-    public ReportEntity buildReportEntity(String fileName) {
-        ReportEntity unMatchReportEntity = new ReportEntity();
+    public MatchingAlgorithmReportEntity buildReportEntity(String fileName) {
+        MatchingAlgorithmReportEntity unMatchReportEntity = new MatchingAlgorithmReportEntity();
         unMatchReportEntity.setType("TitleException");
         unMatchReportEntity.setCreatedDate(new Date());
         unMatchReportEntity.setInstitutionName(ScsbCommonConstants.ALL_INST);
@@ -680,8 +720,7 @@ public class MatchingAlgorithmUtil {
 
     /**
      * This method prepares reports for the bibs which came into matching algorithm but differs in title
-     *
-     * @param titleMap                 the title map
+     *  @param titleMap                 the title map
      * @param bibIds                   the bib ids
      * @param materialTypes            the material types
      * @param owningInstitutions       the owning institutions
@@ -694,7 +733,7 @@ public class MatchingAlgorithmUtil {
      * @param owningInstBibIdList      the owning inst bib id list
      */
     public void prepareReportForUnMatchingTitles(Map<String, String> titleMap, List<Integer> bibIds, List<String> materialTypes, List<String> owningInstitutions, List<String> owningInstBibIds,
-                                                 Set<String> unMatchingTitleHeaderSet, List<ReportDataEntity> reportDataEntityList, List<String> bibIdList,
+                                                 Set<String> unMatchingTitleHeaderSet, List<MatchingAlgorithmReportDataEntity> reportDataEntityList, List<String> bibIdList,
                                                  List<String> materialTypeList, List<String> owningInstitutionList, List<String> owningInstBibIdList) {
         for (Iterator<String> stringIterator = unMatchingTitleHeaderSet.iterator(); stringIterator.hasNext(); ) {
             String titleHeader = stringIterator.next();
@@ -711,7 +750,7 @@ public class MatchingAlgorithmUtil {
             if(owningInstBibIds != null) {
                 owningInstBibIdList.add(owningInstBibIds.get(i-1));
             }
-            ReportDataEntity titleReportDataEntity = new ReportDataEntity();
+            MatchingAlgorithmReportDataEntity titleReportDataEntity = new MatchingAlgorithmReportDataEntity();
             titleReportDataEntity.setHeaderName(titleHeader);
             titleReportDataEntity.setHeaderValue(titleMap.get(titleHeader));
             reportDataEntityList.add(titleReportDataEntity);
@@ -730,7 +769,6 @@ public class MatchingAlgorithmUtil {
         String query = ScsbCommonConstants.DOCTYPE + ":" + ScsbCommonConstants.BIB +
                 and + ScsbConstants.BIB_CATALOGING_STATUS + ":" + ScsbCommonConstants.COMPLETE_STATUS +
                 and + ScsbCommonConstants.IS_DELETED_BIB + ":" + ScsbConstants.FALSE +
-                and + coreParentFilterQuery + ScsbCommonConstants.COLLECTION_GROUP_DESIGNATION + ":" + ScsbCommonConstants.SHARED_CGD +
                 and + coreParentFilterQuery + ScsbConstants.ITEM_CATALOGING_STATUS + ":" + ScsbCommonConstants.COMPLETE_STATUS +
                 and + coreParentFilterQuery + ScsbCommonConstants.IS_DELETED_ITEM + ":" + ScsbConstants.FALSE;
         SolrQuery solrQuery = new SolrQuery(query);
@@ -806,11 +844,11 @@ public class MatchingAlgorithmUtil {
         if(CollectionUtils.isNotEmpty(exceptionRecordNums)) {
             List<List<Integer>> exceptionRecordNumbers = Lists.partition(exceptionRecordNums, batchSize);
             for(List<Integer> exceptionRecordNumberList : exceptionRecordNumbers) {
-                List<ReportEntity> reportEntities = reportDetailRepository.findByIdIn(exceptionRecordNumberList);
-                for(ReportEntity reportEntity : reportEntities) {
+                List<MatchingAlgorithmReportEntity> reportEntities = matchingAlgorithmReportDetailRepository.findByIdIn(exceptionRecordNumberList);
+                for(MatchingAlgorithmReportEntity reportEntity : reportEntities) {
                     reportEntity.setType(ScsbConstants.MATERIAL_TYPE_EXCEPTION);
                 }
-                reportDetailRepository.saveAll(reportEntities);
+                matchingAlgorithmReportDetailRepository.saveAll(reportEntities);
             }
         }
     }
@@ -825,9 +863,9 @@ public class MatchingAlgorithmUtil {
         if(CollectionUtils.isNotEmpty(nonMonographRecordNums)) {
             List<List<Integer>> monographicSetRecordNumbers = Lists.partition(nonMonographRecordNums, batchSize);
             for(List<Integer> monographicSetRecordNumberList : monographicSetRecordNumbers) {
-                List<ReportDataEntity> reportDataEntitiesToUpdate = reportDataDetailsRepository.getReportDataEntityByRecordNumIn(monographicSetRecordNumberList, ScsbConstants.MATERIAL_TYPE);
+                List<MatchingAlgorithmReportDataEntity> reportDataEntitiesToUpdate = matchingAlgorithmReportDataDetailsRepository.getReportDataEntityByRecordNumIn(monographicSetRecordNumberList, ScsbConstants.MATERIAL_TYPE);
                 if(CollectionUtils.isNotEmpty(reportDataEntitiesToUpdate)) {
-                    for(ReportDataEntity reportDataEntity : reportDataEntitiesToUpdate) {
+                    for(MatchingAlgorithmReportDataEntity reportDataEntity : reportDataEntitiesToUpdate) {
                         String headerValue = reportDataEntity.getHeaderValue();
                         String[] materialTypes = headerValue.split(",");
                         List<String> modifiedMaterialTypes = new ArrayList<>();
@@ -836,7 +874,7 @@ public class MatchingAlgorithmUtil {
                         }
                         reportDataEntity.setHeaderValue(StringUtils.join(modifiedMaterialTypes, ","));
                     }
-                    reportDataDetailsRepository.saveAll(reportDataEntitiesToUpdate);
+                    matchingAlgorithmReportDataDetailsRepository.saveAll(reportDataEntitiesToUpdate);
                 }
             }
         }
@@ -848,12 +886,12 @@ public class MatchingAlgorithmUtil {
      * @param type the type
      */
     public void saveCGDUpdatedSummaryReport(String type) {
-        ReportEntity reportEntity = new ReportEntity();
+        MatchingAlgorithmReportEntity reportEntity = new MatchingAlgorithmReportEntity();
         reportEntity.setType(type);
         reportEntity.setFileName(ScsbConstants.SUMMARY_REPORT_FILE_NAME);
         reportEntity.setCreatedDate(new Date());
         reportEntity.setInstitutionName(ScsbCommonConstants.ALL_INST);
-        List<ReportDataEntity> reportDataEntities = new ArrayList<>();
+        List<MatchingAlgorithmReportDataEntity> reportDataEntities = new ArrayList<>();
         List<String> allInstitutionCodesExceptSupportInstitution = commonUtil.findAllInstitutionCodesExceptSupportInstitution();
         for (String institutionCode : allInstitutionCodesExceptSupportInstitution) {
             logger.info("{} Final Counter Value:{} " ,institutionCode, MatchingCounter.getSpecificInstitutionCounterMap(institutionCode).get(MATCHING_COUNTER_SHARED));
@@ -861,7 +899,7 @@ public class MatchingAlgorithmUtil {
             getReportDataEntity(institutionCode+"OpenCount", String.valueOf(MatchingCounter.getSpecificInstitutionCounterMap(institutionCode).get(MATCHING_COUNTER_UPDATED_OPEN)), reportDataEntities);
         }
         reportEntity.addAll(reportDataEntities);
-        getReportDetailRepository().save(reportEntity);
+        getMatchingAlgorithmReportDetailRepository().save(reportEntity);
     }
 
     /**
@@ -883,5 +921,110 @@ public class MatchingAlgorithmUtil {
                 MatchingCounter.setSpecificInstitutionCounterMap(institution, specificInstitutionCounterMap);
             }
         }
+    }
+
+    public Map<Integer, BibliographicEntity> getBibIdAndBibEntityMap(Set<String> bibIdsList){
+        List<BibliographicEntity> bibliographicEntityList = bibliographicDetailsRepository.findByIdIn(bibIdsList.stream().map(s -> Integer.valueOf(s)).collect(toList()));
+        Map<Integer, BibliographicEntity> bibliographicEntityMap = bibliographicEntityList.stream().collect(Collectors.toMap(BibliographicEntity::getId, Function.identity()));
+        return bibliographicEntityMap;
+    }
+
+    public Map<Integer, BibliographicEntity> getbibIdAndBibMap(Set<Integer> bibIdsList){
+        StopWatch stopWatch=new StopWatch();
+        stopWatch.start();
+        logger.info("Fetching Bibs for Matching");
+        List<BibliographicEntity> bibliographicEntityList = bibliographicDetailsRepository.findByIdIn(bibIdsList.stream().collect(toList()));
+        stopWatch.stop();
+        logger.info("Totat time taken to fetch {} bibs is {}",bibliographicEntityList.size(),stopWatch.getTotalTimeSeconds());
+        Map<Integer, BibliographicEntity> bibliographicEntityMap = bibliographicEntityList.stream().collect(Collectors.toMap(BibliographicEntity::getId, Function.identity()));
+        return bibliographicEntityMap;
+    }
+
+    public Set<String> extractBibIdsFromReportDataEntities(List<ReportDataEntity> reportDataEntities) {
+        return reportDataEntities.stream()
+                .flatMap(reportDataEntity -> Arrays.stream(reportDataEntity.getHeaderValue().split(",")))
+                .map(String::trim)
+                .collect(Collectors.toSet());
+    }
+
+    public Set<Integer> extractBibIdsFromMatchScoreReports(List<MatchScoreReport> matchScoreReportList) {
+        return matchScoreReportList.stream()
+                .flatMap(matchScoreReport -> matchScoreReport.getBibIds().stream())
+                .collect(Collectors.toSet());
+    }
+
+    public Optional<Map<Integer,BibliographicEntity>> updateBibsForMatchingIdentifier(List<BibliographicEntity> bibliographicEntityList, Integer matchScore) {
+
+        String matchingIdentity = getMatchingIdentityValue(bibliographicEntityList);
+        Map<Boolean, List<BibliographicEntity>> partionedByMatchingIdentity = bibliographicEntityList.stream()
+                .collect(Collectors.partitioningBy(bibliographicEntity -> StringUtils.isEmpty(bibliographicEntity.getMatchingIdentity())));
+        List<BibliographicEntity> newlyGroupedBibs = groupCGDForNewEntries(matchScore, matchingIdentity, partionedByMatchingIdentity);
+        List<BibliographicEntity> updatedWithExistingGroupedBibs = groupCGDForExistingEntries(matchScore, partionedByMatchingIdentity);
+        return Optional.ofNullable(Stream.of(newlyGroupedBibs,updatedWithExistingGroupedBibs)
+                                            .flatMap(Collection::stream)
+                                            .collect(Collectors.toMap(BibliographicEntity::getId,Function.identity())));
+    }
+
+    private List<BibliographicEntity> groupCGDForExistingEntries(Integer matchScore, Map<Boolean, List<BibliographicEntity>> partionedByMatchingIdentity) {
+        return partionedByMatchingIdentity.get(false).stream()
+                .filter(bibliographicEntity -> !(bibliographicEntity.getMatchScore() == matchScore))
+                .map(bibliographicEntity -> {
+                    if (!(bibliographicEntity.getMatchScore() == matchScore)) {
+                        bibliographicEntity.setAnamolyFlag(true);
+                        String updatedMatchScore = MatchScoreUtil.calculateMatchScore(MatchScoreUtil.convertDecimalToBinary(matchScore), MatchScoreUtil.convertDecimalToBinary(bibliographicEntity.getMatchScore()));
+                        bibliographicEntity.setMatchScore(MatchScoreUtil.convertBinaryToDecimal(updatedMatchScore));
+                    }
+                    bibliographicEntity.setLastUpdatedBy("GroupingCGDProcess");
+                    bibliographicEntity.setLastUpdatedDate(new Date());
+                    return bibliographicEntity;
+                })
+                .collect(toList());
+    }
+
+    private List<BibliographicEntity> groupCGDForNewEntries(Integer matchScore, String matchingIdentity, Map<Boolean, List<BibliographicEntity>> partionedByMatchingIdentity) {
+        return partionedByMatchingIdentity.get(true).stream()
+                .map(bibliographicEntity -> {
+                    bibliographicEntity.setMatchScore(matchScore);
+                    bibliographicEntity.setMatchingIdentity(matchingIdentity);
+                    bibliographicEntity.setLastUpdatedBy("GroupingCGDProcess");
+                    bibliographicEntity.setLastUpdatedDate(new Date());
+                    return bibliographicEntity;
+                })
+                .collect(toList());
+    }
+
+    private String getMatchingIdentityValue(List<BibliographicEntity> bibliographicEntityList) {
+        Optional<BibliographicEntity> existingIdentifier = bibliographicEntityList.stream()
+                .filter(bibliographicEntity -> StringUtils.isNotEmpty(bibliographicEntity.getMatchingIdentity()))
+                .findFirst();
+        existingIdentifier.ifPresent(existingMatchingBibId->logger.info("existing matching id : {} for bibIds : {}",existingMatchingBibId.getMatchingIdentity(), bibliographicEntityList.stream().map(BibliographicEntity::getId).collect(toList()).toString()));
+        String matchingIdentity = existingIdentifier.map(BibliographicEntity::getMatchingIdentity).orElseGet(() -> UUID.randomUUID().toString());
+        return matchingIdentity;
+    }
+
+    public Optional<Set<Integer>> updateBibForMatchingIdentifier(List<Integer> bibIdList) {
+        List<BibliographicEntity> bibliographicEntityList = bibliographicDetailsRepository.findByIdIn(bibIdList);
+        Optional<BibliographicEntity> existingIdentifier = bibliographicEntityList.stream().filter(bibliographicEntity -> StringUtils.isNotEmpty(bibliographicEntity.getMatchingIdentity())).findFirst();
+        String matchingIdentity = existingIdentifier.map(BibliographicEntity::getMatchingIdentity).orElseGet(() -> UUID.randomUUID().toString());
+        List<BibliographicEntity> bibliographicEntitiesToUpdate = bibliographicEntityList.stream()
+                .filter(bibliographicEntity -> StringUtils.isEmpty(bibliographicEntity.getMatchingIdentity()))
+                .map(bibliographicEntity -> {
+                    bibliographicEntity.setMatchingIdentity(matchingIdentity);
+                    return bibliographicEntity;
+                })
+                .collect(toList());
+        if(!bibliographicEntitiesToUpdate.isEmpty()){
+            logger.info("No of grouped bibs to save and index : {}",bibliographicEntitiesToUpdate.stream().count());
+            bibliographicDetailsRepository.saveAll(bibliographicEntitiesToUpdate);
+        }
+        return Optional.ofNullable(bibliographicEntitiesToUpdate.stream().map(BibliographicEntity::getId).collect(toSet()));
+    }
+
+    @Transactional
+    public void saveGroupedBibsToDb(Collection<BibliographicEntity> bibliographicEntities) {
+        logger.info("Saving grouped Bibliographic entities to DB . Total size of bibs : {}",bibliographicEntities.size());
+        bibliographicDetailsRepository.saveAll(bibliographicEntities);
+        entityManager.flush();
+        entityManager.clear();
     }
 }

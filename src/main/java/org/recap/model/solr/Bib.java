@@ -43,6 +43,24 @@ public class Bib {
     @Field("Title_subfield_a")
     private String titleSubFieldA;
 
+    @Field("Title_245")
+    private String title245;
+
+    @Field("Title_246")
+    private String title246;
+
+    @Field("Title_130")
+    private String title130;
+
+    @Field("Title_730")
+    private String title730;
+
+    @Field("Title_740")
+    private String title740;
+
+    @Field("Title_830")
+    private String title830;
+
     @Field("Author_display")
     private String authorDisplay;
 
@@ -127,6 +145,9 @@ public class Bib {
     @Field("BibCatalogingStatus")
     private String bibCatalogingStatus;
 
+    @Field("MatchingIdentifier")
+    private String matchingIdentifier;
+
     @Override
     public boolean equals(Object o) {
         if (this == o)
@@ -192,6 +213,8 @@ public class Bib {
             return false;
         if (getBibCatalogingStatus() != null ? !getBibCatalogingStatus().equals(bib.getBibCatalogingStatus()) : bib.getBibCatalogingStatus() != null)
             return false;
+        if (getMatchingIdentifier() != null ? !getMatchingIdentifier().equals(bib.getMatchingIdentifier()) : bib.getMatchingIdentifier() != null)
+            return false;
         return getTitleSort() != null ? getTitleSort().equals(bib.getTitleSort()) : bib.getTitleSort() == null;
 
     }
@@ -227,6 +250,7 @@ public class Bib {
         result = 31 * result + (getLeaderMaterialType() != null ? getLeaderMaterialType().hashCode() : 0);
         result = 31 * result + (getBibCatalogingStatus() != null ? getBibCatalogingStatus().hashCode() : 0);
         result = 31 * result + (getTitleSort() != null ? getTitleSort().hashCode() : 0);
+        result = 31 * result + (getMatchingIdentifier() != null ? getMatchingIdentifier().hashCode() : 0);
         return result;
     }
 }

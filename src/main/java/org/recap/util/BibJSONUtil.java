@@ -291,6 +291,12 @@ public class BibJSONUtil extends MarcUtil {
             bib.setTitleStartsWith(getTitleStartsWith(marcRecord));
             bib.setTitleSort(getTitleSort(marcRecord, bib.getTitleDisplay()));
             bib.setTitleSubFieldA(getDataFieldValue(marcRecord, "245", null, null, "a"));
+            bib.setTitle245(getTitle245(marcRecord));
+            bib.setTitle246(getTitle246(marcRecord));
+            bib.setTitle130(getTitle130(marcRecord));
+            bib.setTitle730(getTitle730(marcRecord));
+            bib.setTitle740(getTitle740(marcRecord));
+            bib.setTitle830(getTitle830(marcRecord));
             bib.setAuthorDisplay(getAuthorDisplayValue(marcRecord));
             bib.setAuthorSearch(getAuthorSearchValue(marcRecord));
             bib.setPublisher(getPublisherValue(marcRecord));
@@ -314,6 +320,7 @@ public class BibJSONUtil extends MarcUtil {
 
             bib.setDeletedBib(bibliographicEntity.isDeleted());
             bib.setBibCatalogingStatus(bibliographicEntity.getCatalogingStatus());
+            bib.setMatchingIdentifier(bibliographicEntity.getMatchingIdentity());
             return bib;
         } catch (Exception e) {
             saveExceptionReportForBib(bibliographicEntity, e);
@@ -473,6 +480,66 @@ public class BibJSONUtil extends MarcUtil {
         StringBuilder titleDisplay = new StringBuilder();
         titleDisplay.append(getDataFieldValueStartsWith(marcRecord, "245", Arrays.asList('a', 'b', 'c', 'f', 'g', 'h', 'k', 'n', 'p', 's')));
         return titleDisplay.toString();
+    }
+
+    /**
+     * This method gets title 245 $a $b from the marc record.
+     *
+     * @param marcRecord the marc record
+     * @return the title 245 $a $b
+     */
+    public String getTitle245(Record marcRecord) {
+        return getDataFieldValueStartsWith(marcRecord, "245", Arrays.asList('a', 'b'));
+    }
+
+    /**
+     * This method gets title 246 $a $b from the marc record.
+     *
+     * @param marcRecord the marc record
+     * @return the title 246 $a $b
+     */
+    public String getTitle246(Record marcRecord) {
+        return getDataFieldValueStartsWith(marcRecord, "246", Arrays.asList('a', 'b'));
+    }
+
+    /**
+     * This method gets title 130 $a from the marc record.
+     *
+     * @param marcRecord the marc record
+     * @return the title 130 $a
+     */
+    public String getTitle130(Record marcRecord) {
+        return getDataFieldValueStartsWith(marcRecord, "130", Arrays.asList('a'));
+    }
+
+    /**
+     * This method gets title 730 $a from the marc record.
+     *
+     * @param marcRecord the marc record
+     * @return the title 730 $a
+     */
+    public String getTitle730(Record marcRecord) {
+        return getDataFieldValueStartsWith(marcRecord, "730", Arrays.asList('a'));
+    }
+
+    /**
+     * This method gets title 740 $a from the marc record.
+     *
+     * @param marcRecord the marc record
+     * @return the title 740 $a
+     */
+    public String getTitle740(Record marcRecord) {
+        return getDataFieldValueStartsWith(marcRecord, "740", Arrays.asList('a'));
+    }
+
+    /**
+     * This method gets title 830 $a from the marc record.
+     *
+     * @param marcRecord the marc record
+     * @return the title 830 $a
+     */
+    public String getTitle830(Record marcRecord) {
+        return getDataFieldValueStartsWith(marcRecord, "830", Arrays.asList('a'));
     }
 
     /**

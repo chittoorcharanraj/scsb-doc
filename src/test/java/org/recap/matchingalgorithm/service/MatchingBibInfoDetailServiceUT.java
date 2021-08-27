@@ -6,11 +6,10 @@ import org.mockito.Mockito;
 import org.recap.BaseTestCaseUT;
 import org.recap.ScsbCommonConstants;
 import org.recap.ScsbConstants;
+import org.recap.model.jpa.MatchingAlgorithmReportDataEntity;
 import org.recap.model.jpa.MatchingBibInfoDetail;
 import org.recap.model.jpa.ReportDataEntity;
-import org.recap.repository.jpa.MatchingBibInfoDetailRepository;
-import org.recap.repository.jpa.ReportDataDetailsRepository;
-import org.recap.repository.jpa.ReportDetailRepository;
+import org.recap.repository.jpa.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -37,13 +36,13 @@ public class MatchingBibInfoDetailServiceUT extends BaseTestCaseUT {
     private MatchingBibInfoDetailService matchingBibInfoDetailService;
 
     @Mock
-    private ReportDetailRepository reportDetailRepository;
+    private MatchingAlgorithmReportDetailRepository reportDetailRepository;
 
     @Mock
     private MatchingBibInfoDetailRepository matchingBibInfoDetailRepository;
 
     @Mock
-    private ReportDataDetailsRepository reportDataDetailsRepository;
+    private MatchingAlgorithmReportDataDetailsRepository reportDataDetailsRepository;
 
     private Integer batchSize=1000;
 
@@ -57,7 +56,7 @@ public class MatchingBibInfoDetailServiceUT extends BaseTestCaseUT {
         headerNameList.add(ScsbCommonConstants.BIB_ID);
         headerNameList.add(ScsbCommonConstants.OWNING_INSTITUTION);
         headerNameList.add(ScsbCommonConstants.OWNING_INSTITUTION_BIB_ID);
-        List<ReportDataEntity> reportDataEntityList = new ArrayList<>();
+        List<MatchingAlgorithmReportDataEntity> reportDataEntityList = new ArrayList<>();
         reportDataEntityList.add(0,getReportDataEntity("1","BibId","1"));
         reportDataEntityList.add(1,getReportDataEntity("1","OwningInstitution","1"));
         reportDataEntityList.add(2,getReportDataEntity("1","OwningInstitutionBibId","Ad4654564"));
@@ -68,16 +67,16 @@ public class MatchingBibInfoDetailServiceUT extends BaseTestCaseUT {
         int pageNum = 0;
         int count = 0;
         int matchingCount = batchSize;
-        Mockito.when(matchingBibInfoDetailService.getReportDetailRepository()).thenReturn(reportDetailRepository);
-        Mockito.when(matchingBibInfoDetailService.getReportDataDetailsRepository()).thenReturn(reportDataDetailsRepository);
+        Mockito.when(matchingBibInfoDetailService.getMatchingAlgorithmReportDetailRepository()).thenReturn(reportDetailRepository);
+        Mockito.when(matchingBibInfoDetailService.getMatchingAlgorithmReportDataDetailsRepository()).thenReturn(reportDataDetailsRepository);
         Mockito.when(matchingBibInfoDetailService.getMatchingBibInfoDetailRepository()).thenReturn(matchingBibInfoDetailRepository);
         Mockito.when(matchingBibInfoDetailService.getBatchSize()).thenReturn(batchSize);
         Mockito.when(matchingBibInfoDetailService.getPageCount(matchingCount,batchSize)).thenCallRealMethod();
-        Mockito.when(matchingBibInfoDetailService.getReportDetailRepository().getCountByType(typeList)).thenReturn(batchSize);
-        Mockito.when(matchingBibInfoDetailService.getReportDetailRepository().getCountByTypeAndFileNameAndDateRange(typeList, ScsbCommonConstants.ONGOING_MATCHING_ALGORITHM, fromDate, toDate)).thenReturn(batchSize);
-        Mockito.when(matchingBibInfoDetailService.getReportDetailRepository().getRecordNumByTypeAndFileNameAndDateRange(PageRequest.of(pageNum, batchSize), typeList, ScsbCommonConstants.ONGOING_MATCHING_ALGORITHM, fromDate, toDate)).thenReturn(getRecordNumber());
-        Mockito.when(matchingBibInfoDetailService.getReportDetailRepository().getRecordNumByType(PageRequest.of(count, batchSize),typeList)).thenReturn(getRecordNumber());
-        Mockito.when(matchingBibInfoDetailService.getReportDataDetailsRepository().getRecordsForMatchingBibInfo(Mockito.any(),Mockito.any())).thenReturn(reportDataEntityList);
+        Mockito.when(matchingBibInfoDetailService.getMatchingAlgorithmReportDetailRepository().getCountByType(typeList)).thenReturn(batchSize);
+        Mockito.when(matchingBibInfoDetailService.getMatchingAlgorithmReportDetailRepository().getCountByTypeAndFileNameAndDateRange(typeList, ScsbCommonConstants.ONGOING_MATCHING_ALGORITHM, fromDate, toDate)).thenReturn(batchSize);
+        Mockito.when(matchingBibInfoDetailService.getMatchingAlgorithmReportDetailRepository().getRecordNumByTypeAndFileNameAndDateRange(PageRequest.of(pageNum, batchSize), typeList, ScsbCommonConstants.ONGOING_MATCHING_ALGORITHM, fromDate, toDate)).thenReturn(getRecordNumber());
+        Mockito.when(matchingBibInfoDetailService.getMatchingAlgorithmReportDetailRepository().getRecordNumByType(PageRequest.of(count, batchSize),typeList)).thenReturn(getRecordNumber());
+        Mockito.when(matchingBibInfoDetailService.getMatchingAlgorithmReportDataDetailsRepository().getRecordsForMatchingBibInfo(Mockito.any(),Mockito.any())).thenReturn(reportDataEntityList);
         Mockito.when(matchingBibInfoDetailService.getMatchingBibInfoDetailRepository().findRecordNumByBibIds(Mockito.any())).thenReturn(new ArrayList<Integer>(1));
         Mockito.when(matchingBibInfoDetailService.getMatchingBibInfoDetailRepository().findByRecordNumIn(Mockito.any())).thenReturn(Arrays.asList(matchingBibInfoDetail));
         Mockito.when(matchingBibInfoDetailService.populateMatchingBibInfo(fromDate,toDate)).thenCallRealMethod();
@@ -89,8 +88,8 @@ public class MatchingBibInfoDetailServiceUT extends BaseTestCaseUT {
         assertNotNull(response);
     }
 
-    private ReportDataEntity getReportDataEntity(String num, String name, String value) {
-        ReportDataEntity reportDataEntity = new ReportDataEntity();
+    private MatchingAlgorithmReportDataEntity getReportDataEntity(String num, String name, String value) {
+        MatchingAlgorithmReportDataEntity reportDataEntity = new MatchingAlgorithmReportDataEntity();
         reportDataEntity.setRecordNum(num);
         reportDataEntity.setHeaderName(name);
         reportDataEntity.setHeaderValue(value);
@@ -101,12 +100,12 @@ public class MatchingBibInfoDetailServiceUT extends BaseTestCaseUT {
     public void checkGetterServices(){
         Mockito.when(matchingBibInfoDetailService.getBatchSize()).thenCallRealMethod();
         Mockito.when(matchingBibInfoDetailService.getMatchingBibInfoDetailRepository()).thenCallRealMethod();
-        Mockito.when(matchingBibInfoDetailService.getReportDataDetailsRepository()).thenCallRealMethod();
-        Mockito.when(matchingBibInfoDetailService.getReportDetailRepository()).thenCallRealMethod();
+        Mockito.when(matchingBibInfoDetailService.getMatchingAlgorithmReportDataDetailsRepository()).thenCallRealMethod();
+        Mockito.when(matchingBibInfoDetailService.getMatchingAlgorithmReportDetailRepository()).thenCallRealMethod();
         assertNotEquals(batchSize,matchingBibInfoDetailService.getBatchSize());
         assertNotEquals(matchingBibInfoDetailRepository,matchingBibInfoDetailService.getMatchingBibInfoDetailRepository());
-        assertNotEquals(reportDataDetailsRepository,matchingBibInfoDetailService.getReportDataDetailsRepository());
-        assertNotEquals(reportDetailRepository,matchingBibInfoDetailService.getReportDetailRepository());
+        assertNotEquals(reportDataDetailsRepository,matchingBibInfoDetailService.getMatchingAlgorithmReportDataDetailsRepository());
+        assertNotEquals(reportDetailRepository,matchingBibInfoDetailService.getMatchingAlgorithmReportDetailRepository());
     }
 
     public Page<Integer> getRecordNumber(){

@@ -133,14 +133,12 @@ public class SolrIndexController {
      * Partial index string from UI.
      *
      * @param solrIndexRequest the solr index request
-     * @param result           the result
-     * @param model            the model
      * @return the string
      * @throws Exception the exception
      */
     @ResponseBody
     @PostMapping(value = "/solrIndexer/partialIndex")
-    public String partialIndexDataFromUI(@Valid @ModelAttribute("solrIndexRequest") SolrIndexRequest solrIndexRequest,
+      public String partialIndexDataFromUI(@Valid @ModelAttribute("solrIndexRequest") SolrIndexRequest solrIndexRequest,
                             BindingResult result,
                             Model model) throws Exception {
         return report(partialIndex(solrIndexRequest));

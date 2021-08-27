@@ -42,6 +42,9 @@ public final class SearchRecordsUtil {
     @Autowired
     PropertyUtil propertyUtil;
 
+    private String fieldValue;
+    private String fieldName;
+
     /**
      * Gets DataDumpSolrDocumentRepository object.
      *
@@ -59,6 +62,8 @@ public final class SearchRecordsUtil {
      * @throws Exception the exception
      */
     public List<SearchResultRow> searchRecords(SearchRecordsRequest searchRecordsRequest) throws Exception {
+        this.fieldValue = searchRecordsRequest.getFieldValue();
+        this.fieldName = searchRecordsRequest.getFieldName();
         if (!isEmptySearch(searchRecordsRequest)) {
             if (CollectionUtils.isEmpty(searchRecordsRequest.getOwningInstitutions())) {
                 searchRecordsRequest.setOwningInstitutions(commonUtil.findAllInstitutionCodesExceptSupportInstitution());
@@ -193,6 +198,8 @@ public final class SearchRecordsUtil {
                                 searchItemResultRow.setAvailability(isCirculationFreezeEnabled ? ScsbCommonConstants.NOT_AVAILABLE : item.getAvailabilityDisplay());
                                 searchItemResultRow.setOwningInstitutionHoldingsId(getMatchedOwningInstitutionHoldingsId(bibItem.getHoldingsList(), item.getHoldingsIdList()));
                                 searchItemResultRow.setImsLocation(item.getImsLocation());
+
+                                searchItemResultRow.setItemMatched(validateItemBarcode(item.getBarcode()));
                                 searchItemResultRows.add(searchItemResultRow);
                                 mixedStatus.add(isCirculationFreezeEnabled ? ScsbCommonConstants.NOT_AVAILABLE : item.getAvailabilityDisplay());
                                 searchResultRow.setAvailability(isCirculationFreezeEnabled ? ScsbCommonConstants.NOT_AVAILABLE : item.getAvailabilityDisplay());
@@ -214,6 +221,15 @@ public final class SearchRecordsUtil {
             }
         }
         return searchResultRows;
+    }
+
+    /**
+     *
+     * @param barcode
+     * @return Boolean
+     */
+    private boolean validateItemBarcode(String barcode) {
+        return this.fieldName.equalsIgnoreCase(ScsbCommonConstants.BARCODE) ? this.fieldValue.contains(barcode) : ScsbConstants.BOOLEAN_FALSE;
     }
 
     /**

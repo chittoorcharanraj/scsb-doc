@@ -41,7 +41,7 @@ public class MatchingBibItemIndexExecutorService extends MatchingIndexExecutorSe
      */
     @Override
     public Callable getCallable(String coreName, int pageNum, int docsPerPage, String operationType, Date from, Date to) {
-        return new MatchingBibItemIndexCallable(coreName, pageNum, docsPerPage, bibliographicDetailsRepository, holdingsDetailsRepository, producerTemplate, solrTemplate, operationType, from, to,nonHoldingInstitutionList);
+        return new MatchingBibItemIndexCallable(coreName, pageNum, docsPerPage, bibliographicDetailsRepository, holdingsDetailsRepository, producerTemplate, solrTemplate, operationType, from, to,nonHoldingInstitutionList, solrServerProtocol + solrUrl);
     }
 
     /**

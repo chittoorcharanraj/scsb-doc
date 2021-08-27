@@ -15,6 +15,7 @@ public final class ScsbConstants {
     public static final String TITLE_SUBFIELD_A = "Title_subfield_a";
     public static final String USE_RESTRICTION_DISPLAY = "UseRestriction_display";
     public static final String SUCCESS = "success";
+    public static final String TITLE_MATCHED = "Matched";
     //Camel Queues Constants
     public static final String FS_SUBMIT_COLLECTION_EXCEPTION_REPORT_Q = "scsbactivemq:queue:fsSubmitCollectionExceptionReportQ";
     public static final String FTP_SUBMIT_COLLECTION_EXCEPTION_REPORT_Q = "scsbactivemq:queue:ftpSubmitCollectionExceptionReportQ";
@@ -33,6 +34,7 @@ public final class ScsbConstants {
     public static final String FTP_SERIAL_MVM_REPORT_Q = "scsbactivemq:queue:ftpSerialMvmReportsQ";
     public static final String FTP_MATCHING_SUMMARY_REPORT_Q = "scsbactivemq:queue:ftpMatchingSummaryReportQ";
     public static final String S3_ONGOING_MATCHING_CGD_REPORT_Q = "scsbactivemq:queue:s3OngoingMatchingCGDReportQ";
+    public static final String MATCHING_ALGORITHM_GROUPING_INDEX = "scsbactivemq:queue:matchingAlgorithmGroupIndex";
 
     //Camel Route Id Constants
     public static final String FS_SUBMIT_COLLECTION_REJECTION_REPORT_ID = "fsSubmitCollectionRejectionReport";
@@ -65,6 +67,7 @@ public final class ScsbConstants {
     public static final String CSV_EXTENSION = ".csv";
     public static final String MATCHING_BIB_IDS = "matchingBibIds";
     public static final String MATCHING_REPORTS_SEND_EMAIL = "sendEmailForMatchingReports";
+    public static final String MATCHING_CGD_REPORTS_SEND_EMAIL = "sendEmailForMatchingCGDReports";
     public static final String ACCESSION_REPORTS_SEND_EMAIL = "sendEmailForAccessionReports";
 
     public static final String DATE_FORMAT_FOR_FILE_NAME = "yyyyMMdd_HHmmss";
@@ -102,6 +105,7 @@ public final class ScsbConstants {
     public static final String OWNING_INSTITUTION_ITEM_ID = "OwningInstitutionItemId";
     public static final String BIB_CREATED_DATE = "BibCreatedDate";
     public static final String BIB_LAST_UPDATED_DATE = "BibLastUpdatedDate";
+    public static final String MATCHING_IDENTIFIER = "MatchingIdentifier";
     public static final String DATE = "Date";
     public static final String COLUMN_CREATED_DATE = "CREATED_DATE";
     public static final String ITEM_BARCDE_DOESNOT_EXIST = "Item Barcode doesn't exist in SCSB database.";
@@ -183,6 +187,12 @@ public final class ScsbConstants {
     public static final String BIB_DOC_TYPE = "DocType:Bib";
     public static final String SOLR_BIB_ID = "BibId:";
     public static final String TITLE_DISPLAY = "Title_display";
+    public static final String TITLE_245 = "Title_245";
+    public static final String TITLE_246 = "Title_246";
+    public static final String TITLE_130 = "Title_130";
+    public static final String TITLE_730 = "Title_730";
+    public static final String TITLE_740 = "Title_740";
+    public static final String TITLE_830 = "Title_830";
 
     public static final String EMAIL_FOR = "emailFor";
     public static final String UPDATECGD = "updateCgd";
@@ -223,6 +233,11 @@ public final class ScsbConstants {
     public static final String LOG_EXECUTION_TIME = "Time taken to execute {} : {}";
     public static final String INSTITUTION = "Institution";
     public static final String CGD_ROUND_TRIP_EXCEPTION_MESSAGE = "The reported item is not found";
+    public static final String EXCEPTION_TITLE_MATCH_REPORT = "Exception Occured while pulling records for TitleMatchReports:: {}";
+    public static final String EXCEPTION_TITLE_MATCH_COUNT = "Exception Occured while pulling records for TitleMatchCount:: {} ";
+    public static final String EXCEPTION_TITLE_MATCH_EXPORT = "Exception Occured while pulling records for TitleMatchExportReports:: {}";
+    public static final String SINGLE_MATCH_TITLE_EXCEPTION = "SingleMatch-TitleException";
+    public static final String MATCH_SCORE = "MatchScore";
 
     public static class ServicePath {
         private ServicePath() {}
@@ -290,6 +305,7 @@ public final class ScsbConstants {
     public static final String TOTAL_PAGES = "Total Pages : ";
     public static final String UPDATE_ITEMS_Q = "updateItemsQ";
     public static final String SUBJECT = "subject";
+    public static final String SUBJECT_MESSAGE_FOR_MATCHING_ALGORITHM = "The Reports for Matching Algorithm is available at the s3 location ";
     public static final String SMTPS_PREFIX = "smtps://";
     public static final String SMTPS_USERNAME = "?username=";
     public static final String SMTPS_PASSWORD = "&password=";
@@ -301,6 +317,7 @@ public final class ScsbConstants {
     public static final String MATCHING_ALGORITHM_UPDATE_CGD_MESSAGE = "updateCGDBasedOnMaterialTypes, Match type is Single Match, TileException Found";
 
     public static final String ONGOING_MATCHING_DATE_FORMAT = "yyyy/MM/dd";
+    public static final String ONGOING_MATCHING_DATE_TIME_FORMAT = "dd-MM-yyyy hh:mm";
     public static final String CURRENT_PAGE = "Current Page";
 
     private ScsbConstants(){}

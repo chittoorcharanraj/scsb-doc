@@ -7,6 +7,7 @@ import org.mockito.Mockito;
 import org.recap.BaseTestCaseUT;
 import org.recap.ScsbCommonConstants;
 import org.recap.ScsbConstants;
+import org.recap.executors.BibItemIndexExecutorService;
 import org.recap.model.jpa.ItemEntity;
 import org.recap.model.jpa.MatchingBibEntity;
 import org.recap.model.jpa.MatchingMatchPointsEntity;
@@ -43,6 +44,15 @@ public class MatchingAlgorithmProcessorUT extends BaseTestCaseUT {
     @Mock
     ReportDetailRepository reportDetailRepository;
 
+    @Mock
+    BibItemIndexExecutorService bibItemIndexExecutorService;
+
+    @Test
+    public void matchingAlgorithmGroupIndex() throws Exception {
+        List<Integer> bibIds=new ArrayList<>();
+        bibIds.add(1);
+        matchingAlgorithmProcessor.matchingAlgorithmGroupIndex(bibIds);
+    }
     @Test
     public void updateItemEntityTest() throws Exception {
         Mockito.when(itemDetailsRepository.saveAll(Mockito.anyCollection())).thenReturn(new ArrayList<>());
