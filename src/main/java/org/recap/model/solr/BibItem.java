@@ -110,6 +110,12 @@ public class BibItem {
     @Field("MatchingIdentifier")
     private String matchingIdentifier;
 
+    @Field("MatchScore")
+    private  String mScore;
+
+    @Field("AnomalyFlag")
+    private  Boolean anomalyFlag;
+
     private String root;
 
     private List<Item> items = new ArrayList<>();
