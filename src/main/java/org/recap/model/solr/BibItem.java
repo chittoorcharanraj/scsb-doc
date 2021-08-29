@@ -111,7 +111,7 @@ public class BibItem {
     private String matchingIdentifier;
 
     @Field("MatchScore")
-    private  String mScore;
+    private  Integer mScore;
 
     @Field("AnomalyFlag")
     private  Boolean anomalyFlag;
