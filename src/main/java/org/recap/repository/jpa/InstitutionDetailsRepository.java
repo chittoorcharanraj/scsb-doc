@@ -43,6 +43,14 @@ public interface InstitutionDetailsRepository extends BaseRepository<Institution
     List<String> findAllInstitutionCodesExceptSupportInstitution(@Param("supportInstitution") String supportInstitution);
 
     /**
+     * To get the list of institution codes except support institution.
+     *
+     * @return the institutions
+     */
+    @Query(value = "select INSTITUTION_ID from institution_t where INSTITUTION_CODE != :supportInstitution", nativeQuery = true)
+    List<Integer> findAllInstitutionIdsExceptSupportInstitution(@Param("supportInstitution") String supportInstitution);
+
+    /**
      * To get the list of institution entities except support institution.
      *
      * @return the institutions

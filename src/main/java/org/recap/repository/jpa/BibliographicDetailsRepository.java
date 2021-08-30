@@ -290,4 +290,6 @@ public interface BibliographicDetailsRepository extends BaseRepository<Bibliogra
     @Query(value = "SELECT BIB FROM BibliographicEntity as BIB WHERE BIB.lastUpdatedDate BETWEEN :lastUpdatedDateFrom and :lastUpdatedDateTo")
     Page<BibliographicEntity> getBibsBasedOnDateRange(Pageable pageable, @Param("lastUpdatedDateFrom") Date lastUpdatedDateFrom, @Param("lastUpdatedDateTo") Date lastUpdatedDateTo);
 
+    List<BibliographicEntity> findByOwningInstitutionIdInAndIdIn(List<Integer> owningInstitutionIds,List<Integer> bibliographicIds);
+
 }

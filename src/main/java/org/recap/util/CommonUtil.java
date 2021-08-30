@@ -400,6 +400,14 @@ public class CommonUtil {
     }
 
     /**
+     * Get All Institution Ids Except Support Institution
+     * @return institutionIds
+     */
+    public List<Integer> findAllInstitutionIdsExceptSupportInstitution() {
+        return institutionDetailsRepository.findAllInstitutionIdsExceptSupportInstitution(supportInstitution);
+    }
+
+    /**
      * Get All Institution Codes Except Support Institution
      * @return institutionCodes
      */
