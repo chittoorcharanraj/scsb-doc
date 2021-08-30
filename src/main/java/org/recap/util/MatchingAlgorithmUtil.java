@@ -933,7 +933,7 @@ public class MatchingAlgorithmUtil {
         StopWatch stopWatch=new StopWatch();
         stopWatch.start();
         logger.info("Fetching Bibs for Matching");
-        List<BibliographicEntity> bibliographicEntityList = bibliographicDetailsRepository.findByIdIn(bibIdsList.stream().collect(toList()));
+        List<BibliographicEntity> bibliographicEntityList = bibliographicDetailsRepository.findByOwningInstitutionIdInAndIdIn(commonUtil.findAllInstitutionIdsExceptSupportInstitution(),bibIdsList.stream().collect(toList()));
         stopWatch.stop();
         logger.info("Totat time taken to fetch {} bibs is {}",bibliographicEntityList.size(),stopWatch.getTotalTimeSeconds());
         Map<Integer, BibliographicEntity> bibliographicEntityMap = bibliographicEntityList.stream().collect(Collectors.toMap(BibliographicEntity::getId, Function.identity()));
