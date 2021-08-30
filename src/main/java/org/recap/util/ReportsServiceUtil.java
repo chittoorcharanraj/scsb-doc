@@ -507,8 +507,8 @@ public class ReportsServiceUtil {
         else
             titleMatchedReports.setIssn("");
         if (bibItem.getMScore() != null) {
-            titleMatchedReports.setMScore(bibItem.getMScore());
-            titleMatchedReports.setMScoreTranslated(String.valueOf(msMap.get(Integer.parseInt(bibItem.getMScore()))));
+            titleMatchedReports.setMScore(String.valueOf(bibItem.getMScore()));
+            titleMatchedReports.setMScoreTranslated(String.valueOf(msMap.get(bibItem.getMScore())));
         } else {
             titleMatchedReports.setMScore("");
             titleMatchedReports.setMScoreTranslated("");
@@ -522,7 +522,12 @@ public class ReportsServiceUtil {
             titleMatchedReports.setCgd(item.getCollectionGroupDesignation());
         }
         if (!isReportExport) {
-            titleMatchedReports.setItemDetails(setItemDetails(bibItem));
+            if (bibItem.getItems().size() == 1) {
+                titleMatchedReports.setItemBarcode(bibItem.getItems().get(0).getBarcode());
+                titleMatchedReports.setCgd(bibItem.getItems().get(0).getCollectionGroupDesignation());
+            } else {
+                titleMatchedReports.setItemDetails(setItemDetails(bibItem));
+            }
         }
         titleMatchedReportsList.add(titleMatchedReports);
         return titleMatchedReportsList;
