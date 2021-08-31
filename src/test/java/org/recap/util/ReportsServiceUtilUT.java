@@ -24,12 +24,15 @@ import org.recap.BaseTestCaseUT4;
 import org.recap.ScsbCommonConstants;
 import org.recap.ScsbConstants;
 import org.recap.model.jpa.DeaccessionItemChangeLog;
+import org.recap.model.jpa.MatchingScoreTranslationEntity;
 import org.recap.model.reports.ReportsRequest;
 import org.recap.model.reports.ReportsResponse;
 import org.recap.model.reports.TitleMatchedReport;
 import org.recap.model.search.DeaccessionItemResultsRow;
+import org.recap.model.solr.BibItem;
 import org.recap.model.solr.Item;
 import org.recap.repository.jpa.DeaccesionItemChangeLogDetailsRepository;
+import org.recap.repository.jpa.MatchingScoreTranslationRepository;
 import org.recap.repository.solr.impl.BibSolrDocumentRepositoryImpl;
 import org.springframework.data.solr.core.SolrTemplate;
 import org.springframework.test.util.ReflectionTestUtils;
@@ -81,6 +84,18 @@ public class ReportsServiceUtilUT extends BaseTestCaseUT4 {
     @Mock
     BibSolrDocumentRepositoryImpl bibSolrDocumentRepository;
 
+    @Mock
+    MatchingScoreTranslationRepository matchingScoreTranslationRepository;
+
+    @Mock
+    MatchingScoreTranslationEntity matchingScoreTranslationEntity;
+
+    @Mock
+    BibItem bibItem;
+
+    @Mock
+    Item item;
+
     @Before
     public void setup()throws Exception{
         MockitoAnnotations.initMocks(this);
@@ -121,8 +136,37 @@ public class ReportsServiceUtilUT extends BaseTestCaseUT4 {
         ReflectionTestUtils.setField(bibSolrDocumentRepository,"commonUtil",commonUtil);
         Mockito.when(commonUtil.getBibItemFromSolrFieldNames(Mockito.any(),Mockito.anyList(),Mockito.any())).thenCallRealMethod();
         Mockito.doCallRealMethod().when(bibSolrDocumentRepository).populateBibItem(Mockito.any(),Mockito.any());
+        List<MatchingScoreTranslationEntity> msList=new ArrayList<>();
+        msList.add(matchingScoreTranslationEntity);
+        Mockito.when(matchingScoreTranslationEntity.getDecMaScore()).thenReturn(1);
+        Mockito.when(matchingScoreTranslationEntity.getStringMaScore()).thenReturn("1");
+        Mockito.when(matchingScoreTranslationRepository.findAll()).thenReturn(msList);
         TitleMatchedReport titleMatchCount=reportsServiceUtil.titleMatchReports(titleMatchedReport);
         assertNotNull(titleMatchCount);
+    }
+
+    @Test
+    public void prepareTitleReport(){
+        Map<Integer, String> msMap=new HashMap<>();
+        Mockito.when(bibItem.getMatchingIdentifier()).thenReturn("match");
+        Mockito.when(bibItem.getLccn()).thenReturn("lccn");
+        Mockito.when(bibItem.getTitle()).thenReturn("title");
+        Mockito.when(bibItem.getIsbn()).thenReturn(Arrays.asList("ISBN"));
+        Mockito.when(bibItem.getIssn()).thenReturn(Arrays.asList("ISSN"));
+        List<Item> items=new ArrayList<>();
+        items.add(item);
+        Mockito.when(item.getBarcode()).thenReturn("123456");
+        Mockito.when(bibItem.getBarcode()).thenReturn("123456");
+        Mockito.when(bibItem.getItems()).thenReturn(items);
+        List<String> cgd=new ArrayList<>();
+        cgd.add(ScsbConstants.SHARED);
+        ReflectionTestUtils.invokeMethod(reportsServiceUtil,"prepareTitleReport",bibItem,item,msMap,false);
+        ReflectionTestUtils.invokeMethod(reportsServiceUtil,"getBarcodes",bibItem);
+        ReflectionTestUtils.invokeMethod(reportsServiceUtil,"getBarcodesExport",bibItem);
+        ReflectionTestUtils.invokeMethod(reportsServiceUtil,"setItemDetails",bibItem);
+        ReflectionTestUtils.invokeMethod(reportsServiceUtil,"setCGD",bibItem);
+        ReflectionTestUtils.invokeMethod(reportsServiceUtil,"setDataToTitleMatchReports",bibItem,msMap);
+        assertNotNull(items);
     }
 
     @Test
@@ -233,7 +277,7 @@ public class ReportsServiceUtilUT extends BaseTestCaseUT4 {
     public void populateCGDItemCounts() throws Exception {
         ReportsRequest reportsRequest = new ReportsRequest();
         reportsRequest.setOwningInstitutions(Arrays.asList("CUL", "PUL", "NYPL"));
-        reportsRequest.setCollectionGroupDesignations(Arrays.asList("Private", "Open", "Shared"));
+        reportsRequest.setCollectionGroupDesignations(Arrays.asList(ScsbCommonConstants.REPORTS_PRIVATE,ScsbCommonConstants.REPORTS_OPEN,ScsbCommonConstants.REPORTS_SHARED,ScsbCommonConstants.REPORTS_COMMITTED,ScsbCommonConstants.REPORTS_UNCOMMITTABLE));
         SolrQuery query=new SolrQuery("testquery");
         Mockito.when(solrQueryBuilder.buildSolrQueryForCGDReports(Mockito.anyString(),Mockito.anyString())).thenReturn(query);
         Mockito.when(solrQueryBuilder.buildSolrQueryForDeaccesionReportInformation(Mockito.any(),Mockito.anyString(),Mockito.anyBoolean())).thenReturn(query);
