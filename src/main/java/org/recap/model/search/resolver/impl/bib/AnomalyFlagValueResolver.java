@@ -9,11 +9,11 @@ import org.recap.model.solr.BibItem;
 public class AnomalyFlagValueResolver implements BibValueResolver {
     @Override
     public Boolean isInterested(String field) {
-        return "AnomalyFlag".equalsIgnoreCase(field);
+        return "AnamolyFlag".equalsIgnoreCase(field);
     }
 
     @Override
     public void setValue(BibItem bibItem, Object value) {
-        bibItem.setAnomalyFlag((Boolean) value);
+        bibItem.setAnamolyFlag((Boolean) value);
     }
 }

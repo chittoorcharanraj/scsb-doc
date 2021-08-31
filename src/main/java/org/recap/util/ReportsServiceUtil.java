@@ -26,7 +26,6 @@ import org.recap.model.reports.TitleMatchedReport;
 import org.recap.model.reports.TitleMatchedReports;
 import org.recap.model.search.DeaccessionItemResultsRow;
 import org.recap.model.search.IncompleteReportResultsRow;
-import org.recap.model.solr.Bib;
 import org.recap.model.solr.BibItem;
 import org.recap.model.solr.Item;
 import org.recap.repository.jpa.DeaccesionItemChangeLogDetailsRepository;
@@ -46,11 +45,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.ListIterator;
 import java.util.Map;
 import java.util.TimeZone;
-
-import static org.apache.camel.component.mail.SearchTermBuilder.Op.*;
 
 /**
  * Created by rajeshbabuk on 13/1/17.
@@ -506,17 +502,17 @@ public class ReportsServiceUtil {
             titleMatchedReports.setIssn(String.join(",", bibItem.getIssn()));
         else
             titleMatchedReports.setIssn("");
-        if (bibItem.getMScore() != null) {
-            titleMatchedReports.setMScore(String.valueOf(bibItem.getMScore()));
-            titleMatchedReports.setMScoreTranslated(String.valueOf(msMap.get(bibItem.getMScore())));
+        if (bibItem.getMatchScore() != null) {
+            titleMatchedReports.setMatchScore(String.valueOf(bibItem.getMatchScore()));
+            titleMatchedReports.setMatchScoreTranslated(String.valueOf(msMap.get(bibItem.getMatchScore())));
         } else {
-            titleMatchedReports.setMScore("");
-            titleMatchedReports.setMScoreTranslated("");
+            titleMatchedReports.setMatchScore("");
+            titleMatchedReports.setMatchScoreTranslated("");
         }
-        if (bibItem.getAnomalyFlag() != null)
-            titleMatchedReports.setAnomalyFlag(String.valueOf(bibItem.getAnomalyFlag() ? 1 : 0));
+        if (bibItem.getAnamolyFlag() != null)
+            titleMatchedReports.setAnamolyFlag(String.valueOf(bibItem.getAnamolyFlag() ? 1 : 0));
         else
-            titleMatchedReports.setAnomalyFlag("");
+            titleMatchedReports.setAnamolyFlag("");
         if(item !=null) {
             titleMatchedReports.setItemBarcode(item.getBarcode());
             titleMatchedReports.setCgd(item.getCollectionGroupDesignation());
