@@ -14,6 +14,6 @@ public class MatchScoreValueResolver implements BibValueResolver {
 
     @Override
     public void setValue(BibItem bibItem, Object value) {
-        bibItem.setMScore((Integer) value);
+        bibItem.setMatchScore((Integer) value);
     }
 }
