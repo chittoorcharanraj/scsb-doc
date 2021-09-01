@@ -491,15 +491,15 @@ public class ReportsServiceUtil {
         if (bibItem.getTitle() != null)
             titleMatchedReports.setTitle(bibItem.getTitle());
         if (bibItem.getOclcNumber() != null)
-            titleMatchedReports.setOclc(String.join(",", bibItem.getOclcNumber()));
+            titleMatchedReports.setOclc(String.join(", ", bibItem.getOclcNumber()));
         else
             titleMatchedReports.setOclc("");
         if (bibItem.getIsbn() != null)
-            titleMatchedReports.setIsbn(String.join(",", bibItem.getIsbn()));
+            titleMatchedReports.setIsbn(String.join(", ", bibItem.getIsbn()));
         else
             titleMatchedReports.setIsbn("");
         if (bibItem.getIssn() != null)
-            titleMatchedReports.setIssn(String.join(",", bibItem.getIssn()));
+            titleMatchedReports.setIssn(String.join(", ", bibItem.getIssn()));
         else
             titleMatchedReports.setIssn("");
         if (bibItem.getMatchScore() != null) {
