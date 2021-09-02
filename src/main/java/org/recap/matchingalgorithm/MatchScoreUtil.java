@@ -1,6 +1,7 @@
 package org.recap.matchingalgorithm;
 
 import lombok.experimental.UtilityClass;
+import org.recap.ScsbCommonConstants;
 
 @UtilityClass
 public class MatchScoreUtil {
@@ -12,15 +13,15 @@ public class MatchScoreUtil {
      * order : ISBN,OCLC,LCCN,ISSN,Title Bit
      * Ex : Match in  ISBN and OCLC is 11000 and equivalent match score is 24
      */
-    public static final Integer OCLC_ISBN_SCORE =24;
+    public static final Integer ISSN_LCCN_SCORE =6;
     public static final Integer OCLC_ISSN_SCORE =10;
     public static final Integer OCLC_LCCN_SCORE =12;
     public static final Integer ISBN_ISSN_SCORE =18;
     public static final Integer ISBN_LCCN_SCORE =20;
-    public static final Integer ISSN_LCCN_SCORE =6;
+    public static final Integer OCLC_ISBN_SCORE =24;
+    public static final Integer ISSN_SCORE = 2;
+    public static final Integer LCCN_SCORE = 4;
     public static final Integer OCLC_SCORE = 8;
-    public static final Integer ISSN_SCORE = 10;
-    public static final Integer LCCN_SCORE = 12;
     public static final Integer ISBN_SCORE = 16;
 
     public static int convertBinaryToDecimal(String binaryString) {
@@ -53,9 +54,27 @@ public class MatchScoreUtil {
         return String.valueOf(matchScore);
     }
 
+    public static Integer calculateMatchScore(Integer m1, Integer m2) {
+        String matchScoreBinary1 = convertDecimalToBinary(m1);
+        String matchScoreBinary2 = convertDecimalToBinary(m2);
+        String binaryScore = MatchScoreUtil.calculateMatchScore(matchScoreBinary1, matchScoreBinary2);
+        return convertBinaryToDecimal(binaryScore);
+    }
+
     public static Integer getMatchScoreForSingleMatchAndTitle(Integer singleMatchScore) {
         StringBuilder stringBuilder = new StringBuilder(convertDecimalToBinary(singleMatchScore));
         stringBuilder.setCharAt(4,'1');
         return convertBinaryToDecimal(stringBuilder.toString());
     }
+
+    public static Integer getMatchScoreForMatchPoint(String matchPoint){
+        switch (matchPoint){
+            case ScsbCommonConstants.MATCH_POINT_FIELD_OCLC: return OCLC_SCORE;
+            case ScsbCommonConstants.MATCH_POINT_FIELD_ISBN: return ISBN_SCORE;
+            case ScsbCommonConstants.MATCH_POINT_FIELD_LCCN: return LCCN_SCORE;
+            case ScsbCommonConstants.MATCH_POINT_FIELD_ISSN: return ISSN_SCORE;
+            default:return 0;
+        }
+    }
+
 }

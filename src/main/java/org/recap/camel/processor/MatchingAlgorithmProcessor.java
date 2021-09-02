@@ -114,12 +114,12 @@ public class MatchingAlgorithmProcessor {
         SolrIndexRequest solrIndexRequest=new SolrIndexRequest();
         solrIndexRequest.setNumberOfThreads(5);
         solrIndexRequest.setNumberOfDocs(1000);
-        solrIndexRequest.setCommitInterval(1000);
+        solrIndexRequest.setCommitInterval(10000);
         solrIndexRequest.setPartialIndexType("BibIdList");
-        logger.info("BibIds to index : {}",bibIds);
+        logger.info("Total number of BibIds to index from queue: {}",bibIds);
         String collect = bibIds.stream().map(bibId -> String.valueOf(bibId)).collect(Collectors.joining(","));
         solrIndexRequest.setBibIds(collect);
         Integer bibsIndexed = bibItemIndexExecutorService.partialIndex(solrIndexRequest);
-        logger.info("Status for indexing grouped Bib Ids : {}",bibsIndexed);
+        logger.info("Completed indexing {} grouped Bib Ids",bibsIndexed);
     }
 }

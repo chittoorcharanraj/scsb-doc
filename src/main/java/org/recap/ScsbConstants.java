@@ -159,7 +159,7 @@ public final class ScsbConstants {
     public static final String ITEM_ALREADY_ACCESSIONED = "Item already accessioned - Existing item details : ";
 
     public static final String STATUS_DONE="Status  : Done";
-    public static final String TOTAL_TIME_TAKEN="Total Time Taken ";
+    public static final String TOTAL_TIME_TAKEN="**** Total Time Taken ";
     public static final String STATUS_FAILED="Status : Failed";
     public static final String PUL_MATCHING_COUNT="pulMatchingCount";
     public static final String CUL_MATCHING_COUNT="culMatchingCount";

@@ -2,6 +2,7 @@ package org.recap.util;
 
 import org.apache.commons.beanutils.PropertyUtilsBean;
 import org.recap.ScsbCommonConstants;
+import org.recap.model.jpa.MatchingAlgorithmReportDataEntity;
 import org.recap.model.jpa.ReportDataEntity;
 import org.recap.model.matchingreports.TitleExceptionReport;
 import org.slf4j.Logger;
@@ -27,15 +28,15 @@ public class OngoingMatchingAlgorithmReportGenerator {
      * @param reportDataEntities                      the list of report data entity
      * @return the title exception report
      */
-    public TitleExceptionReport prepareTitleExceptionReportRecord(List<ReportDataEntity> reportDataEntities) {
+    public TitleExceptionReport prepareTitleExceptionReportRecord(List<MatchingAlgorithmReportDataEntity> reportDataEntities) {
 
         TitleExceptionReport titleExceptionReport = new TitleExceptionReport();
         String headerName = null;
         Predicate<String> checkForMatchPoints = p -> ScsbCommonConstants.MATCH_POINT_FIELD_OCLC.contains(p) || p.equals(ScsbCommonConstants.MATCH_POINT_FIELD_ISBN) ||
                 p.equals(ScsbCommonConstants.MATCH_POINT_FIELD_ISSN) || p.equals(ScsbCommonConstants.MATCH_POINT_FIELD_LCCN);
 
-        for (Iterator<ReportDataEntity> iterator = reportDataEntities.iterator(); iterator.hasNext(); ) {
-            ReportDataEntity report =  iterator.next();
+        for (Iterator<MatchingAlgorithmReportDataEntity> iterator = reportDataEntities.iterator(); iterator.hasNext(); ) {
+            MatchingAlgorithmReportDataEntity report =  iterator.next();
             if(checkForMatchPoints.test(report.getHeaderName())){
                 headerName = report.getHeaderName().toLowerCase();
             }else{

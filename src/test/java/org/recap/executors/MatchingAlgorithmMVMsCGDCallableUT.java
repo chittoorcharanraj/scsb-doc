@@ -91,7 +91,7 @@ public class MatchingAlgorithmMVMsCGDCallableUT extends BaseTestCaseUT4 {
     public void testMatchingAlgorithmMVMsCGDCallable() throws Exception {
         Map institutionMap = new HashMap();
         MatchingAlgorithmMVMsCGDCallable matchingAlgorithmMVMsCGDCallable = new MatchingAlgorithmMVMsCGDCallable(reportDataDetailsRepository, mockedBibliographicDetailsRepository,pageNum,batchSize,producerTemplate,
-                collectionGroupMap,institutionMap,itemChangeLogDetailsRepository,collectionGroupDetailsRepository,itemDetailsRepository,institutionDetailsRepository);
+                collectionGroupMap,institutionMap,itemChangeLogDetailsRepository,collectionGroupDetailsRepository,itemDetailsRepository,institutionDetailsRepository,Arrays.asList("NYPL"));
         Object object = matchingAlgorithmMVMsCGDCallable.call();
         assertEquals(1,collectionGroupId);
         BibliographicEntity afterUpdate = mockedBibliographicDetailsRepository.findById(bibliographicEntity.getId()).orElse(null);

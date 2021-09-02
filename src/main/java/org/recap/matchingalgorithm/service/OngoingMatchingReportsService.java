@@ -13,14 +13,14 @@ import org.recap.PropertyKeyConstants;
 import org.recap.ScsbCommonConstants;
 import org.recap.ScsbConstants;
 import org.recap.matchingalgorithm.MatchingCounter;
-import org.recap.model.jpa.ReportDataEntity;
-import org.recap.model.jpa.ReportEntity;
+import org.recap.model.jpa.MatchingAlgorithmReportDataEntity;
+import org.recap.model.jpa.MatchingAlgorithmReportEntity;
 import org.recap.model.matchingreports.MatchingSerialAndMVMReports;
 import org.recap.model.matchingreports.MatchingSummaryReport;
 import org.recap.model.matchingreports.TitleExceptionReport;
 import org.recap.model.search.SearchRecordsRequest;
 import org.recap.repository.jpa.InstitutionDetailsRepository;
-import org.recap.repository.jpa.ReportDetailRepository;
+import org.recap.repository.jpa.MatchingAlgorithmReportDetailRepository;
 import org.recap.util.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,7 +53,7 @@ public class OngoingMatchingReportsService {
     private static final Logger logger= LoggerFactory.getLogger(OngoingMatchingReportsService.class);
 
     @Autowired
-    private ReportDetailRepository reportDetailRepository;
+    private MatchingAlgorithmReportDetailRepository matchingAlgorithmReportDetailRepository;
 
     @Autowired
     private DateUtil dateUtil;
@@ -98,8 +98,8 @@ public class OngoingMatchingReportsService {
         return logger;
     }
 
-    public ReportDetailRepository getReportDetailRepository() {
-        return reportDetailRepository;
+    public MatchingAlgorithmReportDetailRepository getMatchingAlgorithmReportDetailRepository() {
+        return matchingAlgorithmReportDetailRepository;
     }
 
     public DateUtil getDateUtil() {
@@ -142,14 +142,14 @@ public class OngoingMatchingReportsService {
      * @return the string
      */
     public String generateTitleExceptionReport(Date createdDate, Integer batchSize) {
-        Page<ReportEntity> reportEntityPage = getReportDetailRepository().findByFileAndTypeAndDateRangeWithPaging(PageRequest.of(0, batchSize), ScsbCommonConstants.ONGOING_MATCHING_ALGORITHM, ScsbConstants.TITLE_EXCEPTION_TYPE,
+        Page<MatchingAlgorithmReportEntity> reportEntityPage = getMatchingAlgorithmReportDetailRepository().findByFileAndTypeAndDateRangeWithPaging(PageRequest.of(0, batchSize), ScsbCommonConstants.ONGOING_MATCHING_ALGORITHM, ScsbConstants.TITLE_EXCEPTION_TYPE,
                 getDateUtil().getFromDate(createdDate), getDateUtil().getToDate(createdDate));
         int totalPages = reportEntityPage.getTotalPages();
         List<TitleExceptionReport> titleExceptionReports = new ArrayList<>();
         int maxTitleCount = 0;
         maxTitleCount = getTitleExceptionReport(reportEntityPage.getContent(), titleExceptionReports, maxTitleCount);
         for(int pageNum=1; pageNum<totalPages; pageNum++) {
-            reportEntityPage = getReportDetailRepository().findByFileAndTypeAndDateRangeWithPaging(PageRequest.of(pageNum, batchSize), ScsbCommonConstants.ONGOING_MATCHING_ALGORITHM, ScsbConstants.TITLE_EXCEPTION_TYPE,
+            reportEntityPage = getMatchingAlgorithmReportDetailRepository().findByFileAndTypeAndDateRangeWithPaging(PageRequest.of(pageNum, batchSize), ScsbCommonConstants.ONGOING_MATCHING_ALGORITHM, ScsbConstants.TITLE_EXCEPTION_TYPE,
                     getDateUtil().getFromDate(createdDate), getDateUtil().getToDate(createdDate));
             maxTitleCount = getTitleExceptionReport(reportEntityPage.getContent(), titleExceptionReports, maxTitleCount);
         }
@@ -169,12 +169,12 @@ public class OngoingMatchingReportsService {
     }
 
 
-    private int getTitleExceptionReport(List<ReportEntity> reportEntities, List<TitleExceptionReport> titleExceptionReports, int maxTitleCount) {
+    private int getTitleExceptionReport(List<MatchingAlgorithmReportEntity> reportEntities, List<TitleExceptionReport> titleExceptionReports, int maxTitleCount) {
         if(CollectionUtils.isNotEmpty(reportEntities)) {
-            for(ReportEntity reportEntity : reportEntities) {
-                List<ReportDataEntity> reportDataEntities = new ArrayList<>();
+            for(MatchingAlgorithmReportEntity reportEntity : reportEntities) {
+                List<MatchingAlgorithmReportDataEntity> reportDataEntities = new ArrayList<>();
                 List<String> titleList = new ArrayList<>();
-                for(ReportDataEntity reportDataEntity : reportEntity.getReportDataEntities()) {
+                for(MatchingAlgorithmReportDataEntity reportDataEntity : reportEntity.getReportDataEntities()) {
                     String headerName = reportDataEntity.getHeaderName();
                     String headerValue = reportDataEntity.getHeaderValue();
                     if(headerName.contains("Title")) {

@@ -5,6 +5,7 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.solr.client.solrj.SolrServerException;
+import org.recap.PropertyKeyConstants;
 import org.recap.ScsbCommonConstants;
 import org.recap.ScsbConstants;
 import org.recap.executors.SaveMatchingBibsCallable;
@@ -19,6 +20,7 @@ import org.recap.util.SolrQueryBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.solr.core.SolrTemplate;
@@ -88,6 +90,9 @@ public class MatchingAlgorithmHelperService {
 
     @Autowired
     MatchingAlgorithmReportDataDetailsRepository matchingAlgorithmReportDataDetailsRepository;
+
+    @Value("${" + PropertyKeyConstants.IS_INDEX_GROUPING_MATCHES + "}")
+    Boolean isIndexGrouping;
 
     /**
      * Gets logger.
@@ -460,33 +465,51 @@ public class MatchingAlgorithmHelperService {
     }
 
     public void groupBibsForMonograph(Integer batchSize, Boolean isPendingMatch) {
+        StopWatch stopWatch = new StopWatch();
+        stopWatch.start();
         int totalPagesCount = getTotalPagesCountForMonographs(batchSize, isPendingMatch);
+        logger.info("Starting to group Monograph bibs for {} where total page count is {}",isPendingMatch,totalPagesCount);
         for (int pageNum = 0; pageNum < totalPagesCount + 1; pageNum++) {
             long from = pageNum * Long.valueOf(batchSize);
-            logger.info("Quering report data query for Monograph where page number is : {} from is : {} and to is : {}", pageNum, from, batchSize);
+            logger.info("Quering report data query for Monograph where Total Page count : {} and current page number is : {} from is : {} and to is : {}",totalPagesCount, pageNum, from, batchSize);
             Optional<List<MatchingAlgorithmReportDataEntity>> reportDataEntities = getMonographDataEntitiesFromDB(batchSize, isPendingMatch, from);
             reportDataEntities.ifPresent(this::groupBibsAndAssignMatchScore);
         }
+        stopWatch.stop();
+        logger.info("Completed to group Monograph bibs for {} ",isPendingMatch);
+        logger.info(ScsbConstants.TOTAL_TIME_TAKEN + " to group Monograph bibs : " + stopWatch.getTotalTimeSeconds());
     }
 
     public void groupBibsForMVMs(Integer batchSize) {
+        StopWatch stopWatch = new StopWatch();
+        stopWatch.start();
         int totalPagesCount = getTotalPagesCountForMVMs(batchSize);
+        logger.info("Starting to group MVM bibs where total page count is {}",totalPagesCount);
         for (int pageNum = 0; pageNum < totalPagesCount + 1; pageNum++) {
             long from = pageNum * Long.valueOf(batchSize);
-            logger.info("Quering report data query for MVMs where page number is : {} from is : {} and to is : {}", pageNum, from, batchSize);
+            logger.info("Quering report data query for MVMs where Total Page count : {} and current page number is : {} from is : {} and to is : {}",totalPagesCount, pageNum, from, batchSize);
             Optional<List<MatchingAlgorithmReportDataEntity>> reportDataEntities = getMVMReportDataEntitiesFromDB(batchSize, from);
             reportDataEntities.ifPresent(this::groupBibsAndAssignMatchScore);
         }
+        stopWatch.stop();
+        logger.info("Completed to group MVM bibs");
+        logger.info(ScsbConstants.TOTAL_TIME_TAKEN + " to group MVM bibs : " + stopWatch.getTotalTimeSeconds());
     }
 
     public void groupForSerialBibs(Integer batchSize) {
+        StopWatch stopWatch = new StopWatch();
+        stopWatch.start();
         int totalPagesCount = getTotalPagesCountForSerialBibs(batchSize);
+        logger.info("Starting to group Serial bibs where total page count is {}",totalPagesCount);
         for (int pageNum = 0; pageNum < totalPagesCount + 1; pageNum++) {
             long from = pageNum * Long.valueOf(batchSize);
-            logger.info("Quering report data query for Serials where page number is : {} from is : {} and to is : {}", pageNum, from, batchSize);
+            logger.info("Quering report data query for Serials where Total Page count : {} and current page number is : {} from is : {} and to is : {}",totalPagesCount, pageNum, from, batchSize);
             Optional<List<MatchingAlgorithmReportDataEntity>> reportDataEntities = getSerialReportDataEntitiesFromDB(batchSize, from);
             reportDataEntities.ifPresent(this::groupBibsAndAssignMatchScore);
         }
+        stopWatch.stop();
+        logger.info("Completed to group Serial bibs");
+        logger.info(ScsbConstants.TOTAL_TIME_TAKEN + " to group Serial bibs : " + stopWatch.getTotalTimeSeconds());
     }
 
     private int getTotalPagesCountForMVMs(Integer batchSize) {
@@ -524,7 +547,9 @@ public class MatchingAlgorithmHelperService {
     private void saveAndIndexGroupedBibs(Map<Integer, BibliographicEntity> bibIdAndBibEntityMap, Set<Integer> bibIdsToIndex) {
         logger.info("Total BibIds grouped to index : {}", bibIdsToIndex.size());
         matchingAlgorithmUtil.saveGroupedBibsToDb(bibIdAndBibEntityMap.values());
-        producerTemplate.sendBody(MATCHING_ALGORITHM_GROUPING_INDEX, bibIdsToIndex);
+        if(isIndexGrouping){
+            producerTemplate.sendBody(MATCHING_ALGORITHM_GROUPING_INDEX, bibIdsToIndex);
+        }
     }
 
     private Map<Integer, BibliographicEntity> getBibIdAndBibliographicEntityMap(List<MatchScoreReport> matchScoreReportList) {

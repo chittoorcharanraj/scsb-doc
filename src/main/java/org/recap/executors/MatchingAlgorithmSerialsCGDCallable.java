@@ -30,10 +30,11 @@ public class MatchingAlgorithmSerialsCGDCallable implements Callable {
     private CollectionGroupDetailsRepository collectionGroupDetailsRepository;
     private ItemDetailsRepository itemDetailsRepository;
     private InstitutionDetailsRepository institutionDetailsRepository;
+    private List<String> nonHoldingInstitutionList;
 
     public MatchingAlgorithmSerialsCGDCallable(MatchingAlgorithmReportDataDetailsRepository matchingAlgorithmReportDataDetailsRepository, BibliographicDetailsRepository bibliographicDetailsRepository, int pageNum, Integer batchSize,
                                                ProducerTemplate producerTemplate, Map collectionGroupMap, Map institutionMap, ItemChangeLogDetailsRepository itemChangeLogDetailsRepository,
-                                               CollectionGroupDetailsRepository collectionGroupDetailsRepository, ItemDetailsRepository itemDetailsRepository, InstitutionDetailsRepository institutionDetailsRepository) {
+                                               CollectionGroupDetailsRepository collectionGroupDetailsRepository, ItemDetailsRepository itemDetailsRepository, InstitutionDetailsRepository institutionDetailsRepository,List<String> nonHoldingInstitutionList) {
         this.matchingAlgorithmReportDataDetailsRepository = matchingAlgorithmReportDataDetailsRepository;
         this.bibliographicDetailsRepository = bibliographicDetailsRepository;
         this.pageNum = pageNum;
@@ -45,6 +46,7 @@ public class MatchingAlgorithmSerialsCGDCallable implements Callable {
         this.collectionGroupDetailsRepository = collectionGroupDetailsRepository;
         this.itemDetailsRepository = itemDetailsRepository;
         this.institutionDetailsRepository = institutionDetailsRepository;
+        this.nonHoldingInstitutionList=nonHoldingInstitutionList;
     }
 
     @Override
@@ -57,7 +59,7 @@ public class MatchingAlgorithmSerialsCGDCallable implements Callable {
             String[] bibIds = bibId.split(",");
             List<Integer> bibIdList = new ArrayList<>();
             MatchingAlgorithmCGDProcessor matchingAlgorithmCGDProcessor = new MatchingAlgorithmCGDProcessor(bibliographicDetailsRepository, producerTemplate, collectionGroupMap,
-                    institutionMap, itemChangeLogDetailsRepository, ScsbConstants.INITIAL_MATCHING_OPERATION_TYPE, collectionGroupDetailsRepository, itemDetailsRepository, institutionDetailsRepository);
+                    institutionMap, itemChangeLogDetailsRepository, ScsbConstants.INITIAL_MATCHING_OPERATION_TYPE, collectionGroupDetailsRepository, itemDetailsRepository, institutionDetailsRepository,nonHoldingInstitutionList);
             for (String id : bibIds) {
                 bibIdList.add(Integer.valueOf(id));
             }

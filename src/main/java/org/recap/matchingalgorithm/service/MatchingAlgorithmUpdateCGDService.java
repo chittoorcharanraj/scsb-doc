@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import org.apache.camel.ProducerTemplate;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.solr.client.solrj.SolrServerException;
+import org.recap.PropertyKeyConstants;
 import org.recap.ScsbCommonConstants;
 import org.recap.ScsbConstants;
 import org.recap.executors.MatchingAlgorithmMVMsCGDCallable;
@@ -18,6 +19,7 @@ import org.recap.util.MatchingAlgorithmUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -64,6 +66,9 @@ public class MatchingAlgorithmUpdateCGDService {
 
     @Autowired
     private CommonUtil commonUtil;
+
+    @Value("${" + PropertyKeyConstants.NONHOLDINGID_INSTITUTION + "}")
+    private List<String> nonHoldingInstitutionList;
 
     /**
      * Gets report data details repository.
@@ -166,7 +171,7 @@ public class MatchingAlgorithmUpdateCGDService {
         logger.info(ScsbConstants.TOTAL_PAGES + "{}" , totalPagesCount);
         for(int pageNum = 0; pageNum < totalPagesCount + 1; pageNum++) {
             Callable callable = new MatchingAlgorithmMonographCGDCallable(getMatchingAlgorithmReportDataDetailsRepository(), getBibliographicDetailsRepository(), pageNum, batchSize, getProducerTemplate(),
-                    getCollectionGroupMap(), getInstitutionEntityMap(), getItemChangeLogDetailsRepository(), getCollectionGroupDetailsRepository(), getItemDetailsRepository(),isPendingMatch,getInstitutionDetailsRepository());
+                    getCollectionGroupMap(), getInstitutionEntityMap(), getItemChangeLogDetailsRepository(), getCollectionGroupDetailsRepository(), getItemDetailsRepository(),isPendingMatch,getInstitutionDetailsRepository(),nonHoldingInstitutionList);
             callables.add(callable);
         }
         Map<String, List<Integer>> unProcessedRecordNumberMap = executeCallables(executor, callables);
@@ -197,7 +202,7 @@ public class MatchingAlgorithmUpdateCGDService {
         logger.info(ScsbConstants.TOTAL_PAGES + "{}" , totalPagesCount);
         for(int pageNum=0; pageNum < totalPagesCount + 1; pageNum++) {
             Callable callable = new MatchingAlgorithmSerialsCGDCallable(getMatchingAlgorithmReportDataDetailsRepository(), getBibliographicDetailsRepository(), pageNum, batchSize, getProducerTemplate(), getCollectionGroupMap(),
-                    getInstitutionEntityMap(), getItemChangeLogDetailsRepository(), getCollectionGroupDetailsRepository(), getItemDetailsRepository(),institutionDetailsRepository);
+                    getInstitutionEntityMap(), getItemChangeLogDetailsRepository(), getCollectionGroupDetailsRepository(), getItemDetailsRepository(),institutionDetailsRepository,nonHoldingInstitutionList);
             callables.add(callable);
         }
         setCGDUpdateSummaryReport(executor, callables, ScsbConstants.MATCHING_SUMMARY_SERIAL);
@@ -223,7 +228,7 @@ public class MatchingAlgorithmUpdateCGDService {
         logger.info(ScsbConstants.TOTAL_PAGES + "{}" , totalPagesCount);
         for(int pageNum=0; pageNum < totalPagesCount + 1; pageNum++) {
             Callable callable = new MatchingAlgorithmMVMsCGDCallable(getMatchingAlgorithmReportDataDetailsRepository(), getBibliographicDetailsRepository(), pageNum, batchSize, getProducerTemplate(), getCollectionGroupMap(),
-                    getInstitutionEntityMap(), getItemChangeLogDetailsRepository(), getCollectionGroupDetailsRepository(), getItemDetailsRepository(),institutionDetailsRepository);
+                    getInstitutionEntityMap(), getItemChangeLogDetailsRepository(), getCollectionGroupDetailsRepository(), getItemDetailsRepository(),institutionDetailsRepository,nonHoldingInstitutionList);
             callables.add(callable);
         }
         setCGDUpdateSummaryReport(executor, callables, ScsbConstants.MATCHING_SUMMARY_MVM);
