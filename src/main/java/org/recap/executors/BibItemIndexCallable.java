@@ -8,12 +8,14 @@ import org.recap.ScsbConstants;
 import org.recap.model.jpa.BibliographicEntity;
 import org.recap.repository.jpa.BibliographicDetailsRepository;
 import org.recap.repository.jpa.HoldingsDetailsRepository;
+import org.recap.util.CommonUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.solr.core.SolrTemplate;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.StopWatch;
 
 import java.io.File;
 import java.util.Date;
@@ -41,6 +43,7 @@ public class BibItemIndexCallable extends CommonCallable implements Callable {
     private String partialIndexType;
     private Map<String, Object> partialIndexMap;
     private List<String> nonHoldingInstitutionList;
+    private CommonUtil commonUtil;
 
     /**
      * This method instantiates a new bib item index callable.
@@ -59,7 +62,7 @@ public class BibItemIndexCallable extends CommonCallable implements Callable {
      * @param partialIndexMap                the partial index map
      */
     public BibItemIndexCallable(String solrURL, String coreName, int pageNum, int docsPerPage, BibliographicDetailsRepository bibliographicDetailsRepository, HoldingsDetailsRepository holdingsDetailsRepository, Integer owningInstitutionId,
-                                Date fromDate, ProducerTemplate producerTemplate, SolrTemplate solrTemplate, String partialIndexType, Map<String, Object> partialIndexMap,List<String> nonHoldingInstitutionList) {
+                                Date fromDate, ProducerTemplate producerTemplate, SolrTemplate solrTemplate, String partialIndexType, Map<String, Object> partialIndexMap,List<String> nonHoldingInstitutionList, CommonUtil commonUtil) {
         this.coreName = coreName;
         this.solrURL = solrURL;
         this.pageNum = pageNum;
@@ -73,6 +76,7 @@ public class BibItemIndexCallable extends CommonCallable implements Callable {
         this.partialIndexType = partialIndexType;
         this.partialIndexMap = partialIndexMap;
         this.nonHoldingInstitutionList = nonHoldingInstitutionList;
+        this.commonUtil = commonUtil;
     }
 
     /**
@@ -82,20 +86,20 @@ public class BibItemIndexCallable extends CommonCallable implements Callable {
      */
     @Override
     public Object call() throws Exception {
-
         Page<BibliographicEntity> bibliographicEntities = null;
+        List<Integer> owningInstitutionIdList = commonUtil.findAllInstitutionIdsExceptSupportInstitution();
         if(StringUtils.isNotBlank(partialIndexType) && partialIndexMap != null) {
             if(partialIndexType.equalsIgnoreCase(ScsbConstants.BIB_ID_LIST)) {
                 List<Integer> bibIdList = (List<Integer>) partialIndexMap.get(ScsbConstants.BIB_ID_LIST);
-                bibliographicEntities = bibliographicDetailsRepository.getBibsBasedOnBibIds(PageRequest.of(pageNum, docsPerPage), bibIdList);
+                bibliographicEntities = bibliographicDetailsRepository.getBibsBasedOnBibIds(PageRequest.of(pageNum, docsPerPage), owningInstitutionIdList, bibIdList);
             } else if(partialIndexType.equalsIgnoreCase(ScsbConstants.BIB_ID_RANGE)) {
                 String bibIdFrom = (String) partialIndexMap.get(ScsbConstants.BIB_ID_RANGE_FROM);
                 String bibIdTo = (String) partialIndexMap.get(ScsbConstants.BIB_ID_RANGE_TO);
-                bibliographicEntities = bibliographicDetailsRepository.getBibsBasedOnBibIdRange(PageRequest.of(pageNum, docsPerPage), Integer.valueOf(bibIdFrom), Integer.valueOf(bibIdTo));
+                bibliographicEntities = bibliographicDetailsRepository.getBibsBasedOnBibIdRange(PageRequest.of(pageNum, docsPerPage), owningInstitutionIdList, Integer.valueOf(bibIdFrom), Integer.valueOf(bibIdTo));
             } else if(partialIndexType.equalsIgnoreCase(ScsbConstants.DATE_RANGE)) {
                 Date dateFrom = (Date) partialIndexMap.get(ScsbConstants.DATE_RANGE_FROM);
                 Date dateTo = (Date) partialIndexMap.get(ScsbConstants.DATE_RANGE_TO);
-                bibliographicEntities = bibliographicDetailsRepository.getBibsBasedOnDateRange(PageRequest.of(pageNum, docsPerPage), dateFrom, dateTo);
+                bibliographicEntities = bibliographicDetailsRepository.getBibsBasedOnDateRange(PageRequest.of(pageNum, docsPerPage), owningInstitutionIdList, dateFrom, dateTo);
             }
          } else {
             if (null == owningInstitutionId && null == fromDate) {

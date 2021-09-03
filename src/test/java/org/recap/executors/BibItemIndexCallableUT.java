@@ -11,6 +11,7 @@ import org.recap.BaseTestCaseUT;
 import org.recap.model.jpa.BibliographicEntity;
 import org.recap.repository.jpa.BibliographicDetailsRepository;
 import org.recap.repository.jpa.HoldingsDetailsRepository;
+import org.recap.util.CommonUtil;
 import org.springframework.data.domain.Page;
 import org.springframework.data.solr.core.SolrTemplate;
 import org.springframework.data.solr.core.query.result.SolrResultPage;
@@ -40,8 +41,11 @@ public class BibItemIndexCallableUT extends BaseTestCaseUT {
     @Mock
     BibliographicDetailsRepository bibliographicDetailsRepository;
 
+    @Mock
+    CommonUtil commonUtil;
+
     @InjectMocks
-    BibItemIndexCallable mockBibItemIndexCallable = new BibItemIndexCallable("","",1,1,bibliographicDetailsRepository,holdingsDetailsRepository,1,new Date(),producerTemplate,solrTemplate, null, null,new ArrayList<String>(Arrays.asList("NYPL")));
+    BibItemIndexCallable mockBibItemIndexCallable = new BibItemIndexCallable("","",1,1,bibliographicDetailsRepository,holdingsDetailsRepository,1,new Date(),producerTemplate,solrTemplate, null, null,new ArrayList<String>(Arrays.asList("NYPL")), commonUtil);
 
 
 

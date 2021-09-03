@@ -23,11 +23,11 @@ import org.powermock.modules.junit4.PowerMockRunnerDelegate;
 import org.recap.*;
 import org.recap.matchingalgorithm.MatchingCounter;
 import org.recap.model.jpa.InstitutionEntity;
-import org.recap.model.jpa.ReportDataEntity;
-import org.recap.model.jpa.ReportEntity;
+import org.recap.model.jpa.MatchingAlgorithmReportDataEntity;
+import org.recap.model.jpa.MatchingAlgorithmReportEntity;
 import org.recap.model.matchingreports.MatchingSummaryReport;
 import org.recap.repository.jpa.InstitutionDetailsRepository;
-import org.recap.repository.jpa.ReportDetailRepository;
+import org.recap.repository.jpa.MatchingAlgorithmReportDetailRepository;
 import org.recap.util.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -72,7 +72,7 @@ public class OngoingMatchingReportsServiceUT extends BaseTestCaseUT4{
     ProducerTemplate producerTemplate;
 
     @Mock
-    ReportDetailRepository reportDetailRepository;
+    MatchingAlgorithmReportDetailRepository matchingAlgorithmReportDetailRepository;
 
     @Mock
     DateUtil dateUtil;
@@ -121,27 +121,27 @@ public class OngoingMatchingReportsServiceUT extends BaseTestCaseUT4{
 
     @Test
     public void generateTitleExceptionReport() throws Exception {
-        List<ReportEntity> reportEntities=new ArrayList<>();
-        List<ReportDataEntity> reportDataEntities=new ArrayList<>();
-        ReportDataEntity reportDataEntity=new ReportDataEntity();
+        List<MatchingAlgorithmReportEntity> reportEntities=new ArrayList<>();
+        List<MatchingAlgorithmReportDataEntity> reportDataEntities=new ArrayList<>();
+        MatchingAlgorithmReportDataEntity reportDataEntity=new MatchingAlgorithmReportDataEntity();
         reportDataEntity.setHeaderName("Title");
         reportDataEntity.setHeaderValue("test");
         reportDataEntities.add(reportDataEntity);
-        ReportEntity reportEntity=new ReportEntity();
+        MatchingAlgorithmReportEntity reportEntity=new MatchingAlgorithmReportEntity();
         reportEntity.addAll(reportDataEntities);
         reportEntities.add(reportEntity);
         File file=new File("Test");
-        Page<ReportEntity> page=Mockito.mock(Page.class);
+        Page<MatchingAlgorithmReportEntity> page=Mockito.mock(Page.class);
         Mockito.when(page.getContent()).thenReturn(reportEntities);
         Mockito.when(page.getTotalPages()).thenReturn(2);
         Mockito.when(mockOngoingMatchingReportsService.getCamelContext()).thenReturn(camelContext);
         Mockito.when(camelContext.getRouteController()).thenReturn(routeController);
         Mockito.doNothing().when(routeController).startRoute(Mockito.anyString());
-        Mockito.when(mockOngoingMatchingReportsService.getMatchingAlgorithmReportDetailRepository()).thenReturn(reportDetailRepository);
+        Mockito.when(mockOngoingMatchingReportsService.getMatchingAlgorithmReportDetailRepository()).thenReturn(matchingAlgorithmReportDetailRepository);
         Mockito.when(mockOngoingMatchingReportsService.getDateUtil()).thenReturn(dateUtil);
         Mockito.when(mockOngoingMatchingReportsService.getCsvUtil()).thenReturn(csvUtil);
         Mockito.when(mockOngoingMatchingReportsService.getMatchingReportsDirectory()).thenReturn(matchingReportsDirectory);
-        Mockito.when(reportDetailRepository.findByFileAndTypeAndDateRangeWithPaging(Mockito.any(),Mockito.anyString(),Mockito.anyString(),Mockito.any(),Mockito.any())).thenReturn(page);
+        Mockito.when(matchingAlgorithmReportDetailRepository.findByFileAndTypeAndDateRangeWithPaging(Mockito.any(),Mockito.anyString(),Mockito.anyString(),Mockito.any(),Mockito.any())).thenReturn(page);
         Mockito.when(csvUtil.createTitleExceptionReportFile(Mockito.anyString(),Mockito.anyInt(),Mockito.anyList())).thenReturn(file);
         String file1=ongoingMatchingReportsService.generateTitleExceptionReport(new Date(), 1);
         assertEquals(String.valueOf(file),file1);
@@ -149,25 +149,25 @@ public class OngoingMatchingReportsServiceUT extends BaseTestCaseUT4{
 
     @Test
     public void generateTitleExceptionReportException() throws Exception {
-        List<ReportEntity> reportEntities=new ArrayList<>();
-        List<ReportDataEntity> reportDataEntities=new ArrayList<>();
-        ReportDataEntity reportDataEntity=new ReportDataEntity();
+        List<MatchingAlgorithmReportEntity> reportEntities=new ArrayList<>();
+        List<MatchingAlgorithmReportDataEntity> reportDataEntities=new ArrayList<>();
+        MatchingAlgorithmReportDataEntity reportDataEntity=new MatchingAlgorithmReportDataEntity();
         reportDataEntity.setHeaderName("Title");
         reportDataEntity.setHeaderValue("test");
         reportDataEntities.add(reportDataEntity);
-        ReportEntity reportEntity=new ReportEntity();
+        MatchingAlgorithmReportEntity reportEntity=new MatchingAlgorithmReportEntity();
         reportEntity.addAll(reportDataEntities);
         reportEntities.add(reportEntity);
         File file=new File("Test");
-        Page<ReportEntity> page=Mockito.mock(Page.class);
+        Page<MatchingAlgorithmReportEntity> page=Mockito.mock(Page.class);
         Mockito.when(page.getContent()).thenReturn(reportEntities);
         Mockito.when(page.getTotalPages()).thenReturn(2);
         Mockito.when(mockOngoingMatchingReportsService.getCamelContext()).thenReturn(camelContext);
-        Mockito.when(mockOngoingMatchingReportsService.getMatchingAlgorithmReportDetailRepository()).thenReturn(reportDetailRepository);
+        Mockito.when(mockOngoingMatchingReportsService.getMatchingAlgorithmReportDetailRepository()).thenReturn(matchingAlgorithmReportDetailRepository);
         Mockito.when(mockOngoingMatchingReportsService.getDateUtil()).thenReturn(dateUtil);
         Mockito.when(mockOngoingMatchingReportsService.getCsvUtil()).thenReturn(csvUtil);
         Mockito.when(mockOngoingMatchingReportsService.getMatchingReportsDirectory()).thenReturn(matchingReportsDirectory);
-        Mockito.when(reportDetailRepository.findByFileAndTypeAndDateRangeWithPaging(Mockito.any(),Mockito.anyString(),Mockito.anyString(),Mockito.any(),Mockito.any())).thenReturn(page);
+        Mockito.when(matchingAlgorithmReportDetailRepository.findByFileAndTypeAndDateRangeWithPaging(Mockito.any(),Mockito.anyString(),Mockito.anyString(),Mockito.any(),Mockito.any())).thenReturn(page);
         Mockito.when(csvUtil.createTitleExceptionReportFile(Mockito.anyString(),Mockito.anyInt(),Mockito.anyList())).thenReturn(file);
         String file1=ongoingMatchingReportsService.generateTitleExceptionReport(new Date(), 1);
         assertEquals(String.valueOf(file),file1);

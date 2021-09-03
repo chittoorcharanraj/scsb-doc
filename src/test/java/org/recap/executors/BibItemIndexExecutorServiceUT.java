@@ -32,6 +32,7 @@ import org.recap.repository.jpa.HoldingsDetailsRepository;
 import org.recap.repository.jpa.InstitutionDetailsRepository;
 import org.recap.repository.solr.main.BibSolrCrudRepository;
 import org.recap.repository.solr.temp.BibCrudRepositoryMultiCoreSupport;
+import org.recap.util.CommonUtil;
 import org.recap.util.DateUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -104,6 +105,9 @@ public class BibItemIndexExecutorServiceUT extends BaseTestCaseUT4 {
     @Mock
     DateUtil dateUtil;
 
+    @Mock
+    CommonUtil commonUtil;
+
     @Value("${" + PropertyKeyConstants.SOLR_ROUTER_URI_TYPE + "}")
     String solrRouterURI;
 
@@ -167,18 +171,19 @@ public class BibItemIndexExecutorServiceUT extends BaseTestCaseUT4 {
 
     @Test
     public void partialIndexBibIdList() throws Exception {
-            Page bibliographicEntities = PowerMockito.mock(Page.class);
-            Mockito.when(bibliographicEntities.getNumberOfElements()).thenReturn(1);
-            Mockito.when(bibliographicEntities.iterator()).thenReturn(getBibliographicEntityIterator());
-            Mockito.when(mockBibliographicDetailsRepository.findByOwningInstitutionIdAndLastUpdatedDateAfter(Mockito.any(), Mockito.anyInt(), Mockito.any())).thenReturn(bibliographicEntities);
-            Mockito.when(bibSolrCrudRepository.countByDocType(Mockito.anyString())).thenReturn(1l);
-            SolrTemplate mocksolrTemplate1 = PowerMockito.mock(SolrTemplate.class);
-            ReflectionTestUtils.setField(bibItemIndexExecutorService, "solrTemplate", mocksolrTemplate1);
-            Mockito.when(mocksolrTemplate1.convertBeanToSolrInputDocument(Mockito.any())).thenReturn(getSolrInputFields());
-            Mockito.when(mockBibliographicDetailsRepository.getCountOfBibBasedOnBibIds(Mockito.anyList())).thenReturn(1l);
-            Mockito.when(mockBibliographicDetailsRepository.getBibsBasedOnBibIds(Mockito.any(), Mockito.anyList())).thenReturn(bibliographicEntities);
-            int count = bibItemIndexExecutorService.partialIndex(getSolrIndexRequest(ScsbConstants.BIB_ID_LIST));
-            assertEquals(0, count);
+        Mockito.when(commonUtil.findAllInstitutionIdsExceptSupportInstitution()).thenReturn(Arrays.asList(1,2,3));
+        Page bibliographicEntities = PowerMockito.mock(Page.class);
+        Mockito.when(bibliographicEntities.getNumberOfElements()).thenReturn(1);
+        Mockito.when(bibliographicEntities.iterator()).thenReturn(getBibliographicEntityIterator());
+        Mockito.when(mockBibliographicDetailsRepository.findByOwningInstitutionIdAndLastUpdatedDateAfter(Mockito.any(), Mockito.anyInt(), Mockito.any())).thenReturn(bibliographicEntities);
+        Mockito.when(bibSolrCrudRepository.countByDocType(Mockito.anyString())).thenReturn(1l);
+        SolrTemplate mocksolrTemplate1 = PowerMockito.mock(SolrTemplate.class);
+        ReflectionTestUtils.setField(bibItemIndexExecutorService, "solrTemplate", mocksolrTemplate1);
+        Mockito.when(mocksolrTemplate1.convertBeanToSolrInputDocument(Mockito.any())).thenReturn(getSolrInputFields());
+        Mockito.when(mockBibliographicDetailsRepository.getCountOfBibBasedOnBibIds(Mockito.anyList(), Mockito.anyList())).thenReturn(1l);
+        Mockito.when(mockBibliographicDetailsRepository.getBibsBasedOnBibIds(Mockito.any(), Mockito.anyList(), Mockito.anyList())).thenReturn(bibliographicEntities);
+        int count = bibItemIndexExecutorService.partialIndex(getSolrIndexRequest(ScsbConstants.BIB_ID_LIST));
+        assertEquals(0, count);
     }
 
     @Test
@@ -191,8 +196,8 @@ public class BibItemIndexExecutorServiceUT extends BaseTestCaseUT4 {
             Mockito.when(mockBibliographicDetailsRepository.findByOwningInstitutionIdAndLastUpdatedDateAfter(Mockito.any(), Mockito.anyInt(), Mockito.any())).thenReturn(bibliographicEntities);
             Mockito.when(bibSolrCrudRepository.countByDocType(Mockito.anyString())).thenReturn(1l);
             Mockito.when(mocksolrTemplate1.convertBeanToSolrInputDocument(Mockito.any())).thenReturn(getSolrInputFields());
-            Mockito.when(mockBibliographicDetailsRepository.getCountOfBibBasedOnBibIdRange(Mockito.anyInt(),Mockito.anyInt())).thenReturn(1l);
-            Mockito.when(mockBibliographicDetailsRepository.getBibsBasedOnBibIdRange(Mockito.any(),Mockito.anyInt(),Mockito.anyInt())).thenReturn(bibliographicEntities);
+            Mockito.when(mockBibliographicDetailsRepository.getCountOfBibBasedOnBibIdRange(Mockito.anyList(),Mockito.anyInt(),Mockito.anyInt())).thenReturn(1l);
+            Mockito.when(mockBibliographicDetailsRepository.getBibsBasedOnBibIdRange(Mockito.any(),Mockito.anyList(),Mockito.anyInt(),Mockito.anyInt())).thenReturn(bibliographicEntities);
             int count = bibItemIndexExecutorService.partialIndex(getSolrIndexRequest(ScsbConstants.BIB_ID_RANGE));
             assertEquals(0, count);
     }
@@ -207,8 +212,8 @@ public class BibItemIndexExecutorServiceUT extends BaseTestCaseUT4 {
             Mockito.when(mockBibliographicDetailsRepository.findByOwningInstitutionIdAndLastUpdatedDateAfter(Mockito.any(), Mockito.anyInt(), Mockito.any())).thenReturn(bibliographicEntities);
             Mockito.when(bibSolrCrudRepository.countByDocType(Mockito.anyString())).thenReturn(1l);
             Mockito.when(mocksolrTemplate1.convertBeanToSolrInputDocument(Mockito.any())).thenReturn(getSolrInputFields());
-            Mockito.when(mockBibliographicDetailsRepository.getCountOfBibBasedOnDateRange(Mockito.any(),Mockito.any())).thenReturn(1l);
-            Mockito.when(mockBibliographicDetailsRepository.getBibsBasedOnDateRange(Mockito.any(),Mockito.any(),Mockito.any())).thenReturn(bibliographicEntities);
+            Mockito.when(mockBibliographicDetailsRepository.getCountOfBibBasedOnDateRange(Mockito.anyList(),Mockito.any(),Mockito.any())).thenReturn(1l);
+            Mockito.when(mockBibliographicDetailsRepository.getBibsBasedOnDateRange(Mockito.any(),Mockito.anyList(),Mockito.any(),Mockito.any())).thenReturn(bibliographicEntities);
             Mockito.when(dateUtil.getFromDate(Mockito.any())).thenCallRealMethod();
             Mockito.when(dateUtil.getToDate(Mockito.any())).thenCallRealMethod();
             int count = bibItemIndexExecutorService.partialIndex(getSolrIndexRequest(ScsbConstants.DATE_RANGE));
@@ -238,8 +243,8 @@ public class BibItemIndexExecutorServiceUT extends BaseTestCaseUT4 {
         Mockito.when(mockBibliographicDetailsRepository.findByOwningInstitutionIdAndLastUpdatedDateAfter(Mockito.any(), Mockito.anyInt(), Mockito.any())).thenReturn(bibliographicEntities);
         Mockito.when(bibSolrCrudRepository.countByDocType(Mockito.anyString())).thenReturn(1l);
         Mockito.when(mocksolrTemplate1.convertBeanToSolrInputDocument(Mockito.any())).thenReturn(getSolrInputFields());
-        Mockito.when(mockBibliographicDetailsRepository.getCountOfBibBasedOnDateRange(Mockito.any(),Mockito.any())).thenReturn(1l);
-        Mockito.when(mockBibliographicDetailsRepository.getBibsBasedOnDateRange(Mockito.any(),Mockito.any(),Mockito.any())).thenReturn(bibliographicEntities);
+        Mockito.when(mockBibliographicDetailsRepository.getCountOfBibBasedOnDateRange(Mockito.anyList(),Mockito.any(),Mockito.any())).thenReturn(1l);
+        Mockito.when(mockBibliographicDetailsRepository.getBibsBasedOnDateRange(Mockito.any(),Mockito.anyList(),Mockito.any(),Mockito.any())).thenReturn(bibliographicEntities);
         Mockito.when(dateUtil.getFromDate(Mockito.any())).thenCallRealMethod();
         Mockito.when(dateUtil.getToDate(Mockito.any())).thenCallRealMethod();
         int count = bibItemIndexExecutorService.partialIndex(solrIndexRequest);
