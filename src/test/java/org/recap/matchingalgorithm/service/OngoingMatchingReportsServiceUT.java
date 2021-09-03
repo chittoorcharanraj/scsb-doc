@@ -137,7 +137,7 @@ public class OngoingMatchingReportsServiceUT extends BaseTestCaseUT4{
         Mockito.when(mockOngoingMatchingReportsService.getCamelContext()).thenReturn(camelContext);
         Mockito.when(camelContext.getRouteController()).thenReturn(routeController);
         Mockito.doNothing().when(routeController).startRoute(Mockito.anyString());
-        Mockito.when(mockOngoingMatchingReportsService.getReportDetailRepository()).thenReturn(reportDetailRepository);
+        Mockito.when(mockOngoingMatchingReportsService.getMatchingAlgorithmReportDetailRepository()).thenReturn(reportDetailRepository);
         Mockito.when(mockOngoingMatchingReportsService.getDateUtil()).thenReturn(dateUtil);
         Mockito.when(mockOngoingMatchingReportsService.getCsvUtil()).thenReturn(csvUtil);
         Mockito.when(mockOngoingMatchingReportsService.getMatchingReportsDirectory()).thenReturn(matchingReportsDirectory);
@@ -163,7 +163,7 @@ public class OngoingMatchingReportsServiceUT extends BaseTestCaseUT4{
         Mockito.when(page.getContent()).thenReturn(reportEntities);
         Mockito.when(page.getTotalPages()).thenReturn(2);
         Mockito.when(mockOngoingMatchingReportsService.getCamelContext()).thenReturn(camelContext);
-        Mockito.when(mockOngoingMatchingReportsService.getReportDetailRepository()).thenReturn(reportDetailRepository);
+        Mockito.when(mockOngoingMatchingReportsService.getMatchingAlgorithmReportDetailRepository()).thenReturn(reportDetailRepository);
         Mockito.when(mockOngoingMatchingReportsService.getDateUtil()).thenReturn(dateUtil);
         Mockito.when(mockOngoingMatchingReportsService.getCsvUtil()).thenReturn(csvUtil);
         Mockito.when(mockOngoingMatchingReportsService.getMatchingReportsDirectory()).thenReturn(matchingReportsDirectory);

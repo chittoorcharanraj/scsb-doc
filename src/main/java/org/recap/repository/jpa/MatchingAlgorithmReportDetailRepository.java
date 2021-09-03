@@ -5,6 +5,7 @@ import org.recap.model.jpa.ReportEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.stereotype.Repository;
 
 import java.util.Date;
 import java.util.List;
@@ -12,6 +13,7 @@ import java.util.List;
 /**
  * Created by rmaheswaran on 12/8/21
  */
+@Repository
 public interface MatchingAlgorithmReportDetailRepository extends BaseRepository<MatchingAlgorithmReportEntity> {
 
     /**
@@ -89,6 +91,20 @@ public interface MatchingAlgorithmReportDetailRepository extends BaseRepository<
      * @return the list
      */
     @Query(value = "select * from ma_report_t where FILE_NAME like %?1% and INSTITUTION_NAME=?2 and CREATED_DATE >= ?3 and CREATED_DATE <= ?4", nativeQuery = true)
-    List<ReportEntity> findByFileNameLikeAndInstitutionAndDateRange(String fileName, String institutionName, Date from, Date to);
+    List<MatchingAlgorithmReportEntity> findByFileNameLikeAndInstitutionAndDateRange(String fileName, String institutionName, Date from, Date to);
+
+    /**
+     * Find by file and type and date range with paging page.
+     *
+     * @param pageable the pageable
+     * @param fileName the file name
+     * @param type     the type
+     * @param from     the from
+     * @param to       the to
+     * @return the page
+     */
+    @Query(value = "select matchingAlgorithmReportEntity from MatchingAlgorithmReportEntity matchingAlgorithmReportEntity where fileName=?1 and type=?2 and createdDate between ?3 and ?4")
+    Page<MatchingAlgorithmReportEntity> findByFileAndTypeAndDateRangeWithPaging(Pageable pageable, String fileName, String type, Date from, Date to);
+
 
 }

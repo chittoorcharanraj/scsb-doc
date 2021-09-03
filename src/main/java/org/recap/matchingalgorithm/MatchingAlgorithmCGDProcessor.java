@@ -43,6 +43,7 @@ public class MatchingAlgorithmCGDProcessor {
     private CollectionGroupDetailsRepository collectionGroupDetailsRepository;
     private ItemDetailsRepository itemDetailsRepository;
     private InstitutionDetailsRepository institutionDetailsRepository;
+    private List<String> nonHoldingInstitutionList;
 
     /**
      * This method instantiates a new matching algorithm cgd processor.
@@ -54,11 +55,12 @@ public class MatchingAlgorithmCGDProcessor {
      * @param matchingType                     the matching type
      * @param collectionGroupDetailsRepository the collection group details repository
      * @param itemDetailsRepository            the item details repository
+     * @param nonHoldingInstitutionList        the non holding institution list
      * @param institutionDetailsRepository
      */
     public MatchingAlgorithmCGDProcessor(BibliographicDetailsRepository bibliographicDetailsRepository, ProducerTemplate producerTemplate, Map collectionGroupMap, Map institutionMap,
                                          ItemChangeLogDetailsRepository itemChangeLogDetailsRepository, String matchingType, CollectionGroupDetailsRepository collectionGroupDetailsRepository,
-                                         ItemDetailsRepository itemDetailsRepository, InstitutionDetailsRepository institutionDetailsRepository) {
+                                         ItemDetailsRepository itemDetailsRepository, InstitutionDetailsRepository institutionDetailsRepository,List<String> nonHoldingInstitutionList) {
         this.bibliographicDetailsRepository = bibliographicDetailsRepository;
         this.producerTemplate = producerTemplate;
         this.collectionGroupMap = collectionGroupMap;
@@ -68,6 +70,7 @@ public class MatchingAlgorithmCGDProcessor {
         this.collectionGroupDetailsRepository = collectionGroupDetailsRepository;
         this.itemDetailsRepository = itemDetailsRepository;
         this.institutionDetailsRepository=institutionDetailsRepository;
+        this.nonHoldingInstitutionList=nonHoldingInstitutionList;
     }
 
     private static boolean checkIfItemsAreCommitted(Map.Entry<Integer, ItemEntity> entry) {
@@ -112,7 +115,7 @@ public class MatchingAlgorithmCGDProcessor {
                 itemEntityMap.remove(itemEntityToBeShared.get().getId());
                 MatchingCounter.updateCGDCounter(itemEntityToBeShared.get().getInstitutionEntity().getInstitutionCode(), false);
             } else {
-                itemEntities.sort(Comparator.comparing(ItemEntity::getCreatedDate));
+                itemEntities.sort(Comparator.comparing(ItemEntity::getLastUpdatedDate));
                 findAndremoveSharedItem(itemEntityMap, itemEntities);
             }
         }
@@ -225,7 +228,7 @@ public class MatchingAlgorithmCGDProcessor {
                 }
                 materialTypeSet.add(ScsbCommonConstants.MONOGRAPH);
             } else {
-                if(bibliographicEntity.getOwningInstitutionId().equals(institutionMap.get("NYPL"))) {
+                if(nonHoldingInstitutionList.contains(bibliographicEntity.getInstitutionEntity().getInstitutionCode())) {
                     //NYPL
                     boolean isMultipleCopy = false;
                     for(ItemEntity itemEntity : itemEntities) {

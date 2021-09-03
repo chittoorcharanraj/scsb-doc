@@ -974,8 +974,6 @@ public class MatchingAlgorithmUtil {
                         String updatedMatchScore = MatchScoreUtil.calculateMatchScore(MatchScoreUtil.convertDecimalToBinary(matchScore), MatchScoreUtil.convertDecimalToBinary(bibliographicEntity.getMatchScore()));
                         bibliographicEntity.setMatchScore(MatchScoreUtil.convertBinaryToDecimal(updatedMatchScore));
                     }
-                    bibliographicEntity.setLastUpdatedBy("GroupingCGDProcess");
-                    bibliographicEntity.setLastUpdatedDate(new Date());
                     return bibliographicEntity;
                 })
                 .collect(toList());
@@ -986,8 +984,6 @@ public class MatchingAlgorithmUtil {
                 .map(bibliographicEntity -> {
                     bibliographicEntity.setMatchScore(matchScore);
                     bibliographicEntity.setMatchingIdentity(matchingIdentity);
-                    bibliographicEntity.setLastUpdatedBy("GroupingCGDProcess");
-                    bibliographicEntity.setLastUpdatedDate(new Date());
                     return bibliographicEntity;
                 })
                 .collect(toList());
