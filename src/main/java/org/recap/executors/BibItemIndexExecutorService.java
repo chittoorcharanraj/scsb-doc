@@ -5,6 +5,7 @@ import org.recap.PropertyKeyConstants;
 import org.recap.ScsbConstants;
 import org.recap.repository.jpa.BibliographicDetailsRepository;
 import org.recap.repository.jpa.HoldingsDetailsRepository;
+import org.recap.util.CommonUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.solr.core.SolrTemplate;
@@ -28,6 +29,9 @@ public class BibItemIndexExecutorService extends IndexExecutorService {
     @Autowired
     private HoldingsDetailsRepository holdingsDetailsRepository;
 
+    @Autowired
+    private CommonUtil commonUtil;
+
     @Resource(name = "recapSolrTemplate")
     private SolrTemplate solrTemplate;
 
@@ -46,7 +50,7 @@ public class BibItemIndexExecutorService extends IndexExecutorService {
     @Override
     public Callable getCallable(String coreName, int pageNum, int docsPerPage, Integer owningInstitutionId, Date fromDate, String partialIndexType, Map<String, Object> partialIndexMap) {
         return new BibItemIndexCallable(solrServerProtocol + solrUrl, coreName, pageNum, docsPerPage, bibliographicDetailsRepository, holdingsDetailsRepository,
-                owningInstitutionId, fromDate, producerTemplate, solrTemplate, partialIndexType, partialIndexMap,nonHoldingInstitutionList);
+                owningInstitutionId, fromDate, producerTemplate, solrTemplate, partialIndexType, partialIndexMap, nonHoldingInstitutionList, commonUtil);
     }
 
     /**
@@ -74,17 +78,18 @@ public class BibItemIndexExecutorService extends IndexExecutorService {
     protected Integer getTotalDocCountForPartialIndex(String partialIndexType, Map<String,Object> partialIndexMap) {
         Long count = 0L;
         if(StringUtils.isNotBlank(partialIndexType) && partialIndexMap != null) {
+            List<Integer> owningInstitutionIdList = commonUtil.findAllInstitutionIdsExceptSupportInstitution();
             if(partialIndexType.equalsIgnoreCase(ScsbConstants.BIB_ID_LIST)) {
                 List<Integer> bibIdList = (List<Integer>) partialIndexMap.get(ScsbConstants.BIB_ID_LIST);
-                count = bibliographicDetailsRepository.getCountOfBibBasedOnBibIds(bibIdList);
+                count = bibliographicDetailsRepository.getCountOfBibBasedOnBibIds(owningInstitutionIdList, bibIdList);
             } else if(partialIndexType.equalsIgnoreCase(ScsbConstants.BIB_ID_RANGE)) {
                 String bibIdFrom = (String) partialIndexMap.get(ScsbConstants.BIB_ID_RANGE_FROM);
                 String bibIdTo = (String) partialIndexMap.get(ScsbConstants.BIB_ID_RANGE_TO);
-                count = bibliographicDetailsRepository.getCountOfBibBasedOnBibIdRange(Integer.valueOf(bibIdFrom), Integer.valueOf(bibIdTo));
+                count = bibliographicDetailsRepository.getCountOfBibBasedOnBibIdRange(owningInstitutionIdList, Integer.valueOf(bibIdFrom), Integer.valueOf(bibIdTo));
             } else if(partialIndexType.equalsIgnoreCase(ScsbConstants.DATE_RANGE)) {
                 Date dateFrom = (Date) partialIndexMap.get(ScsbConstants.DATE_RANGE_FROM);
                 Date dateTo = (Date) partialIndexMap.get(ScsbConstants.DATE_RANGE_TO);
-                count = bibliographicDetailsRepository.getCountOfBibBasedOnDateRange(dateFrom, dateTo);
+                count = bibliographicDetailsRepository.getCountOfBibBasedOnDateRange(owningInstitutionIdList, dateFrom, dateTo);
             }
         }
         return count.intValue();
