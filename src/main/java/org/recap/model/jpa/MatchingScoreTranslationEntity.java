@@ -18,6 +18,10 @@ import javax.persistence.Table;
 public class MatchingScoreTranslationEntity {
     @Id
     @Column(
+            name = "ID"
+    )
+    private Integer id;
+    @Column(
             name = "DECIMAL_MA_SCORE"
     )
     private Integer decMaScore;

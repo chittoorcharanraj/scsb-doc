@@ -447,7 +447,10 @@ public class ReportsServiceUtil {
         SolrQuery query = appendSolrQueryForTitle(titleMatchedReport);
         query.setRows(titleMatchedReport.getPageSize());
         query.setStart((titleMatchedReport.getPageNumber() * (titleMatchedReport.getPageSize())));
-        query.setSort(ScsbConstants.BIB_CREATED_DATE, SolrQuery.ORDER.desc);
+        if (titleMatchedReport.getTitleMatch().get(0).equalsIgnoreCase(ScsbConstants.TITLE_MATCHED))
+            query.setSort(ScsbConstants.MATCHING_IDENTIFIER, SolrQuery.ORDER.desc);
+        else
+            query.setSort(ScsbConstants.BIB_CREATED_DATE, SolrQuery.ORDER.desc);
         QueryResponse queryResponse = solrTemplate.getSolrClient().query(query);
         titleMatchedReport.setTotalRecordsCount(queryResponse.getResults().getNumFound());
         int totalPagesCount = (int) Math.ceil((double) (titleMatchedReport.getTotalRecordsCount()) / (double) (titleMatchedReport.getPageSize()));
@@ -575,7 +578,10 @@ public class ReportsServiceUtil {
         List<BibItem> bibItems = new ArrayList<>();
         SolrQuery query = appendSolrQueryForTitle(titleMatchedReport);
         query.setRows(Integer.MAX_VALUE);
-        query.setSort(ScsbConstants.BIB_CREATED_DATE, SolrQuery.ORDER.desc);
+        if (titleMatchedReport.getTitleMatch().get(0).equalsIgnoreCase(ScsbConstants.TITLE_MATCHED))
+            query.setSort(ScsbConstants.MATCHING_IDENTIFIER, SolrQuery.ORDER.desc);
+        else
+            query.setSort(ScsbConstants.BIB_CREATED_DATE, SolrQuery.ORDER.desc);
         QueryResponse queryResponse = solrTemplate.getSolrClient().query(query);
         SolrDocumentList bibSolrDocumentList = queryResponse.getResults();
         setDataForBibItems(bibSolrDocumentList,bibItems);
@@ -591,24 +597,6 @@ public class ReportsServiceUtil {
         titleMatchedReport.setTitleMatchedReports(titleMatchedReportsList);
         return titleMatchedReport;
     }
-    private List<String> getBarcodes(BibItem bibItem) {
-        List<String> barcodes = new ArrayList<>();
-        for (Item item : bibItem.getItems()) {
-            if (item.getBarcode().equalsIgnoreCase(bibItem.getItems().get(bibItem.getItems().size() - 1).getBarcode()))
-                barcodes.add(item.getBarcode());
-            else
-                barcodes.add(item.getBarcode() + ",");
-        }
-        return barcodes;
-    }
-    private String getBarcodesExport(BibItem bibItem) {
-        StringBuilder barcodes = new StringBuilder();
-        for (Item item : bibItem.getItems()) {
-            barcodes.append(item.getBarcode()+",");
-        }
-        return barcodes.toString();
-    }
-
 
     private SolrQuery appendSolrQueryForTitle(TitleMatchedReport titleMatchedReport) throws ParseException {
         String solrFormattedDate = getSolrFormattedDates(convertDateToString(titleMatchedReport.getFromDate()), convertDateToString(titleMatchedReport.getToDate()));
