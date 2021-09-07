@@ -157,30 +157,43 @@ function updatePartialIndexStatus() {
 }
 
 function saveReport() {
+    var criteria = $('#matchingCriteria').val();
+    if (criteria === 'removeMatchingIdsInDB') {
+        $('#removeMIdsConfirmationModal').modal('show');
+    } else if (criteria === 'removeMatchingIdsInSolr') {
+        $('#removeMIdsSolrConfirmationSolrModal').modal('show');
+    } else {
+        proceedToSaveReport();
+    }
+}
+
+function proceedToSaveReport() {
+    $('#removeMIdsConfirmationModal').modal('hide');
+    $('#removeMIdsSolrConfirmationSolrModal').modal('hide');
     $("#saveReport").attr('disabled', 'disabled');
     document.getElementById("matchingAlgorithmStatus").value = '';
     var criteria = $('#matchingCriteria').val();
     var matchingAlgoDate = $('#matchingAlgoDate').val();
     var url = '';
-    if(criteria === 'ALL') {
+    if (criteria === 'ALL') {
         url = "/matchingAlgorithm/full?matchingAlgoDate="+matchingAlgoDate;
     } else if(criteria === 'MatchingAndReports') {
         url = "/matchingAlgorithm/findMatchingAndSaveReports";
     } else if (criteria === 'Reports') {
         url = "/matchingAlgorithm/reports";
-    } else if (criteria === 'GroupBibs') {
+    } else if (criteria === 'removeMatchingIdsInDB') {
+        url = "/matchingAlgorithm/removeMatchingIdsInDB";
+    } else if (criteria === 'removeMatchingIdsInSolr') {
+        url = "/matchingAlgorithm/removeMatchingIdsInSolr";
+    }  else if (criteria === 'GroupBibs') {
         url = "/matchingAlgorithm/groupBibs";
-    }
-    else if (criteria === 'GroupMonographs') {
+    } else if (criteria === 'GroupMonographs') {
             url = "/matchingAlgorithm/groupMonographs";
-    }
-    else if (criteria === 'GroupMVMs') {
+    } else if (criteria === 'GroupMVMs') {
             url = "/matchingAlgorithm/groupMVMs";
-    }
-    else if (criteria === 'GroupSerials') {
+    } else if (criteria === 'GroupSerials') {
             url = "/matchingAlgorithm/groupSerials";
-    }
-    else if (criteria === 'UpdateMonographCGDInDB') {
+    } else if (criteria === 'UpdateMonographCGDInDB') {
         url = "/matchingAlgorithm/updateMonographCGDInDB";
     } else if (criteria === 'UpdateSerialCGDInDB') {
         url = "/matchingAlgorithm/updateSerialCGDInDB";

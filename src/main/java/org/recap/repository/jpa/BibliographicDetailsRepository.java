@@ -292,4 +292,9 @@ public interface BibliographicDetailsRepository extends BaseRepository<Bibliogra
 
     List<BibliographicEntity> findByOwningInstitutionIdInAndIdIn(List<Integer> owningInstitutionIds,List<Integer> bibliographicIds);
 
+    @Modifying(clearAutomatically = true)
+    @Transactional
+    @Query("UPDATE BibliographicEntity bib SET bib.matchingIdentity = NULL, bib.matchScore = NULL, bib.anamolyFlag = false WHERE bib.matchingIdentity IS NOT NULL")
+    int removeMatchingIdentifiers();
+
 }

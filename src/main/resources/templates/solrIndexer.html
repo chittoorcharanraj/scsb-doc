@@ -364,10 +364,12 @@
                                             <div class="col-sm-4">
                                                 <select id="matchingCriteria"
                                                         class="form-control"
-                                                        style="width: 160px;" th:onchange="'javascript:showDateField()'">
+                                                        style="width: 280px;" th:onchange="'javascript:showDateField()'">
                                                     <option value="ALL">Run Matching Full Process</option>
                                                     <option value="MatchingAndReports">Find Matching And Save Reports</option>
                                                     <option value="Reports">Save Only Reports</option>
+                                                    <option th:if="${@environment.getProperty('show.remove.matching.ids.from.db')}" value="removeMatchingIdsInDB">Remove Matching Identifiers In DB</option>
+                                                    <option th:if="${@environment.getProperty('show.remove.matching.ids.from.solr')}" value="removeMatchingIdsInSolr">Remove Matching Identifiers In Solr</option>
                                                     <option value="GroupBibs">Group bibs</option>
                                                     <option value="GroupMonographs">Group Monographs</option>
                                                     <option value="GroupMVMs">Group MVMs</option>
@@ -403,6 +405,48 @@
                                         <div class="form-group col-sm-12">
                                         <textarea class="form-control" id="matchingAlgorithmStatus" rows="5"
                                                   placeholder="Matching Algorithm Status" readonly="true"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="removeMIdsConfirmationModal" class="modal fade" role="dialog" data-keyboard="false" data-backdrop="static">
+                                <div class="modal-dialog">
+                                    <div id="removeMIdsConfModalContent" class="modal-content">
+                                        <div class="modal-header">
+                                            <h4 class="modal-title">Remove Matching Id's in DB Confirmation</h4>
+                                        </div>
+                                        <div class="modal-body" style="height: 150px;">
+                                            <p>Are you sure? Do you want to proceed to remove Matching Identifier's from DB?</p>
+                                            <p class="text-warning">Warning: This will clean Matching Identifier, Match Score and Anamoly Flag to all Bibs in DB</p>
+                                            <div class="col-sm-4 pull-right">
+                                                <button id="proceedToRemoveBtn" type="button" name="action" onclick="proceedToSaveReport()"
+                                                        class="btn btn-primary">Proceed
+                                                </button>
+                                                <button id="removeCancelBtn" type="button" name="cancel" data-dismiss="modal"
+                                                        class="btn btn-danger">Cancel
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="removeMIdsSolrConfirmationSolrModal" class="modal fade" role="dialog" data-keyboard="false" data-backdrop="static">
+                                <div class="modal-dialog">
+                                    <div id="removeMIdsSolrConfModalContent" class="modal-content">
+                                        <div class="modal-header">
+                                            <h4 class="modal-title">Remove Matching Id's in Solr Confirmation</h4>
+                                        </div>
+                                        <div class="modal-body" style="height: 150px;">
+                                            <p>Are you sure? Do you want to proceed to remove Matching Identifier's from Solr?</p>
+                                            <p class="text-warning">Warning: This will clean Matching Identifier, Match Score and Anamoly Flag to all Bibs in Solr</p>
+                                            <div class="col-sm-4 pull-right">
+                                                <button id="proceedToRemoveSolrBtn" type="button" name="action" onclick="proceedToSaveReport()"
+                                                        class="btn btn-primary">Proceed
+                                                </button>
+                                                <button id="removeCancelSolrBtn" type="button" name="cancel" data-dismiss="modal"
+                                                        class="btn btn-danger">Cancel
+                                                </button>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
