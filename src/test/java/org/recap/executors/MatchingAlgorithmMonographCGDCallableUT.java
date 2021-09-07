@@ -49,7 +49,7 @@ public class MatchingAlgorithmMonographCGDCallableUT extends BaseTestCaseUT4 {
     long from = Long.valueOf(0);
     int pageNum = 1;
     Integer batchSize = 10;
-    List<String> nonHoldingInstitutionList;
+    List<String> nonHoldingInstitutionList=new ArrayList<>();
 
     @Before
     public void setUp() throws Exception {
@@ -118,8 +118,8 @@ public class MatchingAlgorithmMonographCGDCallableUT extends BaseTestCaseUT4 {
     public BibliographicEntity saveBibSingleHoldingsSingleItem() throws Exception {
 
         InstitutionEntity institutionEntity = new InstitutionEntity();
-        institutionEntity.setInstitutionCode("UC");
-        institutionEntity.setInstitutionName("University of Chicago");
+        institutionEntity.setInstitutionCode("NYPL");
+        institutionEntity.setInstitutionName("NYPL");
         assertNotNull(institutionEntity);
 
         Random random = new Random();
@@ -131,6 +131,7 @@ public class MatchingAlgorithmMonographCGDCallableUT extends BaseTestCaseUT4 {
         bibliographicEntity.setCreatedBy("tst");
         bibliographicEntity.setLastUpdatedBy("tst");
         bibliographicEntity.setOwningInstitutionId(3);
+        bibliographicEntity.setInstitutionEntity(institutionEntity);
         bibliographicEntity.setOwningInstitutionBibId(String.valueOf(random.nextInt()));
 
         HoldingsEntity holdingsEntity = new HoldingsEntity();

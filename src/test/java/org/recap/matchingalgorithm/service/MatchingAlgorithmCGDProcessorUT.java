@@ -246,6 +246,9 @@ public class MatchingAlgorithmCGDProcessorUT extends BaseTestCaseUT {
         Map institutionMap=new HashMap();
         institutionMap.put("NYPL",3);
         ReflectionTestUtils.setField(matchingAlgorithmCGDProcessor,"institutionMap",institutionMap);
+        List<String> nonHoldingInstitutionList=new ArrayList<>();
+        nonHoldingInstitutionList.add("NYPL");
+        ReflectionTestUtils.setField(matchingAlgorithmCGDProcessor,"nonHoldingInstitutionList",nonHoldingInstitutionList);
         boolean checkForMonographAndPopulateValues=matchingAlgorithmCGDProcessor.checkForMonographAndPopulateValues(materialTypeSet,itemEntityMap,bibIdList,ScsbConstants.ONGOING_MATCHING_OPERATION_TYPE);
         assertEquals(true,checkForMonographAndPopulateValues);
     }
@@ -285,6 +288,9 @@ public class MatchingAlgorithmCGDProcessorUT extends BaseTestCaseUT {
         ReflectionTestUtils.setField(matchingAlgorithmCGDProcessor,"collectionGroupMap",collectionGroupMap);
         Map institutionMap=new HashMap();
         institutionMap.put("CUL",2);
+        List<String> nonHoldingInstitutionList=new ArrayList<>();
+        nonHoldingInstitutionList.add("NYPL");
+        ReflectionTestUtils.setField(matchingAlgorithmCGDProcessor,"nonHoldingInstitutionList",nonHoldingInstitutionList);
         ReflectionTestUtils.setField(matchingAlgorithmCGDProcessor,"institutionMap",institutionMap);
         boolean checkForMonographAndPopulateValues=matchingAlgorithmCGDProcessor.checkForMonographAndPopulateValues(materialTypeSet,itemEntityMap,bibIdList,ScsbConstants.ONGOING_MATCHING_OPERATION_TYPE);
         assertEquals(true,checkForMonographAndPopulateValues);
@@ -323,6 +329,9 @@ public class MatchingAlgorithmCGDProcessorUT extends BaseTestCaseUT {
         ReflectionTestUtils.setField(matchingAlgorithmCGDProcessor,"collectionGroupMap",collectionGroupMap);
         Map institutionMap=new HashMap();
         institutionMap.put("PUL",1);
+        List<String> nonHoldingInstitutionList=new ArrayList<>();
+        nonHoldingInstitutionList.add("NYPL");
+        ReflectionTestUtils.setField(matchingAlgorithmCGDProcessor,"nonHoldingInstitutionList",nonHoldingInstitutionList);
         ReflectionTestUtils.setField(matchingAlgorithmCGDProcessor,"institutionMap",institutionMap);
         boolean checkForMonographAndPopulateValues=matchingAlgorithmCGDProcessor.checkForMonographAndPopulateValues(materialTypeSet,itemEntityMap,bibIdList,ScsbConstants.ONGOING_MATCHING_OPERATION_TYPE);
         assertEquals(false,checkForMonographAndPopulateValues);

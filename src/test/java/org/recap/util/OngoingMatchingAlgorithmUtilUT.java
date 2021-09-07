@@ -202,12 +202,14 @@ public class OngoingMatchingAlgorithmUtilUT extends BaseTestCaseUT4 {
 
     @Test
     public void fetchUpdatedRecordsByBibIdRangeAndStartProcessMultiMatch() throws Exception {
+        List<String> nonHoldingInstitutionList=new ArrayList<>();
         SolrTemplate mocksolrTemplate1 = PowerMockito.mock(SolrTemplate.class);
         SolrClient solrClient = PowerMockito.mock(SolrClient.class);
         QueryResponse queryResponse = Mockito.mock(QueryResponse.class);
         ReflectionTestUtils.setField(ongoingMatchingAlgorithmUtil, "matchingAlgorithmUtil", mockedmatchingAlgorithmUtil);
         ReflectionTestUtils.setField(ongoingMatchingAlgorithmUtil,"solrTemplate",mocksolrTemplate1);
         ReflectionTestUtils.setField(ongoingMatchingAlgorithmUtil,"commonUtil",commonUtil);
+        ReflectionTestUtils.setField(ongoingMatchingAlgorithmUtil,"nonHoldingInstitutionList",nonHoldingInstitutionList);
         SolrDocumentList solrDocumentList = getSolrDocumentsMulti();
             Mockito.when(solrQueryBuilder.fetchBibsByBibIdRange(Mockito.anyString(), Mockito.anyString())).thenReturn("test");
             PowerMockito.when(mocksolrTemplate1.getSolrClient()).thenReturn(solrClient);
