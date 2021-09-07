@@ -319,6 +319,8 @@ public final class ScsbConstants {
     public static final String ONGOING_MATCHING_DATE_FORMAT = "yyyy/MM/dd";
     public static final String ONGOING_MATCHING_DATE_TIME_FORMAT = "dd-MM-yyyy hh:mm";
     public static final String CURRENT_PAGE = "Current Page";
+    public static final String ROWS_UPDATED = "Rows Updated";
+    public static final String RECORDS_UPDATED = "Records Updated";
 
     private ScsbConstants(){}
 }

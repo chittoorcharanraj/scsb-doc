@@ -856,4 +856,11 @@ public class SolrQueryBuilder {
                 append(coreChildFilterQuery).append(ScsbConstants.ITEM_CATALOGING_STATUS).append(":").append(ScsbCommonConstants.COMPLETE_STATUS);
         return new SolrQuery(query.toString());
     }
+
+    public SolrQuery solrQueryToFetchMatchedRecords() {
+        SolrQuery solrQuery = new SolrQuery(ScsbConstants.BIB_DOC_TYPE + and + ScsbConstants.MATCHING_IDENTIFIER + ":" + "*");
+        solrQuery.setRows(10000);
+        solrQuery.setFields(ScsbConstants.BIB_ID);
+        return solrQuery;
+    }
 }

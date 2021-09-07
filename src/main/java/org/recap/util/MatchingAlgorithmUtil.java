@@ -18,7 +18,6 @@ import org.recap.matchingalgorithm.MatchScoreReport;
 import org.recap.matchingalgorithm.MatchScoreUtil;
 import org.recap.matchingalgorithm.MatchingCounter;
 import org.recap.model.jpa.*;
-import org.recap.model.solr.SolrIndexRequest;
 import org.recap.repository.jpa.*;
 import org.recap.service.accession.SolrIndexService;
 import org.slf4j.Logger;
@@ -1022,5 +1021,22 @@ public class MatchingAlgorithmUtil {
         bibliographicDetailsRepository.saveAll(bibliographicEntities);
         entityManager.flush();
         entityManager.clear();
+    }
+
+    public int removeMatchingIdsInDB() {
+        return bibliographicDetailsRepository.removeMatchingIdentifiers();
+    }
+
+    public Set<Integer> getBibIdsToRemoveMatchingIdsInSolr() throws IOException, SolrServerException {
+        Set<Integer> bibIds = new HashSet<>();
+        SolrQuery solrQuery = solrQueryBuilder.solrQueryToFetchMatchedRecords();
+        QueryResponse queryResponse = solrTemplate.getSolrClient().query(solrQuery);
+        SolrDocumentList solrDocumentList = queryResponse.getResults();
+        if (CollectionUtils.isNotEmpty(solrDocumentList)) {
+            for (SolrDocument bibSolrDocument : solrDocumentList) {
+                bibIds.add((Integer) bibSolrDocument.getFieldValue(ScsbConstants.BIB_ID));
+            }
+        }
+        return bibIds;
     }
 }

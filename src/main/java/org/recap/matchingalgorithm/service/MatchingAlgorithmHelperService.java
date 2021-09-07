@@ -8,10 +8,12 @@ import org.apache.solr.client.solrj.SolrServerException;
 import org.recap.PropertyKeyConstants;
 import org.recap.ScsbCommonConstants;
 import org.recap.ScsbConstants;
+import org.recap.executors.BibItemIndexExecutorService;
 import org.recap.executors.SaveMatchingBibsCallable;
 import org.recap.matchingalgorithm.MatchScoreReport;
 import org.recap.matchingalgorithm.MatchScoreUtil;
 import org.recap.model.jpa.*;
+import org.recap.model.solr.SolrIndexRequest;
 import org.recap.repository.jpa.*;
 import org.recap.service.ActiveMqQueuesInfo;
 import org.recap.util.CommonUtil;
@@ -93,6 +95,9 @@ public class MatchingAlgorithmHelperService {
 
     @Value("${" + PropertyKeyConstants.IS_INDEX_GROUPING_MATCHES + "}")
     Boolean isIndexGrouping;
+
+    @Autowired
+    private BibItemIndexExecutorService bibItemIndexExecutorService;
 
     /**
      * Gets logger.
@@ -623,5 +628,30 @@ public class MatchingAlgorithmHelperService {
         });
         saveAndIndexGroupedBibs(bibIdAndBibEntityMap, bibIdsToIndex);
         clearAllCollection(reportDataEntityList, bibIdAndBibEntityMap, bibIdsToIndex);
+    }
+
+    public int removeMatchingIdsInDB() {
+        return matchingAlgorithmUtil.removeMatchingIdsInDB();
+    }
+
+    public int removeMatchingIdsInSolr() throws IOException, SolrServerException {
+        int totalBibsIndexed = 0;
+        Set<Integer> bibIdsToIndex;
+        do {
+            bibIdsToIndex = matchingAlgorithmUtil.getBibIdsToRemoveMatchingIdsInSolr();
+            if (!bibIdsToIndex.isEmpty()) {
+                SolrIndexRequest solrIndexRequest = new SolrIndexRequest();
+                solrIndexRequest.setNumberOfThreads(1);
+                solrIndexRequest.setNumberOfDocs(10000);
+                solrIndexRequest.setCommitInterval(10000);
+                solrIndexRequest.setPartialIndexType("BibIdList");
+                String collectedBibIds = bibIdsToIndex.stream().map(String::valueOf).collect(Collectors.joining(","));
+                solrIndexRequest.setBibIds(collectedBibIds);
+                Integer bibsIndexed = bibItemIndexExecutorService.partialIndex(solrIndexRequest);
+                logger.info("Completed indexing {} to remove Matching Identifiers for Bib Ids", bibsIndexed);
+                totalBibsIndexed = totalBibsIndexed + bibsIndexed;
+            }
+        } while (!bibIdsToIndex.isEmpty());
+        return totalBibsIndexed;
     }
 }

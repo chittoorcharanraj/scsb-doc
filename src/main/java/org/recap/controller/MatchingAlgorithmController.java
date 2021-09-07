@@ -231,6 +231,48 @@ public class MatchingAlgorithmController {
     }
 
     @ResponseBody
+    @PostMapping(value = "/matchingAlgorithm/removeMatchingIdsInDB")
+    public String removeMatchingIdsInDB(){
+        StringBuilder status = new StringBuilder();
+        try {
+            StopWatch stopWatch = new StopWatch();
+            stopWatch.start();
+            int rowsUpdated = matchingAlgorithmHelperService.removeMatchingIdsInDB();
+            stopWatch.stop();
+            getLogger().info("Total rows updated to remove matching Ids from DB :{} " , rowsUpdated);
+            getLogger().info("Total Time taken to remove matching Ids from DB :{} " , stopWatch.getTotalTimeSeconds());
+            status.append(ScsbConstants.STATUS_DONE ).append("\n");
+            status.append(ScsbConstants.ROWS_UPDATED ).append(" : ").append(rowsUpdated).append("\n");
+            status.append(ScsbConstants.TOTAL_TIME_TAKEN + "to remove matching Ids from DB : " + stopWatch.getTotalTimeSeconds()).append("\n");
+        } catch (Exception e) {
+            getLogger().error(ScsbCommonConstants.LOG_ERROR,e);
+            status.append(ScsbConstants.STATUS_FAILED);
+        }
+        return status.toString();
+    }
+
+    @ResponseBody
+    @PostMapping(value = "/matchingAlgorithm/removeMatchingIdsInSolr")
+    public String removeMatchingIdsInSolr(){
+        StringBuilder status = new StringBuilder();
+        try {
+            StopWatch stopWatch = new StopWatch();
+            stopWatch.start();
+            int recordsIndexed = matchingAlgorithmHelperService.removeMatchingIdsInSolr();
+            stopWatch.stop();
+            getLogger().info("Total records indexed to remove matching Ids from Solr :{} " , recordsIndexed);
+            getLogger().info("Total Time taken to remove matching Ids from Solr :{} " , stopWatch.getTotalTimeSeconds());
+            status.append(ScsbConstants.STATUS_DONE ).append("\n");
+            status.append(ScsbConstants.RECORDS_UPDATED ).append(" : ").append(recordsIndexed).append("\n");
+            status.append(ScsbConstants.TOTAL_TIME_TAKEN + "to remove matching Ids from Solr : " + stopWatch.getTotalTimeSeconds()).append("\n");
+        } catch (Exception e) {
+            getLogger().error(ScsbCommonConstants.LOG_ERROR,e);
+            status.append(ScsbConstants.STATUS_FAILED);
+        }
+        return status.toString();
+    }
+
+    @ResponseBody
     @PostMapping(value = "/matchingAlgorithm/groupBibs")
     public String groupMatchingBibs(){
         StringBuilder status = new StringBuilder();
