@@ -161,8 +161,6 @@ public class ReportsServiceUtilUT extends BaseTestCaseUT4 {
         List<String> cgd=new ArrayList<>();
         cgd.add(ScsbConstants.SHARED);
         ReflectionTestUtils.invokeMethod(reportsServiceUtil,"prepareTitleReport",bibItem,item,msMap,false);
-        ReflectionTestUtils.invokeMethod(reportsServiceUtil,"getBarcodes",bibItem);
-        ReflectionTestUtils.invokeMethod(reportsServiceUtil,"getBarcodesExport",bibItem);
         ReflectionTestUtils.invokeMethod(reportsServiceUtil,"setItemDetails",bibItem);
         ReflectionTestUtils.invokeMethod(reportsServiceUtil,"setCGD",bibItem);
         ReflectionTestUtils.invokeMethod(reportsServiceUtil,"setDataToTitleMatchReports",bibItem,msMap);

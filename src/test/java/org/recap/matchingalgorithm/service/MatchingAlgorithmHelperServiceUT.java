@@ -109,6 +109,7 @@ public class MatchingAlgorithmHelperServiceUT extends BaseTestCaseUT {
     @BeforeEach
     public void setup() throws Exception {
         MockitoAnnotations.initMocks(this);
+        ReflectionTestUtils.setField(matchingAlgorithmHelperService,"isIndexGrouping",true);
     }
 
     @Test
