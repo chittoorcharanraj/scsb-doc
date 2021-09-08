@@ -106,6 +106,7 @@ public final class ScsbConstants {
     public static final String BIB_CREATED_DATE = "BibCreatedDate";
     public static final String BIB_LAST_UPDATED_DATE = "BibLastUpdatedDate";
     public static final String MATCHING_IDENTIFIER = "MatchingIdentifier";
+    public static final String MATCHING_QUALIFIER = "MAQualifier";
     public static final String DATE = "Date";
     public static final String COLUMN_CREATED_DATE = "CREATED_DATE";
     public static final String ITEM_BARCDE_DOESNOT_EXIST = "Item Barcode doesn't exist in SCSB database.";

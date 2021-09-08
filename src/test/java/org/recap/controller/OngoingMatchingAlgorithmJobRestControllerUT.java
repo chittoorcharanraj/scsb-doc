@@ -51,7 +51,7 @@ public class OngoingMatchingAlgorithmJobRestControllerUT extends BaseTestCaseUT4
 
     @Test
     public void testStartMatchingAlgorithmJob() throws Exception {
-        Mockito.when(ongoingMatchingAlgorithmUtil.fetchUpdatedRecordsAndStartProcess(Mockito.any(),Mockito.anyInt())).thenReturn(ScsbCommonConstants.SUCCESS);
+        Mockito.when(ongoingMatchingAlgorithmUtil.fetchUpdatedRecordsAndStartProcess(Mockito.any(),Mockito.anyInt(),true)).thenReturn(ScsbCommonConstants.SUCCESS);
         Mockito.when(matchingBibInfoDetailService.populateMatchingBibInfo(Mockito.any(),Mockito.any())).thenReturn(ScsbCommonConstants.SUCCESS);
         String status=ongoingMatchingAlgorithmJobRestController.startMatchingAlgorithmJob(getSolrIndexRequest());
         assertEquals(ScsbCommonConstants.SUCCESS,status);
@@ -59,7 +59,7 @@ public class OngoingMatchingAlgorithmJobRestControllerUT extends BaseTestCaseUT4
 
     @Test
     public void testStartMatchingAlgorithmJobException() throws Exception {
-        Mockito.when(ongoingMatchingAlgorithmUtil.fetchUpdatedRecordsAndStartProcess(Mockito.any(),Mockito.anyInt())).thenThrow(NullPointerException.class);
+        Mockito.when(ongoingMatchingAlgorithmUtil.fetchUpdatedRecordsAndStartProcess(Mockito.any(),Mockito.anyInt(),true)).thenThrow(NullPointerException.class);
         String status=ongoingMatchingAlgorithmJobRestController.startMatchingAlgorithmJob(getSolrIndexRequest());
         assertNotNull(status);
     }
