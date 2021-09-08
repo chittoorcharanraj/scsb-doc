@@ -154,6 +154,9 @@ public class Bib {
     @Field("AnamolyFlag")
     private Boolean anamolyFlag;
 
+    @Field("MAQualifier")
+    private Boolean maQualifier;
+
     @Override
     public boolean equals(Object o) {
         if (this == o)
@@ -225,6 +228,8 @@ public class Bib {
             return false;
         if (getAnamolyFlag() != null ? !getAnamolyFlag().equals(bib.getAnamolyFlag()) : bib.getAnamolyFlag() != null)
             return false;
+        if (getMaQualifier() != null ? !getMaQualifier().equals(bib.getMaQualifier()) : bib.getMaQualifier() != null)
+            return false;
         return getTitleSort() != null ? getTitleSort().equals(bib.getTitleSort()) : bib.getTitleSort() == null;
 
     }
@@ -263,6 +268,7 @@ public class Bib {
         result = 31 * result + (getMatchingIdentifier() != null ? getMatchingIdentifier().hashCode() : 0);
         result = 31 * result + (getMatchScore() != null ? getMatchScore().hashCode() : 0);
         result = 31 * result + (getAnamolyFlag() != null ? getAnamolyFlag().hashCode() : 0);
+        result = 31 * result + (getMaQualifier() != null ? getMaQualifier().hashCode() : 0);
         return result;
     }
 }

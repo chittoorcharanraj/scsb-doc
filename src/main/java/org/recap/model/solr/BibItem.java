@@ -116,6 +116,9 @@ public class BibItem {
     @Field("AnamolyFlag")
     private  Boolean anamolyFlag;
 
+    @Field("MAQualifier")
+    private  Boolean maQualifier;
+
     private String root;
 
     private List<Item> items = new ArrayList<>();
