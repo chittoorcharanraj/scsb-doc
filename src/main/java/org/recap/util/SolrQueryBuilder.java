@@ -685,6 +685,16 @@ public class SolrQueryBuilder {
         return query.toString();
     }
 
+    public String fetchMatchingQualifiedBibs() {
+        StringBuilder query = new StringBuilder();
+        query.append(ScsbConstants.MATCHING_QUALIFIER).append(":").append(ScsbConstants.BOOLEAN_TRUE)
+                .append(and).append(ScsbCommonConstants.IS_DELETED_BIB).append(":").append(ScsbConstants.FALSE)
+                .append(and).append(ScsbConstants.BIB_CATALOGING_STATUS).append(":").append(ScsbCommonConstants.COMPLETE_STATUS);
+        query.append(and).append(coreParentFilterQuery).append(ScsbCommonConstants.IS_DELETED_ITEM).append(":").append(ScsbConstants.FALSE)
+                .append(and).append(coreParentFilterQuery).append(ScsbConstants.ITEM_CATALOGING_STATUS).append(":").append(ScsbCommonConstants.COMPLETE_STATUS);
+        return query.toString();
+    }
+
     /**
      * This query is used to Fetch created or updated bibs based on the date range.
      *

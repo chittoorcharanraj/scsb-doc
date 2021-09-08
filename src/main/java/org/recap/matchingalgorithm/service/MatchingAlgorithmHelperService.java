@@ -619,12 +619,6 @@ public class MatchingAlgorithmHelperService {
             List<BibliographicEntity> bibToupdate = matchScoreReport.getBibIds().stream().map(bibIdAndBibEntityMap::get).collect(toList());
             Optional<Map<Integer, BibliographicEntity>> bibliographicEntityMap = matchingAlgorithmUtil.updateBibsForMatchingIdentifier(bibToupdate, matchScoreReport.getMatchScore());
             bibliographicEntityMap.ifPresentOrElse(entry -> bibIdsToIndex.addAll(entry.keySet()), () -> logger.info("No bib ids found to group for indexing"));
-           /* bibliographicEntityMap.ifPresent(entityMap -> {
-                Map<Integer, BibliographicEntity> integerBibliographicEntityMap = entityMap;
-                for (Map.Entry<Integer, BibliographicEntity> integerBibliographicEntityEntry : integerBibliographicEntityMap.entrySet()) {
-                    bibIdAndBibEntityMap.replace(integerBibliographicEntityEntry.getKey(), integerBibliographicEntityEntry.getValue());
-                }
-            });*/
         });
         saveAndIndexGroupedBibs(bibIdAndBibEntityMap, bibIdsToIndex);
         clearAllCollection(reportDataEntityList, bibIdAndBibEntityMap, bibIdsToIndex);

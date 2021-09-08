@@ -297,4 +297,15 @@ public interface BibliographicDetailsRepository extends BaseRepository<Bibliogra
     @Query("UPDATE BibliographicEntity bib SET bib.matchingIdentity = NULL, bib.matchScore = NULL, bib.anamolyFlag = false WHERE bib.matchingIdentity IS NOT NULL")
     int removeMatchingIdentifiers();
 
+    List<BibliographicEntity> findByMatchingIdentity(String matchingIdentity);
+
+    @Modifying
+    @Query(value = "UPDATE `RECAP`.`BIBLIOGRAPHIC_T` SET `ANAMOLY_FLAG`='1' WHERE `BIBLIOGRAPHIC_ID` in (:bibliographicIds)",nativeQuery = true)
+    @Transactional
+    void updateAnamolyFlag(@Param("bibliographicIds")List<Integer> bibIds);
+
+    @Modifying
+    @Query(value = "UPDATE `RECAP`.`BIBLIOGRAPHIC_T` SET `MA_QUALIFIER`='0' WHERE `BIBLIOGRAPHIC_ID` in (:bibliographicIds)",nativeQuery = true)
+    @Transactional
+    void updateMAQualifierAsFalse(@Param("bibliographicIds")List<Integer> bibIdList);
 }

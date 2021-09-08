@@ -12,6 +12,7 @@ import org.recap.repository.jpa.ItemDetailsRepository;
 import org.recap.repository.jpa.MatchingBibDetailsRepository;
 import org.recap.repository.jpa.MatchingMatchPointsDetailsRepository;
 import org.recap.repository.jpa.ReportDetailRepository;
+import org.recap.util.MatchingAlgorithmUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,6 +45,9 @@ public class MatchingAlgorithmProcessor {
 
     @Autowired
     private BibItemIndexExecutorService bibItemIndexExecutorService;
+
+    @Autowired
+    private MatchingAlgorithmUtil matchingAlgorithmUtil;
 
     /**
      * This method is used to save matching match-point in the database.
@@ -111,15 +115,6 @@ public class MatchingAlgorithmProcessor {
     }
 
     public void matchingAlgorithmGroupIndex(List<Integer> bibIds){
-        SolrIndexRequest solrIndexRequest=new SolrIndexRequest();
-        solrIndexRequest.setNumberOfThreads(5);
-        solrIndexRequest.setNumberOfDocs(1000);
-        solrIndexRequest.setCommitInterval(10000);
-        solrIndexRequest.setPartialIndexType("BibIdList");
-        logger.info("Total number of BibIds to index from queue: {}",bibIds);
-        String collect = bibIds.stream().map(bibId -> String.valueOf(bibId)).collect(Collectors.joining(","));
-        solrIndexRequest.setBibIds(collect);
-        Integer bibsIndexed = bibItemIndexExecutorService.partialIndex(solrIndexRequest);
-        logger.info("Completed indexing {} grouped Bib Ids",bibsIndexed);
+        matchingAlgorithmUtil.indexBibs(bibIds);
     }
 }
