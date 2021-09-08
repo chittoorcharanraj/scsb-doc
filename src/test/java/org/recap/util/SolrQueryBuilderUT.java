@@ -133,6 +133,11 @@ public class SolrQueryBuilderUT extends BaseTestCaseUT {
     }
 
     @Test
+    public void solrQueryToFetchMatchedRecords(){
+        solrQueryBuilder.solrQueryToFetchMatchedRecords();
+    }
+
+    @Test
     public void buildSolrQueryForDeaccessionReports(){
         SolrQuery buildSolrQueryForDeaccessionReports = solrQueryBuilder.buildSolrQueryForDeaccessionReports("2016-10-21T14:30Z TO NOW","PUL",true,"Private");
         assertNotNull(buildSolrQueryForDeaccessionReports);

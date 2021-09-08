@@ -105,6 +105,7 @@ public class ReportsServiceUtilUT extends BaseTestCaseUT4 {
 
     @Test
     public void titleMatchReports() throws Exception {
+        MatchingScoreTranslationEntity matchingScoreTranslationEntity1=new MatchingScoreTranslationEntity();
         List<String> titleMatch=new ArrayList<>();
         titleMatch.add(ScsbConstants.TITLE_MATCHED);
         Mockito.when(titleMatchedReport.getTitleMatch()).thenReturn(titleMatch);
