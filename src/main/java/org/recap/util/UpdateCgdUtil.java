@@ -106,6 +106,7 @@ public class UpdateCgdUtil {
                         for (BibliographicEntity bibliographicEntity : itemEntity.getBibliographicEntities()) {
                             bibliographicEntity.setLastUpdatedBy(userName);
                             bibliographicEntity.setLastUpdatedDate(lastUpdatedDate);
+                            bibliographicEntity.setMaQualifier(Boolean.TRUE);
                             bibliographicDetailsRepository.save(bibliographicEntity);
                         }
                     }
