@@ -104,6 +104,12 @@ public class SolrQueryBuilderUT extends BaseTestCaseUT {
     }
 
     @Test
+    public void fetchMatchingQualifiedBibs(){
+        String fetchCreatedOrUpdatedBibs = solrQueryBuilder.fetchMatchingQualifiedBibs();
+        assertNotNull(fetchCreatedOrUpdatedBibs);
+    }
+
+    @Test
     public void fetchBibsByBibIdRange(){
         String fetchBibsByBibIdRange = solrQueryBuilder.fetchBibsByBibIdRange("1","2");
         assertNotNull(fetchBibsByBibIdRange);
