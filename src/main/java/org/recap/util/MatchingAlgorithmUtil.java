@@ -1008,7 +1008,7 @@ public class MatchingAlgorithmUtil {
         Optional<BibliographicEntity> existingIdentifier = bibliographicEntityList.stream()
                 .filter(bibliographicEntity -> StringUtils.isNotEmpty(bibliographicEntity.getMatchingIdentity()))
                 .findFirst();
-        existingIdentifier.ifPresent(existingMatchingBibId->logger.info("existing matching id : {} for bibIds : {}",existingMatchingBibId.getMatchingIdentity(), bibliographicEntityList.stream().map(BibliographicEntity::getId).collect(toList()).toString()));
+     //   existingIdentifier.ifPresent(existingMatchingBibId->logger.info("existing matching id : {} for bibIds : {}",existingMatchingBibId.getMatchingIdentity(), bibliographicEntityList.stream().map(BibliographicEntity::getId).collect(toList()).toString()));
         String matchingIdentity = existingIdentifier.map(BibliographicEntity::getMatchingIdentity).orElseGet(() -> UUID.randomUUID().toString());
         return matchingIdentity;
     }
