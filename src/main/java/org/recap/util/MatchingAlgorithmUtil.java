@@ -18,6 +18,7 @@ import org.recap.matchingalgorithm.MatchScoreReport;
 import org.recap.matchingalgorithm.MatchScoreUtil;
 import org.recap.matchingalgorithm.MatchingCounter;
 import org.recap.model.jpa.*;
+import org.recap.model.solr.SolrIndexRequest;
 import org.recap.repository.jpa.*;
 import org.recap.service.accession.SolrIndexService;
 import org.slf4j.Logger;
@@ -953,18 +954,33 @@ public class MatchingAlgorithmUtil {
     }
 
     public Optional<Map<Integer,BibliographicEntity>> updateBibsForMatchingIdentifier(List<BibliographicEntity> bibliographicEntityList, Integer matchScore) {
-
         String matchingIdentity = getMatchingIdentityValue(bibliographicEntityList);
         Map<Boolean, List<BibliographicEntity>> partionedByMatchingIdentity = bibliographicEntityList.stream()
                 .collect(Collectors.partitioningBy(bibliographicEntity -> StringUtils.isEmpty(bibliographicEntity.getMatchingIdentity())));
-        List<BibliographicEntity> newlyGroupedBibs = groupCGDForNewEntries(matchScore, matchingIdentity, partionedByMatchingIdentity);
-        List<BibliographicEntity> updatedWithExistingGroupedBibs = groupCGDForExistingEntries(matchScore, partionedByMatchingIdentity);
+        List<BibliographicEntity> newlyGroupedBibs=new ArrayList<>();
+        List<BibliographicEntity> updatedWithExistingGroupedBibs=new ArrayList<>();
+        if(CollectionUtils.isNotEmpty(partionedByMatchingIdentity.get(true))){
+            newlyGroupedBibs = groupCGDForNewEntries(matchScore, matchingIdentity, partionedByMatchingIdentity);
+        }
+        if(CollectionUtils.isNotEmpty(partionedByMatchingIdentity.get(false))) {
+            updatedWithExistingGroupedBibs = groupCGDForExistingEntries(matchScore, partionedByMatchingIdentity, matchingIdentity);
+        }
         return Optional.ofNullable(Stream.of(newlyGroupedBibs,updatedWithExistingGroupedBibs)
-                                            .flatMap(Collection::stream)
-                                            .collect(Collectors.toMap(BibliographicEntity::getId,Function.identity())));
+                .flatMap(Collection::stream)
+                .collect(Collectors.toMap(BibliographicEntity::getId,Function.identity())));
     }
 
-    private List<BibliographicEntity> groupCGDForExistingEntries(Integer matchScore, Map<Boolean, List<BibliographicEntity>> partionedByMatchingIdentity) {
+    private List<BibliographicEntity> groupCGDForExistingEntries(Integer matchScore, Map<Boolean, List<BibliographicEntity>> partionedByMatchingIdentity,String matchingIdentity) {
+        List<BibliographicEntity> bibliographicEntityListWithExistingMatchingIdentifier = bibliographicDetailsRepository.findByMatchingIdentity(matchingIdentity);
+        List<BibliographicEntity> bibliographicEntities = partionedByMatchingIdentity.get(false);
+        Set<Integer> matchScores = bibliographicEntities.stream().map(bibliographicEntity -> bibliographicEntity.getMatchScore()).collect(toSet());
+        boolean isAnamolyFlagUpdateNeeded=((matchScores.size()>2) || !matchScores.contains(matchScore))?true:false;
+        if (isAnamolyFlagUpdateNeeded){
+            bibliographicEntityListWithExistingMatchingIdentifier.forEach(bibliographicEntity -> bibliographicEntity.setAnamolyFlag(true));
+            bibliographicDetailsRepository.updateAnamolyFlag(bibliographicEntityListWithExistingMatchingIdentifier.stream().map(bibliographicEntity -> bibliographicEntity.getId()).collect(Collectors.toList()));
+        }
+        List<Integer> bibIds = bibliographicEntities.stream().map(bibliographicEntity -> bibliographicEntity.getId()).collect(toList());
+        bibliographicDetailsRepository.updateAnamolyFlag(bibIds);
         return partionedByMatchingIdentity.get(false).stream()
                 .filter(bibliographicEntity -> !(bibliographicEntity.getMatchScore() == matchScore))
                 .map(bibliographicEntity -> {
@@ -992,7 +1008,7 @@ public class MatchingAlgorithmUtil {
         Optional<BibliographicEntity> existingIdentifier = bibliographicEntityList.stream()
                 .filter(bibliographicEntity -> StringUtils.isNotEmpty(bibliographicEntity.getMatchingIdentity()))
                 .findFirst();
-        existingIdentifier.ifPresent(existingMatchingBibId->logger.info("existing matching id : {} for bibIds : {}",existingMatchingBibId.getMatchingIdentity(), bibliographicEntityList.stream().map(BibliographicEntity::getId).collect(toList()).toString()));
+     //   existingIdentifier.ifPresent(existingMatchingBibId->logger.info("existing matching id : {} for bibIds : {}",existingMatchingBibId.getMatchingIdentity(), bibliographicEntityList.stream().map(BibliographicEntity::getId).collect(toList()).toString()));
         String matchingIdentity = existingIdentifier.map(BibliographicEntity::getMatchingIdentity).orElseGet(() -> UUID.randomUUID().toString());
         return matchingIdentity;
     }
@@ -1023,6 +1039,14 @@ public class MatchingAlgorithmUtil {
         entityManager.clear();
     }
 
+    @Transactional
+    public void updateMAQualifier(List<Integer> bibIds) {
+        logger.info("Updating MAQualfier for Bibs DB . Total size of bibs : {}",bibIds.size());
+        bibliographicDetailsRepository.updateMAQualifierAsFalse(bibIds);
+        entityManager.flush();
+        entityManager.clear();
+    }
+
     public int removeMatchingIdsInDB() {
         return bibliographicDetailsRepository.removeMatchingIdentifiers();
     }
@@ -1038,5 +1062,18 @@ public class MatchingAlgorithmUtil {
             }
         }
         return bibIds;
+    }
+
+    public void indexBibs(List<Integer> bibIds) {
+        SolrIndexRequest solrIndexRequest=new SolrIndexRequest();
+        solrIndexRequest.setNumberOfThreads(5);
+        solrIndexRequest.setNumberOfDocs(1000);
+        solrIndexRequest.setCommitInterval(10000);
+        solrIndexRequest.setPartialIndexType("BibIdList");
+        logger.info("Total number of BibIds to index from queue: {}", bibIds);
+        String collect = bibIds.stream().map(bibId -> String.valueOf(bibId)).collect(Collectors.joining(","));
+        solrIndexRequest.setBibIds(collect);
+        String bibsIndexed = bibItemIndexExecutorService.partialIndex(solrIndexRequest);
+        logger.info("Status of Index : {}",bibsIndexed);
     }
 }
