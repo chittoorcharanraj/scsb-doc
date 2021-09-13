@@ -477,7 +477,11 @@ public class MatchingAlgorithmHelperService {
         for (int pageNum = 0; pageNum < totalPagesCount + 1; pageNum++) {
             long from = pageNum * Long.valueOf(batchSize);
             logger.info("Quering report data query for Monograph where Total Page count : {} and current page number is : {} from is : {} and to is : {}",totalPagesCount, pageNum, from, batchSize);
+            StopWatch stopWatchForFetchingReport = new StopWatch();
+            stopWatchForFetchingReport.start();
             Optional<List<MatchingAlgorithmReportDataEntity>> reportDataEntities = getMonographDataEntitiesFromDB(batchSize, isPendingMatch, from);
+            stopWatchForFetchingReport.stop();
+            logger.info("Total time taken for fetching reports {} for size {}",stopWatchForFetchingReport.getTotalTimeSeconds(),reportDataEntities.get().size());
             reportDataEntities.ifPresent(this::groupBibsAndAssignMatchScore);
         }
         stopWatch.stop();
@@ -610,10 +614,12 @@ public class MatchingAlgorithmHelperService {
         return countOfRecordNum;
     }
 
-    private void groupBibsAndAssignMatchScore(List<MatchingAlgorithmReportDataEntity> reportDataEntityList) { //10k
+    private void groupBibsAndAssignMatchScore(List<MatchingAlgorithmReportDataEntity> reportDataEntityList) {
+        StopWatch stopWatch=new StopWatch();
+        stopWatch.start();
         Map<String, List<MatchingAlgorithmReportDataEntity>> reportDatasGroupedByRecordNum = reportDataEntityList.stream().collect(Collectors.groupingBy(MatchingAlgorithmReportDataEntity::getRecordNum));
-        List<MatchScoreReport> matchScoreReportList = prepareMatchScoreReportList(reportDatasGroupedByRecordNum); //10k mS list
-        Map<Integer, BibliographicEntity> bibIdAndBibEntityMap = getBibIdAndBibliographicEntityMap(matchScoreReportList); // 10-30K bibs
+        List<MatchScoreReport> matchScoreReportList = prepareMatchScoreReportList(reportDatasGroupedByRecordNum); // 10k
+        Map<Integer, BibliographicEntity> bibIdAndBibEntityMap = getBibIdAndBibliographicEntityMap(matchScoreReportList);//10k-40k
         Set<Integer> bibIdsToIndex = new HashSet<>();
         matchScoreReportList.forEach(matchScoreReport -> {
             List<BibliographicEntity> bibToupdate = matchScoreReport.getBibIds().stream().map(bibIdAndBibEntityMap::get).collect(toList());
@@ -622,6 +628,8 @@ public class MatchingAlgorithmHelperService {
         });
         saveAndIndexGroupedBibs(bibIdAndBibEntityMap, bibIdsToIndex);
         clearAllCollection(reportDataEntityList, bibIdAndBibEntityMap, bibIdsToIndex);
+        stopWatch.stop();
+        logger.info("Total time taken for grouping reports of size {} and bibs size {} is : {}",reportDataEntityList.size(),bibIdAndBibEntityMap.size(),stopWatch.getTotalTimeSeconds());
     }
 
     public int removeMatchingIdsInDB() {

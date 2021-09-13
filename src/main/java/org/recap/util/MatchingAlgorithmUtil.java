@@ -954,11 +954,12 @@ public class MatchingAlgorithmUtil {
     }
 
     public Optional<Map<Integer,BibliographicEntity>> updateBibsForMatchingIdentifier(List<BibliographicEntity> bibliographicEntityList, Integer matchScore) {
-        String matchingIdentity = getMatchingIdentityValue(bibliographicEntityList);
-        Map<Boolean, List<BibliographicEntity>> partionedByMatchingIdentity = bibliographicEntityList.stream()
-                .collect(Collectors.partitioningBy(bibliographicEntity -> StringUtils.isEmpty(bibliographicEntity.getMatchingIdentity())));
         List<BibliographicEntity> newlyGroupedBibs=new ArrayList<>();
         List<BibliographicEntity> updatedWithExistingGroupedBibs=new ArrayList<>();
+        String matchingIdentity = getMatchingIdentityValue(bibliographicEntityList);
+
+        Map<Boolean, List<BibliographicEntity>> partionedByMatchingIdentity = partitionBibsByMatchingIdentity(bibliographicEntityList);
+
         if(CollectionUtils.isNotEmpty(partionedByMatchingIdentity.get(true))){
             newlyGroupedBibs = groupCGDForNewEntries(matchScore, matchingIdentity, partionedByMatchingIdentity);
         }
@@ -970,28 +971,39 @@ public class MatchingAlgorithmUtil {
                 .collect(Collectors.toMap(BibliographicEntity::getId,Function.identity())));
     }
 
+    private Map<Boolean, List<BibliographicEntity>> partitionBibsByMatchingIdentity(List<BibliographicEntity> bibliographicEntityList) {
+        return bibliographicEntityList.stream()
+                .collect(Collectors.partitioningBy(bibliographicEntity -> StringUtils.isEmpty(bibliographicEntity.getMatchingIdentity())));
+    }
+
     private List<BibliographicEntity> groupCGDForExistingEntries(Integer matchScore, Map<Boolean, List<BibliographicEntity>> partionedByMatchingIdentity,String matchingIdentity) {
-        List<BibliographicEntity> bibliographicEntityListWithExistingMatchingIdentifier = bibliographicDetailsRepository.findByMatchingIdentity(matchingIdentity);
+        StopWatch stopWatch=new StopWatch();
+        stopWatch.start();
+
+       // To find and update bibs for anamoly flag if required with existing matching identifier
+        List<BibliographicEntity> bibliographicEntityListWithExistingMatchingIdentifier = bibliographicDetailsRepository.findByOwningInstitutionIdInAndMatchingIdentity(commonUtil.findAllInstitutionIdsExceptSupportInstitution(),matchingIdentity);
+
         List<BibliographicEntity> bibliographicEntities = partionedByMatchingIdentity.get(false);
         Set<Integer> matchScores = bibliographicEntities.stream().map(bibliographicEntity -> bibliographicEntity.getMatchScore()).collect(toSet());
         boolean isAnamolyFlagUpdateNeeded=((matchScores.size()>2) || !matchScores.contains(matchScore))?true:false;
         if (isAnamolyFlagUpdateNeeded){
-            bibliographicEntityListWithExistingMatchingIdentifier.forEach(bibliographicEntity -> bibliographicEntity.setAnamolyFlag(true));
-            bibliographicDetailsRepository.updateAnamolyFlag(bibliographicEntityListWithExistingMatchingIdentifier.stream().map(bibliographicEntity -> bibliographicEntity.getId()).collect(Collectors.toList()));
+            List<Integer> bibIdsFromPartitionedByMatchingIdentity = bibliographicEntities.stream().map(bibliographicEntity -> bibliographicEntity.getId()).collect(toList());
+            List<Integer> bibIdsExisting = bibliographicEntityListWithExistingMatchingIdentifier.stream().map(bibliographicEntity -> bibliographicEntity.getId()).collect(toList());
+            List<Integer> bibIdsToUpdateAnamolyFlag = Stream.of(bibIdsFromPartitionedByMatchingIdentity, bibIdsExisting).flatMap(bibIds -> bibIds.stream()).collect(toList());
+            bibliographicDetailsRepository.updateAnamolyFlag(bibIdsToUpdateAnamolyFlag);
         }
-        List<Integer> bibIds = bibliographicEntities.stream().map(bibliographicEntity -> bibliographicEntity.getId()).collect(toList());
-        bibliographicDetailsRepository.updateAnamolyFlag(bibIds);
-        return partionedByMatchingIdentity.get(false).stream()
+        //todo - updating anamoly flag
+        List<BibliographicEntity> modifiedBibs = partionedByMatchingIdentity.get(false).stream()
                 .filter(bibliographicEntity -> !(bibliographicEntity.getMatchScore() == matchScore))
                 .map(bibliographicEntity -> {
-                    if (!(bibliographicEntity.getMatchScore() == matchScore)) {
-                        bibliographicEntity.setAnamolyFlag(true);
-                        String updatedMatchScore = MatchScoreUtil.calculateMatchScore(MatchScoreUtil.convertDecimalToBinary(matchScore), MatchScoreUtil.convertDecimalToBinary(bibliographicEntity.getMatchScore()));
-                        bibliographicEntity.setMatchScore(MatchScoreUtil.convertBinaryToDecimal(updatedMatchScore));
-                    }
+                    String updatedMatchScore = MatchScoreUtil.calculateMatchScore(MatchScoreUtil.convertDecimalToBinary(matchScore), MatchScoreUtil.convertDecimalToBinary(bibliographicEntity.getMatchScore()));
+                    bibliographicEntity.setMatchScore(MatchScoreUtil.convertBinaryToDecimal(updatedMatchScore));
                     return bibliographicEntity;
                 })
                 .collect(toList());
+        stopWatch.stop();
+        logger.info("Total time taken for grouping with existing bibs : {}",stopWatch.getTotalTimeSeconds());
+        return modifiedBibs;
     }
 
     private List<BibliographicEntity> groupCGDForNewEntries(Integer matchScore, String matchingIdentity, Map<Boolean, List<BibliographicEntity>> partionedByMatchingIdentity) {
@@ -1008,7 +1020,6 @@ public class MatchingAlgorithmUtil {
         Optional<BibliographicEntity> existingIdentifier = bibliographicEntityList.stream()
                 .filter(bibliographicEntity -> StringUtils.isNotEmpty(bibliographicEntity.getMatchingIdentity()))
                 .findFirst();
-     //   existingIdentifier.ifPresent(existingMatchingBibId->logger.info("existing matching id : {} for bibIds : {}",existingMatchingBibId.getMatchingIdentity(), bibliographicEntityList.stream().map(BibliographicEntity::getId).collect(toList()).toString()));
         String matchingIdentity = existingIdentifier.map(BibliographicEntity::getMatchingIdentity).orElseGet(() -> UUID.randomUUID().toString());
         return matchingIdentity;
     }
