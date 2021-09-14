@@ -81,6 +81,9 @@ public class SolrIndexControllerUT extends BaseTestCaseUT {
     @Mock
     CommonUtil commonUtil;
 
+    @Mock
+    BindingResult result;
+
     @BeforeEach
     public void setUp()throws Exception {
         MockitoAnnotations.initMocks(this);
@@ -95,6 +98,15 @@ public class SolrIndexControllerUT extends BaseTestCaseUT {
     @Test
     public void fullIndex()throws Exception{
         String response =solrIndexController.fullIndex(getSolrIndexRequest(),bindingResult,model);
+        assertNotNull(response);
+        assertTrue(response.contains("Total number of records processed :"));
+    }
+
+    @Test
+    public void partialIndexDataFromUI()throws Exception{
+        SolrIndexRequest solrIndexRequest = getSolrIndexRequest();
+        solrIndexRequest.setOwningInstitutionCode("PUL");
+        String response =solrIndexController.partialIndexDataFromUI(solrIndexRequest,bindingResult,model);
         assertNotNull(response);
         assertTrue(response.contains("Total number of records processed :"));
     }
@@ -203,7 +215,7 @@ public class SolrIndexControllerUT extends BaseTestCaseUT {
         SolrIndexRequest solrIndexRequest = getSolrIndexRequest();
         solrIndexRequest.setOwningInstitutionCode("PUL");
         solrIndexRequest.setCommitInterval(5000);
-        String response =solrIndexController.partialIndex(solrIndexRequest);
+        String response =solrIndexController.partialIndexData(solrIndexRequest);
         assertNotNull(response);
         assertTrue(response.contains("Total number of records processed :"));
     }
