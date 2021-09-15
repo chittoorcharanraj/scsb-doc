@@ -740,12 +740,16 @@ public class OngoingMatchingAlgorithmUtil {
                         }
                         else {
                             matchScore = MatchScoreUtil.getMatchScoreForSingleMatchAndTitle(matchScore);
-                            matchingAlgorithmCGDProcessor.updateCGDProcess(itemEntityMap);
+                            if (!itemEntityMap.isEmpty()) {
+                                matchingAlgorithmCGDProcessor.updateCGDProcess(itemEntityMap);
+                            }
                             groupBibsAndUpdateInDB(matchScore, bibIdList);
                         }
                     }
                     else if(matchType.equalsIgnoreCase(ScsbConstants.MULTI_MATCH)){
-                        matchingAlgorithmCGDProcessor.updateCGDProcess(itemEntityMap);
+                        if (!itemEntityMap.isEmpty()) {
+                            matchingAlgorithmCGDProcessor.updateCGDProcess(itemEntityMap);
+                        }
                         groupBibsAndUpdateInDB(matchScore, bibIdList);
                     }
                 } else {
