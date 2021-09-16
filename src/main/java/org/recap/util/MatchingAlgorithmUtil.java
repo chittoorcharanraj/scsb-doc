@@ -1039,14 +1039,6 @@ public class MatchingAlgorithmUtil {
         entityManager.clear();
     }
 
-    @Transactional
-    public void updateMAQualifier(List<Integer> bibIds) {
-        logger.info("Updating MAQualfier for Bibs DB . Total size of bibs : {}",bibIds.size());
-        bibliographicDetailsRepository.updateMAQualifierAsFalse(bibIds);
-        entityManager.flush();
-        entityManager.clear();
-    }
-
     public int removeMatchingIdsInDB() {
         return bibliographicDetailsRepository.removeMatchingIdentifiers();
     }
