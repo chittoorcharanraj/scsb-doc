@@ -16,6 +16,8 @@ import org.recap.repository.jpa.ItemDetailsRepository;
 import org.recap.repository.jpa.MatchingBibDetailsRepository;
 import org.recap.repository.jpa.MatchingMatchPointsDetailsRepository;
 import org.recap.repository.jpa.ReportDetailRepository;
+import org.recap.util.MatchingAlgorithmUtil;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -46,6 +48,10 @@ public class MatchingAlgorithmProcessorUT extends BaseTestCaseUT {
 
     @Mock
     BibItemIndexExecutorService bibItemIndexExecutorService;
+
+    @Mock
+    MatchingAlgorithmUtil matchingAlgorithmUtil;
+
 
     @Test
     public void matchingAlgorithmGroupIndex() throws Exception {

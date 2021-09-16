@@ -31,6 +31,39 @@ public class BibResolverUT extends BaseTestCaseUT {
         leaderMaterialTypeValueResolver.isInterested("LeaderMaterialType");
         assertNotNull(leaderMaterialTypeValueResolver.getClass());
     }
+
+    @Test
+    public void testMAQualifierValueResolver() throws Exception {
+        MAQualifierValueResolver mAQualifierValueResolver = new MAQualifierValueResolver();
+        mAQualifierValueResolver.setValue(bibItem(),true);
+        mAQualifierValueResolver.isInterested("MAQualifier");
+        assertNotNull(mAQualifierValueResolver.getClass());
+    }
+
+    @Test
+    public void testAnomalyFlagValueResolver() throws Exception {
+        AnomalyFlagValueResolver anomalyFlagValueResolver = new AnomalyFlagValueResolver();
+        anomalyFlagValueResolver.setValue(bibItem(),true);
+        anomalyFlagValueResolver.isInterested("AnamolyFlag");
+        assertNotNull(anomalyFlagValueResolver.getClass());
+    }
+
+    @Test
+    public void testMatchScoreValueResolver() throws Exception {
+        MatchScoreValueResolver matchScoreValueResolver = new MatchScoreValueResolver();
+        matchScoreValueResolver.setValue(bibItem(),1);
+        matchScoreValueResolver.isInterested("MatchScore");
+        assertNotNull(matchScoreValueResolver.getClass());
+    }
+
+    @Test
+    public void testMatchingIdentifierValueResolver() throws Exception {
+        MatchingIdentifierValueResolver matchingIdentifierValueResolver = new MatchingIdentifierValueResolver();
+        matchingIdentifierValueResolver.setValue(bibItem(),"test");
+        matchingIdentifierValueResolver.isInterested("MatchingIdentifier");
+        assertNotNull(matchingIdentifierValueResolver.getClass());
+    }
+
     @Test
     public void testDocTypeValueResolver() throws Exception {
         DocTypeValueResolver docTypeValueResolver = new DocTypeValueResolver();
@@ -252,6 +285,7 @@ public class BibResolverUT extends BaseTestCaseUT {
         bibItem.setNotes("Notes");
         bibItem.setOwningInstitution("PUL");
         bibItem.setOwningInstitutionBibId("1");
+        bibItem.setMaQualifier(true);
         return bibItem;
 
     }

@@ -10,6 +10,7 @@ import org.mockito.MockitoAnnotations;
 import org.recap.BaseTestCaseUT;
 import org.recap.ScsbCommonConstants;
 import org.recap.ScsbConstants;
+import org.recap.executors.BibItemIndexExecutorService;
 import org.recap.matchingalgorithm.MatchScoreUtil;
 import org.recap.model.jpa.BibliographicEntity;
 import org.recap.model.jpa.MatchingAlgorithmReportDataEntity;
@@ -105,6 +106,12 @@ public class MatchingAlgorithmHelperServiceUT extends BaseTestCaseUT {
     @Mock
     EntityManager entityManager;
 
+    @Mock
+    BibItemIndexExecutorService bibItemIndexExecutorService;
+
+    @Mock
+    Set<Integer> bibIdsToIndex;
+
 
     @BeforeEach
     public void setup() throws Exception {
@@ -127,6 +134,19 @@ public class MatchingAlgorithmHelperServiceUT extends BaseTestCaseUT {
     @Test
     public void groupBibsForMonograph() throws Exception {
          matchingAlgorithmHelperService.groupBibsForMonograph(1,false);
+    }
+
+    @Test
+    public void removeMatchingIdsInSolr() throws Exception {
+        Mockito.when(bibIdsToIndex.isEmpty()).thenReturn(false).thenReturn(true);
+        Mockito.when(bibItemIndexExecutorService.partialIndex(Mockito.any())).thenReturn(1);
+        Mockito.when(matchingAlgorithmUtil.getBibIdsToRemoveMatchingIdsInSolr()).thenReturn(bibIdsToIndex);
+        matchingAlgorithmHelperService.removeMatchingIdsInSolr();
+    }
+
+    @Test
+    public void removeMatchingIdsInDB() throws Exception {
+        matchingAlgorithmHelperService.removeMatchingIdsInDB();
     }
 
     @Test

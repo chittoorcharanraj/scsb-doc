@@ -41,10 +41,7 @@ import java.util.HashMap;
 import java.util.Random;
 import java.util.function.Function;
 
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.*;
 import static org.recap.ScsbConstants.*;
 import static org.recap.ScsbConstants.MATCHING_COUNTER_UPDATED_OPEN;
 
@@ -175,6 +172,39 @@ public class MatchingAlgorithmControllerUT extends BaseTestCaseUT4 {
         String response = matchingAlgoController.groupMVMs();
         assertNotNull(response);
     }
+
+    @Test
+    public void removeMatchingIdsInDB() {
+        ReflectionTestUtils.setField(matchingAlgoController,"matchingAlgorithmHelperService",matchingAlgorithmHelperService);
+        Mockito.when(matchingAlgorithmHelperService.removeMatchingIdsInDB()).thenReturn(1);
+        Mockito.when(matchingAlgoController.removeMatchingIdsInDB()).thenCallRealMethod();
+        String response = matchingAlgoController.removeMatchingIdsInDB();
+        assertTrue(response.contains(ScsbConstants.STATUS_DONE));
+    }
+
+    @Test
+    public void removeMatchingIdsInDB_Exception() {
+        Mockito.when(matchingAlgoController.removeMatchingIdsInDB()).thenCallRealMethod();
+        String response = matchingAlgoController.removeMatchingIdsInDB();
+        assertTrue(response.contains(ScsbConstants.STATUS_FAILED));
+    }
+
+    @Test
+    public void removeMatchingIdsInSolr() {
+        ReflectionTestUtils.setField(matchingAlgoController,"matchingAlgorithmHelperService",matchingAlgorithmHelperService);
+        Mockito.when(matchingAlgorithmHelperService.removeMatchingIdsInDB()).thenReturn(1);
+        Mockito.when(matchingAlgoController.removeMatchingIdsInSolr()).thenCallRealMethod();
+        String response = matchingAlgoController.removeMatchingIdsInSolr();
+        assertTrue(response.contains(ScsbConstants.STATUS_DONE));
+    }
+
+    @Test
+    public void removeMatchingIdsInSolr_Exception() {
+        Mockito.when(matchingAlgoController.removeMatchingIdsInSolr()).thenCallRealMethod();
+        String response = matchingAlgoController.removeMatchingIdsInSolr();
+        assertTrue(response.contains(ScsbConstants.STATUS_FAILED));
+    }
+
 
     @Test
     public void groupMonographs() {

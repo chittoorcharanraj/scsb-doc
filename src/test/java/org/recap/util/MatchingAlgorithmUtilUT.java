@@ -22,11 +22,8 @@ import org.recap.BaseTestCaseUT4;
 import org.recap.ScsbCommonConstants;
 import org.recap.ScsbConstants;
 import org.recap.controller.SolrIndexController;
-import org.recap.model.jpa.BibliographicEntity;
-import org.recap.model.jpa.MatchingAlgorithmReportDataEntity;
-import org.recap.model.jpa.MatchingAlgorithmReportEntity;
-import org.recap.model.jpa.MatchingBibEntity;
-import org.recap.model.jpa.MatchingMatchPointsEntity;
+import org.recap.matchingalgorithm.MatchScoreReport;
+import org.recap.model.jpa.*;
 import org.recap.repository.jpa.BibliographicDetailsRepository;
 import org.recap.repository.jpa.InstitutionDetailsRepository;
 import org.recap.repository.jpa.MatchingAlgorithmReportDataDetailsRepository;
@@ -37,6 +34,7 @@ import org.springframework.data.solr.core.SolrTemplate;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.util.ReflectionTestUtils;
 
+import javax.persistence.EntityManager;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -97,6 +95,15 @@ public class MatchingAlgorithmUtilUT extends BaseTestCaseUT4 {
     @Mock
     MatchingAlgorithmReportDataEntity matchingAlgorithmReportDataEntity;
 
+    @Mock
+    SolrQuery solrQuery;
+
+    @Mock
+    Collection<BibliographicEntity> bibliographicEntities;
+
+    @Mock
+    EntityManager entityManager;
+
     @Before
     public void setup() throws Exception {
         MockitoAnnotations.initMocks(this);
@@ -147,6 +154,34 @@ public class MatchingAlgorithmUtilUT extends BaseTestCaseUT4 {
         Mockito.when(bibliographicDetailsRepository.findByIdIn(Mockito.anyList())).thenReturn(bibliographicEntityList);
         mockMatchingAlgorithmUtil.getBibIdAndBibEntityMap(bibIdsList);
     }
+
+    @Test
+    public void groupCGDForExistingEntries() throws Exception {
+        List<Integer> bibIds=new ArrayList<>();
+        mockMatchingAlgorithmUtil.indexBibs(bibIds);
+        mockMatchingAlgorithmUtil.updateMAQualifier(bibIds);
+        mockMatchingAlgorithmUtil.removeMatchingIdsInDB();
+        Map<Boolean,List<BibliographicEntity>> partionedByMatchingIdentity=new HashMap<>();
+        List<BibliographicEntity> bibliographicEntities=new ArrayList<>();
+        bibliographicEntities.add(bibliographicEntity);
+        partionedByMatchingIdentity.put(false,bibliographicEntities);
+        ReflectionTestUtils.invokeMethod(mockMatchingAlgorithmUtil,"groupCGDForExistingEntries",1,partionedByMatchingIdentity,"matchingIdentity");
+    }
+
+    @Test
+    public void extractBibIdsFromReportDataEntities() throws Exception {
+        List<ReportDataEntity> reportDataEntities=new ArrayList<>();
+        Set<String> result=mockMatchingAlgorithmUtil.extractBibIdsFromReportDataEntities(reportDataEntities);
+        assertNotNull(result);
+    }
+
+    @Test
+    public void extractBibIdsFromMatchScoreReports() throws Exception {
+        List<MatchScoreReport> reportDataEntities=new ArrayList<>();
+        Set<Integer> result=mockMatchingAlgorithmUtil.extractBibIdsFromMatchScoreReports(reportDataEntities);
+        assertNotNull(result);
+    }
+
     @Test
     public void getSingleMatchBibsAndSaveReport() throws Exception {
         Map<String, Set<Integer>> criteriaMap = getStringSetMap();
@@ -215,6 +250,34 @@ public class MatchingAlgorithmUtilUT extends BaseTestCaseUT4 {
         mockMatchingAlgorithmUtil.updateExceptionRecords(Arrays.asList(1,2,3),1);
         assertNotNull(reportDataEntityEmpty);
         assertNotNull(reportDataEntity1);
+    }
+
+    @Test
+    public void getbibIdAndBibMap() throws Exception {
+        Set<Integer> bibIdsList=new HashSet<>();
+        Map<Integer, BibliographicEntity> bibliographicEntityMap=mockMatchingAlgorithmUtil.getbibIdAndBibMap(bibIdsList);
+        assertNotNull(bibliographicEntityMap);
+    }
+
+    @Test
+    public void saveGroupedBibsToDb() throws Exception {
+        mockMatchingAlgorithmUtil.saveGroupedBibsToDb(bibliographicEntities);
+    }
+
+    @Test
+    public void getBibIdsToRemoveMatchingIdsInSolr() throws Exception {
+        SolrTemplate mocksolrTemplate1 = PowerMockito.mock(SolrTemplate.class);
+        ReflectionTestUtils.setField(mockMatchingAlgorithmUtil, "solrTemplate", mocksolrTemplate1);
+        SolrClient solrClient = PowerMockito.mock(SolrClient.class);
+        PowerMockito.when(mocksolrTemplate1.getSolrClient()).thenReturn(solrClient);
+        QueryResponse queryResponse = Mockito.mock(QueryResponse.class);
+        Mockito.when(solrClient.query(Mockito.any(SolrQuery.class))).thenReturn(queryResponse);
+        SolrDocumentList solrDocumentList = getSolrDocuments();
+        solrDocumentList.setNumFound(1);
+        Mockito.when(queryResponse.getResults()).thenReturn(solrDocumentList);
+        Mockito.when(solrQueryBuilder.solrQueryToFetchMatchedRecords()).thenReturn(solrQuery);
+        Set<Integer> bibIdsList=mockMatchingAlgorithmUtil.getBibIdsToRemoveMatchingIdsInSolr();
+        assertNotNull(bibIdsList);
     }
 
     @Test
