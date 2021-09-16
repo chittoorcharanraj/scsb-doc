@@ -30,6 +30,7 @@ public class SolrQueryBuilder {
     private String to = " TO ";
     private String coreParentFilterQuery = "{!parent which=\"ContentType:parent\"}";
     private String coreChildFilterQuery = "{!child of=\"ContentType:parent\"}";
+    private String filterQuery = "{!join from=MatchingIdentifier to=MatchingIdentifier}MatchingIdentifier:{!join from=MatchingIdentifier to=MatchingIdentifier}";
 
     /**
      * Gets query string for item criteria for parent.
@@ -856,7 +857,7 @@ public class SolrQueryBuilder {
     }
     public SolrQuery buildQueryTitleMatchedReport( String date, StringBuilder owningInst, StringBuilder cgd, String matchingIdentifier) {
         StringBuilder query = new StringBuilder();
-        query.append(ScsbCommonConstants.DOCTYPE).append(":").append(ScsbCommonConstants.BIB).append(and)
+        query.append(filterQuery).append(ScsbCommonConstants.DOCTYPE).append(":").append(ScsbCommonConstants.BIB).append(and)
                 .append(ScsbConstants.BIB_CATALOGING_STATUS).append(":").append(ScsbCommonConstants.COMPLETE_STATUS).append(and)
                 .append(ScsbCommonConstants.BIB_OWNING_INSTITUTION).append(":(").append(owningInst).append(")").append(and)
                 .append(ScsbConstants.BIB_CREATED_DATE).append(":[").append(date).append("]").append(and).append(matchingIdentifier)

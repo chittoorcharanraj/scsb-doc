@@ -322,6 +322,7 @@ public final class ScsbConstants {
     public static final String CURRENT_PAGE = "Current Page";
     public static final String ROWS_UPDATED = "Rows Updated";
     public static final String RECORDS_UPDATED = "Records Updated";
-
+    public static final String TITLE_MATCH_REPORT_PATH = "reports/title-match-reports/";
+    public static final String TITLE_MATCH = "_Title_Match_";
     private ScsbConstants(){}
 }
