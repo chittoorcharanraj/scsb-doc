@@ -234,6 +234,12 @@ public class CommonUtilUT extends BaseTestCaseUT4 {
     }
 
     @Test
+    public void findAllInstitutionIdsExceptSupportInstitution() {
+        List<Integer> result = commonUtil.findAllInstitutionIdsExceptSupportInstitution();
+        assertNotNull(result);
+    }
+
+    @Test
     public void findAllInstitutionsExceptSupportInstitution() {
         InstitutionEntity institutionEntity = getInstitutionEntity();
         Mockito.when(institutionDetailsRepository.findAllInstitutionsExceptSupportInstitution(supportInstitution)).thenReturn(Collections.singletonList(institutionEntity));

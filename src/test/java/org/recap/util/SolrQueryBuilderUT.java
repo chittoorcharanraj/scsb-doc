@@ -104,6 +104,12 @@ public class SolrQueryBuilderUT extends BaseTestCaseUT {
     }
 
     @Test
+    public void fetchMatchingQualifiedBibs(){
+        String fetchCreatedOrUpdatedBibs = solrQueryBuilder.fetchMatchingQualifiedBibs();
+        assertNotNull(fetchCreatedOrUpdatedBibs);
+    }
+
+    @Test
     public void fetchBibsByBibIdRange(){
         String fetchBibsByBibIdRange = solrQueryBuilder.fetchBibsByBibIdRange("1","2");
         assertNotNull(fetchBibsByBibIdRange);
@@ -130,6 +136,11 @@ public class SolrQueryBuilderUT extends BaseTestCaseUT {
         List<String> matchCriteriaValues=new ArrayList<>();
         SolrQuery solrQueryToFetchBibDetails = solrQueryBuilder.solrQueryToFetchBibDetails(matchingMatchPointsEntities,matchCriteriaValues,"");
         assertNotNull(solrQueryToFetchBibDetails);
+    }
+
+    @Test
+    public void solrQueryToFetchMatchedRecords(){
+        solrQueryBuilder.solrQueryToFetchMatchedRecords();
     }
 
     @Test
