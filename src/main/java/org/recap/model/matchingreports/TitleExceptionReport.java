@@ -18,5 +18,6 @@ public class TitleExceptionReport implements Serializable {
     private String isbn;
     private String issn;
     private String lccn;
+    private String matchScore;
     private List<String> titleList;
 }

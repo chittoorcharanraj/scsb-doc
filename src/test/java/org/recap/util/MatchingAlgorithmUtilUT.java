@@ -159,7 +159,6 @@ public class MatchingAlgorithmUtilUT extends BaseTestCaseUT4 {
     public void groupCGDForExistingEntries() throws Exception {
         List<Integer> bibIds=new ArrayList<>();
         mockMatchingAlgorithmUtil.indexBibs(bibIds);
-        mockMatchingAlgorithmUtil.updateMAQualifier(bibIds);
         mockMatchingAlgorithmUtil.removeMatchingIdsInDB();
         Map<Boolean,List<BibliographicEntity>> partionedByMatchingIdentity=new HashMap<>();
         List<BibliographicEntity> bibliographicEntities=new ArrayList<>();

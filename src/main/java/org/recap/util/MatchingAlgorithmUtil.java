@@ -1050,14 +1050,6 @@ public class MatchingAlgorithmUtil {
         entityManager.clear();
     }
 
-    @Transactional
-    public void updateMAQualifier(List<Integer> bibIds) {
-        logger.info("Updating MAQualfier for Bibs DB . Total size of bibs : {}",bibIds.size());
-        bibliographicDetailsRepository.updateMAQualifierAsFalse(bibIds);
-        entityManager.flush();
-        entityManager.clear();
-    }
-
     public int removeMatchingIdsInDB() {
         return bibliographicDetailsRepository.removeMatchingIdentifiers();
     }
@@ -1081,7 +1073,7 @@ public class MatchingAlgorithmUtil {
         solrIndexRequest.setNumberOfDocs(1000);
         solrIndexRequest.setCommitInterval(10000);
         solrIndexRequest.setPartialIndexType("BibIdList");
-        logger.info("Total number of BibIds to index from queue: {}", bibIds);
+        logger.info("Total number of BibIds to index from queue: {}", bibIds.size());
         String collect = bibIds.stream().map(bibId -> String.valueOf(bibId)).collect(Collectors.joining(","));
         solrIndexRequest.setBibIds(collect);
         String bibsIndexed = bibItemIndexExecutorService.partialIndex(solrIndexRequest);

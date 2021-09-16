@@ -113,7 +113,7 @@ public class OngoingMatchingAlgorithmUtil {
      * @throws IOException         the io exception
      * @throws SolrServerException the solr server exception
      */
-    public String fetchUpdatedRecordsAndStartProcess(Date date, Integer rows,Boolean isMAQualifier) throws IOException, SolrServerException {
+    public String fetchUpdatedRecordsAndStartProcess(Date date, Integer rows) throws IOException, SolrServerException {
         String status;
         matchingAlgorithmUtil.populateMatchingCounter();
         List<MatchingSummaryReport> matchingSummaryReports = ongoingMatchingReportsService.populateSummaryReportBeforeMatching();
@@ -121,14 +121,12 @@ public class OngoingMatchingAlgorithmUtil {
         String formattedDate = getFormattedDateString(date);
         Integer start = 0;
         int totalProcessed = 0;
-        QueryResponse queryResponse=(!isMAQualifier)?fetchDataForOngoingMatchingBasedOnDate(formattedDate, rows, start):fetchDataForOngoingMatchingBasedOnMatchingQualifierFlag(rows, start);
-
+        QueryResponse queryResponse = fetchDataForOngoingMatchingBasedOnDate(formattedDate, rows, start);
         Integer totalNumFound = Math.toIntExact(queryResponse.getResults().getNumFound());
         int quotient = totalNumFound / (rows);
         int remainder = totalNumFound % (rows);
         Integer totalPages = remainder == 0 ? quotient : quotient + 1;
         logger.info("Batch Size : {} ",rows);
-        logger.info("Total Number of Records Found : {} ",totalNumFound);
         logger.info("Total Number of Records Found from date [{}]: {} ", date, totalNumFound);
         logger.info("Total Pages : {} ",totalPages);
         logger.info("{} : {}/{} ", ScsbConstants.CURRENT_PAGE, 1, totalPages);
@@ -139,7 +137,7 @@ public class OngoingMatchingAlgorithmUtil {
         for(int pageNum=1; pageNum<totalPages; pageNum++) {
             logger.info("{} : {}/{} ", ScsbConstants.CURRENT_PAGE, pageNum+1, totalPages);
             start = pageNum * rows;
-            queryResponse=(!isMAQualifier)?fetchDataForOngoingMatchingBasedOnDate(formattedDate, rows, start):fetchDataForOngoingMatchingBasedOnMatchingQualifierFlag(rows, start);
+            queryResponse = fetchDataForOngoingMatchingBasedOnDate(formattedDate, rows, start);
             solrDocumentList = queryResponse.getResults();
             totalProcessed = totalProcessed + solrDocumentList.size();
             status = processOngoingMatchingAlgorithm(solrDocumentList, serialMvmBibIds);
@@ -322,19 +320,6 @@ public class OngoingMatchingAlgorithmUtil {
         return null;
     }
 
-    public QueryResponse fetchDataForOngoingMatchingBasedOnMatchingQualifierFlag(Integer batchSize, Integer start) {
-        try {
-            String query = solrQueryBuilder.fetchMatchingQualifiedBibs();
-            SolrQuery solrQuery = new SolrQuery(query);
-            solrQuery.setStart(start);
-            solrQuery.setRows(batchSize);
-            return solrTemplate.getSolrClient().query(solrQuery);
-
-        } catch (SolrServerException | IOException e) {
-            logger.error(ScsbCommonConstants.LOG_ERROR,e);
-        }
-        return null;
-    }
     /**
      * This method fetches data for ongoing matching based on date range.
      *
@@ -422,7 +407,6 @@ public class OngoingMatchingAlgorithmUtil {
                 bibIdList.add(bibId);
                 status = processMatchingForBib(solrDocument, serialMvmBibIds);
             }
-            matchingAlgorithmUtil.updateMAQualifier(bibIdList);
             matchingAlgorithmUtil.indexBibs(bibIdList);
         }
         stopWatch.stop();

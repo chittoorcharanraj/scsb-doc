@@ -72,7 +72,6 @@ public class BibUT extends BaseTestCaseUT {
         bib.setOwningInstHoldingsIdList(Arrays.asList(1));
         bib.setMatchingIdentifier("match");
         bib.setAnamolyFlag(true);
-        bib.setMaQualifier(true);
         bib.setMatchScore(1);
         Bib bib1=new Bib();
         bib1.hashCode();
@@ -190,7 +189,6 @@ public class BibUT extends BaseTestCaseUT {
         bib.setMatchingIdentifier(matchingIdentifier);
         bib.setMatchScore(matchScore);
         bib.setAnamolyFlag(anamolyFlag);
-        bib.setMaQualifier(maQualifier);
         return bib;
     }
 

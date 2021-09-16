@@ -34,6 +34,7 @@ import org.recap.model.solr.Item;
 import org.recap.repository.jpa.DeaccesionItemChangeLogDetailsRepository;
 import org.recap.repository.jpa.MatchingScoreTranslationRepository;
 import org.recap.repository.solr.impl.BibSolrDocumentRepositoryImpl;
+import org.recap.service.TitleMatchReportExportService;
 import org.springframework.data.solr.core.SolrTemplate;
 import org.springframework.test.util.ReflectionTestUtils;
 
@@ -96,6 +97,9 @@ public class ReportsServiceUtilUT extends BaseTestCaseUT4 {
     @Mock
     Item item;
 
+    @Mock
+    TitleMatchReportExportService titleMatchReportExportService;
+
     @Before
     public void setup()throws Exception{
         MockitoAnnotations.initMocks(this);
@@ -108,10 +112,10 @@ public class ReportsServiceUtilUT extends BaseTestCaseUT4 {
         MatchingScoreTranslationEntity matchingScoreTranslationEntity1=new MatchingScoreTranslationEntity();
         List<String> titleMatch=new ArrayList<>();
         titleMatch.add(ScsbConstants.TITLE_MATCHED);
-        Mockito.when(titleMatchedReport.getTitleMatch()).thenReturn(titleMatch);
+        Mockito.when(titleMatchedReport.getTitleMatch()).thenReturn(String.valueOf(titleMatch));
         List<String> owningInst=new ArrayList<>();
         owningInst.add(ScsbCommonConstants.PRINCETON);
-        Mockito.when(titleMatchedReport.getOwningInst()).thenReturn(owningInst);
+        Mockito.when(titleMatchedReport.getOwningInst()).thenReturn(String.valueOf(owningInst));
         List<String> cgd=new ArrayList<>();
         cgd.add(ScsbConstants.SHARED);
         Mockito.when(titleMatchedReport.getCgd()).thenReturn(cgd);
@@ -172,10 +176,11 @@ public class ReportsServiceUtilUT extends BaseTestCaseUT4 {
     public void titleMatchReportsExport() throws Exception {
         List<String> titleMatch=new ArrayList<>();
         titleMatch.add(ScsbConstants.TITLE_MATCHED);
-        Mockito.when(titleMatchedReport.getTitleMatch()).thenReturn(titleMatch);
+        Mockito.when(titleMatchedReport.getTitleMatch()).thenReturn(String.valueOf(titleMatch));
         List<String> owningInst=new ArrayList<>();
         owningInst.add(ScsbCommonConstants.PRINCETON);
-        Mockito.when(titleMatchedReport.getOwningInst()).thenReturn(owningInst);
+        Mockito.when(titleMatchedReport.getOwningInst()).thenReturn(String.valueOf(owningInst));
+        Mockito.when(titleMatchReportExportService.process(titleMatchedReport)).thenReturn(titleMatchedReport);
         List<String> cgd=new ArrayList<>();
         cgd.add(ScsbConstants.SHARED);
         Mockito.when(titleMatchedReport.getCgd()).thenReturn(cgd);
@@ -183,6 +188,7 @@ public class ReportsServiceUtilUT extends BaseTestCaseUT4 {
         Mockito.when(titleMatchedReport.getToDate()).thenReturn(new Date());
         Mockito.when(titleMatchedReport.getPageSize()).thenReturn(1);
         Mockito.when(titleMatchedReport.getPageNumber()).thenReturn(1);
+        Mockito.when(titleMatchedReport.getTotalRecordsCount()).thenReturn(1L);
         SolrTemplate mocksolrTemplate1 = PowerMockito.mock(SolrTemplate.class);
         ReflectionTestUtils.setField(reportsServiceUtil,"solrTemplate",mocksolrTemplate1);
         SolrClient solrClient=PowerMockito.mock(SolrClient.class);
@@ -209,10 +215,10 @@ public class ReportsServiceUtilUT extends BaseTestCaseUT4 {
     public void titleMatchCount() throws Exception {
         List<String> titleMatch=new ArrayList<>();
         titleMatch.add(ScsbConstants.TITLE_MATCHED);
-        Mockito.when(titleMatchedReport.getTitleMatch()).thenReturn(titleMatch);
+        Mockito.when(titleMatchedReport.getTitleMatch()).thenReturn(String.valueOf(titleMatch));
         List<String> owningInst=new ArrayList<>();
         owningInst.add(ScsbCommonConstants.PRINCETON);
-        Mockito.when(titleMatchedReport.getOwningInst()).thenReturn(owningInst);
+        Mockito.when(titleMatchedReport.getOwningInst()).thenReturn(String.valueOf(owningInst));
         List<String> cgd=new ArrayList<>();
         cgd.add(ScsbConstants.SHARED);
         Mockito.when(titleMatchedReport.getCgd()).thenReturn(cgd);

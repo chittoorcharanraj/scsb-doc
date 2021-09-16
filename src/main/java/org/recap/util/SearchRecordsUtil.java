@@ -163,6 +163,7 @@ public final class SearchRecordsUtil {
                 searchResultRow.setLeaderMaterialType(bibItem.getLeaderMaterialType());
                 searchResultRow.setBibCreatedDate(bibItem.getBibCreatedDate());
                 searchResultRow.setOwningInstitutionBibId(bibItem.getOwningInstitutionBibId());
+                searchResultRow.setMatchingIdentifier(bibItem.getMatchingIdentifier());
                 String authorSearch = CollectionUtils.isNotEmpty(bibItem.getAuthorSearch()) ? bibItem.getAuthorSearch().get(0) : " ";
                 searchResultRow.setAuthorSearch(authorSearch);
                 Holdings holdings = CollectionUtils.isEmpty(bibItem.getHoldingsList()) ? new Holdings() : bibItem.getHoldingsList().get(0);
