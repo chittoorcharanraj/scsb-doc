@@ -67,4 +67,5 @@ public class SearchResultRow implements Serializable {
     private String requestNotes;
     private Date bibCreatedDate;
     private String authorSearch;
+    private String matchingIdentifier;
 }
