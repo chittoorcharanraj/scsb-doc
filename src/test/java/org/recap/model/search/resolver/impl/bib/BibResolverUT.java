@@ -33,14 +33,6 @@ public class BibResolverUT extends BaseTestCaseUT {
     }
 
     @Test
-    public void testMAQualifierValueResolver() throws Exception {
-        MAQualifierValueResolver mAQualifierValueResolver = new MAQualifierValueResolver();
-        mAQualifierValueResolver.setValue(bibItem(),true);
-        mAQualifierValueResolver.isInterested("MAQualifier");
-        assertNotNull(mAQualifierValueResolver.getClass());
-    }
-
-    @Test
     public void testAnomalyFlagValueResolver() throws Exception {
         AnomalyFlagValueResolver anomalyFlagValueResolver = new AnomalyFlagValueResolver();
         anomalyFlagValueResolver.setValue(bibItem(),true);
@@ -285,7 +277,6 @@ public class BibResolverUT extends BaseTestCaseUT {
         bibItem.setNotes("Notes");
         bibItem.setOwningInstitution("PUL");
         bibItem.setOwningInstitutionBibId("1");
-        bibItem.setMaQualifier(true);
         return bibItem;
 
     }

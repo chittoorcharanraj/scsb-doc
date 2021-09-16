@@ -55,7 +55,7 @@ public class OngoingMatchingAlgorithmJobRestController {
         String status="";
         Integer rows = Integer.valueOf(batchSize);
         try {
-            status = ongoingMatchingAlgorithmUtil.fetchUpdatedRecordsAndStartProcess(dateUtil.getFromDate(date), rows,true);
+            status = ongoingMatchingAlgorithmUtil.fetchUpdatedRecordsAndStartProcess(dateUtil.getFromDate(date), rows);
             if(ScsbCommonConstants.SUCCESS.equalsIgnoreCase(status)) {
                 status = matchingBibInfoDetailService.populateMatchingBibInfo(dateUtil.getFromDate(date), dateUtil.getToDate(date));
             }

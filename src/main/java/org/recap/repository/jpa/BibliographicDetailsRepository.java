@@ -304,8 +304,4 @@ public interface BibliographicDetailsRepository extends BaseRepository<Bibliogra
     @Transactional
     void updateAnamolyFlag(@Param("bibliographicIds")List<Integer> bibIds);
 
-    @Modifying
-    @Query(value = "UPDATE `RECAP`.`BIBLIOGRAPHIC_T` SET `MA_QUALIFIER`='0' WHERE `BIBLIOGRAPHIC_ID` in (:bibliographicIds)",nativeQuery = true)
-    @Transactional
-    void updateMAQualifierAsFalse(@Param("bibliographicIds")List<Integer> bibIdList);
 }
