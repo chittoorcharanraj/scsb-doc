@@ -127,7 +127,6 @@ public class OngoingMatchingAlgorithmUtil {
         int remainder = totalNumFound % (rows);
         Integer totalPages = remainder == 0 ? quotient : quotient + 1;
         logger.info("Batch Size : {} ",rows);
-        logger.info("Total Number of Records Found : {} ",totalNumFound);
         logger.info("Total Number of Records Found from date [{}]: {} ", date, totalNumFound);
         logger.info("Total Pages : {} ",totalPages);
         logger.info("{} : {}/{} ", ScsbConstants.CURRENT_PAGE, 1, totalPages);

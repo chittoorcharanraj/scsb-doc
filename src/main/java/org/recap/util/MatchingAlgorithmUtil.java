@@ -1062,7 +1062,7 @@ public class MatchingAlgorithmUtil {
         solrIndexRequest.setNumberOfDocs(1000);
         solrIndexRequest.setCommitInterval(10000);
         solrIndexRequest.setPartialIndexType("BibIdList");
-        logger.info("Total number of BibIds to index from queue: {}", bibIds);
+        logger.info("Total number of BibIds to index from queue: {}", bibIds.size());
         String collect = bibIds.stream().map(bibId -> String.valueOf(bibId)).collect(Collectors.joining(","));
         solrIndexRequest.setBibIds(collect);
         String bibsIndexed = bibItemIndexExecutorService.partialIndex(solrIndexRequest);
