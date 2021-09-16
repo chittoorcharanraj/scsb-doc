@@ -113,7 +113,7 @@ public class OngoingMatchingAlgorithmJobControllerUT extends BaseTestCaseUT {
         Mockito.when(ongoingMatchingAlgoJobController.getDateUtil()).thenReturn(dateUtil);
         Mockito.when(ongoingMatchingAlgoJobController.getBatchSize()).thenReturn(batchSize);
         Mockito.when(ongoingMatchingAlgoJobController.getLogger()).thenCallRealMethod();
-        Mockito.when(ongoingMatchingAlgorithmUtil.fetchUpdatedRecordsAndStartProcess(dateUtil.getFromDate(date), rows,false)).thenReturn(ScsbCommonConstants.SUCCESS);
+        Mockito.when(ongoingMatchingAlgorithmUtil.fetchUpdatedRecordsAndStartProcess(dateUtil.getFromDate(date), rows)).thenReturn(ScsbCommonConstants.SUCCESS);
         Mockito.when(ongoingMatchingAlgoJobController.startMatchingAlgorithmJob(solrIndexRequest)).thenCallRealMethod();
         String status = ongoingMatchingAlgoJobController.startMatchingAlgorithmJob(solrIndexRequest);
         assertTrue(status.contains(ScsbCommonConstants.SUCCESS));
