@@ -152,8 +152,12 @@ public class TitleMatchReportExportService {
             cell.setCellValue(columns[i]);
         }
         for (TitleMatchedReports titleMatchedReports : titleMatchedReport.getTitleMatchedReports()) {
-            Row row = sheet.createRow(rowNum++);
-            writeTitleMatchReport(titleMatchedReports, row);
+            if(rowNum<=1000000) {
+                Row row = sheet.createRow(rowNum++);
+                writeTitleMatchReport(titleMatchedReports, row);
+            } else {
+                return;
+            }
         }
         FileOutputStream fileOut = new FileOutputStream(titleReportDir + filename);
         workbook.write(fileOut);
