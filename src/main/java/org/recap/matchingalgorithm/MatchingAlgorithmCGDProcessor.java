@@ -211,7 +211,7 @@ public class MatchingAlgorithmCGDProcessor {
      * @param bibIdList         the bib id list
      * @return the boolean
      */
-    public boolean checkForMonographAndPopulateValues(Set<String> materialTypeSet,Map<Integer, ItemEntity> itemEntityMap, List<Integer> bibIdList,String matchingAlgorithmType) {
+    public boolean checkForMonographAndPopulateValues(Set<String> materialTypeSet,Map<Integer, ItemEntity> itemEntityMap, List<Integer> bibIdList,String matchingAlgorithmType,Boolean isCGDProcess) {
         boolean isMonograph = true;
         List<BibliographicEntity> bibliographicEntities = bibliographicDetailsRepository.findByIdIn(bibIdList);
         for(BibliographicEntity bibliographicEntity : bibliographicEntities) {
@@ -223,7 +223,10 @@ public class MatchingAlgorithmCGDProcessor {
                 if(ScsbConstants.INITIAL_MATCHING_OPERATION_TYPE.equals(matchingAlgorithmType)&&isItemShared(itemEntity)) {
                     populateValues(itemEntityMap, itemEntity);
                 }
-                else if(ScsbConstants.ONGOING_MATCHING_OPERATION_TYPE.equals(matchingAlgorithmType)&&isItemCommittedOrShared(itemEntity)){
+                else if(ScsbConstants.ONGOING_MATCHING_OPERATION_TYPE.equals(matchingAlgorithmType)&&isItemCommittedOrShared(itemEntity) && isCGDProcess){
+                    populateValues(itemEntityMap, itemEntity);
+                }
+                else if(ScsbConstants.ONGOING_MATCHING_OPERATION_TYPE.equals(matchingAlgorithmType) && !isCGDProcess){
                     populateValues(itemEntityMap, itemEntity);
                 }
                 materialTypeSet.add(ScsbCommonConstants.MONOGRAPH);
@@ -236,7 +239,10 @@ public class MatchingAlgorithmCGDProcessor {
                             if(itemEntity.getCopyNumber() != null && itemEntity.getCopyNumber() > 1) {
                                 isMultipleCopy = true;
                             }
-                            if(isItemCommittedOrShared(itemEntity)) {
+                            if(isItemCommittedOrShared(itemEntity) && isCGDProcess) {
+                                populateValues(itemEntityMap, itemEntity);
+                            }
+                            else if(!isCGDProcess){
                                 populateValues(itemEntityMap, itemEntity);
                             }
                         }
@@ -251,14 +257,20 @@ public class MatchingAlgorithmCGDProcessor {
                     //CUL & PUL
                     if(bibliographicEntity.getHoldingsEntities().size() > 1) {
                         for(ItemEntity itemEntity : itemEntities) {
-                            if(itemEntity.getCollectionGroupId().equals(collectionGroupMap.get(ScsbCommonConstants.SHARED_CGD))) {
+                            if(isItemCommittedOrShared(itemEntity) && isCGDProcess) {
+                                populateValues(itemEntityMap, itemEntity);
+                            }
+                            else if(!isCGDProcess){
                                 populateValues(itemEntityMap, itemEntity);
                             }
                         }
                         materialTypeSet.add(ScsbCommonConstants.MONOGRAPH);
                     } else {
                         for(ItemEntity itemEntity : itemEntities) {
-                            if(itemEntity.getCollectionGroupId().equals(collectionGroupMap.get(ScsbCommonConstants.SHARED_CGD))) {
+                            if(isItemCommittedOrShared(itemEntity) && isCGDProcess) {
+                                populateValues(itemEntityMap, itemEntity);
+                            }
+                            else if(!isCGDProcess){
                                 populateValues(itemEntityMap, itemEntity);
                             }
                         }

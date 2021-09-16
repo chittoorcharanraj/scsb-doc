@@ -455,10 +455,6 @@ public class MatchingAlgorithmHelperService {
         return executorService;
     }
 
-    private void populateBibIds( Map<String, Set<Integer>> isbnAndBibIdMap ,  Map<Integer, MatchingBibEntity> bibEntityMap, List<List<Integer>> multipleMatchBibIds, String matchPoint) {
-        buildBibIdAndBibEntityMap(multipleMatchBibIds, isbnAndBibIdMap, bibEntityMap, logger, ScsbCommonConstants.MATCH_POINT_FIELD_ISBN, matchPoint);
-    }
-
     private void buildBibIdAndBibEntityMap(List<List<Integer>> multipleMatchBibIds, Map<String, Set<Integer>> matchPoint1AndBibIdMap, Map<Integer, MatchingBibEntity> bibEntityMap, Logger logger, String matchPoint1, String matchPoint2) {
         logger.info(ScsbConstants.TOTAL_BIB_ID_PARTITION_LIST, multipleMatchBibIds.size());
         for (List<Integer> bibIds : multipleMatchBibIds) {
@@ -477,7 +473,11 @@ public class MatchingAlgorithmHelperService {
         for (int pageNum = 0; pageNum < totalPagesCount + 1; pageNum++) {
             long from = pageNum * Long.valueOf(batchSize);
             logger.info("Quering report data query for Monograph where Total Page count : {} and current page number is : {} from is : {} and to is : {}",totalPagesCount, pageNum, from, batchSize);
+            StopWatch stopWatchForFetchingReport = new StopWatch();
+            stopWatchForFetchingReport.start();
             Optional<List<MatchingAlgorithmReportDataEntity>> reportDataEntities = getMonographDataEntitiesFromDB(batchSize, isPendingMatch, from);
+            stopWatchForFetchingReport.stop();
+            logger.info("Total time taken for fetching reports {} for size {}",stopWatchForFetchingReport.getTotalTimeSeconds(),reportDataEntities.get().size());
             reportDataEntities.ifPresent(this::groupBibsAndAssignMatchScore);
         }
         stopWatch.stop();
@@ -610,18 +610,22 @@ public class MatchingAlgorithmHelperService {
         return countOfRecordNum;
     }
 
-    private void groupBibsAndAssignMatchScore(List<MatchingAlgorithmReportDataEntity> reportDataEntityList) { //10k
+    private void groupBibsAndAssignMatchScore(List<MatchingAlgorithmReportDataEntity> reportDataEntityList) {
+        StopWatch stopWatch=new StopWatch();
+        stopWatch.start();
         Map<String, List<MatchingAlgorithmReportDataEntity>> reportDatasGroupedByRecordNum = reportDataEntityList.stream().collect(Collectors.groupingBy(MatchingAlgorithmReportDataEntity::getRecordNum));
-        List<MatchScoreReport> matchScoreReportList = prepareMatchScoreReportList(reportDatasGroupedByRecordNum); //10k mS list
-        Map<Integer, BibliographicEntity> bibIdAndBibEntityMap = getBibIdAndBibliographicEntityMap(matchScoreReportList); // 10-30K bibs
+        List<MatchScoreReport> matchScoreReportList = prepareMatchScoreReportList(reportDatasGroupedByRecordNum); // 10k
+        Map<Integer, BibliographicEntity> bibIdAndBibEntityMap = getBibIdAndBibliographicEntityMap(matchScoreReportList);//10k-40k
         Set<Integer> bibIdsToIndex = new HashSet<>();
         matchScoreReportList.forEach(matchScoreReport -> {
             List<BibliographicEntity> bibToupdate = matchScoreReport.getBibIds().stream().map(bibIdAndBibEntityMap::get).collect(toList());
-            Optional<Map<Integer, BibliographicEntity>> bibliographicEntityMap = matchingAlgorithmUtil.updateBibsForMatchingIdentifier(bibToupdate, matchScoreReport.getMatchScore());
+            Optional<Map<Integer, BibliographicEntity>> bibliographicEntityMap = matchingAlgorithmUtil.groupBibsForInitialMatching(bibToupdate, matchScoreReport.getMatchScore());
             bibliographicEntityMap.ifPresentOrElse(entry -> bibIdsToIndex.addAll(entry.keySet()), () -> logger.info("No bib ids found to group for indexing"));
         });
         saveAndIndexGroupedBibs(bibIdAndBibEntityMap, bibIdsToIndex);
         clearAllCollection(reportDataEntityList, bibIdAndBibEntityMap, bibIdsToIndex);
+        stopWatch.stop();
+        logger.info("Total time taken for grouping reports of size {} and bibs size {} is : {}",reportDataEntityList.size(),bibIdAndBibEntityMap.size(),stopWatch.getTotalTimeSeconds());
     }
 
     public int removeMatchingIdsInDB() {

@@ -81,20 +81,20 @@ public class OngoingMatchingAlgorithmJobController {
             if (jobType.equalsIgnoreCase(ScsbCommonConstants.ONGOING_MATCHING_ALGORITHM_JOB) && matchBy.equalsIgnoreCase(ScsbConstants.FROM_DATE)) {
                 logger.info("From Date : {}", solrIndexRequest.getFromDate());
                 Date date = new SimpleDateFormat(ScsbConstants.ONGOING_MATCHING_DATE_FORMAT).parse(solrIndexRequest.getFromDate());
-                status = getOngoingMatchingAlgorithmUtil().fetchUpdatedRecordsAndStartProcess(getDateUtil().getFromDate(date), rows);
+                status = getOngoingMatchingAlgorithmUtil().fetchUpdatedRecordsAndStartProcess(getDateUtil().getFromDate(date), rows,true);
             } else if (jobType.equalsIgnoreCase(ScsbCommonConstants.ONGOING_MATCHING_ALGORITHM_JOB) && matchBy.equalsIgnoreCase(ScsbConstants.BIB_ID_LIST)) {
-                status = getOngoingMatchingAlgorithmUtil().fetchUpdatedRecordsByBibIdsAndStartProcess(solrIndexRequest.getBibIds(), rows);
+                status = getOngoingMatchingAlgorithmUtil().fetchUpdatedRecordsByBibIdsAndStartProcess(solrIndexRequest.getBibIds(), rows,true);
             } else if (jobType.equalsIgnoreCase(ScsbCommonConstants.ONGOING_MATCHING_ALGORITHM_JOB) && matchBy.equalsIgnoreCase(ScsbConstants.BIB_ID_RANGE)) {
                 logger.info("From Bib Id : {}, To Bib Id : {}", solrIndexRequest.getFromBibId(), solrIndexRequest.getToBibId());
                 String fromBibId = solrIndexRequest.getFromBibId();
                 String toBibId = solrIndexRequest.getToBibId();
-                status = getOngoingMatchingAlgorithmUtil().fetchUpdatedRecordsByBibIdRangeAndStartProcess(fromBibId, toBibId, rows);
+                status = getOngoingMatchingAlgorithmUtil().fetchUpdatedRecordsByBibIdRangeAndStartProcess(fromBibId, toBibId, rows,true);
             } else if (jobType.equalsIgnoreCase(ScsbCommonConstants.ONGOING_MATCHING_ALGORITHM_JOB) && matchBy.equalsIgnoreCase(ScsbConstants.DATE_RANGE)) {
                 logger.info("From Date : {}, To Date : {}", solrIndexRequest.getFromDate(), solrIndexRequest.getToDate());
                 SimpleDateFormat dateFormatter = new SimpleDateFormat(ScsbConstants.ONGOING_MATCHING_DATE_TIME_FORMAT);
                 Date fromDate = StringUtils.isNotBlank(solrIndexRequest.getDateFrom()) ? dateFormatter.parse(solrIndexRequest.getDateFrom()) : getDateUtil().getFromDate(new Date());
                 Date toDate = StringUtils.isNotBlank(solrIndexRequest.getDateTo()) ? dateFormatter.parse(solrIndexRequest.getDateTo()) : getDateUtil().getToDate(new Date());
-                status = getOngoingMatchingAlgorithmUtil().fetchUpdatedRecordsByDateRangeAndStartProcess(fromDate, toDate, rows);
+                status = getOngoingMatchingAlgorithmUtil().fetchUpdatedRecordsByDateRangeAndStartProcess(fromDate, toDate, rows,true);
             } else if (jobType.equalsIgnoreCase(ScsbConstants.POPULATE_DATA_FOR_DATA_DUMP_JOB)) {
                 logger.info("From Date : {}", solrIndexRequest.getFromDate());
                 Date date = new SimpleDateFormat(ScsbConstants.ONGOING_MATCHING_DATE_FORMAT).parse(solrIndexRequest.getFromDate());
