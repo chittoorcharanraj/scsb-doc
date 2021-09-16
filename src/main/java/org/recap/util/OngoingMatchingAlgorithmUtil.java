@@ -881,7 +881,7 @@ public class OngoingMatchingAlgorithmUtil {
                     BibItem bibItem = populateBibItem(solrDocument);
                     Integer incomingBibsMatchScore=0;
                     Integer existingLoopBibMatchScore=0;
-                    if(bibItem.getMatchScore()!=null || bibItem.getMatchScore()!=0){
+                    if(!(bibItem.getMatchScore()==null) || bibItem.getMatchScore()!=0){
                         incomingBibsMatchScore=bibItem.getMatchScore();
                     }
                     if(existingBibItemMap.get(bibItem.getBibId())!=null){
