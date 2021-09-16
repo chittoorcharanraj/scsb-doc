@@ -680,6 +680,23 @@ public class SolrQueryBuilder {
                 .append(or).append(ScsbConstants.BIB_LAST_UPDATED_DATE).append(":").append("[").append(date).append("]").append(")")
                 .append(and).append(ScsbCommonConstants.IS_DELETED_BIB).append(":").append(ScsbConstants.FALSE)
                 .append(and).append(ScsbConstants.BIB_CATALOGING_STATUS).append(":").append(ScsbCommonConstants.COMPLETE_STATUS);
+        query.append(and).append(coreParentFilterQuery).append(ScsbCommonConstants.IS_DELETED_ITEM).append(":").append(ScsbConstants.FALSE)
+                .append(and).append(coreParentFilterQuery).append(ScsbConstants.ITEM_CATALOGING_STATUS).append(":").append(ScsbCommonConstants.COMPLETE_STATUS);
+        return query.toString();
+    }
+
+    /**
+     * This query is used to Fetch created or updated bibs based on the date.
+     *
+     * @param date the date
+     * @return the string
+     */
+    public String fetchOnlyCreatedOrUpdatedSharedBibs(String date) {
+        StringBuilder query = new StringBuilder();
+        query.append("(").append(ScsbConstants.BIB_CREATED_DATE).append(":").append("[").append(date).append("]")
+                .append(or).append(ScsbConstants.BIB_LAST_UPDATED_DATE).append(":").append("[").append(date).append("]").append(")")
+                .append(and).append(ScsbCommonConstants.IS_DELETED_BIB).append(":").append(ScsbConstants.FALSE)
+                .append(and).append(ScsbConstants.BIB_CATALOGING_STATUS).append(":").append(ScsbCommonConstants.COMPLETE_STATUS);
         query.append(and).append(coreParentFilterQuery).append(ScsbCommonConstants.COLLECTION_GROUP_DESIGNATION).append(":").append(ScsbCommonConstants.SHARED_CGD)
                 .append(and).append(coreParentFilterQuery).append(ScsbCommonConstants.IS_DELETED_ITEM).append(":").append(ScsbConstants.FALSE)
                 .append(and).append(coreParentFilterQuery).append(ScsbConstants.ITEM_CATALOGING_STATUS).append(":").append(ScsbCommonConstants.COMPLETE_STATUS);

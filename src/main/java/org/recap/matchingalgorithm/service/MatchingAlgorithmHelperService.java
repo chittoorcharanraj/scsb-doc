@@ -455,10 +455,6 @@ public class MatchingAlgorithmHelperService {
         return executorService;
     }
 
-    private void populateBibIds( Map<String, Set<Integer>> isbnAndBibIdMap ,  Map<Integer, MatchingBibEntity> bibEntityMap, List<List<Integer>> multipleMatchBibIds, String matchPoint) {
-        buildBibIdAndBibEntityMap(multipleMatchBibIds, isbnAndBibIdMap, bibEntityMap, logger, ScsbCommonConstants.MATCH_POINT_FIELD_ISBN, matchPoint);
-    }
-
     private void buildBibIdAndBibEntityMap(List<List<Integer>> multipleMatchBibIds, Map<String, Set<Integer>> matchPoint1AndBibIdMap, Map<Integer, MatchingBibEntity> bibEntityMap, Logger logger, String matchPoint1, String matchPoint2) {
         logger.info(ScsbConstants.TOTAL_BIB_ID_PARTITION_LIST, multipleMatchBibIds.size());
         for (List<Integer> bibIds : multipleMatchBibIds) {
@@ -623,7 +619,7 @@ public class MatchingAlgorithmHelperService {
         Set<Integer> bibIdsToIndex = new HashSet<>();
         matchScoreReportList.forEach(matchScoreReport -> {
             List<BibliographicEntity> bibToupdate = matchScoreReport.getBibIds().stream().map(bibIdAndBibEntityMap::get).collect(toList());
-            Optional<Map<Integer, BibliographicEntity>> bibliographicEntityMap = matchingAlgorithmUtil.updateBibsForMatchingIdentifier(bibToupdate, matchScoreReport.getMatchScore());
+            Optional<Map<Integer, BibliographicEntity>> bibliographicEntityMap = matchingAlgorithmUtil.groupBibsForInitialMatching(bibToupdate, matchScoreReport.getMatchScore());
             bibliographicEntityMap.ifPresentOrElse(entry -> bibIdsToIndex.addAll(entry.keySet()), () -> logger.info("No bib ids found to group for indexing"));
         });
         saveAndIndexGroupedBibs(bibIdAndBibEntityMap, bibIdsToIndex);

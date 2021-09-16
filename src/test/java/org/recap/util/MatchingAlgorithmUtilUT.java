@@ -131,7 +131,7 @@ public class MatchingAlgorithmUtilUT extends BaseTestCaseUT4 {
         bibliographicEntityList.add(bibliographicEntity);
         Mockito.when(bibliographicEntity.getMatchingIdentity()).thenReturn("");
         Mockito.when(bibliographicDetailsRepository.findByIdIn(Mockito.anyList())).thenReturn(bibliographicEntityList);
-        Optional<Map<Integer,BibliographicEntity>> id= mockMatchingAlgorithmUtil.updateBibsForMatchingIdentifier(bibliographicEntityList,1);
+        Optional<Map<Integer,BibliographicEntity>> id= mockMatchingAlgorithmUtil.groupBibsForInitialMatching(bibliographicEntityList,1);
         assertNotNull(id);
     }
 
@@ -165,13 +165,6 @@ public class MatchingAlgorithmUtilUT extends BaseTestCaseUT4 {
         bibliographicEntities.add(bibliographicEntity);
         partionedByMatchingIdentity.put(false,bibliographicEntities);
         ReflectionTestUtils.invokeMethod(mockMatchingAlgorithmUtil,"groupCGDForExistingEntries",1,partionedByMatchingIdentity,"matchingIdentity");
-    }
-
-    @Test
-    public void extractBibIdsFromReportDataEntities() throws Exception {
-        List<ReportDataEntity> reportDataEntities=new ArrayList<>();
-        Set<String> result=mockMatchingAlgorithmUtil.extractBibIdsFromReportDataEntities(reportDataEntities);
-        assertNotNull(result);
     }
 
     @Test

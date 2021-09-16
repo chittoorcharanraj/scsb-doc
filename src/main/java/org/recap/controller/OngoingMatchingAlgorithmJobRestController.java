@@ -1,7 +1,9 @@
 package org.recap.controller;
 
+import org.apache.solr.client.solrj.SolrServerException;
 import org.recap.PropertyKeyConstants;
 import org.recap.ScsbCommonConstants;
+import org.recap.ScsbConstants;
 import org.recap.matchingalgorithm.service.MatchingBibInfoDetailService;
 import org.recap.model.solr.SolrIndexRequest;
 import org.recap.service.OngoingMatchingAlgorithmService;
@@ -20,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.io.IOException;
 import java.util.Date;
 
 /**
@@ -55,7 +58,9 @@ public class OngoingMatchingAlgorithmJobRestController {
         String status="";
         Integer rows = Integer.valueOf(batchSize);
         try {
-            status = ongoingMatchingAlgorithmUtil.fetchUpdatedRecordsAndStartProcess(dateUtil.getFromDate(date), rows);
+            processOngoingMatchingAlgorithm(date, rows,false);
+            status=processOngoingMatchingAlgorithm(date, rows,true);
+
             if(ScsbCommonConstants.SUCCESS.equalsIgnoreCase(status)) {
                 status = matchingBibInfoDetailService.populateMatchingBibInfo(dateUtil.getFromDate(date), dateUtil.getToDate(date));
             }
@@ -64,6 +69,20 @@ public class OngoingMatchingAlgorithmJobRestController {
         }
         stopWatch.stop();
         logger.info("Total Time taken to complete Ongoing Matching Algorithm : {}", stopWatch.getTotalTimeSeconds());
+        return status;
+    }
+
+    private String processOngoingMatchingAlgorithm(Date date, Integer rows, boolean isCGDProcess) throws IOException, SolrServerException {
+        String status="";
+        StopWatch stopWatchForGrouping=new StopWatch();
+        stopWatchForGrouping.start();
+        status=ongoingMatchingAlgorithmUtil.fetchUpdatedRecordsAndStartProcess(dateUtil.getFromDate(date), rows,isCGDProcess);
+        stopWatchForGrouping.stop();
+        if(isCGDProcess){
+            logger.info(ScsbConstants.TOTAL_TIME_TAKEN+"for Updating CGD : "+stopWatchForGrouping.getTotalTimeSeconds());}
+        else {
+            logger.info(ScsbConstants.TOTAL_TIME_TAKEN+"for Grouping Bibs: "+stopWatchForGrouping.getTotalTimeSeconds());
+        }
         return status;
     }
 

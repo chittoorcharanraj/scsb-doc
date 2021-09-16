@@ -113,15 +113,18 @@ public class OngoingMatchingAlgorithmUtil {
      * @throws IOException         the io exception
      * @throws SolrServerException the solr server exception
      */
-    public String fetchUpdatedRecordsAndStartProcess(Date date, Integer rows) throws IOException, SolrServerException {
+    public String fetchUpdatedRecordsAndStartProcess(Date date, Integer rows,Boolean isCGDProcess) throws IOException, SolrServerException {
         String status;
-        matchingAlgorithmUtil.populateMatchingCounter();
-        List<MatchingSummaryReport> matchingSummaryReports = ongoingMatchingReportsService.populateSummaryReportBeforeMatching();
+        List<MatchingSummaryReport> matchingSummaryReports=new ArrayList<>();
+        if(isCGDProcess) {
+            matchingAlgorithmUtil.populateMatchingCounter();
+            matchingSummaryReports = ongoingMatchingReportsService.populateSummaryReportBeforeMatching();
+        }
         List<Integer> serialMvmBibIds = new ArrayList<>();
         String formattedDate = getFormattedDateString(date);
         Integer start = 0;
         int totalProcessed = 0;
-        QueryResponse queryResponse = fetchDataForOngoingMatchingBasedOnDate(formattedDate, rows, start);
+        QueryResponse queryResponse = fetchDataForOngoingMatchingBasedOnDate(formattedDate, rows, start,isCGDProcess);
         Integer totalNumFound = Math.toIntExact(queryResponse.getResults().getNumFound());
         int quotient = totalNumFound / (rows);
         int remainder = totalNumFound % (rows);
@@ -132,23 +135,25 @@ public class OngoingMatchingAlgorithmUtil {
         logger.info("{} : {}/{} ", ScsbConstants.CURRENT_PAGE, 1, totalPages);
         SolrDocumentList solrDocumentList = queryResponse.getResults();
         totalProcessed = totalProcessed + solrDocumentList.size();
-        status = processOngoingMatchingAlgorithm(solrDocumentList, serialMvmBibIds);
+        status = processOngoingMatchingAlgorithm(solrDocumentList, serialMvmBibIds,isCGDProcess);
 
         for(int pageNum=1; pageNum<totalPages; pageNum++) {
             logger.info("{} : {}/{} ", ScsbConstants.CURRENT_PAGE, pageNum+1, totalPages);
             start = pageNum * rows;
-            queryResponse = fetchDataForOngoingMatchingBasedOnDate(formattedDate, rows, start);
+            queryResponse = fetchDataForOngoingMatchingBasedOnDate(formattedDate, rows, start,isCGDProcess);
             solrDocumentList = queryResponse.getResults();
             totalProcessed = totalProcessed + solrDocumentList.size();
-            status = processOngoingMatchingAlgorithm(solrDocumentList, serialMvmBibIds);
+            status = processOngoingMatchingAlgorithm(solrDocumentList, serialMvmBibIds,isCGDProcess);
         }
-        logger.info("Total Number of Records Processed for Ongoing Matching Algorithm: {} ",totalProcessed);
-        if(CollectionUtils.isNotEmpty(serialMvmBibIds)) {
-            ongoingMatchingReportsService.generateSerialAndMVMsReport(serialMvmBibIds);
-        }
-        ongoingMatchingReportsService.generateTitleExceptionReport(date, rows);
+        if (isCGDProcess) {
+            logger.info("Total Number of Records Processed for Ongoing Matching Algorithm: {} ", totalProcessed);
+            if (CollectionUtils.isNotEmpty(serialMvmBibIds)) {
+                ongoingMatchingReportsService.generateSerialAndMVMsReport(serialMvmBibIds);
+            }
+            ongoingMatchingReportsService.generateTitleExceptionReport(date, rows);
 
-        ongoingMatchingReportsService.generateSummaryReport(matchingSummaryReports);
+            ongoingMatchingReportsService.generateSummaryReport(matchingSummaryReports);
+        }
         return status;
     }
 
@@ -162,7 +167,7 @@ public class OngoingMatchingAlgorithmUtil {
      * @throws IOException         the io exception
      * @throws SolrServerException the solr server exception
      */
-    public String fetchUpdatedRecordsByDateRangeAndStartProcess(Date fromDate, Date toDate, Integer rows) throws IOException, SolrServerException {
+    public String fetchUpdatedRecordsByDateRangeAndStartProcess(Date fromDate, Date toDate, Integer rows,Boolean isCGDProcess) throws IOException, SolrServerException {
         String status;
         matchingAlgorithmUtil.populateMatchingCounter();
         List<MatchingSummaryReport> matchingSummaryReports = ongoingMatchingReportsService.populateSummaryReportBeforeMatching();
@@ -183,7 +188,7 @@ public class OngoingMatchingAlgorithmUtil {
         logger.info("{} : {}/{} ", ScsbConstants.CURRENT_PAGE, 1, totalPages);
         SolrDocumentList solrDocumentList = queryResponse.getResults();
         totalProcessed = totalProcessed + solrDocumentList.size();
-        status = processOngoingMatchingAlgorithm(solrDocumentList, serialMvmBibIds);
+        status = processOngoingMatchingAlgorithm(solrDocumentList, serialMvmBibIds,isCGDProcess);
 
         for(int pageNum=1; pageNum<totalPages; pageNum++) {
             logger.info("{} : {}/{} ", ScsbConstants.CURRENT_PAGE, pageNum+1, totalPages);
@@ -191,7 +196,7 @@ public class OngoingMatchingAlgorithmUtil {
             queryResponse = fetchDataForOngoingMatchingBasedOnDateRange(formattedFromDate, formattedToDate, rows, start);
             solrDocumentList = queryResponse.getResults();
             totalProcessed = totalProcessed + solrDocumentList.size();
-            status = processOngoingMatchingAlgorithm(solrDocumentList, serialMvmBibIds);
+            status = processOngoingMatchingAlgorithm(solrDocumentList, serialMvmBibIds,isCGDProcess);
         }
         logger.info("Total Number of Records Processed for Ongoing Matching Algorithm: {} ",totalProcessed);
         if(CollectionUtils.isNotEmpty(serialMvmBibIds)) {
@@ -213,7 +218,7 @@ public class OngoingMatchingAlgorithmUtil {
      * @throws IOException         the io exception
      * @throws SolrServerException the solr server exception
      */
-    public String fetchUpdatedRecordsByBibIdRangeAndStartProcess(String fromBibId, String toBibId, Integer rows) throws IOException, SolrServerException {
+    public String fetchUpdatedRecordsByBibIdRangeAndStartProcess(String fromBibId, String toBibId, Integer rows,Boolean isCGDProcess) throws IOException, SolrServerException {
         String status;
         matchingAlgorithmUtil.populateMatchingCounter();
         List<MatchingSummaryReport> matchingSummaryReports = ongoingMatchingReportsService.populateSummaryReportBeforeMatching();
@@ -231,7 +236,7 @@ public class OngoingMatchingAlgorithmUtil {
         logger.info("{} : {}/{} ", ScsbConstants.CURRENT_PAGE, 1, totalPages);
         SolrDocumentList solrDocumentList = queryResponse.getResults();
         totalProcessed = totalProcessed + solrDocumentList.size();
-        status = processOngoingMatchingAlgorithm(solrDocumentList, serialMvmBibIds);
+        status = processOngoingMatchingAlgorithm(solrDocumentList, serialMvmBibIds,isCGDProcess);
 
         for(int pageNum=1; pageNum<totalPages; pageNum++) {
             logger.info("{} : {}/{} ", ScsbConstants.CURRENT_PAGE, pageNum+1, totalPages);
@@ -239,7 +244,7 @@ public class OngoingMatchingAlgorithmUtil {
             queryResponse = fetchDataForOngoingMatchingBasedOnBibIdRange(fromBibId, toBibId, rows, start);
             solrDocumentList = queryResponse.getResults();
             totalProcessed = totalProcessed + solrDocumentList.size();
-            status = processOngoingMatchingAlgorithm(solrDocumentList, serialMvmBibIds);
+            status = processOngoingMatchingAlgorithm(solrDocumentList, serialMvmBibIds,isCGDProcess);
         }
         logger.info("Total Number of Records Processed for Ongoing Matching Algorithm: {} ",totalProcessed);
         if(CollectionUtils.isNotEmpty(serialMvmBibIds)) {
@@ -260,7 +265,7 @@ public class OngoingMatchingAlgorithmUtil {
      * @throws IOException         the io exception
      * @throws SolrServerException the solr server exception
      */
-    public String fetchUpdatedRecordsByBibIdsAndStartProcess(String bibIds, Integer rows) throws IOException, SolrServerException {
+    public String fetchUpdatedRecordsByBibIdsAndStartProcess(String bibIds, Integer rows,Boolean isCGDProcess) throws IOException, SolrServerException {
         String status;
         matchingAlgorithmUtil.populateMatchingCounter();
         List<MatchingSummaryReport> matchingSummaryReports = ongoingMatchingReportsService.populateSummaryReportBeforeMatching();
@@ -278,7 +283,7 @@ public class OngoingMatchingAlgorithmUtil {
         logger.info("{} : {}/{} ", ScsbConstants.CURRENT_PAGE, 1, totalPages);
         SolrDocumentList solrDocumentList = queryResponse.getResults();
         totalProcessed = totalProcessed + solrDocumentList.size();
-        status = processOngoingMatchingAlgorithm(solrDocumentList, serialMvmBibIds);
+        status = processOngoingMatchingAlgorithm(solrDocumentList, serialMvmBibIds,isCGDProcess);
 
         for(int pageNum=1; pageNum<totalPages; pageNum++) {
             logger.info("{} : {}/{} ", ScsbConstants.CURRENT_PAGE, pageNum+1, totalPages);
@@ -286,7 +291,7 @@ public class OngoingMatchingAlgorithmUtil {
             queryResponse = fetchDataForOngoingMatchingBasedOnBibIds(bibIds, rows, start);
             solrDocumentList = queryResponse.getResults();
             totalProcessed = totalProcessed + solrDocumentList.size();
-            status = processOngoingMatchingAlgorithm(solrDocumentList, serialMvmBibIds);
+            status = processOngoingMatchingAlgorithm(solrDocumentList, serialMvmBibIds,isCGDProcess);
         }
         logger.info("Total Number of Records Processed for Ongoing Matching Algorithm: {} ",totalProcessed);
         if(CollectionUtils.isNotEmpty(serialMvmBibIds)) {
@@ -306,9 +311,9 @@ public class OngoingMatchingAlgorithmUtil {
      * @param start     the start
      * @return the solr document list
      */
-    public QueryResponse fetchDataForOngoingMatchingBasedOnDate(String date, Integer batchSize, Integer start) {
+    public QueryResponse fetchDataForOngoingMatchingBasedOnDate(String date, Integer batchSize, Integer start,Boolean isCGDProcess) {
         try {
-            String query = solrQueryBuilder.fetchCreatedOrUpdatedBibs(date);
+            String query = isCGDProcess?solrQueryBuilder.fetchOnlyCreatedOrUpdatedSharedBibs(date):solrQueryBuilder.fetchCreatedOrUpdatedBibs(date);
             SolrQuery solrQuery = new SolrQuery(query);
             solrQuery.setStart(start);
             solrQuery.setRows(batchSize);
@@ -395,7 +400,7 @@ public class OngoingMatchingAlgorithmUtil {
      * @param serialMvmBibIds  the serial mvm bib ids
      * @return the string
      */
-    public String processOngoingMatchingAlgorithm(SolrDocumentList solrDocumentList, List<Integer> serialMvmBibIds) {
+    public String processOngoingMatchingAlgorithm(SolrDocumentList solrDocumentList, List<Integer> serialMvmBibIds,Boolean isCGDProcess) {
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
         String status = ScsbCommonConstants.SUCCESS;
@@ -405,7 +410,7 @@ public class OngoingMatchingAlgorithmUtil {
                 SolrDocument solrDocument = iterator.next();
                 int bibId = (Integer) solrDocument.getFieldValue(ScsbConstants.BIB_ID);
                 bibIdList.add(bibId);
-                status = processMatchingForBib(solrDocument, serialMvmBibIds);
+                status = processMatchingForBib(solrDocument, serialMvmBibIds,isCGDProcess);
             }
             matchingAlgorithmUtil.indexBibs(bibIdList);
         }
@@ -421,7 +426,7 @@ public class OngoingMatchingAlgorithmUtil {
      * @param serialMvmBibIds the serial mvm bib ids
      * @return the string
      */
-    public String processMatchingForBib(SolrDocument solrDocument, List<Integer> serialMvmBibIds) {
+    public String processMatchingForBib(SolrDocument solrDocument, List<Integer> serialMvmBibIds,Boolean isCGDProcess) {
         String status = ScsbCommonConstants.SUCCESS;
         Map<Integer, BibItem> bibItemMap = new HashMap<>();
         List<Integer> itemIds = new ArrayList<>();
@@ -432,7 +437,7 @@ public class OngoingMatchingAlgorithmUtil {
                 // Multi Match
                 logger.info("Multi Match Found for Bib Id: {}", bibId);
                 try {
-                    itemIds = saveReportAndUpdateCGDForMultiMatch(bibItemMap, serialMvmBibIds,matchPointString);
+                    itemIds = saveReportAndUpdateCGDForMultiMatch(bibItemMap, serialMvmBibIds,matchPointString,isCGDProcess);
                 } catch (IOException | SolrServerException e) {
                     logger.error(ScsbCommonConstants.LOG_ERROR, e);
                     status = ScsbCommonConstants.FAILURE;
@@ -442,7 +447,7 @@ public class OngoingMatchingAlgorithmUtil {
                 logger.info("Single Match Found for Bib Id: {}", bibId);
                 try {
                     if(checkIfReportForSingleMatchExists(solrDocument, bibItemMap, matchPointString)){
-                        itemIds = saveReportAndUpdateCGDForSingleMatch(bibItemMap, matchPointString.iterator().next(), serialMvmBibIds);
+                        itemIds = saveReportAndUpdateCGDForSingleMatch(bibItemMap, matchPointString.iterator().next(), serialMvmBibIds,isCGDProcess);
                     }
                 } catch (Exception e) {
                     logger.error(ScsbCommonConstants.LOG_ERROR,e);
@@ -473,16 +478,16 @@ public class OngoingMatchingAlgorithmUtil {
      */
     private Set<String> getMatchingBibsAndMatchPoints(SolrDocument solrDocument, Map<Integer, BibItem> bibItemMap) {
         Set<String> matchPointString = new HashSet<>();
-        addToBibItemMap(solrDocument, bibItemMap, matchPointString, ScsbCommonConstants.OCLC_NUMBER);
-        addToBibItemMap(solrDocument, bibItemMap, matchPointString, ScsbCommonConstants.ISBN_CRITERIA);
-        addToBibItemMap(solrDocument, bibItemMap, matchPointString, ScsbCommonConstants.ISSN_CRITERIA);
-        addToBibItemMap(solrDocument, bibItemMap, matchPointString, ScsbCommonConstants.LCCN_CRITERIA);
+        addToBibItemMap(solrDocument, bibItemMap, matchPointString, ScsbCommonConstants.OCLC_NUMBER,MatchScoreUtil.OCLC_SCORE);
+        addToBibItemMap(solrDocument, bibItemMap, matchPointString, ScsbCommonConstants.ISBN_CRITERIA,MatchScoreUtil.ISBN_SCORE);
+        addToBibItemMap(solrDocument, bibItemMap, matchPointString, ScsbCommonConstants.ISSN_CRITERIA,MatchScoreUtil.ISSN_SCORE);
+        addToBibItemMap(solrDocument, bibItemMap, matchPointString, ScsbCommonConstants.LCCN_CRITERIA,MatchScoreUtil.LCCN_SCORE);
         return matchPointString;
     }
 
-    private void addToBibItemMap(SolrDocument solrDocument, Map<Integer, BibItem> bibItemMap, Set<String> matchPointString, String matchPointField) {
+    private void addToBibItemMap(SolrDocument solrDocument, Map<Integer, BibItem> bibItemMap, Set<String> matchPointString, String matchPointField, Integer matchScore) {
         Map<Integer, BibItem> tempMap;
-        tempMap = findMatchingBibs(solrDocument, matchPointString, matchPointField);
+        tempMap = findMatchingBibs(solrDocument, matchPointString, matchPointField,matchScore,bibItemMap);
         if (tempMap != null && tempMap.size() > 0)
             bibItemMap.putAll(tempMap);
     }
@@ -499,7 +504,7 @@ public class OngoingMatchingAlgorithmUtil {
         }
     }
 
-    private List<Integer> saveReportAndUpdateCGDForSingleMatch(Map<Integer, BibItem> bibItemMap, String matchPointString, List<Integer> serialMvmBibIds) {
+    private List<Integer> saveReportAndUpdateCGDForSingleMatch(Map<Integer, BibItem> bibItemMap, String matchPointString, List<Integer> serialMvmBibIds,Boolean isCGDProcess) {
         List<MatchingAlgorithmReportDataEntity> reportDataEntities = new ArrayList<>();
         Set<String> owningInstSet = new HashSet<>();
         Set<String> materialTypeSet = new HashSet<>();
@@ -557,7 +562,7 @@ public class OngoingMatchingAlgorithmUtil {
                 parameterMap.put(ScsbConstants.MATCH_POINT, matchPointString);
                 try {
                     matchScore=MatchScoreUtil.getMatchScoreForMatchPoint(matchPointString);
-                    itemIds = updateCGDBasedOnMaterialTypes(reportEntity, materialTypeSet, serialMvmBibIds, ScsbConstants.SINGLE_MATCH, parameterMap, reportEntitiesToSave, titleMap,matchScore);
+                    itemIds = updateCGDBasedOnMaterialTypes(reportEntity, materialTypeSet, serialMvmBibIds, ScsbConstants.SINGLE_MATCH, parameterMap, reportEntitiesToSave, titleMap,matchScore,bibItemMap,isCGDProcess);
                     materialTypeList = (List<String>) parameterMap.get(ScsbConstants.MATERIAL_TYPE);
                     reportEntity.setType(ScsbConstants.SINGLE_MATCH.concat("-").concat(matchPointString));
                 } catch (Exception e) {
@@ -566,12 +571,14 @@ public class OngoingMatchingAlgorithmUtil {
             } else {
                 reportEntity.setType(ScsbConstants.MATERIAL_TYPE_EXCEPTION);
             }
-            matchingAlgorithmUtil.getReportDataEntityList(reportDataEntities, owningInstList, bibIds, materialTypeList, owningInstBibIds,matchScore);
-            matchingAlgorithmUtil.getReportDataEntity(matchPointString.equalsIgnoreCase(ScsbCommonConstants.OCLC_NUMBER) ? ScsbCommonConstants.OCLC_CRITERIA : matchPointString, criteriaValueString, reportDataEntities);
-            reportEntity.addAll(reportDataEntities);
-            reportEntitiesToSave.add(reportEntity);
-            matchingAlgorithmReportDetailRepository.saveAll(reportEntitiesToSave);
-            matchingAlgorithmReportDetailRepository.flush();
+            if (isCGDProcess) {
+                matchingAlgorithmUtil.getReportDataEntityList(reportDataEntities, owningInstList, bibIds, materialTypeList, owningInstBibIds, matchScore);
+                matchingAlgorithmUtil.getReportDataEntity(matchPointString.equalsIgnoreCase(ScsbCommonConstants.OCLC_NUMBER) ? ScsbCommonConstants.OCLC_CRITERIA : matchPointString, criteriaValueString, reportDataEntities);
+                reportEntity.addAll(reportDataEntities);
+                reportEntitiesToSave.add(reportEntity);
+                matchingAlgorithmReportDetailRepository.saveAll(reportEntitiesToSave);
+                matchingAlgorithmReportDetailRepository.flush();
+            }
         }
         return itemIds;
     }
@@ -620,7 +627,7 @@ public class OngoingMatchingAlgorithmUtil {
      * @throws IOException
      * @throws SolrServerException
      */
-    private List<Integer> saveReportAndUpdateCGDForMultiMatch(Map<Integer, BibItem> bibItemMap, List<Integer> serialMvmBibIds, Set<String> matchPointString) throws IOException, SolrServerException {
+    private List<Integer> saveReportAndUpdateCGDForMultiMatch(Map<Integer, BibItem> bibItemMap, List<Integer> serialMvmBibIds, Set<String> matchPointString,Boolean isCGDProcess) throws IOException, SolrServerException {
         MatchingAlgorithmReportEntity reportEntity = new MatchingAlgorithmReportEntity();
         reportEntity.setFileName(ScsbCommonConstants.ONGOING_MATCHING_ALGORITHM);
         reportEntity.setCreatedDate(new Date());
@@ -666,17 +673,18 @@ public class OngoingMatchingAlgorithmUtil {
             Map parameterMap = new HashMap();
             parameterMap.put(ScsbCommonConstants.BIB_ID, bibIdList);
             parameterMap.put(ScsbConstants.MATERIAL_TYPE, materialTypeList);
-            itemIds = updateCGDBasedOnMaterialTypes(reportEntity, materialTypes, serialMvmBibIds, ScsbConstants.MULTI_MATCH, parameterMap, new ArrayList<>(), null,matchScore);
+            itemIds = updateCGDBasedOnMaterialTypes(reportEntity, materialTypes, serialMvmBibIds, ScsbConstants.MULTI_MATCH, parameterMap, new ArrayList<>(), null,matchScore,bibItemMap,isCGDProcess);
             materialTypeList = (List<String>) parameterMap.get(ScsbConstants.MATERIAL_TYPE);
-            matchingAlgorithmUtil.getReportDataEntityList(reportDataEntities, owningInstList, bibIdList, materialTypeList, owningInstBibIds,matchScore);
-
-            checkAndAddReportEntities(reportDataEntities, oclcNumbers, ScsbCommonConstants.OCLC_CRITERIA);
-            checkAndAddReportEntities(reportDataEntities, isbns, ScsbCommonConstants.ISBN_CRITERIA);
-            checkAndAddReportEntities(reportDataEntities, issns, ScsbCommonConstants.ISSN_CRITERIA);
-            checkAndAddReportEntities(reportDataEntities, lccns, ScsbCommonConstants.LCCN_CRITERIA);
-            checkAndAddReportEntities(reportDataEntities, matchPointString, "MatchPoints");
-            reportEntity.addAll(reportDataEntities);
-            producerTemplate.sendBody("scsbactivemq:queue:saveMatchingReportsQ", Arrays.asList(reportEntity));
+            if (isCGDProcess) {
+                matchingAlgorithmUtil.getReportDataEntityList(reportDataEntities, owningInstList, bibIdList, materialTypeList, owningInstBibIds, matchScore);
+                checkAndAddReportEntities(reportDataEntities, oclcNumbers, ScsbCommonConstants.OCLC_CRITERIA);
+                checkAndAddReportEntities(reportDataEntities, isbns, ScsbCommonConstants.ISBN_CRITERIA);
+                checkAndAddReportEntities(reportDataEntities, issns, ScsbCommonConstants.ISSN_CRITERIA);
+                checkAndAddReportEntities(reportDataEntities, lccns, ScsbCommonConstants.LCCN_CRITERIA);
+                checkAndAddReportEntities(reportDataEntities, matchPointString, "MatchPoints");
+                reportEntity.addAll(reportDataEntities);
+                producerTemplate.sendBody("scsbactivemq:queue:saveMatchingReportsQ", Arrays.asList(reportEntity));
+            }
         }
         return itemIds;
     }
@@ -703,7 +711,7 @@ public class OngoingMatchingAlgorithmUtil {
      * @throws SolrServerException the solr server exception
      */
     private List<Integer> updateCGDBasedOnMaterialTypes(MatchingAlgorithmReportEntity reportEntity, Set<String> materialTypes, List<Integer> serialMvmBibIds, String matchType, Map parameterMap,
-                                                        List<MatchingAlgorithmReportEntity> reportEntityList, Map<String,String> titleMap,Integer matchScore) throws IOException, SolrServerException {
+                                                        List<MatchingAlgorithmReportEntity> reportEntityList, Map<String,String> titleMap,Integer matchScore,Map<Integer, BibItem> bibItemMap,Boolean isCGDProcess) throws IOException, SolrServerException {
         List<Integer> itemIds = new ArrayList<>();
         List<String> materialTypeList = (List<String>) parameterMap.get(ScsbConstants.MATERIAL_TYPE);
         List<Integer> bibIdList = (List<Integer>) parameterMap.get(ScsbCommonConstants.BIB_ID);
@@ -714,7 +722,7 @@ public class OngoingMatchingAlgorithmUtil {
             Map<Integer, ItemEntity> itemEntityMap = new HashMap<>();
             if(materialTypes.contains(ScsbCommonConstants.MONOGRAPH)) {
                 Set<String> materialTypeSet = new HashSet<>();
-                boolean isMonograph = matchingAlgorithmCGDProcessor.checkForMonographAndPopulateValues(materialTypeSet, itemEntityMap, bibIdList,ScsbConstants.ONGOING_MATCHING_OPERATION_TYPE);
+                boolean isMonograph = matchingAlgorithmCGDProcessor.checkForMonographAndPopulateValues(materialTypeSet, itemEntityMap, bibIdList,ScsbConstants.ONGOING_MATCHING_OPERATION_TYPE,isCGDProcess);
                 if(isMonograph) {
                     if(matchType.equalsIgnoreCase(ScsbConstants.SINGLE_MATCH)) {
                         MatchingAlgorithmReportEntity reportEntityForTitleException = titleVerificationForSingleMatch(reportEntity.getFileName(), titleMap, bibIdList, materialTypeList, parameterMap);
@@ -723,18 +731,26 @@ public class OngoingMatchingAlgorithmUtil {
                             reportEntityList.add(reportEntityForTitleException);
                         }
                         else {
-                            matchScore = MatchScoreUtil.getMatchScoreForSingleMatchAndTitle(matchScore);
-                            if (!itemEntityMap.isEmpty()) {
+                            if (!itemEntityMap.isEmpty() && isCGDProcess) {
                                 matchingAlgorithmCGDProcessor.updateCGDProcess(itemEntityMap);
                             }
-                            groupBibsAndUpdateInDB(matchScore, bibIdList);
+                            else if(!isCGDProcess){
+                                bibIdList.forEach(bibId->{
+                                    BibItem bibItem = bibItemMap.get(bibId);
+                                    Integer calculatedSingleMatchScore = MatchScoreUtil.getMatchScoreForSingleMatchAndTitle(bibItem.getMatchScore());
+                                    bibItem.setMatchScore(calculatedSingleMatchScore);
+                                });
+                                groupBibsAndUpdateInDB(bibIdList,bibItemMap);
+                            }
                         }
                     }
                     else if(matchType.equalsIgnoreCase(ScsbConstants.MULTI_MATCH)){
-                        if (!itemEntityMap.isEmpty()) {
+                        if (!itemEntityMap.isEmpty() && isCGDProcess) {
                             matchingAlgorithmCGDProcessor.updateCGDProcess(itemEntityMap);
                         }
-                        groupBibsAndUpdateInDB(matchScore, bibIdList);
+                        else if(!isCGDProcess){
+                            groupBibsAndUpdateInDB(bibIdList, bibItemMap);
+                        }
                     }
                 } else {
                     if(materialTypeSet.size() > 1) {
@@ -756,11 +772,15 @@ public class OngoingMatchingAlgorithmUtil {
                             for(int i = 0; i < size; i++) {
                                 materialTypeList.add(ScsbConstants.MONOGRAPHIC_SET);
                             }
-                            matchingAlgorithmCGDProcessor.updateItemsCGD(itemEntityMap);
+                            if(isCGDProcess){
+                                matchingAlgorithmCGDProcessor.updateItemsCGD(itemEntityMap);
+                            }
                             serialMvmBibIds.addAll(bibIdList);
                         }
                     }
-                    groupBibsAndUpdateInDB(matchScore, bibIdList);
+                    if(!isCGDProcess){
+                        groupBibsAndUpdateInDB(bibIdList, bibItemMap);
+                    }
                 }
             } else if(materialTypes.contains(ScsbCommonConstants.SERIAL)) {
                 if(matchType.equalsIgnoreCase(ScsbConstants.SINGLE_MATCH)) {
@@ -772,16 +792,22 @@ public class OngoingMatchingAlgorithmUtil {
                     else {
                         matchScore = MatchScoreUtil.getMatchScoreForSingleMatchAndTitle(matchScore);
                         matchingAlgorithmCGDProcessor.populateItemEntityMap(itemEntityMap, bibIdList);
-                        matchingAlgorithmCGDProcessor.updateItemsCGD(itemEntityMap);
+                        if(isCGDProcess){
+                            matchingAlgorithmCGDProcessor.updateItemsCGD(itemEntityMap);
+                        }
                         serialMvmBibIds.addAll(bibIdList);
                     }
                 }
                 else if(matchType.equalsIgnoreCase(ScsbConstants.MULTI_MATCH)){
                     matchingAlgorithmCGDProcessor.populateItemEntityMap(itemEntityMap, bibIdList);
-                    matchingAlgorithmCGDProcessor.updateItemsCGD(itemEntityMap);
+                    if(isCGDProcess){
+                        matchingAlgorithmCGDProcessor.updateItemsCGD(itemEntityMap);
+                    }
                     serialMvmBibIds.addAll(bibIdList);
                 }
-                groupBibsAndUpdateInDB(matchScore, bibIdList);
+                if(!isCGDProcess) {
+                    groupBibsAndUpdateInDB(bibIdList, bibItemMap);
+                }
             }
         } else {
             reportEntity.setType(ScsbConstants.MATERIAL_TYPE_EXCEPTION);
@@ -790,9 +816,9 @@ public class OngoingMatchingAlgorithmUtil {
         return itemIds;
     }
 
-    private void groupBibsAndUpdateInDB(Integer matchScore, List<Integer> bibIdList) {
+    private void groupBibsAndUpdateInDB(List<Integer> bibIdList, Map<Integer, BibItem> bibItemMap) {
         List<BibliographicEntity> bibliographicEntityList = bibliographicDetailsRepository.findByIdIn(bibIdList);
-        matchingAlgorithmUtil.updateBibsForMatchingIdentifier(bibliographicEntityList, matchScore);
+        matchingAlgorithmUtil.updateBibsForMatchingIdentifier(bibliographicEntityList, bibItemMap);
         matchingAlgorithmUtil.saveGroupedBibsToDb(bibliographicEntityList);
     }
 
@@ -801,9 +827,11 @@ public class OngoingMatchingAlgorithmUtil {
      * @param solrDocument
      * @param matchPointString
      * @param fieldName
+     * @param matchScore
+     * @param existingBibItemMap
      * @return
      */
-    private Map<Integer, BibItem> findMatchingBibs(SolrDocument solrDocument, Set<String> matchPointString, String fieldName) {
+    private Map<Integer, BibItem> findMatchingBibs(SolrDocument solrDocument, Set<String> matchPointString, String fieldName, Integer matchScore, Map<Integer, BibItem> existingBibItemMap) {
         Map<Integer, BibItem> bibItemMap = null;
         Object value = solrDocument.getFieldValue(fieldName);
         if(value != null) {
@@ -811,13 +839,13 @@ public class OngoingMatchingAlgorithmUtil {
                 String fieldValue = (String) value;
                 if(StringUtils.isNotBlank(fieldValue)) {
                     String query = solrQueryBuilder.solrQueryForOngoingMatching(fieldName, fieldValue);
-                    bibItemMap = getBibsFromSolr(matchPointString, fieldName, query);
+                    bibItemMap = getBibsFromSolr(matchPointString, fieldName, query, matchScore, existingBibItemMap);
                 }
             } else if(value instanceof List) {
                 List<String> fieldValues = (List<String>) value;
                 if(CollectionUtils.isNotEmpty(fieldValues)) {
                     String query = solrQueryBuilder.solrQueryForOngoingMatching(fieldName, fieldValues);
-                    bibItemMap = getBibsFromSolr(matchPointString, fieldName, query);
+                    bibItemMap = getBibsFromSolr(matchPointString, fieldName, query,matchScore,existingBibItemMap);
                 }
             }
         }
@@ -830,9 +858,11 @@ public class OngoingMatchingAlgorithmUtil {
      * @param matchPointString the match point string
      * @param fieldName        the field name
      * @param query            the query
+     * @param matchScore
+     * @param existingBibItemMap
      * @return bibs from solr
      */
-    public Map<Integer, BibItem> getBibsFromSolr(Set<String> matchPointString, String fieldName, String query) {
+    public Map<Integer, BibItem> getBibsFromSolr(Set<String> matchPointString, String fieldName, String query, Integer matchScore, Map<Integer, BibItem> existingBibItemMap) {
         Map<Integer, BibItem> bibItemMap = new HashMap<>();
         SolrQuery solrQuery = new SolrQuery(query);
         try {
@@ -849,6 +879,17 @@ public class OngoingMatchingAlgorithmUtil {
                 for (Iterator<SolrDocument> iterator = solrDocumentList.iterator(); iterator.hasNext(); ) {
                     SolrDocument solrDocument = iterator.next();
                     BibItem bibItem = populateBibItem(solrDocument);
+                    Integer incomingBibsMatchScore=0;
+                    Integer existingLoopBibMatchScore=0;
+                    if(bibItem.getMatchScore()!=null || bibItem.getMatchScore()!=0){
+                        incomingBibsMatchScore=bibItem.getMatchScore();
+                    }
+                    if(existingBibItemMap.get(bibItem.getBibId())!=null){
+                        existingLoopBibMatchScore = existingBibItemMap.get(bibItem.getBibId()).getMatchScore();
+                    }
+                    Integer calulatedMatchScore = MatchScoreUtil.calculateMatchScore(incomingBibsMatchScore, existingLoopBibMatchScore);
+                    Integer finalCalcutedMatchScore = MatchScoreUtil.calculateMatchScore(calulatedMatchScore, matchScore);
+                    bibItem.setMatchScore(finalCalcutedMatchScore);
                     bibItemMap.put(bibItem.getBibId(), bibItem);
                 }
             }
