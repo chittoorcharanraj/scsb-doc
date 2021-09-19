@@ -477,7 +477,7 @@ public class MatchingAlgorithmHelperService {
             stopWatchForFetchingReport.start();
             Optional<List<MatchingAlgorithmReportDataEntity>> reportDataEntities = getMonographDataEntitiesFromDB(batchSize, isPendingMatch, from);
             stopWatchForFetchingReport.stop();
-            logger.info("Total time taken for fetching reports {} for size {}",stopWatchForFetchingReport.getTotalTimeSeconds(),reportDataEntities.get().size());
+            logger.info("Total time taken for fetching reports {}",stopWatchForFetchingReport.getTotalTimeSeconds());
             reportDataEntities.ifPresent(this::groupBibsAndAssignMatchScore);
         }
         stopWatch.stop();

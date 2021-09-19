@@ -950,19 +950,30 @@ public class MatchingAlgorithmUtil {
     public Optional<Map<Integer,BibliographicEntity>> groupBibsForInitialMatching(List<BibliographicEntity> bibliographicEntityList, Integer matchScore) {
         List<BibliographicEntity> newlyGroupedBibs=new ArrayList<>();
         List<BibliographicEntity> updatedWithExistingGroupedBibs=new ArrayList<>();
-        String matchingIdentity = getMatchingIdentityValue(bibliographicEntityList);
+        List<BibliographicEntity> combinedBibs=new ArrayList<>();
 
-        Map<Boolean, List<BibliographicEntity>> partionedByMatchingIdentity = partitionBibsByMatchingIdentity(bibliographicEntityList);
+        Set<String> matchingIdentities = bibliographicEntityList.stream().
+                filter(bibliographicEntity -> bibliographicEntity.getMatchingIdentity() != null)
+                .map(bibliographicEntity -> bibliographicEntity.getMatchingIdentity())
+                .collect(toSet());
+        if (matchingIdentities.size() > 1) {
+            combinedBibs = combineGroupedBibsForInitialMatching(matchingIdentities, bibliographicEntityList, matchScore);
+        } else {
 
-        if(CollectionUtils.isNotEmpty(partionedByMatchingIdentity.get(true))){
-            newlyGroupedBibs = initialMatchingroupBibsForNewEntries(matchScore, matchingIdentity, partionedByMatchingIdentity);
+            String matchingIdentity = getMatchingIdentityValue(bibliographicEntityList);
+
+            Map<Boolean, List<BibliographicEntity>> partionedByMatchingIdentity = partitionBibsByMatchingIdentity(bibliographicEntityList);
+
+            if (CollectionUtils.isNotEmpty(partionedByMatchingIdentity.get(true))) {
+                newlyGroupedBibs = initialMatchingroupBibsForNewEntries(matchScore, matchingIdentity, partionedByMatchingIdentity);
+            }
+            if (CollectionUtils.isNotEmpty(partionedByMatchingIdentity.get(false))) {
+                updatedWithExistingGroupedBibs = intialMatchingGroupBibsForExistingEntries(matchScore, partionedByMatchingIdentity, matchingIdentity);
+            }
         }
-        if(CollectionUtils.isNotEmpty(partionedByMatchingIdentity.get(false))) {
-            updatedWithExistingGroupedBibs = intialMatchingGroupBibsForExistingEntries(matchScore, partionedByMatchingIdentity, matchingIdentity);
-        }
-        return Optional.ofNullable(Stream.of(newlyGroupedBibs,updatedWithExistingGroupedBibs)
+        return Optional.ofNullable(Stream.of(newlyGroupedBibs,updatedWithExistingGroupedBibs,combinedBibs)
                 .flatMap(Collection::stream)
-                .collect(Collectors.toMap(BibliographicEntity::getId,Function.identity())));
+                .collect(Collectors.toMap(BibliographicEntity::getId,Function.identity(),(oldValue,newValue)->newValue)));
     }
 
     public Optional<Map<Integer,BibliographicEntity>> updateBibsForMatchingIdentifier(List<BibliographicEntity> bibliographicEntityList, Map<Integer, BibItem> bibItemMap) {
@@ -989,7 +1000,7 @@ public class MatchingAlgorithmUtil {
         }
         return Optional.ofNullable(Stream.of(newlyGroupedBibs,updatedWithExistingGroupedBibs,combinedBibs)
                 .flatMap(Collection::stream)
-                .collect(Collectors.toMap(BibliographicEntity::getId,Function.identity())));
+                .collect(Collectors.toMap(BibliographicEntity::getId,Function.identity(),(oldValue,newValue)->newValue)));
     }
 
     private List<BibliographicEntity> combineGroupedBibs(Set<String> matchingIdentities, List<BibliographicEntity> bibliographicEntityList, Map<Integer, BibItem> bibItemMap) {
@@ -1016,6 +1027,32 @@ public class MatchingAlgorithmUtil {
                 .collect(Collectors.toList());
 
     }
+
+    private List<BibliographicEntity> combineGroupedBibsForInitialMatching(Set<String> matchingIdentities, List<BibliographicEntity> bibliographicEntityList,Integer matchScore) {
+        List<Integer> allInstitutionIdsExceptSupportInstitution = commonUtil.findAllInstitutionIdsExceptSupportInstitution();
+        List<String> matchingIdentifiers = matchingIdentities.stream().collect(toList());
+        List<BibliographicEntity> existingGroupedBibs = bibliographicDetailsRepository.findByOwningInstitutionIdInAndMatchingIdentityIn(allInstitutionIdsExceptSupportInstitution, matchingIdentifiers);
+        List<BibliographicEntity> updatedCollectedBibs = bibliographicEntityList.stream()
+                .filter(bibliographicEntity -> !(bibliographicEntity.getMatchScore() == matchScore))
+                .map(bibliographicEntity -> {
+                    bibliographicEntity.setAnamolyFlag(true);
+                    String updatedMatchScore = MatchScoreUtil.calculateMatchScore(MatchScoreUtil.convertDecimalToBinary(matchScore), MatchScoreUtil.convertDecimalToBinary(bibliographicEntity.getMatchScore()));
+                    bibliographicEntity.setMatchScore(MatchScoreUtil.convertBinaryToDecimal(updatedMatchScore));
+                    return bibliographicEntity;
+                })
+                .collect(toList());
+        String matchingIdentifier = matchingIdentifiers.stream().findFirst().get();
+        return Stream.of(existingGroupedBibs,updatedCollectedBibs)
+                .flatMap(bibliographicEntities -> bibliographicEntities.stream())
+                .map(bibliographicEntity -> {
+                    bibliographicEntity.setMatchingIdentity(matchingIdentifier);
+                    bibliographicEntity.setAnamolyFlag(true);
+                    return bibliographicEntity;
+                })
+                .collect(Collectors.toList());
+
+    }
+
 
     private Map<Boolean, List<BibliographicEntity>> partitionBibsByMatchingIdentity(List<BibliographicEntity> bibliographicEntityList) {
         return bibliographicEntityList.stream()
