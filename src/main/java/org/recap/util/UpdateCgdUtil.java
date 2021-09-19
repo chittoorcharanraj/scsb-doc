@@ -106,6 +106,9 @@ public class UpdateCgdUtil {
                         for (BibliographicEntity bibliographicEntity : itemEntity.getBibliographicEntities()) {
                             bibliographicEntity.setLastUpdatedBy(userName);
                             bibliographicEntity.setLastUpdatedDate(lastUpdatedDate);
+                            if (!oldCollectionGroupDesignation.equalsIgnoreCase(newCollectionGroupDesignation) && ScsbCommonConstants.SHARED_CGD.equalsIgnoreCase(newCollectionGroupDesignation)) {
+                                bibliographicEntity.setMaQualifier(ScsbCommonConstants.MA_QUALIFIER_2);
+                            }
                             bibliographicDetailsRepository.save(bibliographicEntity);
                         }
                     }
