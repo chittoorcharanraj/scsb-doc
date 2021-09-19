@@ -304,4 +304,5 @@ public interface BibliographicDetailsRepository extends BaseRepository<Bibliogra
     @Transactional
     void updateAnamolyFlag(@Param("bibliographicIds")List<Integer> bibIds);
 
+    List<BibliographicEntity> findByOwningInstitutionIdInAndMatchingIdentityIn(List<Integer> allInstitutionIdsExceptSupportInstitution, List<String> matchingIdentifiers);
 }
