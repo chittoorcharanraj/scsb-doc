@@ -414,10 +414,12 @@ public class OngoingMatchingAlgorithmUtil {
                 bibIdList.add(bibId);
                 status = processMatchingForBib(solrDocument, serialMvmBibIds,isCGDProcess);
             }
-            if(isCGDProcess){
-                matchingAlgorithmUtil.resetMAQualifier(bibIdList);
-            }
+            StopWatch stopWatchForMAQualifierUpdate=new StopWatch();
+            stopWatchForMAQualifierUpdate.start();
+            int modifiedBibs = matchingAlgorithmUtil.resetMAQualifier(bibIdList, isCGDProcess);
             matchingAlgorithmUtil.indexBibs(bibIdList);
+            stopWatchForMAQualifierUpdate.stop();
+            logger.info("Total time taken for updating and indexing MAQualifier {} for size {}",stopWatchForMAQualifierUpdate.getTotalTimeSeconds(),bibIdList.size());
         }
         stopWatch.stop();
         logger.info("Total Time taken to executing matching algorithm only for {} records : {}" , solrDocumentList.size(), stopWatch.getTotalTimeSeconds());

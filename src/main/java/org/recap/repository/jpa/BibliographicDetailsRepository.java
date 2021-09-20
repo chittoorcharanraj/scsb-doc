@@ -307,7 +307,13 @@ public interface BibliographicDetailsRepository extends BaseRepository<Bibliogra
     List<BibliographicEntity> findByOwningInstitutionIdInAndMatchingIdentityIn(List<Integer> allInstitutionIdsExceptSupportInstitution, List<String> matchingIdentifiers);
 
     @Modifying
-    @Query(value = "UPDATE `RECAP`.`BIBLIOGRAPHIC_T` SET `MA_QUALIFIER`='0' WHERE `BIBLIOGRAPHIC_ID` in (:bibliographicIds)",nativeQuery = true)
+    @Query(value = "UPDATE `RECAP`.`BIBLIOGRAPHIC_T` SET `MA_QUALIFIER`='0' WHERE `BIBLIOGRAPHIC_ID` in (:bibliographicIds) AND `MA_QUALIFIER` in (2,3)",nativeQuery = true)
     @Transactional
-    void resetMAQualifier(@Param("bibliographicIds")List<Integer> bibIdList);
+    int resetMAQualifier(@Param("bibliographicIds")List<Integer> bibIdList);
+
+
+    @Modifying
+    @Query(value = "UPDATE `RECAP`.`BIBLIOGRAPHIC_T` SET `MA_QUALIFIER`='0' WHERE `BIBLIOGRAPHIC_ID` in (:bibliographicIds) AND `MA_QUALIFIER` in (1)",nativeQuery = true)
+    @Transactional
+    int resetMAQualifierForGrouping(@Param("bibliographicIds")List<Integer> bibIds);
 }

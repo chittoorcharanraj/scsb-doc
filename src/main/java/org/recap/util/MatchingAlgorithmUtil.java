@@ -1201,11 +1201,19 @@ public class MatchingAlgorithmUtil {
     }
 
     @Transactional
-    public void resetMAQualifier(List<Integer> bibIds) {
+    public int resetMAQualifier(List<Integer> bibIds,boolean isCGDProcess) {
+        logger.info("Thread name : {}",Thread.currentThread().getName());
         logger.info("Updating MAQualfier for Bibs DB . Total size of bibs : {}",bibIds.size());
-        bibliographicDetailsRepository.resetMAQualifier(bibIds);
+        int modifiedBibs=0;
+        if(isCGDProcess){
+             modifiedBibs = bibliographicDetailsRepository.resetMAQualifier(bibIds);
+        }
+        else {
+            modifiedBibs = bibliographicDetailsRepository.resetMAQualifierForGrouping(bibIds);
+        }
         entityManager.flush();
         entityManager.clear();
+        return modifiedBibs;
     }
 
     public int removeMatchingIdsInDB() {
