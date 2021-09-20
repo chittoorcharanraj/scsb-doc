@@ -1201,19 +1201,17 @@ public class MatchingAlgorithmUtil {
     }
 
     @Transactional
-    public int resetMAQualifier(List<Integer> bibIds,boolean isCGDProcess) {
+    public void resetMAQualifier(List<Integer> bibIds,boolean isCGDProcess) {
         logger.info("Thread name : {}",Thread.currentThread().getName());
         logger.info("Updating MAQualfier for Bibs DB . Total size of bibs : {}",bibIds.size());
-        int modifiedBibs=0;
         if(isCGDProcess){
-             modifiedBibs = bibliographicDetailsRepository.resetMAQualifier(bibIds);
+            bibliographicDetailsRepository.resetMAQualifier(bibIds);
         }
         else {
-            modifiedBibs = bibliographicDetailsRepository.resetMAQualifierForGrouping(bibIds);
+            bibliographicDetailsRepository.resetMAQualifierForGrouping(bibIds);
         }
         entityManager.flush();
         entityManager.clear();
-        return modifiedBibs;
     }
 
     public int removeMatchingIdsInDB() {
@@ -1233,7 +1231,7 @@ public class MatchingAlgorithmUtil {
         return bibIds;
     }
 
-    public void indexBibs(List<Integer> bibIds) {
+    public String indexBibs(List<Integer> bibIds) {
         SolrIndexRequest solrIndexRequest=new SolrIndexRequest();
         solrIndexRequest.setNumberOfThreads(5);
         solrIndexRequest.setNumberOfDocs(1000);
@@ -1244,5 +1242,6 @@ public class MatchingAlgorithmUtil {
         solrIndexRequest.setBibIds(collect);
         String bibsIndexed = bibItemIndexExecutorService.partialIndex(solrIndexRequest);
         logger.info("Status of Index : {}",bibsIndexed);
+        return "Success";
     }
 }
