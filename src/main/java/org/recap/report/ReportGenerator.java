@@ -18,6 +18,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StopWatch;
 
@@ -319,6 +320,16 @@ public class ReportGenerator {
     public TitleMatchedReport getItemMatchReportExport(TitleMatchedReport titleMatchedReport){
         try {
             return reportsServiceUtil.titleMatchReportsExport(titleMatchedReport);
+        } catch (Exception e){
+            logger.info(ScsbConstants.EXCEPTION_TITLE_MATCH_EXPORT,e.getMessage());
+            return titleMatchedReport;
+        }
+    }
+
+    @Async
+    public TitleMatchedReport getItemMatchReportExportS3(TitleMatchedReport titleMatchedReport){
+        try {
+            return reportsServiceUtil.titleMatchReportsExportS3(titleMatchedReport);
         } catch (Exception e){
             logger.info(ScsbConstants.EXCEPTION_TITLE_MATCH_EXPORT,e.getMessage());
             return titleMatchedReport;

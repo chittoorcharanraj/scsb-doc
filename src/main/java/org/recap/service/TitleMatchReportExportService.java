@@ -135,8 +135,12 @@ public class TitleMatchReportExportService {
             }
             prepareWorkbook(titleMatchedReport, filename);
         }
-        zipFiles();
-        uploadFilesinS3(institution_name);
+        try {
+            zipFiles();
+            uploadFilesinS3(institution_name);
+        } catch (IOException e) {
+          logger.info("Exception occured while doing zip the files: {}"+e.getMessage());
+        }
         titleMatchedReport.setMessage("Report is Generated in S3 location is: " + s3BucketName +"/"+ ScsbConstants.TITLE_MATCH_REPORT_PATH);
         log.info("Report is Generated in S3 location is: "+ s3BucketName +"/"+ ScsbConstants.TITLE_MATCH_REPORT_PATH);
         return  titleMatchedReport;
@@ -197,7 +201,7 @@ public class TitleMatchReportExportService {
             Upload xfer = xfer_mgr.upload(s3BucketName, ScsbConstants.TITLE_MATCH_REPORT_PATH + institution_name + "/" + institution_name + ScsbConstants.TITLE_MATCH + getCurrentDate() + ".zip", filesInFolder.get(0));
             XferMgrProgress.waitForCompletion(xfer);
         } catch (AmazonServiceException e) {
-            logger.info(e.getErrorMessage());
+            logger.info("Exception occured while processing files to S3: {}"+e.getErrorMessage());
         }
     }
 
