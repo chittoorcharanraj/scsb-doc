@@ -81,8 +81,6 @@ public class ReportsServiceUtil {
     @Autowired
     private TitleMatchReportExportService titleMatchReportExportService;
 
-    @Value("${" + PropertyKeyConstants.TITLE_MATCH_REPORT_EXPORT_LIMIT + "}")
-    private Integer titleReportExportLimit;
 
     @Value("${" + PropertyKeyConstants.TITLE_REPORT_LIMIT_BIBS_PER_FILE + "}")
     private Integer titleReportExportBibsLimitPerFile;
@@ -539,7 +537,7 @@ public class ReportsServiceUtil {
             if (bibItem.getItems().size() == 1) {
                 titleMatchedReports.setItemBarcode(bibItem.getItems().get(0).getBarcode());
                 titleMatchedReports.setCgd(bibItem.getItems().get(0).getCollectionGroupDesignation());
-                titleMatchedReports.setCgd(bibItem.getItems().get(0).getVolumePartYear());
+                titleMatchedReports.setChronologyAndEnum(bibItem.getItems().get(0).getVolumePartYear());
             } else {
                 titleMatchedReports.setItemDetails(setItemDetails(bibItem));
             }
@@ -589,11 +587,11 @@ public class ReportsServiceUtil {
         return cgdAppend;
     }
     public TitleMatchedReport titleMatchReportsExport(TitleMatchedReport titleMatchedReport) throws Exception {
-        if (titleMatchedReport.getTotalRecordsCount() > titleReportExportLimit) {
-            return titleMatchReportExportService.process(titleMatchedReport);
-        } else {
             return getTitleMatchedReportsExport(titleMatchedReport);
-        }
+    }
+
+    public TitleMatchedReport titleMatchReportsExportS3(TitleMatchedReport titleMatchedReport) throws Exception {
+            return titleMatchReportExportService.process(titleMatchedReport);
     }
 
     public TitleMatchedReport getTitleMatchedReportsExport(TitleMatchedReport titleMatchedReport) throws ParseException, SolrServerException, IOException {
@@ -646,7 +644,7 @@ public class ReportsServiceUtil {
         StringBuilder cgdAppend = appendCGDs(titleMatchedReport);
         String matchingIdentifier = (titleMatchedReport.getTitleMatch().equals(ScsbConstants.TITLE_MATCHED)) ?
                 "" : "-";
-        SolrQuery query = solrQueryBuilder.buildQueryTitleMatchedReport(solrFormattedDate, owningInstAppend, cgdAppend, matchingIdentifier);
+        SolrQuery query = solrQueryBuilder.buildQueryTitleMatchedReport(solrFormattedDate, owningInstAppend, cgdAppend, matchingIdentifier,titleMatchedReport.getTitleMatch());
         return query;
     }
     private  void setDataForBibItems( SolrDocumentList bibSolrDocumentList,List<BibItem> bibItems){

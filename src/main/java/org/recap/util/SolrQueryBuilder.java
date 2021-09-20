@@ -8,7 +8,6 @@ import org.apache.solr.client.solrj.SolrQuery;
 import org.recap.ScsbCommonConstants;
 import org.recap.ScsbConstants;
 import org.recap.model.jpa.MatchingMatchPointsEntity;
-import org.recap.model.reports.TitleMatchedReport;
 import org.recap.model.search.SearchRecordsRequest;
 import org.springframework.stereotype.Component;
 
@@ -902,9 +901,12 @@ public class SolrQueryBuilder {
                 and).append(coreParentFilterQuery).append(ScsbCommonConstants.IS_DELETED_ITEM).append(":").append(ScsbConstants.FALSE);
         return new SolrQuery(query.toString());
     }
-    public SolrQuery buildQueryTitleMatchedReport( String date, StringBuilder owningInst, StringBuilder cgd, String matchingIdentifier) {
+    public SolrQuery buildQueryTitleMatchedReport(String date, StringBuilder owningInst, StringBuilder cgd, String matchingIdentifier, String match) {
         StringBuilder query = new StringBuilder();
-        query.append(filterQuery).append(ScsbCommonConstants.DOCTYPE).append(":").append(ScsbCommonConstants.BIB).append(and)
+        if (match.equalsIgnoreCase(ScsbConstants.TITLE_MATCHED))
+            query.append(filterQuery);
+
+        query.append(ScsbCommonConstants.DOCTYPE).append(":").append(ScsbCommonConstants.BIB).append(and)
                 .append(ScsbConstants.BIB_CATALOGING_STATUS).append(":").append(ScsbCommonConstants.COMPLETE_STATUS).append(and)
                 .append(ScsbCommonConstants.BIB_OWNING_INSTITUTION).append(":(").append(owningInst).append(")").append(and)
                 .append(ScsbConstants.BIB_CREATED_DATE).append(":[").append(date).append("]").append(and).append(matchingIdentifier)

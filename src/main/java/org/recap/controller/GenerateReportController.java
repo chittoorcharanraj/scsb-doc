@@ -1,6 +1,7 @@
 package org.recap.controller;
 
 import org.codehaus.plexus.util.StringUtils;
+import org.recap.PropertyKeyConstants;
 import org.recap.ScsbCommonConstants;
 import org.recap.ScsbConstants;
 import org.recap.model.reports.TitleMatchedReport;
@@ -11,6 +12,7 @@ import org.recap.util.DateUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
@@ -40,6 +42,9 @@ public class GenerateReportController {
 
     @Autowired
     private DateUtil dateUtil;
+
+    @Value("${" + PropertyKeyConstants.SCSB_BUCKET_NAME + "}")
+    private String s3BucketName;
 
     /**
      * This method is used to generate reports appropriately depending on the report type selected in UI.
@@ -150,5 +155,17 @@ public class GenerateReportController {
     @PostMapping("/titleMatchReportExport")
     public ResponseEntity<TitleMatchedReport> titleMatchReportExport(@RequestBody TitleMatchedReport titleMatchedReport) throws ParseException {
         return  new ResponseEntity<>(reportGenerator.getItemMatchReportExport(titleMatchedReport),HttpStatus.OK);
+    }
+    /**
+     *
+     * @param titleMatchedReport
+     * @return List of TitleMatchReport
+     * @throws ParseException
+     */
+    @PostMapping("/title-match-report-export-s3")
+    public ResponseEntity<TitleMatchedReport> titleMatchReportExportS3(@RequestBody TitleMatchedReport titleMatchedReport) throws ParseException {
+        reportGenerator.getItemMatchReportExportS3(titleMatchedReport);
+        titleMatchedReport.setMessage("Report is Generated in S3 location is: " + s3BucketName +"/"+ ScsbConstants.TITLE_MATCH_REPORT_PATH);
+        return  new ResponseEntity<>(titleMatchedReport,HttpStatus.OK);
     }
 }
