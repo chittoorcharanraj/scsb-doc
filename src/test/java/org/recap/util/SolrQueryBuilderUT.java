@@ -99,7 +99,7 @@ public class SolrQueryBuilderUT extends BaseTestCaseUT {
 
     @Test
     public void fetchCreatedOrUpdatedBibs(){
-        String fetchCreatedOrUpdatedBibs = solrQueryBuilder.fetchCreatedOrUpdatedBibs("2016-10-21T14:30Z TO NOW");
+        String fetchCreatedOrUpdatedBibs = solrQueryBuilder.fetchBibsForGroupingProcess("2016-10-21T14:30Z TO NOW",Mockito.anyBoolean());
         assertNotNull(fetchCreatedOrUpdatedBibs);
     }
 
