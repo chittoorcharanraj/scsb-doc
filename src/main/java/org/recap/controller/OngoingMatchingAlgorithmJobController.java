@@ -81,7 +81,7 @@ public class OngoingMatchingAlgorithmJobController {
             if (jobType.equalsIgnoreCase(ScsbCommonConstants.ONGOING_MATCHING_ALGORITHM_JOB) && matchBy.equalsIgnoreCase(ScsbConstants.FROM_DATE)) {
                 logger.info("From Date : {}", solrIndexRequest.getFromDate());
                 Date date = new SimpleDateFormat(ScsbConstants.ONGOING_MATCHING_DATE_FORMAT).parse(solrIndexRequest.getFromDate());
-                status = getOngoingMatchingAlgorithmUtil().fetchUpdatedRecordsAndStartProcess(getDateUtil().getFromDate(date), rows,true);
+                status = getOngoingMatchingAlgorithmUtil().fetchUpdatedRecordsAndStartProcess(getDateUtil().getFromDate(date), rows, true, false);
             } else if (jobType.equalsIgnoreCase(ScsbCommonConstants.ONGOING_MATCHING_ALGORITHM_JOB) && matchBy.equalsIgnoreCase(ScsbConstants.BIB_ID_LIST)) {
                 status = getOngoingMatchingAlgorithmUtil().fetchUpdatedRecordsByBibIdsAndStartProcess(solrIndexRequest.getBibIds(), rows,true);
             } else if (jobType.equalsIgnoreCase(ScsbCommonConstants.ONGOING_MATCHING_ALGORITHM_JOB) && matchBy.equalsIgnoreCase(ScsbConstants.BIB_ID_RANGE)) {

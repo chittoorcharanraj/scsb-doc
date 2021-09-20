@@ -58,8 +58,8 @@ public class OngoingMatchingAlgorithmJobRestController {
         String status="";
         Integer rows = Integer.valueOf(batchSize);
         try {
-            processOngoingMatchingAlgorithm(date, rows,false);
-            status=processOngoingMatchingAlgorithm(date, rows,true);
+            processOngoingMatchingAlgorithm(date, rows,false,true);
+            status=processOngoingMatchingAlgorithm(date, rows,true,true);
 
             if(ScsbCommonConstants.SUCCESS.equalsIgnoreCase(status)) {
                 status = matchingBibInfoDetailService.populateMatchingBibInfo(dateUtil.getFromDate(date), dateUtil.getToDate(date));
@@ -72,11 +72,11 @@ public class OngoingMatchingAlgorithmJobRestController {
         return status;
     }
 
-    private String processOngoingMatchingAlgorithm(Date date, Integer rows, boolean isCGDProcess) throws IOException, SolrServerException {
+    private String processOngoingMatchingAlgorithm(Date date, Integer rows, boolean isCGDProcess, boolean isBasedOnMAQualifier) throws IOException, SolrServerException {
         String status="";
         StopWatch stopWatchForGrouping=new StopWatch();
         stopWatchForGrouping.start();
-        status=ongoingMatchingAlgorithmUtil.fetchUpdatedRecordsAndStartProcess(dateUtil.getFromDate(date), rows,isCGDProcess);
+        status=ongoingMatchingAlgorithmUtil.fetchUpdatedRecordsAndStartProcess(dateUtil.getFromDate(date), rows,isCGDProcess,isBasedOnMAQualifier);
         stopWatchForGrouping.stop();
         if(isCGDProcess){
             logger.info(ScsbConstants.TOTAL_TIME_TAKEN+"for Updating CGD : "+stopWatchForGrouping.getTotalTimeSeconds());}

@@ -109,11 +109,13 @@ public class OngoingMatchingAlgorithmUtil {
      *
      * @param date the date
      * @param rows the rows
+     * @param isCGDProcess
+     * @param isBasedOnMAQualifier
      * @return the string
      * @throws IOException         the io exception
      * @throws SolrServerException the solr server exception
      */
-    public String fetchUpdatedRecordsAndStartProcess(Date date, Integer rows,Boolean isCGDProcess) throws IOException, SolrServerException {
+    public String fetchUpdatedRecordsAndStartProcess(Date date, Integer rows, boolean isCGDProcess, boolean isBasedOnMAQualifier) throws IOException, SolrServerException {
         String status;
         List<MatchingSummaryReport> matchingSummaryReports=new ArrayList<>();
         if(isCGDProcess) {
@@ -124,7 +126,7 @@ public class OngoingMatchingAlgorithmUtil {
         String formattedDate = getFormattedDateString(date);
         Integer start = 0;
         int totalProcessed = 0;
-        QueryResponse queryResponse = fetchDataForOngoingMatchingBasedOnDate(formattedDate, rows, start,isCGDProcess);
+        QueryResponse queryResponse = fetchDataForOngoingMatchingBasedOnDate(formattedDate, rows, start,isCGDProcess,isBasedOnMAQualifier);
         Integer totalNumFound = Math.toIntExact(queryResponse.getResults().getNumFound());
         int quotient = totalNumFound / (rows);
         int remainder = totalNumFound % (rows);
@@ -140,7 +142,7 @@ public class OngoingMatchingAlgorithmUtil {
         for(int pageNum=1; pageNum<totalPages; pageNum++) {
             logger.info("{} : {}/{} ", ScsbConstants.CURRENT_PAGE, pageNum+1, totalPages);
             start = pageNum * rows;
-            queryResponse = fetchDataForOngoingMatchingBasedOnDate(formattedDate, rows, start,isCGDProcess);
+            queryResponse = fetchDataForOngoingMatchingBasedOnDate(formattedDate, rows, start,isCGDProcess,isBasedOnMAQualifier);
             solrDocumentList = queryResponse.getResults();
             totalProcessed = totalProcessed + solrDocumentList.size();
             status = processOngoingMatchingAlgorithm(solrDocumentList, serialMvmBibIds,isCGDProcess);
@@ -311,9 +313,9 @@ public class OngoingMatchingAlgorithmUtil {
      * @param start     the start
      * @return the solr document list
      */
-    public QueryResponse fetchDataForOngoingMatchingBasedOnDate(String date, Integer batchSize, Integer start,Boolean isCGDProcess) {
+    public QueryResponse fetchDataForOngoingMatchingBasedOnDate(String date, Integer batchSize, Integer start,Boolean isCGDProcess,boolean isBasedOnMAQualifier) {
         try {
-            String query = isCGDProcess?solrQueryBuilder.fetchOnlyCreatedOrUpdatedSharedBibs(date):solrQueryBuilder.fetchCreatedOrUpdatedBibs(date);
+            String query = isCGDProcess?solrQueryBuilder.fetchBibsForCGDProcess(date,isBasedOnMAQualifier):solrQueryBuilder.fetchBibsForGroupingProcess(date,isBasedOnMAQualifier);
             SolrQuery solrQuery = new SolrQuery(query);
             solrQuery.setStart(start);
             solrQuery.setRows(batchSize);
@@ -411,6 +413,9 @@ public class OngoingMatchingAlgorithmUtil {
                 int bibId = (Integer) solrDocument.getFieldValue(ScsbConstants.BIB_ID);
                 bibIdList.add(bibId);
                 status = processMatchingForBib(solrDocument, serialMvmBibIds,isCGDProcess);
+            }
+            if(isCGDProcess){
+                matchingAlgorithmUtil.resetMAQualifier(bibIdList);
             }
             matchingAlgorithmUtil.indexBibs(bibIdList);
         }
