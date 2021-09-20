@@ -64,7 +64,7 @@ public class TitleMatchReportExportService {
     @Autowired
     private ReportsServiceUtil reportsServiceUtil;
 
-    private static String[] columns = {"Owning Institution", "BibId", "SCSB Id", "Item Barcode", "ISBN", "OCLC", "LCCN", "ISSN", "CGD", "Title", "Matching Identifier", "Anomaly Flag", "Match Score", "Match Score Translated", "Publisher", "Publication Date", "Chronology And Enum"};
+    private static String[] columns = {"Owning Institution", "BibId", "SCSB Id", "Item Barcode", "CGD", "ISBN", "OCLC", "LCCN", "ISSN", "Title", "Matching Identifier", "Anomaly Flag", "Match Score", "Match Score Translated", "Publisher", "Publication Date", "Chronology And Enum"};
 
     private void writeTitleMatchReport(TitleMatchedReports titleMatchedReports, Row row) {
         Cell cell = row.createCell(0);
