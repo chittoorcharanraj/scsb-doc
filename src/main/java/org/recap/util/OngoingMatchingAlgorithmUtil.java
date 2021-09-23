@@ -156,10 +156,9 @@ public class OngoingMatchingAlgorithmUtil {
                 ongoingMatchingReportsService.generateSerialAndMVMsReport(serialMvmBibIds);
             }
             ongoingMatchingReportsService.generateTitleExceptionReport(date, rows);
-
             ongoingMatchingReportsService.generateSummaryReport(matchingSummaryReports);
         }
-        String indexStatus = matchingAlgorithmUtil.indexBibs(bibIdListToIndex);
+        matchingAlgorithmUtil.indexBibs(bibIdListToIndex);
         ongoingMatchingStopWatch.stop();
         if(isCGDProcess){
             logger.info("{} for OngoingMatching CGD process {} for a total bibs of : {}",ScsbConstants.TOTAL_TIME_TAKEN,ongoingMatchingStopWatch.getTotalTimeSeconds(),bibIdListToIndex.size());
@@ -182,6 +181,7 @@ public class OngoingMatchingAlgorithmUtil {
         matchingAlgorithmUtil.populateMatchingCounter();
         List<MatchingSummaryReport> matchingSummaryReports = ongoingMatchingReportsService.populateSummaryReportBeforeMatching();
         List<Integer> serialMvmBibIds = new ArrayList<>();
+        List<Integer> bibIdListToIndex = new ArrayList<>();
         String formattedFromDate = getFormattedDateString(fromDate);
         String formattedToDate = getFormattedDateString(toDate);
         Integer start = 0;
@@ -198,7 +198,7 @@ public class OngoingMatchingAlgorithmUtil {
         logger.info("{} : {}/{} ", ScsbConstants.CURRENT_PAGE, 1, totalPages);
         SolrDocumentList solrDocumentList = queryResponse.getResults();
         totalProcessed = totalProcessed + solrDocumentList.size();
-        status = processOngoingMatchingAlgorithm(solrDocumentList, serialMvmBibIds,isCGDProcess,new ArrayList<>());
+        status = processOngoingMatchingAlgorithm(solrDocumentList, serialMvmBibIds,isCGDProcess,bibIdListToIndex);
 
         for(int pageNum=1; pageNum<totalPages; pageNum++) {
             logger.info("{} : {}/{} ", ScsbConstants.CURRENT_PAGE, pageNum+1, totalPages);
@@ -206,15 +206,15 @@ public class OngoingMatchingAlgorithmUtil {
             queryResponse = fetchDataForOngoingMatchingBasedOnDateRange(formattedFromDate, formattedToDate, rows, start);
             solrDocumentList = queryResponse.getResults();
             totalProcessed = totalProcessed + solrDocumentList.size();
-            status = processOngoingMatchingAlgorithm(solrDocumentList, serialMvmBibIds,isCGDProcess,new ArrayList<>());
+            status = processOngoingMatchingAlgorithm(solrDocumentList, serialMvmBibIds,isCGDProcess,bibIdListToIndex);
         }
         logger.info("Total Number of Records Processed for Ongoing Matching Algorithm: {} ",totalProcessed);
         if(CollectionUtils.isNotEmpty(serialMvmBibIds)) {
             ongoingMatchingReportsService.generateSerialAndMVMsReport(serialMvmBibIds);
         }
         ongoingMatchingReportsService.generateTitleExceptionReport(fromDate, rows);
-
         ongoingMatchingReportsService.generateSummaryReport(matchingSummaryReports);
+        matchingAlgorithmUtil.indexBibs(bibIdListToIndex);
         return status;
     }
 
@@ -233,6 +233,7 @@ public class OngoingMatchingAlgorithmUtil {
         matchingAlgorithmUtil.populateMatchingCounter();
         List<MatchingSummaryReport> matchingSummaryReports = ongoingMatchingReportsService.populateSummaryReportBeforeMatching();
         List<Integer> serialMvmBibIds = new ArrayList<>();
+        List<Integer> bibIdListToIndex = new ArrayList<>();
         Integer start = 0;
         int totalProcessed = 0;
         QueryResponse queryResponse = fetchDataForOngoingMatchingBasedOnBibIdRange(fromBibId, toBibId, rows, start);
@@ -246,7 +247,7 @@ public class OngoingMatchingAlgorithmUtil {
         logger.info("{} : {}/{} ", ScsbConstants.CURRENT_PAGE, 1, totalPages);
         SolrDocumentList solrDocumentList = queryResponse.getResults();
         totalProcessed = totalProcessed + solrDocumentList.size();
-        status = processOngoingMatchingAlgorithm(solrDocumentList, serialMvmBibIds,isCGDProcess,new ArrayList<>());
+        status = processOngoingMatchingAlgorithm(solrDocumentList, serialMvmBibIds,isCGDProcess,bibIdListToIndex);
 
         for(int pageNum=1; pageNum<totalPages; pageNum++) {
             logger.info("{} : {}/{} ", ScsbConstants.CURRENT_PAGE, pageNum+1, totalPages);
@@ -254,15 +255,15 @@ public class OngoingMatchingAlgorithmUtil {
             queryResponse = fetchDataForOngoingMatchingBasedOnBibIdRange(fromBibId, toBibId, rows, start);
             solrDocumentList = queryResponse.getResults();
             totalProcessed = totalProcessed + solrDocumentList.size();
-            status = processOngoingMatchingAlgorithm(solrDocumentList, serialMvmBibIds,isCGDProcess,new ArrayList<>());
+            status = processOngoingMatchingAlgorithm(solrDocumentList, serialMvmBibIds,isCGDProcess,bibIdListToIndex);
         }
         logger.info("Total Number of Records Processed for Ongoing Matching Algorithm: {} ",totalProcessed);
         if(CollectionUtils.isNotEmpty(serialMvmBibIds)) {
             ongoingMatchingReportsService.generateSerialAndMVMsReport(serialMvmBibIds);
         }
         ongoingMatchingReportsService.generateTitleExceptionReport(new Date(), rows);
-
         ongoingMatchingReportsService.generateSummaryReport(matchingSummaryReports);
+        matchingAlgorithmUtil.indexBibs(bibIdListToIndex);
         return status;
     }
 
@@ -280,6 +281,7 @@ public class OngoingMatchingAlgorithmUtil {
         matchingAlgorithmUtil.populateMatchingCounter();
         List<MatchingSummaryReport> matchingSummaryReports = ongoingMatchingReportsService.populateSummaryReportBeforeMatching();
         List<Integer> serialMvmBibIds = new ArrayList<>();
+        List<Integer> bibIdListToIndex = new ArrayList<>();
         Integer start = 0;
         int totalProcessed = 0;
         QueryResponse queryResponse = fetchDataForOngoingMatchingBasedOnBibIds(bibIds, rows, start);
@@ -293,7 +295,7 @@ public class OngoingMatchingAlgorithmUtil {
         logger.info("{} : {}/{} ", ScsbConstants.CURRENT_PAGE, 1, totalPages);
         SolrDocumentList solrDocumentList = queryResponse.getResults();
         totalProcessed = totalProcessed + solrDocumentList.size();
-        status = processOngoingMatchingAlgorithm(solrDocumentList, serialMvmBibIds,isCGDProcess,new ArrayList<>());
+        status = processOngoingMatchingAlgorithm(solrDocumentList, serialMvmBibIds,isCGDProcess,bibIdListToIndex);
 
         for(int pageNum=1; pageNum<totalPages; pageNum++) {
             logger.info("{} : {}/{} ", ScsbConstants.CURRENT_PAGE, pageNum+1, totalPages);
@@ -301,15 +303,15 @@ public class OngoingMatchingAlgorithmUtil {
             queryResponse = fetchDataForOngoingMatchingBasedOnBibIds(bibIds, rows, start);
             solrDocumentList = queryResponse.getResults();
             totalProcessed = totalProcessed + solrDocumentList.size();
-            status = processOngoingMatchingAlgorithm(solrDocumentList, serialMvmBibIds,isCGDProcess,new ArrayList<>());
+            status = processOngoingMatchingAlgorithm(solrDocumentList, serialMvmBibIds,isCGDProcess,bibIdListToIndex);
         }
         logger.info("Total Number of Records Processed for Ongoing Matching Algorithm: {} ",totalProcessed);
         if(CollectionUtils.isNotEmpty(serialMvmBibIds)) {
             ongoingMatchingReportsService.generateSerialAndMVMsReport(serialMvmBibIds);
         }
         ongoingMatchingReportsService.generateTitleExceptionReport(new Date(), rows);
-
         ongoingMatchingReportsService.generateSummaryReport(matchingSummaryReports);
+        matchingAlgorithmUtil.indexBibs(bibIdListToIndex);
         return status;
     }
 
