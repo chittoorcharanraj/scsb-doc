@@ -42,6 +42,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.TimeZone;
 
@@ -993,7 +994,12 @@ public class OngoingMatchingAlgorithmUtil {
 
     private void groupBibsAndUpdateInDB(List<Integer> bibIdList, Map<Integer, BibItem> bibItemMap) {
         List<BibliographicEntity> bibliographicEntityList = bibliographicDetailsRepository.findByIdIn(bibIdList);
-        matchingAlgorithmUtil.updateBibsForMatchingIdentifier(bibliographicEntityList, bibItemMap);
+        Optional<Map<Integer,BibliographicEntity>> bibliographicEntityOptional= matchingAlgorithmUtil.updateBibsForMatchingIdentifier(bibliographicEntityList, bibItemMap);
+        if(bibliographicEntityOptional.isPresent()) {
+            Map<Integer, BibliographicEntity> bibliographicEntityListToBeSaved = new HashMap<>();
+            bibliographicEntityListToBeSaved = bibliographicEntityOptional.get();
+            matchingAlgorithmUtil.saveGroupedBibsToDb(bibliographicEntityListToBeSaved.values());
+        }
         matchingAlgorithmUtil.saveGroupedBibsToDb(bibliographicEntityList);
         matchingAlgorithmUtil.indexBibs(bibIdList);
     }
