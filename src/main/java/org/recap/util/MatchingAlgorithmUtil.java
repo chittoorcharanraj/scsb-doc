@@ -1151,12 +1151,16 @@ public class MatchingAlgorithmUtil {
                 .collect(toList());
     }
     private List<BibliographicEntity> groupCGDForNewEntries(Map<Integer, BibItem> bibItemMap, String matchingIdentity, Map<Boolean, List<BibliographicEntity>> partionedByMatchingIdentity) {
+        boolean isAnamolyFlag=false;
+        if(CollectionUtils.isNotEmpty(partionedByMatchingIdentity.get(false))){
+            isAnamolyFlag=true;
+        }
+        boolean finalIsAnamolyFlag = isAnamolyFlag;
         List<BibliographicEntity> bibliographicEntities = partionedByMatchingIdentity.get(true);
-        int matchScoreSize = bibliographicEntities.parallelStream().map(bibliographicEntity -> bibliographicEntity.getMatchScore()).collect(toSet()).size();
         return bibliographicEntities.stream()
                 .map(bibliographicEntity -> {
                     BibItem bibItem = bibItemMap.get(bibliographicEntity.getId());
-                    if(matchScoreSize>1){
+                    if(finalIsAnamolyFlag){
                         bibliographicEntity.setAnamolyFlag(true);
                     }
                     bibliographicEntity.setMatchScore(bibItem.getMatchScore());
