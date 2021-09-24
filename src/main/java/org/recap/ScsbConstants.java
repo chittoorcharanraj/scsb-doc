@@ -324,5 +324,13 @@ public final class ScsbConstants {
     public static final String RECORDS_UPDATED = "Records Updated";
     public static final String TITLE_MATCH_REPORT_PATH = "reports/title-match-reports/";
     public static final String TITLE_MATCH = "_Title_Match_";
+
+    public static final String OCLCISBN = "OCLCNumber-ISBN";
+    public static final String OCLCISSN = "OCLCNumber-ISSN";
+    public static final String OCLCLCCN =  "OCLCNumber-LCCN";
+    public static final String ISBNISSN = "ISBN-ISSN";
+    public static final String ISBNLCCN = "ISBN-LCCN";
+    public static final String ISSNLCCN = "ISSN-LCCN";
+
     private ScsbConstants(){}
 }
