@@ -449,7 +449,7 @@ public class OngoingMatchingAlgorithmUtil {
         int bibId = (Integer) solrDocument.getFieldValue(ScsbConstants.BIB_ID);
         bibItemMap = getMatchingBibsAndMatchPoints(solrDocument, bibItemMap);
         Map<String, HashMap<Integer, BibItem>> multiMatchBibItemMap = new HashMap<>();
-        Map<String, HashMap<Integer, BibItem>> singleMatchBibItemMap = new HashMap<String, HashMap<Integer, BibItem>>();
+        Map<String, HashMap<Integer, BibItem>> singleMatchBibItemMap = new HashMap<>();
         String matchpoint = null;
         if (bibItemMap.size() > 0) {
             for (Iterator<String> bibItemIterator = bibItemMap.keySet().iterator(); bibItemIterator.hasNext(); ) {
@@ -622,16 +622,16 @@ public class OngoingMatchingAlgorithmUtil {
             lccnBibIds.removeAll(isbnlccn);
             lccnBibIds.removeAll(issnlccn);
 
-        if (oclcBibIds.size() > 0 && oclcBibItemMap.size() > 1) {
+        if (!oclcBibIds.isEmpty() && oclcBibItemMap.size() > 1) {
             bibItemMap.put(ScsbCommonConstants.OCLC_NUMBER, oclcBibItemMap);
         }
-        if (isbnBibIds.size() > 0 && isbnBibItemMap.size() > 1) {
+        if (!isbnBibIds.isEmpty() && isbnBibItemMap.size() > 1) {
             bibItemMap.put(ScsbCommonConstants.ISBN_CRITERIA, isbnBibItemMap);
         }
-        if (issnBibIds.size() > 0 && issnBibItemMap.size() > 1) {
+        if (!issnBibIds.isEmpty() && issnBibItemMap.size() > 1) {
             bibItemMap.put(ScsbCommonConstants.ISSN_CRITERIA, issnBibItemMap);
         }
-        if (lccnBibIds.size() > 0 && lccnBibItemMap.size() > 1) {
+        if (!lccnBibIds.isEmpty() && lccnBibItemMap.size() > 1) {
             bibItemMap.put(ScsbCommonConstants.LCCN_CRITERIA, lccnBibItemMap);
         }
        return bibItemMap;
@@ -996,8 +996,7 @@ public class OngoingMatchingAlgorithmUtil {
         List<BibliographicEntity> bibliographicEntityList = bibliographicDetailsRepository.findByIdIn(bibIdList);
         Optional<Map<Integer,BibliographicEntity>> bibliographicEntityOptional= matchingAlgorithmUtil.updateBibsForMatchingIdentifier(bibliographicEntityList, bibItemMap);
         if(bibliographicEntityOptional.isPresent()) {
-            Map<Integer, BibliographicEntity> bibliographicEntityListToBeSaved = new HashMap<>();
-            bibliographicEntityListToBeSaved = bibliographicEntityOptional.get();
+            Map<Integer, BibliographicEntity> bibliographicEntityListToBeSaved = bibliographicEntityOptional.get();
             matchingAlgorithmUtil.saveGroupedBibsToDb(bibliographicEntityListToBeSaved.values());
         }
         matchingAlgorithmUtil.saveGroupedBibsToDb(bibliographicEntityList);
@@ -1134,7 +1133,7 @@ public class OngoingMatchingAlgorithmUtil {
      */
     public Map getCollectionGroupMap() {
         if (null == collectionGroupMap) {
-            collectionGroupMap = new HashMap();
+            collectionGroupMap = new HashMap<>();
             Iterable<CollectionGroupEntity> collectionGroupEntities = collectionGroupDetailsRepository.findAll();
             for (Iterator<CollectionGroupEntity> iterator = collectionGroupEntities.iterator(); iterator.hasNext(); ) {
                 CollectionGroupEntity collectionGroupEntity = iterator.next();
@@ -1151,7 +1150,7 @@ public class OngoingMatchingAlgorithmUtil {
      */
     public Map getInstitutionEntityMap() {
         if (null == institutionMap) {
-            institutionMap = new HashMap();
+            institutionMap = new HashMap<>();
             Iterable<InstitutionEntity> institutionEntities = institutionDetailsRepository.findAll();
             for (Iterator<InstitutionEntity> iterator = institutionEntities.iterator(); iterator.hasNext(); ) {
                 InstitutionEntity institutionEntity = iterator.next();
