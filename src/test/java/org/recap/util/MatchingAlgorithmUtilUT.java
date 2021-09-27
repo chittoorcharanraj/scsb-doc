@@ -1,8 +1,10 @@
 package org.recap.util;
 
+import io.swagger.models.auth.In;
 import org.apache.camel.ProducerTemplate;
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrQuery;
+import org.apache.solr.client.solrj.request.CoreAdminRequest;
 import org.apache.solr.client.solrj.response.FacetField;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocument;
@@ -24,6 +26,7 @@ import org.recap.ScsbConstants;
 import org.recap.controller.SolrIndexController;
 import org.recap.matchingalgorithm.MatchScoreReport;
 import org.recap.model.jpa.*;
+import org.recap.model.solr.BibItem;
 import org.recap.repository.jpa.BibliographicDetailsRepository;
 import org.recap.repository.jpa.InstitutionDetailsRepository;
 import org.recap.repository.jpa.MatchingAlgorithmReportDataDetailsRepository;
@@ -58,6 +61,7 @@ public class MatchingAlgorithmUtilUT extends BaseTestCaseUT4 {
 
     @InjectMocks
     MatchingAlgorithmUtil mockMatchingAlgorithmUtil;
+
 
     @Mock
     private SolrQueryBuilder solrQueryBuilder;
@@ -103,6 +107,12 @@ public class MatchingAlgorithmUtilUT extends BaseTestCaseUT4 {
 
     @Mock
     EntityManager entityManager;
+
+    @Mock
+    SolrTemplate solrTemplate;
+
+    @Mock
+    CoreAdminRequest coreAdminRequest;
 
     @Before
     public void setup() throws Exception {
@@ -158,13 +168,20 @@ public class MatchingAlgorithmUtilUT extends BaseTestCaseUT4 {
     @Test
     public void groupCGDForExistingEntries() throws Exception {
         List<Integer> bibIds=new ArrayList<>();
+        Map<Integer, BibItem> bibItemMap = new HashMap<>();
+        BibItem bibid = new BibItem();
+        bibid.setMatchScore(1);
+        bibItemMap.put(1,bibid);
+        BibliographicEntity bibliographicEntity = new BibliographicEntity();
+        bibliographicEntity.setId(1);
+        bibliographicEntity.setMatchScore(1);
         mockMatchingAlgorithmUtil.indexBibs(bibIds);
         mockMatchingAlgorithmUtil.removeMatchingIdsInDB();
         Map<Boolean,List<BibliographicEntity>> partionedByMatchingIdentity=new HashMap<>();
         List<BibliographicEntity> bibliographicEntities=new ArrayList<>();
         bibliographicEntities.add(bibliographicEntity);
         partionedByMatchingIdentity.put(false,bibliographicEntities);
-        ReflectionTestUtils.invokeMethod(mockMatchingAlgorithmUtil,"groupCGDForExistingEntries",1,partionedByMatchingIdentity,"matchingIdentity");
+        ReflectionTestUtils.invokeMethod(mockMatchingAlgorithmUtil,"groupCGDForExistingEntries",bibItemMap,partionedByMatchingIdentity,"matchingIdentity");
     }
 
     @Test
@@ -372,7 +389,7 @@ public class MatchingAlgorithmUtilUT extends BaseTestCaseUT4 {
     }
 
     private MatchingBibEntity getMatchingBibEntity(String matching,Integer bib,String inst,String title) {
-        MatchingBibEntity matchingBibEntity=new MatchingBibEntity();
+        MatchingBibEntity matchingBibEntity = new MatchingBibEntity();
         matchingBibEntity.setMatching(matching);
         matchingBibEntity.setBibId(bib);
         matchingBibEntity.setId(10);
@@ -388,6 +405,7 @@ public class MatchingAlgorithmUtilUT extends BaseTestCaseUT4 {
         matchingBibEntity.setStatus(ScsbConstants.PENDING);
         return matchingBibEntity;
     }
+
 
 
 }
