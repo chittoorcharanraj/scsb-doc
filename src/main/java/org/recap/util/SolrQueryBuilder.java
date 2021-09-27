@@ -903,18 +903,21 @@ public class SolrQueryBuilder {
     }
     public SolrQuery buildQueryTitleMatchedReport(String date, StringBuilder owningInst, StringBuilder cgd, String matchingIdentifier, String match) {
         StringBuilder query = new StringBuilder();
+        StringBuilder tempQuery = new StringBuilder();
         if (match.equalsIgnoreCase(ScsbConstants.TITLE_MATCHED))
             query.append(filterQuery);
 
         query.append(ScsbCommonConstants.DOCTYPE).append(":").append(ScsbCommonConstants.BIB).append(and)
                 .append(ScsbConstants.BIB_CATALOGING_STATUS).append(":").append(ScsbCommonConstants.COMPLETE_STATUS).append(and)
-                .append(ScsbCommonConstants.BIB_OWNING_INSTITUTION).append(":(").append(owningInst).append(")").append(and)
+                .append(ScsbCommonConstants.BIB_OWNING_INSTITUTION).append(":").append(owningInst).append(and)
                 .append(ScsbConstants.BIB_CREATED_DATE).append(":[").append(date).append("]").append(and).append(matchingIdentifier)
-                .append(ScsbConstants.MATCHING_IDENTIFIER).append(":").append("*").append(coreParentFilterQuery).append(" ")
-                .append(ScsbCommonConstants.COLLECTION_GROUP_DESIGNATION).append(":(").append(cgd).append(")").append(" ")
-                .append(coreParentFilterQuery).append(ScsbCommonConstants.IS_DELETED_ITEM).append(":").append(ScsbConstants.FALSE).
-                append(coreChildFilterQuery).append(ScsbConstants.ITEM_CATALOGING_STATUS).append(":").append(ScsbCommonConstants.COMPLETE_STATUS);
-        return new SolrQuery(query.toString());
+                .append(ScsbConstants.MATCHING_IDENTIFIER).append(":").append("*");
+        tempQuery.append(coreParentFilterQuery)
+                .append("(").append(cgd).append(")").append(and).append("(")
+                .append(ScsbCommonConstants.IS_DELETED_ITEM).append(":").append(ScsbConstants.FALSE).append(")");
+        SolrQuery solrQuery = new SolrQuery(query.toString());
+        solrQuery.setFilterQueries(tempQuery.toString());
+        return solrQuery;
     }
 
     public SolrQuery solrQueryToFetchMatchedRecords() {

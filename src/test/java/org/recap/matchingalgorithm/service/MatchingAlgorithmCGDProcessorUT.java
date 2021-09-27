@@ -207,6 +207,7 @@ public class MatchingAlgorithmCGDProcessorUT extends BaseTestCaseUT {
         collectionGroupMap.put(ScsbCommonConstants.SHARED_CGD,1);
         ReflectionTestUtils.setField(matchingAlgorithmCGDProcessor,"collectionGroupMap",collectionGroupMap);
         boolean checkForMonographAndPopulateValues=matchingAlgorithmCGDProcessor.checkForMonographAndPopulateValues(materialTypeSet,itemEntityMap,bibIdList,ScsbConstants.ONGOING_MATCHING_OPERATION_TYPE,Boolean.FALSE);
+
         assertEquals(true,checkForMonographAndPopulateValues);
     }
 
@@ -250,6 +251,7 @@ public class MatchingAlgorithmCGDProcessorUT extends BaseTestCaseUT {
         nonHoldingInstitutionList.add("NYPL");
         ReflectionTestUtils.setField(matchingAlgorithmCGDProcessor,"nonHoldingInstitutionList",nonHoldingInstitutionList);
         boolean checkForMonographAndPopulateValues=matchingAlgorithmCGDProcessor.checkForMonographAndPopulateValues(materialTypeSet,itemEntityMap,bibIdList,ScsbConstants.ONGOING_MATCHING_OPERATION_TYPE,Boolean.FALSE);
+
         assertEquals(true,checkForMonographAndPopulateValues);
     }
 
@@ -293,6 +295,7 @@ public class MatchingAlgorithmCGDProcessorUT extends BaseTestCaseUT {
         ReflectionTestUtils.setField(matchingAlgorithmCGDProcessor,"nonHoldingInstitutionList",nonHoldingInstitutionList);
         ReflectionTestUtils.setField(matchingAlgorithmCGDProcessor,"institutionMap",institutionMap);
         boolean checkForMonographAndPopulateValues=matchingAlgorithmCGDProcessor.checkForMonographAndPopulateValues(materialTypeSet,itemEntityMap,bibIdList,ScsbConstants.ONGOING_MATCHING_OPERATION_TYPE,Boolean.FALSE);
+
         assertEquals(true,checkForMonographAndPopulateValues);
     }
 
@@ -334,6 +337,7 @@ public class MatchingAlgorithmCGDProcessorUT extends BaseTestCaseUT {
         ReflectionTestUtils.setField(matchingAlgorithmCGDProcessor,"nonHoldingInstitutionList",nonHoldingInstitutionList);
         ReflectionTestUtils.setField(matchingAlgorithmCGDProcessor,"institutionMap",institutionMap);
         boolean checkForMonographAndPopulateValues=matchingAlgorithmCGDProcessor.checkForMonographAndPopulateValues(materialTypeSet,itemEntityMap,bibIdList,ScsbConstants.ONGOING_MATCHING_OPERATION_TYPE,Boolean.FALSE);
+
         assertEquals(false,checkForMonographAndPopulateValues);
     }
 

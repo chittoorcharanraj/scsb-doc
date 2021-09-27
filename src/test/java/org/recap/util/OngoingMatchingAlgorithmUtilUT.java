@@ -286,6 +286,7 @@ public class OngoingMatchingAlgorithmUtilUT extends BaseTestCaseUT4 {
         Set<String> matchPointString=new HashSet<>();
         matchPointString.add("match");
         Map<Integer, BibItem> bibItemMap = ongoingMatchingAlgorithmUtil.getBibsFromSolr("test", "fieldName", 1,existingBibItemMap);
+
         assertNotNull(bibItemMap);
     }
 

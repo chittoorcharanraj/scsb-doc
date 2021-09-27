@@ -130,6 +130,7 @@ public class ReportsServiceUtilUT extends BaseTestCaseUT4 {
         PowerMockito.when(mocksolrTemplate1.getSolrClient()).thenReturn(solrClient);
         Mockito.when(solrClient.query(Mockito.any(SolrQuery.class))).thenReturn(queryResponse);
         Mockito.when(solrQueryBuilder.buildQueryTitleMatchedReport(Mockito.anyString(),Mockito.any(),Mockito.any(),Mockito.any(), Mockito.anyString())).thenCallRealMethod();
+
         SolrDocumentList solrDocumentList=new SolrDocumentList();
         solrDocumentList.add(bibSolrDocument);
         solrDocumentList.setNumFound(1l);
@@ -196,6 +197,7 @@ public class ReportsServiceUtilUT extends BaseTestCaseUT4 {
         PowerMockito.when(mocksolrTemplate1.getSolrClient()).thenReturn(solrClient);
         Mockito.when(solrClient.query(Mockito.any(SolrQuery.class))).thenReturn(queryResponse);
         Mockito.when(solrQueryBuilder.buildQueryTitleMatchedReport(Mockito.anyString(),Mockito.any(),Mockito.any(),Mockito.any(),Mockito.anyString())).thenCallRealMethod();
+
         SolrDocumentList solrDocumentList=new SolrDocumentList();
         solrDocumentList.add(bibSolrDocument);
         solrDocumentList.setNumFound(1l);

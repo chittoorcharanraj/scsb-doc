@@ -436,7 +436,7 @@ public class ReportsServiceUtil {
                     TitleMatchCount titleMatchCount = new TitleMatchCount();
                     String matchingIdentifier = (titleMatch.equals(ScsbConstants.TITLE_MATCHED)) ?
                             "" : "-";
-                    SolrQuery query = solrQueryBuilder.buildQueryTitleMatchCount(solrFormattedDate, owningInstitution, cgd,matchingIdentifier);
+                    SolrQuery query = solrQueryBuilder.buildQueryTitleMatchCount(solrFormattedDate, owningInstitution, cgd, matchingIdentifier);
                     QueryResponse queryResponse = solrTemplate.getSolrClient().query(query);
                     long count = queryResponse.getResults().getNumFound();
                     titleMatchCount.setCount(count);
@@ -578,11 +578,12 @@ public class ReportsServiceUtil {
 
     private StringBuilder appendCGDs(TitleMatchedReport titleMatchedReport){
         StringBuilder cgdAppend = new StringBuilder();
+        String cgdText = "CollectionGroupDesignation:";
         for (String cgd : titleMatchedReport.getCgd()) {
             if(titleMatchedReport.getCgd().get(titleMatchedReport.getCgd().size()-1).equalsIgnoreCase(cgd))
-                cgdAppend.append(cgd);
+                cgdAppend.append(cgdText+cgd);
             else
-                cgdAppend.append(cgd + " OR ");
+                cgdAppend.append(cgdText+cgd + " OR ");
         }
         return cgdAppend;
     }
@@ -611,7 +612,7 @@ public class ReportsServiceUtil {
     public TitleMatchedReport getTitleMatchedReportsExportS3(TitleMatchedReport titleMatchedReport) throws ParseException, SolrServerException, IOException {
         List<BibItem> bibItems = new ArrayList<>();
         SolrQuery query = appendSolrQueryForTitle(titleMatchedReport);
-        query.setRows(titleReportExportBibsLimitPerFile);
+        query.setRows(100000);
         query.setStart(titleMatchedReport.getPageNumber()*titleReportExportBibsLimitPerFile);
         if (titleMatchedReport.getTitleMatch().equalsIgnoreCase(ScsbConstants.TITLE_MATCHED))
             query.setSort(ScsbConstants.MATCHING_IDENTIFIER, SolrQuery.ORDER.desc);
