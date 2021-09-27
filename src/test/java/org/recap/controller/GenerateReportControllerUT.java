@@ -26,7 +26,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.ArgumentMatchers.any;
 
 /**
  * Created by hemalathas on 19/1/17.
@@ -60,11 +62,10 @@ public class GenerateReportControllerUT extends BaseTestCaseUT {
     @Mock
     TitleMatchedReport titleMatchedReport;
 
-
     @Test
     @DisplayName("Test title Match count")
     public void testTitleMatchCount() throws Exception{
-        Mockito.when(reportGenerator.getItemMatchCount(Mockito.any())).thenCallRealMethod();
+        Mockito.when(reportGenerator.getItemMatchCount(any())).thenCallRealMethod();
         ResponseEntity<TitleMatchedReport> reportResponseEntity=generateReportController.titleMatchCount(titleMatchedReport);
         assertNotNull(reportResponseEntity);
     }
@@ -72,7 +73,7 @@ public class GenerateReportControllerUT extends BaseTestCaseUT {
     @Test
     @DisplayName("Test title Match Report")
     public void testTitleMatchReport() throws Exception{
-        Mockito.when(reportGenerator.getItemMatchReport(Mockito.any())).thenCallRealMethod();
+        Mockito.when(reportGenerator.getItemMatchReport(any())).thenCallRealMethod();
         ResponseEntity<TitleMatchedReport> reportResponseEntity=generateReportController.titleMatchReport(titleMatchedReport);
         assertNotNull(reportResponseEntity);
     }
@@ -80,7 +81,7 @@ public class GenerateReportControllerUT extends BaseTestCaseUT {
     @Test
     @DisplayName("Test title Match Report Export")
     public void testTitleMatchReportExport() throws Exception{
-        Mockito.when(reportGenerator.getItemMatchReportExport(Mockito.any())).thenCallRealMethod();
+        Mockito.when(reportGenerator.getItemMatchReportExport(any())).thenCallRealMethod();
         ResponseEntity<TitleMatchedReport> reportResponseEntity=generateReportController.titleMatchReportExport(titleMatchedReport);
         assertNotNull(reportResponseEntity);
     }
@@ -96,7 +97,7 @@ public class GenerateReportControllerUT extends BaseTestCaseUT {
         solrIndexRequest.setReportType(ScsbCommonConstants.ACCESSION_SUMMARY_REPORT);
         solrIndexRequest.setOwningInstitutionCode("PUL");
         solrIndexRequest.setTransmissionType(ScsbCommonConstants.FILE_SYSTEM);
-        Mockito.when(reportGenerator.generateReport(Mockito.anyString(),Mockito.anyString(),Mockito.anyString(),Mockito.anyString(),Mockito.any(),Mockito.any())).thenReturn("test");
+        Mockito.when(reportGenerator.generateReport(Mockito.anyString(),Mockito.anyString(),Mockito.anyString(),Mockito.anyString(), any(), any())).thenReturn("test");
         String reponse = generateReportController.generateReports(solrIndexRequest,bindingResult,model);
         assertNotNull(reponse);
     }
@@ -110,7 +111,7 @@ public class GenerateReportControllerUT extends BaseTestCaseUT {
         solrIndexRequest.setReportType(ScsbConstants.ONGOING_ACCESSION_REPORT);
         solrIndexRequest.setOwningInstitutionCode("PUL");
         solrIndexRequest.setTransmissionType(ScsbCommonConstants.FILE_SYSTEM);
-        Mockito.when(reportGenerator.generateReport(Mockito.anyString(),Mockito.anyString(),Mockito.anyString(),Mockito.anyString(),Mockito.any(),Mockito.any())).thenReturn("test");
+        Mockito.when(reportGenerator.generateReport(Mockito.anyString(),Mockito.anyString(),Mockito.anyString(),Mockito.anyString(), any(), any())).thenReturn("test");
         String reponse = generateReportController.generateReports(solrIndexRequest,bindingResult,model);
         assertNotNull(reponse);
     }
@@ -121,7 +122,7 @@ public class GenerateReportControllerUT extends BaseTestCaseUT {
         solrIndexRequest.setReportType(ScsbCommonConstants.DEACCESSION_SUMMARY_REPORT);
         solrIndexRequest.setOwningInstitutionCode("PUL");
         solrIndexRequest.setTransmissionType(ScsbCommonConstants.FILE_SYSTEM);
-        Mockito.when(reportGenerator.generateReport(Mockito.anyString(),Mockito.anyString(),Mockito.anyString(),Mockito.anyString(),Mockito.any(),Mockito.any())).thenReturn("test");
+        Mockito.when(reportGenerator.generateReport(Mockito.anyString(),Mockito.anyString(),Mockito.anyString(),Mockito.anyString(), any(), any())).thenReturn("test");
         String reponse = generateReportController.generateReports(solrIndexRequest,bindingResult,model);
         assertNotNull(reponse);
     }
@@ -132,7 +133,7 @@ public class GenerateReportControllerUT extends BaseTestCaseUT {
         solrIndexRequest.setReportType(ScsbCommonConstants.SUBMIT_COLLECTION_REJECTION_REPORT);
         solrIndexRequest.setOwningInstitutionCode("PUL");
         solrIndexRequest.setTransmissionType(ScsbCommonConstants.FILE_SYSTEM);
-        Mockito.when(reportGenerator.generateReport(Mockito.anyString(),Mockito.anyString(),Mockito.anyString(),Mockito.anyString(),Mockito.any(),Mockito.any())).thenReturn("test");
+        Mockito.when(reportGenerator.generateReport(Mockito.anyString(),Mockito.anyString(),Mockito.anyString(),Mockito.anyString(), any(), any())).thenReturn("test");
         String reponse = generateReportController.generateReports(solrIndexRequest,bindingResult,model);
         assertNotNull(reponse);
     }
@@ -145,7 +146,7 @@ public class GenerateReportControllerUT extends BaseTestCaseUT {
         solrIndexRequest.setReportType("Failure");
         solrIndexRequest.setOwningInstitutionCode("PUL");
         solrIndexRequest.setTransmissionType(ScsbCommonConstants.FILE_SYSTEM);
-        Mockito.when(reportGenerator.generateReport(Mockito.anyString(),Mockito.anyString(),Mockito.anyString(),Mockito.anyString(),Mockito.any(),Mockito.any())).thenReturn("test");
+        Mockito.when(reportGenerator.generateReport(Mockito.anyString(),Mockito.anyString(),Mockito.anyString(),Mockito.anyString(), any(), any())).thenReturn("test");
         String reponse = generateReportController.generateReports(solrIndexRequest,bindingResult,model);
         assertNotNull(reponse);
     }
@@ -157,7 +158,7 @@ public class GenerateReportControllerUT extends BaseTestCaseUT {
         solrIndexRequest.setReportType(ScsbCommonConstants.SUBMIT_COLLECTION_EXCEPTION_REPORT);
         solrIndexRequest.setOwningInstitutionCode("PUL");
         solrIndexRequest.setTransmissionType(ScsbCommonConstants.FILE_SYSTEM);
-        Mockito.when(reportGenerator.generateReport(Mockito.anyString(),Mockito.anyString(),Mockito.anyString(),Mockito.anyString(),Mockito.any(),Mockito.any())).thenReturn("test");
+        Mockito.when(reportGenerator.generateReport(Mockito.anyString(),Mockito.anyString(),Mockito.anyString(),Mockito.anyString(), any(), any())).thenReturn("test");
         String reponse = generateReportController.generateReports(solrIndexRequest,bindingResult,model);
         assertNotNull(reponse);
     }
@@ -169,7 +170,7 @@ public class GenerateReportControllerUT extends BaseTestCaseUT {
         solrIndexRequest.setReportType(ScsbCommonConstants.SUBMIT_COLLECTION_SUCCESS_REPORT);
         solrIndexRequest.setOwningInstitutionCode("PUL");
         solrIndexRequest.setTransmissionType(ScsbCommonConstants.FILE_SYSTEM);
-        Mockito.when(reportGenerator.generateReport(Mockito.anyString(),Mockito.anyString(),Mockito.anyString(),Mockito.anyString(),Mockito.any(),Mockito.any())).thenReturn("test");
+        Mockito.when(reportGenerator.generateReport(Mockito.anyString(),Mockito.anyString(),Mockito.anyString(),Mockito.anyString(), any(), any())).thenReturn("test");
         String reponse = generateReportController.generateReports(solrIndexRequest,bindingResult,model);
         assertNotNull(reponse);
     }
@@ -180,7 +181,7 @@ public class GenerateReportControllerUT extends BaseTestCaseUT {
         solrIndexRequest.setReportType(ScsbCommonConstants.SUBMIT_COLLECTION_FAILURE_REPORT);
         solrIndexRequest.setOwningInstitutionCode("PUL");
         solrIndexRequest.setTransmissionType(ScsbCommonConstants.FILE_SYSTEM);
-        Mockito.when(reportGenerator.generateReport(Mockito.anyString(),Mockito.anyString(),Mockito.anyString(),Mockito.anyString(),Mockito.any(),Mockito.any())).thenReturn("test");
+        Mockito.when(reportGenerator.generateReport(Mockito.anyString(),Mockito.anyString(),Mockito.anyString(),Mockito.anyString(), any(), any())).thenReturn("test");
         String reponse = generateReportController.generateReports(solrIndexRequest,bindingResult,model);
         assertNotNull(reponse);
     }
@@ -192,7 +193,7 @@ public class GenerateReportControllerUT extends BaseTestCaseUT {
         solrIndexRequest.setReportType(ScsbConstants.SUBMIT_COLLECTION_SUMMARY_REPORT);
         solrIndexRequest.setOwningInstitutionCode("PUL");
         solrIndexRequest.setTransmissionType(ScsbCommonConstants.FILE_SYSTEM);
-        Mockito.when(reportGenerator.generateReport(Mockito.anyString(),Mockito.anyString(),Mockito.anyString(),Mockito.anyString(),Mockito.any(),Mockito.any())).thenReturn("");
+        Mockito.when(reportGenerator.generateReport(Mockito.anyString(),Mockito.anyString(),Mockito.anyString(),Mockito.anyString(), any(), any())).thenReturn("");
         String reponse = generateReportController.generateReports(solrIndexRequest,bindingResult,model);
         assertNotNull(reponse);
     }
@@ -214,7 +215,7 @@ public class GenerateReportControllerUT extends BaseTestCaseUT {
     @Test
     @DisplayName("Test Accession report for Exception")
     public void accessionException() throws Exception{
-        Mockito.when(reportGenerator.accessionExceptionReportGenerator(Mockito.any())).thenCallRealMethod();
+        Mockito.when(reportGenerator.accessionExceptionReportGenerator(any())).thenCallRealMethod();
         Mockito.when(submitCollectionReprot.getPageNumber()).thenReturn(1);
         Mockito.when(submitCollectionReprot.getPageSize()).thenReturn(1);
         Mockito.when(submitCollectionReprot.getInstitutionName()).thenReturn(ScsbCommonConstants.PRINCETON);
@@ -234,7 +235,7 @@ public class GenerateReportControllerUT extends BaseTestCaseUT {
         Mockito.when(reportEntityList.getTotalElements()).thenReturn(1l);
         Mockito.when(reportEntity.getType()).thenReturn(ScsbCommonConstants.SUBMIT_COLLECTION_EXCEPTION_REPORT);
         ReflectionTestUtils.setField(reportGenerator,"reportDetailRepository",reportDetailRepository);
-        Mockito.when(reportDetailRepository.findByInstitutionAndTypeAndDateRangeAndAccession(Mockito.any(),Mockito.anyString(),Mockito.any(),Mockito.any(),Mockito.any())).thenReturn(reportEntityList);
+        Mockito.when(reportDetailRepository.findByInstitutionAndTypeAndDateRangeAndAccession(any(),Mockito.anyString(), any(), any(), any())).thenReturn(reportEntityList);
         ResponseEntity<SubmitCollectionReport> accessionException=generateReportController.accessionException(submitCollectionReprot);
         assertNotNull(accessionException);
     }
@@ -256,8 +257,8 @@ public class GenerateReportControllerUT extends BaseTestCaseUT {
         Mockito.when(reportEntity.getReportDataEntities()).thenReturn(reportDataEntities);
         Mockito.when(reportEntity.getType()).thenReturn(ScsbCommonConstants.SUBMIT_COLLECTION_SUCCESS_REPORT);
         ReflectionTestUtils.setField(reportGenerator,"reportDetailRepository",reportDetailRepository);
-        Mockito.when(reportDetailRepository.findByInstitutionAndTypeAndDateRangeAndAccession(Mockito.any(),Mockito.anyString(),Mockito.any(),Mockito.any())).thenReturn(reportEntities);
-        Mockito.when(reportGenerator.accessionExceptionReportExport(Mockito.any())).thenCallRealMethod();
+        Mockito.when(reportDetailRepository.findByInstitutionAndTypeAndDateRangeAndAccession(any(),Mockito.anyString(), any(), any())).thenReturn(reportEntities);
+        Mockito.when(reportGenerator.accessionExceptionReportExport(any())).thenCallRealMethod();
         ResponseEntity<SubmitCollectionReport> accessionException=generateReportController.accessionException(submitCollectionReprot);
         assertNotNull(accessionException);
     }
@@ -316,6 +317,16 @@ public class GenerateReportControllerUT extends BaseTestCaseUT {
         reportEntity.setReportDataEntities(reportDataEntities);
         reportEntityList.add(reportEntity);
         return reportEntityList;
+
+    }
+
+    @Test
+    @DisplayName("title-match-report-export-s3")
+    public void titleMatchReportExportS3() throws Exception
+    {
+        Mockito.when(reportGenerator.getItemMatchReportExportS3(any())).thenReturn(titleMatchedReport);
+        ResponseEntity<TitleMatchedReport> reportResponseEntity = generateReportController.titleMatchReportExportS3(titleMatchedReport);
+        assertNotNull(reportResponseEntity);
 
     }
 }
