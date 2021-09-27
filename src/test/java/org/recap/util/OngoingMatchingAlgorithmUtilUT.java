@@ -282,7 +282,7 @@ public class OngoingMatchingAlgorithmUtilUT extends BaseTestCaseUT4 {
         Mockito.when(queryResponse.getResults()).thenReturn(solrDocumentList);
         Set<String> matchPointString=new HashSet<>();
         matchPointString.add("match");
-        Map<Integer, BibItem> bibItemMap = ongoingMatchingAlgorithmUtil.getBibsFromSolr(matchPointString, "fieldName","query", Mockito.anyInt(), Mockito.anyMap());
+        Map<Integer, BibItem> bibItemMap = ongoingMatchingAlgorithmUtil.getBibsFromSolr( "fieldName","query", Mockito.anyInt(), Mockito.anyMap());
         assertNotNull(bibItemMap);
     }
 

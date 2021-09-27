@@ -908,7 +908,7 @@ public class SolrQueryBuilder {
 
         query.append(ScsbCommonConstants.DOCTYPE).append(":").append(ScsbCommonConstants.BIB).append(and)
                 .append(ScsbConstants.BIB_CATALOGING_STATUS).append(":").append(ScsbCommonConstants.COMPLETE_STATUS).append(and)
-                .append(ScsbCommonConstants.BIB_OWNING_INSTITUTION).append(":(").append(owningInst).append(")").append(and)
+                .append(ScsbCommonConstants.BIB_OWNING_INSTITUTION).append(":").append(owningInst).append(and)
                 .append(ScsbConstants.BIB_CREATED_DATE).append(":[").append(date).append("]").append(and).append(matchingIdentifier)
                 .append(ScsbConstants.MATCHING_IDENTIFIER).append(":").append("*").append(coreParentFilterQuery).append(" ")
                 .append(ScsbCommonConstants.COLLECTION_GROUP_DESIGNATION).append(":(").append(cgd).append(")").append(" ")

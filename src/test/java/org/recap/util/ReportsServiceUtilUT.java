@@ -129,6 +129,7 @@ public class ReportsServiceUtilUT extends BaseTestCaseUT4 {
         QueryResponse queryResponse=Mockito.mock(QueryResponse.class);
         PowerMockito.when(mocksolrTemplate1.getSolrClient()).thenReturn(solrClient);
         Mockito.when(solrClient.query(Mockito.any(SolrQuery.class))).thenReturn(queryResponse);
+        String matchingIdentifier="afyukjl-lasjd-12sdk-skdf3";
         Mockito.when(solrQueryBuilder.buildQueryTitleMatchedReport(Mockito.anyString(),Mockito.any(),Mockito.any(), matchingIdentifier, Mockito.anyString())).thenCallRealMethod();
         SolrDocumentList solrDocumentList=new SolrDocumentList();
         solrDocumentList.add(bibSolrDocument);
@@ -195,6 +196,7 @@ public class ReportsServiceUtilUT extends BaseTestCaseUT4 {
         QueryResponse queryResponse=Mockito.mock(QueryResponse.class);
         PowerMockito.when(mocksolrTemplate1.getSolrClient()).thenReturn(solrClient);
         Mockito.when(solrClient.query(Mockito.any(SolrQuery.class))).thenReturn(queryResponse);
+        String matchingIdentifier = "afyukjl-lasjd-12sdk-skdf3";
         Mockito.when(solrQueryBuilder.buildQueryTitleMatchedReport(Mockito.anyString(),Mockito.any(),Mockito.any(), matchingIdentifier, Mockito.anyString())).thenCallRealMethod();
         SolrDocumentList solrDocumentList=new SolrDocumentList();
         solrDocumentList.add(bibSolrDocument);
