@@ -113,7 +113,7 @@ public class OngoingMatchingAlgorithmJobControllerUT extends BaseTestCaseUT {
         Mockito.when(ongoingMatchingAlgoJobController.getDateUtil()).thenReturn(dateUtil);
         Mockito.when(ongoingMatchingAlgoJobController.getBatchSize()).thenReturn(batchSize);
         Mockito.when(ongoingMatchingAlgoJobController.getLogger()).thenCallRealMethod();
-        Mockito.when(ongoingMatchingAlgorithmUtil.fetchUpdatedRecordsAndStartProcess(dateUtil.getFromDate(date), rows,Mockito.anyBoolean(),Mockito.anyBoolean())).thenReturn(ScsbCommonConstants.SUCCESS);
+        Mockito.when(ongoingMatchingAlgorithmUtil.fetchUpdatedRecordsAndStartProcess(Mockito.any(),Mockito.any(),Mockito.anyBoolean(),Mockito.anyBoolean())).thenReturn(ScsbCommonConstants.SUCCESS);
         Mockito.when(ongoingMatchingAlgoJobController.startMatchingAlgorithmJob(solrIndexRequest)).thenCallRealMethod();
         String status = ongoingMatchingAlgoJobController.startMatchingAlgorithmJob(solrIndexRequest);
         assertTrue(status.contains(ScsbCommonConstants.SUCCESS));
@@ -143,7 +143,7 @@ public class OngoingMatchingAlgorithmJobControllerUT extends BaseTestCaseUT {
         Mockito.when(ongoingMatchingAlgoJobController.getOngoingMatchingAlgorithmUtil()).thenReturn(ongoingMatchingAlgorithmUtil);
         Mockito.when(ongoingMatchingAlgoJobController.getBatchSize()).thenReturn(batchSize);
         Mockito.when(ongoingMatchingAlgoJobController.getLogger()).thenCallRealMethod();
-        Mockito.when(ongoingMatchingAlgorithmUtil.fetchUpdatedRecordsByBibIdRangeAndStartProcess(null,null,1000,Mockito.anyBoolean())).thenReturn(ScsbCommonConstants.SUCCESS);
+        Mockito.when(ongoingMatchingAlgorithmUtil.fetchUpdatedRecordsByBibIdRangeAndStartProcess(Mockito.any(),Mockito.any(),Mockito.any(),Mockito.anyBoolean())).thenReturn(ScsbCommonConstants.SUCCESS);
         Mockito.when(ongoingMatchingAlgoJobController.startMatchingAlgorithmJob(solrIndexRequest)).thenCallRealMethod();
         String status = ongoingMatchingAlgoJobController.startMatchingAlgorithmJob(solrIndexRequest);
         assertTrue(status.contains(ScsbCommonConstants.SUCCESS));
