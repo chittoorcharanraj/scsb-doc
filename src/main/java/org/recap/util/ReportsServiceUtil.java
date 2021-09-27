@@ -578,11 +578,12 @@ public class ReportsServiceUtil {
 
     private StringBuilder appendCGDs(TitleMatchedReport titleMatchedReport){
         StringBuilder cgdAppend = new StringBuilder();
+        String cgdText = "CollectionGroupDesignation:";
         for (String cgd : titleMatchedReport.getCgd()) {
             if(titleMatchedReport.getCgd().get(titleMatchedReport.getCgd().size()-1).equalsIgnoreCase(cgd))
-                cgdAppend.append(cgd);
+                cgdAppend.append(cgdText+cgd);
             else
-                cgdAppend.append(cgd + " OR ");
+                cgdAppend.append(cgdText+cgd + " OR ");
         }
         return cgdAppend;
     }
