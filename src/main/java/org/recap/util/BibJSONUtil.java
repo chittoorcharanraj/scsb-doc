@@ -25,6 +25,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.data.solr.core.SolrTemplate;
 import org.springframework.util.CollectionUtils;
 
+import java.text.Normalizer;
 import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.Date;
@@ -291,6 +292,7 @@ public class BibJSONUtil extends MarcUtil {
             bib.setTitleStartsWith(getTitleStartsWith(marcRecord));
             bib.setTitleSort(getTitleSort(marcRecord, bib.getTitleDisplay()));
             bib.setTitleSubFieldA(getDataFieldValue(marcRecord, "245", null, null, "a"));
+            bib.setTitleMatch(getTitleToMatch(bib.getTitleSubFieldA()));
             bib.setTitle245(getTitle245(marcRecord));
             bib.setTitle246(getTitle246(marcRecord));
             bib.setTitle130(getTitle130(marcRecord));
@@ -612,6 +614,65 @@ public class BibJSONUtil extends MarcUtil {
             return titleDisplay.substring(secondIndicatorForDataField);
         }
         return "";
+    }
+
+    /**
+     * This method replaces diacritics(~= accents) characters by replacing them to normal characters in title.
+     *
+     * @param title the title
+     * @return the string
+     */
+    public String normalizeDiacriticsInTitle(String title) {
+        String normalizedTitle = Normalizer.normalize(title, Normalizer.Form.NFD);
+        normalizedTitle = normalizedTitle.replaceAll("[^\\p{ASCII}]", "");
+        normalizedTitle = normalizedTitle.replaceAll("\\p{M}", "");
+        return normalizedTitle;
+    }
+
+    /**
+     * This method gets matched title for  the given title.
+     *
+     * @param title the title
+     * @return the title to match
+     */
+    public String getTitleToMatch(String title) {
+        title = normalizeDiacriticsInTitle(title.trim());
+        title = title.replaceAll("[^\\w\\s]", "").trim();
+        title = title.replaceAll("\\s{2,}", " ");
+        String titleToMatch = "";
+        if(StringUtils.isNotBlank(title)) {
+            String[] titleArray = title.split(" ");
+            int count = 0;
+            for (int j = 0; j < titleArray.length; j++) {
+                String tempTitle = titleArray[j];
+                if (!("a".equalsIgnoreCase(tempTitle) || "an".equalsIgnoreCase(tempTitle) || "the".equalsIgnoreCase(tempTitle))) {
+                    titleToMatch = getTitleToMatch(titleToMatch, count, tempTitle);
+                    count = count + 1;
+                } else {
+                    if(j != 0) {
+                        titleToMatch = getTitleToMatch(titleToMatch, count, tempTitle);
+                        count = count + 1;
+                    }
+                }
+                if (count == 4) {
+                    break;
+                }
+            }
+        }
+        return titleToMatch.replaceAll("\\s", "");
+    }
+
+    private String getTitleToMatch(String titleToMatch, int count, String tempTitle) {
+        if (count == 0) {
+            titleToMatch = tempTitle;
+        } else {
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.append(titleToMatch);
+            stringBuilder.append(" ");
+            stringBuilder.append(tempTitle);
+            titleToMatch = stringBuilder.toString();
+        }
+        return titleToMatch;
     }
 
 }

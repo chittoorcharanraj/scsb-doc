@@ -43,6 +43,9 @@ public class Bib {
     @Field("Title_subfield_a")
     private String titleSubFieldA;
 
+    @Field("Title_match")
+    private String titleMatch;
+
     @Field("Title_245")
     private String title245;
 
