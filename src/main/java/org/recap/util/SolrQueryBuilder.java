@@ -13,6 +13,7 @@ import org.springframework.stereotype.Component;
 
 import java.text.CharacterIterator;
 import java.text.StringCharacterIterator;
+import java.util.Collections;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -29,7 +30,7 @@ public class SolrQueryBuilder {
     private String to = " TO ";
     private String coreParentFilterQuery = "{!parent which=\"ContentType:parent\"}";
     private String coreChildFilterQuery = "{!child of=\"ContentType:parent\"}";
-    private String filterQuery = "{!join from=MatchingIdentifier to=MatchingIdentifier}MatchingIdentifier:{!join from=MatchingIdentifier to=MatchingIdentifier}";
+    private String joinQueryOnMatchingIdentifier = "{!join from=MatchingIdentifier to=MatchingIdentifier}";
 
     /**
      * Gets query string for item criteria for parent.
@@ -891,38 +892,20 @@ public class SolrQueryBuilder {
         return solrQuery;
     }
     public SolrQuery buildQueryTitleMatchCount( String date, String owningInst, String cgd, String matchingIdentifier) {
-        StringBuilder query = new StringBuilder();
-        StringBuilder filterQueryForBib = new StringBuilder();
-        query.append(coreParentFilterQuery).append(ScsbConstants.ITEM_CREATED_DATE).append(":[").append(date).append("]").append(
-                and).append(ScsbCommonConstants.COLLECTION_GROUP_DESIGNATION).append(":").append(cgd).append(
-                and).append(ScsbConstants.ITEM_CATALOGING_STATUS).append(":").append(ScsbCommonConstants.COMPLETE_STATUS).append(
-                and).append(ScsbCommonConstants.IS_DELETED_ITEM).append(":").append(ScsbConstants.FALSE);
-        filterQueryForBib.append(ScsbCommonConstants.DOCTYPE).append(":").append(ScsbCommonConstants.BIB).append(
-                and).append(ScsbConstants.BIB_CATALOGING_STATUS).append(":").append(ScsbCommonConstants.COMPLETE_STATUS).append(
-                and).append(ScsbCommonConstants.IS_DELETED_BIB).append(":").append(ScsbConstants.FALSE).append(
-                and).append(ScsbCommonConstants.BIB_OWNING_INSTITUTION).append(":").append(owningInst).append(
-                and).append(matchingIdentifier).append(ScsbConstants.MATCHING_IDENTIFIER).append(":").append("*");
-        SolrQuery solrQuery = new SolrQuery(query.toString());
-        solrQuery.setFilterQueries(filterQueryForBib.toString());
+        SolrQuery solrQuery = new SolrQuery();
+        solrQuery.setQuery(getBibFilterQueryForTitleMatchReport(owningInst, matchingIdentifier));
+        solrQuery.setFilterQueries(getCoreParentFilterQueryForTitleMatchReport(date, Collections.singletonList(cgd)));
         return solrQuery;
     }
-    public SolrQuery buildQueryTitleMatchedReport(String date, StringBuilder owningInst, StringBuilder cgd, String matchingIdentifier, String match) {
-        StringBuilder query = new StringBuilder();
-        StringBuilder tempQuery = new StringBuilder();
-        if (match.equalsIgnoreCase(ScsbConstants.TITLE_MATCHED))
-            query.append(filterQuery);
 
-        query.append(ScsbCommonConstants.DOCTYPE).append(":").append(ScsbCommonConstants.BIB).append(and)
-                .append(ScsbConstants.BIB_CATALOGING_STATUS).append(":").append(ScsbCommonConstants.COMPLETE_STATUS).append(and)
-                .append(ScsbCommonConstants.IS_DELETED_BIB).append(":").append(ScsbConstants.FALSE).append(and)
-                .append(ScsbCommonConstants.BIB_OWNING_INSTITUTION).append(":").append(owningInst).append(and)
-                .append(ScsbConstants.MATCHING_IDENTIFIER).append(":").append("*");
-        tempQuery.append(coreParentFilterQuery)
-                .append("(").append(ScsbConstants.ITEM_CREATED_DATE).append(":[").append(date).append("]").append(")").append(and)
-                .append("(").append(ScsbConstants.ITEM_CATALOGING_STATUS).append(":").append(ScsbCommonConstants.COMPLETE_STATUS).append(")").append(and)
-                .append("(").append(ScsbCommonConstants.IS_DELETED_ITEM).append(":").append(ScsbConstants.FALSE).append(")");
-        SolrQuery solrQuery = new SolrQuery(query.toString());
-        solrQuery.setFilterQueries(tempQuery.toString());
+    public SolrQuery buildQueryTitleMatchedReport(String date, String owningInst, List<String> cgds, String matchingIdentifier, String match) {
+        String joinQueryOnMatchingId = "";
+        if (match.equalsIgnoreCase(ScsbConstants.TITLE_MATCHED)) {
+            joinQueryOnMatchingId = joinQueryOnMatchingIdentifier;
+        }
+        SolrQuery solrQuery = new SolrQuery();
+        solrQuery.setQuery(joinQueryOnMatchingId + getBibFilterQueryForTitleMatchReport(owningInst, matchingIdentifier));
+        solrQuery.setFilterQueries(joinQueryOnMatchingId + getCoreParentFilterQueryForTitleMatchReport(date, cgds));
         return solrQuery;
     }
 
@@ -931,5 +914,40 @@ public class SolrQueryBuilder {
         solrQuery.setRows(10000);
         solrQuery.setFields(ScsbConstants.BIB_ID);
         return solrQuery;
+    }
+
+    private String getCoreParentFilterQueryForTitleMatchReport(String date, List<String> cgds) {
+        StringBuilder queryBuilder = new StringBuilder();
+        queryBuilder.append(coreParentFilterQuery).append(ScsbConstants.ITEM_CREATED_DATE).append(":[").append(date).append("]").append(
+                and).append(getQueryForCGDs(cgds)).append(
+                and).append(ScsbConstants.ITEM_CATALOGING_STATUS).append(":").append(ScsbCommonConstants.COMPLETE_STATUS).append(
+                and).append(ScsbCommonConstants.IS_DELETED_ITEM).append(":").append(ScsbConstants.FALSE);
+        return queryBuilder.toString();
+    }
+
+    private String getBibFilterQueryForTitleMatchReport(String owningInst, String matchingIdentifier) {
+        StringBuilder filterQueryForBib = new StringBuilder();
+        filterQueryForBib.append(ScsbCommonConstants.DOCTYPE).append(":").append(ScsbCommonConstants.BIB).append(
+                and).append(ScsbConstants.BIB_CATALOGING_STATUS).append(":").append(ScsbCommonConstants.COMPLETE_STATUS).append(
+                and).append(ScsbCommonConstants.IS_DELETED_BIB).append(":").append(ScsbConstants.FALSE).append(
+                and).append(ScsbCommonConstants.BIB_OWNING_INSTITUTION).append(":").append(owningInst).append(
+                and).append(matchingIdentifier).append(ScsbConstants.MATCHING_IDENTIFIER).append(":").append("*");
+        return filterQueryForBib.toString();
+    }
+
+    private StringBuilder getQueryForCGDs(List<String> cgds) {
+        StringBuilder cgdAppend = new StringBuilder();
+        if (!cgds.isEmpty()) {
+            cgdAppend.append("(");
+            String cgdText = ScsbCommonConstants.COLLECTION_GROUP_DESIGNATION + ":";
+            for (String cgd : cgds) {
+                if (cgds.get(cgds.size() - 1).equalsIgnoreCase(cgd))
+                    cgdAppend.append(cgdText).append(cgd);
+                else
+                    cgdAppend.append(cgdText).append(cgd).append(or);
+            }
+            cgdAppend.append(")");
+        }
+        return cgdAppend;
     }
 }
