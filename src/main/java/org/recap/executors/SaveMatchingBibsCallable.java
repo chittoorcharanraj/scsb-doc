@@ -12,18 +12,7 @@ import org.recap.ScsbConstants;
 import org.recap.model.jpa.MatchingBibEntity;
 import org.recap.model.jpa.MatchingMatchPointsEntity;
 import org.recap.model.search.resolver.BibValueResolver;
-import org.recap.model.search.resolver.impl.bib.TitleSubFieldAValueResolver;
-import org.recap.model.search.resolver.impl.bib.RootValueResolver;
-import org.recap.model.search.resolver.impl.bib.BibIdValueResolver;
-import org.recap.model.search.resolver.impl.bib.IdValueResolver;
-import org.recap.model.search.resolver.impl.bib.ISBNValueResolver;
-import org.recap.model.search.resolver.impl.bib.ISSNValueResolver;
-import org.recap.model.search.resolver.impl.bib.LCCNValueResolver;
-import org.recap.model.search.resolver.impl.bib.LeaderMaterialTypeValueResolver;
-import org.recap.model.search.resolver.impl.bib.OCLCValueResolver;
-import org.recap.model.search.resolver.impl.bib.OwningInstitutionBibIdValueResolver;
-import org.recap.model.search.resolver.impl.bib.OwningInstitutionValueResolver;
-import org.recap.model.search.resolver.impl.bib.IsDeletedBibValueResolver;
+import org.recap.model.search.resolver.impl.bib.*;
 import org.recap.model.solr.BibItem;
 import org.recap.repository.jpa.MatchingMatchPointsDetailsRepository;
 import org.recap.util.CommonUtil;
@@ -207,6 +196,7 @@ public class SaveMatchingBibsCallable implements Callable {
             bibValueResolvers.add(new OwningInstitutionBibIdValueResolver());
             bibValueResolvers.add(new OwningInstitutionValueResolver());
             bibValueResolvers.add(new TitleSubFieldAValueResolver());
+            bibValueResolvers.add(new TitleMatchValueResolver());
             bibValueResolvers.add(new IsDeletedBibValueResolver());
         }
         return bibValueResolvers;
