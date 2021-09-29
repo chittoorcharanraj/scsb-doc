@@ -324,13 +324,17 @@ public final class ScsbConstants {
     public static final String RECORDS_UPDATED = "Records Updated";
     public static final String TITLE_MATCH_REPORT_PATH = "reports/title-match-reports/";
     public static final String TITLE_MATCH = "_Title_Match_";
-
+    public static final String TITLE_MATCH_REPORT_MESSAGE =  "This report is being exported to S3 location at ";
+    public static final String TITLE_MATCH_REPORT_MESSAGE_APPEND = ". Please check after 1 hr.";
     public static final String OCLCISBN = "OCLCNumber-ISBN";
     public static final String OCLCISSN = "OCLCNumber-ISSN";
     public static final String OCLCLCCN =  "OCLCNumber-LCCN";
     public static final String ISBNISSN = "ISBN-ISSN";
     public static final String ISBNLCCN = "ISBN-LCCN";
     public static final String ISSNLCCN = "ISSN-LCCN";
+    public static final String IN_PROGRESS = "IN PROGRESS";
+    public static final String COMPLETED = "COMPLETED";
+    public static final String TITLE_REPORT_MESSAGE_IN_PROGRESS = "Title Match export is going on for other request. Please try to export after sometime.";
 
     private ScsbConstants(){}
 }
