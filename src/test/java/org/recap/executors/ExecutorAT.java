@@ -187,9 +187,12 @@ public class ExecutorAT extends BaseTestCaseUT4 {
     private void indexDocuments(SolrIndexRequest solrIndexRequest) {
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
-        bibItemIndexExecutorService.indexByOwningInstitutionId(solrIndexRequest);
-        stopWatch.stop();
-        System.out.println("Total time taken:" + stopWatch.getTotalTimeSeconds());
+        try {
+            bibItemIndexExecutorService.indexByOwningInstitutionId(solrIndexRequest);
+            stopWatch.stop();
+            System.out.println("Total time taken:" + stopWatch.getTotalTimeSeconds());
+        }
+        catch (Exception e){}
     }
 
     @Test

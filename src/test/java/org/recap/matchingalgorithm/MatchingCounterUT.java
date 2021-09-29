@@ -2,10 +2,7 @@ package org.recap.matchingalgorithm;
 
 import org.junit.jupiter.api.Test;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static org.recap.ScsbConstants.MATCHING_COUNTER_OPEN;
 import static org.recap.ScsbConstants.MATCHING_COUNTER_SHARED;
@@ -37,5 +34,4 @@ public class MatchingCounterUT {
             institutionCgdCounter.put(MATCHING_COUNTER_UPDATED_OPEN,institutionCgdCounter.get(MATCHING_COUNTER_UPDATED_OPEN)+1);
         }
         return institutionCgdCounter;
-    }
-}
+    }}

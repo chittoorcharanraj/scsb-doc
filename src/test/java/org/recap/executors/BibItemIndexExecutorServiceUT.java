@@ -47,11 +47,7 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -89,6 +85,9 @@ public class BibItemIndexExecutorServiceUT extends BaseTestCaseUT4 {
 
     @Mock
     BibSolrCrudRepository bibSolrCrudRepository;
+
+    @Mock
+    IndexExecutorService indexExecutorService;
 
     @Mock
     ProducerTemplate producerTemplate;
@@ -222,7 +221,7 @@ public class BibItemIndexExecutorServiceUT extends BaseTestCaseUT4 {
 
     @Test
     public void partialIndexForEmptyValue() throws Exception {
-        SolrIndexRequest solrIndexRequest=new SolrIndexRequest();
+        SolrIndexRequest solrIndexRequest = new SolrIndexRequest();
         int countExp = bibItemIndexExecutorService.partialIndex(solrIndexRequest);
         solrIndexRequest.setNumberOfThreads(5);
         int count = bibItemIndexExecutorService.partialIndex(solrIndexRequest);
