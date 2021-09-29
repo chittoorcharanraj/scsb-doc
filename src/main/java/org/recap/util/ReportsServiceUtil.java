@@ -593,7 +593,7 @@ public class ReportsServiceUtil {
     public TitleMatchedReport getTitleMatchedReportsExportS3(TitleMatchedReport titleMatchedReport) throws ParseException, SolrServerException, IOException {
         List<BibItem> bibItems = new ArrayList<>();
         SolrQuery query = appendSolrQueryForTitle(titleMatchedReport);
-        query.setRows(100000);
+        query.setRows(titleReportExportBibsLimitPerFile);
         query.setStart(titleMatchedReport.getPageNumber()*titleReportExportBibsLimitPerFile);
         if (titleMatchedReport.getTitleMatch().equalsIgnoreCase(ScsbConstants.TITLE_MATCHED))
             query.setSort(ScsbConstants.MATCHING_IDENTIFIER, SolrQuery.ORDER.desc);

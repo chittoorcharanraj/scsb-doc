@@ -1,6 +1,7 @@
 package org.recap.report;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.recap.PropertyKeyConstants;
 import org.recap.ScsbCommonConstants;
 import org.recap.ScsbConstants;
 import org.recap.model.csv.SubmitCollectionReportRecord;
@@ -14,6 +15,7 @@ import org.recap.util.SubmitCollectionReportGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -96,6 +98,12 @@ public class ReportGenerator {
 
     @Autowired
     private ReportsServiceUtil reportsServiceUtil;
+
+    @Value("${" + PropertyKeyConstants.TITLE_MATCH_REPORT_EXPORT_LIMIT + "}")
+    private Integer titleExportLimit;
+
+    @Value("${" + PropertyKeyConstants.SCSB_BUCKET_NAME + "}")
+    private String s3BucketName;
 
     /**
      * This method is used to generate report based on the reportType.
@@ -311,7 +319,10 @@ public class ReportGenerator {
     }
     public TitleMatchedReport getItemMatchReport(TitleMatchedReport titleMatchedReport){
         try {
-            return reportsServiceUtil.titleMatchReports(titleMatchedReport);
+            TitleMatchedReport titleMatchedReportRes= reportsServiceUtil.titleMatchReports(titleMatchedReport);
+            titleMatchedReportRes.setExportLimit(titleExportLimit);
+            titleMatchedReportRes.setReportMessage(ScsbConstants.TITLE_MATCH_REPORT_MESSAGE + s3BucketName +ScsbConstants.TITLE_MATCH_REPORT_PATH + ScsbConstants.TITLE_MATCH_REPORT_MESSAGE_APPEND);
+            return titleMatchedReportRes;
         } catch (Exception e){
             logger.info(ScsbConstants.EXCEPTION_TITLE_MATCH_REPORT,e.getMessage());
             return titleMatchedReport;
