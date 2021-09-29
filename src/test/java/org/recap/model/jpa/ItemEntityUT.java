@@ -24,6 +24,7 @@ public class ItemEntityUT {
         itemEntity.setLastUpdatedBy("tst");
         itemEntity.equals(new ItemEntity());
         itemEntity.hashCode();
+        itemEntity.isCgdProtection();
         assertNotNull(itemEntity);
     }
 }

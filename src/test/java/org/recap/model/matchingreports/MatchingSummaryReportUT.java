@@ -3,6 +3,7 @@ package org.recap.model.matchingreports;
 import org.junit.jupiter.api.Test;
 import org.recap.BaseTestCaseUT;
 
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
@@ -20,6 +21,8 @@ public class MatchingSummaryReportUT extends BaseTestCaseUT {
         matchingSummaryReport.setOpenItemsBeforeMatching("1");
         matchingSummaryReport.setSharedItemsAfterMatching("2");
         matchingSummaryReport.setOpenItemsAfterMatching("1");
+        matchingSummaryReport.setSharedItemsDiff("2");
+        matchingSummaryReport.setOpenItemsDiff("2");
 
         assertNotNull(matchingSummaryReport.getInstitution());
         assertNotNull(matchingSummaryReport.getTotalBibs());
@@ -28,7 +31,8 @@ public class MatchingSummaryReportUT extends BaseTestCaseUT {
         assertNotNull(matchingSummaryReport.getOpenItemsBeforeMatching());
         assertNotNull(matchingSummaryReport.getSharedItemsAfterMatching());
         assertNotNull(matchingSummaryReport.getOpenItemsAfterMatching());
-
+        assertNotNull(matchingSummaryReport.getSharedItemsDiff());
+        assertNotNull(matchingSummaryReport.getOpenItemsDiff());
 
     }
 

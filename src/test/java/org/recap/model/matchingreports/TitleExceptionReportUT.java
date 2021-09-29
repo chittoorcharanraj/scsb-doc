@@ -24,6 +24,7 @@ public class TitleExceptionReportUT extends BaseTestCaseUT {
         titleExceptionReport.setIssn("1236");
         titleExceptionReport.setLccn("7412");
         titleExceptionReport.setTitleList(Arrays.asList("Test"));
+        titleExceptionReport.setMatchScore("test");
 
         assertNotNull(titleExceptionReport.getOwningInstitution());
         assertNotNull(titleExceptionReport.getBibId());
@@ -34,6 +35,7 @@ public class TitleExceptionReportUT extends BaseTestCaseUT {
         assertNotNull(titleExceptionReport.getIssn());
         assertNotNull(titleExceptionReport.getLccn());
         assertNotNull(titleExceptionReport.getTitleList());
+        assertNotNull(titleExceptionReport.getMatchScore());
     }
 
 }
