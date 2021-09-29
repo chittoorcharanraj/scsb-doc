@@ -1111,7 +1111,7 @@ public class MatchingAlgorithmUtil {
         }*/
         boolean finalIsAnamolyFlagUpdateNeeded = isAnamolyFlagUpdateNeeded;
         List<BibliographicEntity> modifiedBibs = partionedByMatchingIdentity.get(false).stream()
-                .filter(bibliographicEntity -> !(bibliographicEntity.getMatchScore() == bibItemMap.get(bibliographicEntity.getId()).getMatchScore()))
+                .filter(bibliographicEntity -> bibItemMap.get(bibliographicEntity.getId())!= null && !(bibliographicEntity.getMatchScore() == bibItemMap.get(bibliographicEntity.getId()).getMatchScore()))
                 .map(bibliographicEntity -> {
                     if(finalIsAnamolyFlagUpdateNeeded){
                         bibliographicEntity.setAnamolyFlag(true);
@@ -1163,7 +1163,13 @@ public class MatchingAlgorithmUtil {
                     if(finalIsAnamolyFlag){
                         bibliographicEntity.setAnamolyFlag(true);
                     }
-                    bibliographicEntity.setMatchScore(bibItem.getMatchScore());
+                    if(bibItem != null ){
+                        bibliographicEntity.setMatchScore(bibItem.getMatchScore());
+                    }
+                    else {
+                        logger.info("Inside null");
+                        bibliographicEntity.setMatchScore(0);
+                    }
                     bibliographicEntity.setMatchingIdentity(matchingIdentity);
                     return bibliographicEntity;
                 })
