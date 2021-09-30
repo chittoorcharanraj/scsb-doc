@@ -1008,7 +1008,7 @@ public class MatchingAlgorithmUtil {
         List<String> matchingIdentifiers = matchingIdentities.stream().collect(toList());
         List<BibliographicEntity> existingGroupedBibs = bibliographicDetailsRepository.findByOwningInstitutionIdInAndMatchingIdentityIn(allInstitutionIdsExceptSupportInstitution, matchingIdentifiers);
         List<BibliographicEntity> updatedCollectedBibs = bibliographicEntityList.stream()
-                .filter(bibliographicEntity -> !(bibliographicEntity.getMatchScore() == bibItemMap.get(bibliographicEntity.getId()).getMatchScore()))
+                .filter(bibliographicEntity -> null != bibItemMap.get(bibliographicEntity.getId()) && !(bibliographicEntity.getMatchScore() == bibItemMap.get(bibliographicEntity.getId()).getMatchScore()))
                 .map(bibliographicEntity -> {
                     bibliographicEntity.setAnamolyFlag(true);
                     String updatedMatchScore = MatchScoreUtil.calculateMatchScore(MatchScoreUtil.convertDecimalToBinary(bibItemMap.get(bibliographicEntity.getId()).getMatchScore()), MatchScoreUtil.convertDecimalToBinary(bibliographicEntity.getMatchScore()));
@@ -1111,7 +1111,7 @@ public class MatchingAlgorithmUtil {
         }*/
         boolean finalIsAnamolyFlagUpdateNeeded = isAnamolyFlagUpdateNeeded;
         List<BibliographicEntity> modifiedBibs = partionedByMatchingIdentity.get(false).stream()
-                .filter(bibliographicEntity -> bibItemMap.get(bibliographicEntity.getId())!= null && !(bibliographicEntity.getMatchScore() == bibItemMap.get(bibliographicEntity.getId()).getMatchScore()))
+                .filter(bibliographicEntity -> null != bibItemMap.get(bibliographicEntity.getId()) && !(bibliographicEntity.getMatchScore() == bibItemMap.get(bibliographicEntity.getId()).getMatchScore()))
                 .map(bibliographicEntity -> {
                     if(finalIsAnamolyFlagUpdateNeeded){
                         bibliographicEntity.setAnamolyFlag(true);

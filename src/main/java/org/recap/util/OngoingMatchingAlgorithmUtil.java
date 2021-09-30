@@ -442,7 +442,7 @@ public class OngoingMatchingAlgorithmUtil {
      * @param serialMvmBibIds the serial mvm bib ids
      * @return the string
      */
-    public String processMatchingForBib(SolrDocument solrDocument, List<Integer> serialMvmBibIds,Boolean isCGDProcess) {
+    public String processMatchingForBib(SolrDocument solrDocument, List<Integer> serialMvmBibIds, Boolean isCGDProcess) {
         String status = ScsbCommonConstants.SUCCESS;
         List<Integer> itemIds = new ArrayList<>();
         Map<String, HashMap<Integer, BibItem>> bibItemMap = new HashMap<>();
@@ -457,40 +457,40 @@ public class OngoingMatchingAlgorithmUtil {
                 logger.info("matchpoint is >>> " + matchpoint);
                 if (matchpoint.contains("-")) {
                     multiMatchBibItemMap.put(matchpoint, bibItemMap.get(matchpoint));
-                }
-                else {
-                    singleMatchBibItemMap.put(matchpoint,bibItemMap.get(matchpoint));
+                } else {
+                    if (!ScsbConstants.TITLE.equalsIgnoreCase(matchpoint)) {
+                        singleMatchBibItemMap.put(matchpoint, bibItemMap.get(matchpoint));
+                    }
                 }
             }
-                if (multiMatchBibItemMap.size() > 0) {
-                    // Multi Match
-                    logger.info("Multi Match Found for Bib Id: {}", bibId);
-                    try {
-                        itemIds = saveReportAndUpdateCGDForMultiMatch(multiMatchBibItemMap, serialMvmBibIds, isCGDProcess);
-                    } catch (IOException | SolrServerException e) {
-                        logger.error(ScsbCommonConstants.LOG_ERROR, e);
-                        status = ScsbCommonConstants.FAILURE;
-                    }
-                }
-                if (singleMatchBibItemMap.size() > 0) {
-                    // Single Match
-                        logger.info("Single Match Found for Bib Id: {}", bibId);
-                    try {
-
-                    if(checkIfReportForSingleMatchExists(solrDocument, singleMatchBibItemMap)){
-                        itemIds = saveReportAndUpdateCGDForSingleMatch(singleMatchBibItemMap, serialMvmBibIds,isCGDProcess);
-                    }
-                    } catch (Exception e) {
-                        logger.error(ScsbCommonConstants.LOG_ERROR, e);
-                        status = ScsbCommonConstants.FAILURE;
-                    }
-                }
-                if (CollectionUtils.isNotEmpty(itemIds)) {
-                    updateCGDForItemInSolr(itemIds);
+            if (multiMatchBibItemMap.size() > 0) {
+                // Multi Match
+                logger.info("Multi Match Found for Bib Id: {}", bibId);
+                try {
+                    itemIds = saveReportAndUpdateCGDForMultiMatch(multiMatchBibItemMap, serialMvmBibIds, isCGDProcess);
+                } catch (IOException | SolrServerException e) {
+                    logger.error(ScsbCommonConstants.LOG_ERROR, e);
+                    status = ScsbCommonConstants.FAILURE;
                 }
             }
-            return status;
+            if (singleMatchBibItemMap.size() > 0) {
+                // Single Match
+                logger.info("Single Match Found for Bib Id: {}", bibId);
+                try {
+                    if (checkIfReportForSingleMatchExists(solrDocument, singleMatchBibItemMap)) {
+                        itemIds = saveReportAndUpdateCGDForSingleMatch(singleMatchBibItemMap, serialMvmBibIds, isCGDProcess);
+                    }
+                } catch (Exception e) {
+                    logger.error(ScsbCommonConstants.LOG_ERROR, e);
+                    status = ScsbCommonConstants.FAILURE;
+                }
+            }
+            if (CollectionUtils.isNotEmpty(itemIds)) {
+                updateCGDForItemInSolr(itemIds);
+            }
         }
+        return status;
+    }
 
 
     protected boolean checkIfReportForSingleMatchExists(SolrDocument solrDocument, Map<String, HashMap<Integer, BibItem>> singleMatchBibItemMap) {
@@ -881,21 +881,24 @@ public class OngoingMatchingAlgorithmUtil {
         Set<String> titleMatches = new HashSet<>();
 
         List<Integer> itemIds = new ArrayList<>();
-        Integer matchScore=0;
-
-        Set<String> matchPointString = new HashSet<>();
+        Integer matchScore = 0;
+        Set<String> matchPointStrings = new HashSet<>();
         Map<Integer, BibItem> bibItemMap = new HashMap<>();
         for (Iterator<String> bibIterator = multiMatchedBibItemMap.keySet().iterator(); bibIterator.hasNext(); ) {
+            Integer matchScoreCal=0;
+            Set<String> matchPointString = new HashSet<>();
             String bibMatchPoint = bibIterator.next();
             String[] matchPointTokens = bibMatchPoint.split("-");
             for (String matchPoint : matchPointTokens) {
-                if(!matchPointString.contains(matchPoint) && !ScsbConstants.TITLE.equalsIgnoreCase(matchPoint)) {
+                if(!matchPointString.contains(matchPoint)) {
                     matchPointString.add(matchPoint);
-                    logger.info("matchScore before calculating >>>> " + matchScore);
-                    matchScore = MatchScoreUtil.calculateMatchScore(matchScore, MatchScoreUtil.getMatchScoreForMatchPoint(matchPoint));
+                    matchPointStrings.add(matchPoint);
+                    logger.info("matchScore before calculating >>>> " + matchScoreCal);
+                    matchScoreCal = MatchScoreUtil.calculateMatchScore(matchScoreCal, MatchScoreUtil.getMatchScoreForMatchPoint(matchPoint));
                 }
-                logger.info("matchScore after calculating >>>> " + matchScore);
+                logger.info("matchScore after calculating >>>> " + matchScoreCal);
             }
+            matchScore = matchScoreCal;
             logger.info("matchPointString in multi match is >>> " + matchPointString);
 
             bibItemMap = multiMatchedBibItemMap.get(bibMatchPoint);
@@ -903,11 +906,11 @@ public class OngoingMatchingAlgorithmUtil {
                 logger.info("integerBibItemEntry.getKey() >>>>>> " + integerBibItemEntry.getKey());
                 logger.info("integerBibItemEntry.getValue().getMatchScore() >>>>>> " + integerBibItemEntry.getValue().getMatchScore());
                if(integerBibItemEntry.getValue().getMatchScore() != null && integerBibItemEntry.getValue().getMatchScore() > 0) {
-                   Integer matchScoreNew = MatchScoreUtil.calculateMatchScore(matchScore, integerBibItemEntry.getValue().getMatchScore());
+                   Integer matchScoreNew = MatchScoreUtil.calculateMatchScore(matchScoreCal, integerBibItemEntry.getValue().getMatchScore());
                    integerBibItemEntry.getValue().setMatchScore(matchScoreNew);
                }
                else {
-                  integerBibItemEntry.getValue().setMatchScore(matchScore);
+                  integerBibItemEntry.getValue().setMatchScore(matchScoreCal);
               }
             }
 
@@ -945,7 +948,7 @@ public class OngoingMatchingAlgorithmUtil {
                 checkAndAddReportEntities(reportDataEntities, issns, ScsbCommonConstants.ISSN_CRITERIA);
                 checkAndAddReportEntities(reportDataEntities, lccns, ScsbCommonConstants.LCCN_CRITERIA);
                 checkAndAddReportEntities(reportDataEntities, titleMatches, ScsbConstants.TITLE);
-                checkAndAddReportEntities(reportDataEntities, matchPointString, "MatchPoints");
+                checkAndAddReportEntities(reportDataEntities, matchPointStrings, "MatchPoints");
                 reportEntity.addAll(reportDataEntities);
                 producerTemplate.sendBody("scsbactivemq:queue:saveMatchingReportsQ", Arrays.asList(reportEntity));
             }
