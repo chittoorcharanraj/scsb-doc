@@ -97,6 +97,7 @@ public class TitleMatchReportExportService {
     }
 
     private void generateTitleMatchReport(TitleMatchedReport titleMatchedReport) throws ParseException, SolrServerException, IOException {
+        log.info("Title Match Export process started");
         if (new File(titleReportDir).listFiles() != null) {
             Arrays.stream(new File(titleReportDir).listFiles()).filter(file -> file.getName().contains(".xlsx")).forEach(File::delete);
         }
@@ -110,35 +111,61 @@ public class TitleMatchReportExportService {
             totalFiles = Math.round(fileCount / 100);
         }
         int iterationCount = 100;
-        for (int j = 1; j <= totalFiles; j++) {
-            if (j == totalFiles && j > 1) {
-                iterationCount = fileCount % 100;
-            } else if (j == 1 && totalFiles == 1) {
-                iterationCount = titleMatchedReport.getTotalPageCount();
-            }
-            String filename = createFileName(titleMatchedReport.getOwningInst(), fileCount, j);
-            Workbook workbook = new XSSFWorkbook();
-            Sheet sheet = workbook.createSheet(filename);
-            titleMatchedReport.getTotalPageCount();
-            rowNumber = 1;
-            for (int i = 0; i < iterationCount; i++) {
-                if (!(i <= 0)) {
-                    titleMatchedReport.setPageNumber(i);
-                    titleMatchedReport = reportsServiceUtil.getTitleMatchedReportsExportS3(titleMatchedReport);
-                }
-                prepareWorkbook(titleMatchedReport, sheet);
-            }
-            FileOutputStream fileOut = new FileOutputStream(titleReportDir + filename);
-            workbook.write(fileOut);
-            fileOut.close();
-            workbook.close();
-        }
         try {
+            for (int j = 1; j <= totalFiles; j++) {
+                if (j == totalFiles && j > 1) {
+                    iterationCount = fileCount % 100;
+                } else if (j == 1 && totalFiles == 1) {
+                    iterationCount = titleMatchedReport.getTotalPageCount();
+                }
+                String filename = createFileName(titleMatchedReport.getOwningInst(), fileCount, j);
+                String tempFilename = null;
+                Workbook workbook = new XSSFWorkbook();
+                Sheet sheet = workbook.createSheet(filename);
+                rowNumber = 1;
+                for (int i = 0; i < iterationCount; i++) {
+                    if (!(i <= 0)) {
+                        titleMatchedReport.setPageNumber(i);
+                        titleMatchedReport = reportsServiceUtil.getTitleMatchedReportsExportS3(titleMatchedReport);
+                    }
+                    if ((rowNumber + titleMatchedReport.getTotalRecordsCount()) > 1048500) {
+                        rowNumber = 1;
+                        FileOutputStream fileOut = new FileOutputStream(titleReportDir + filename);
+                        workbook.write(fileOut);
+                        fileOut.close();
+                        workbook.close();
+                        tempFilename = createFileName(titleMatchedReport.getOwningInst(), fileCount, i + j);
+                        workbook = new XSSFWorkbook();
+                        sheet = workbook.createSheet(tempFilename);
+                        prepareWorkbook(titleMatchedReport, sheet);
+                    } else {
+                        prepareWorkbook(titleMatchedReport, sheet);
+                    }
+                }
+                FileOutputStream fileOut = null;
+                if (tempFilename != null) {
+                    fileOut = new FileOutputStream(titleReportDir + tempFilename);
+                } else {
+                    fileOut = new FileOutputStream(titleReportDir + filename);
+                }
+                workbook.write(fileOut);
+                fileOut.close();
+                workbook.close();
+            }
+
             zipFiles();
             uploadFilesinS3(institution_name);
             updateStatusCompleteInFile();
+            logger.info("Title Match Export process completed and file placed in s3");
         } catch (IOException e) {
-            logger.info("Exception occured while doing zip the files: {}" + e.getMessage());
+            logger.info("Exception occured while doing zip the files: {}", e.getMessage());
+            updateStatusCompleteInFile();
+        } catch (IllegalArgumentException ie) {
+            logger.info("Exception occured while preparing work book {}", ie.getMessage());
+            updateStatusCompleteInFile();
+        } catch (Exception ne) {
+            logger.info("Exception occured while exporting records");
+            updateStatusCompleteInFile();
         }
     }
 
