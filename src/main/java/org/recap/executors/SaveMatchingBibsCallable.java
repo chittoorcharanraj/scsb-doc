@@ -1,6 +1,5 @@
 package org.recap.executors;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apache.camel.ProducerTemplate;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -13,6 +12,7 @@ import org.recap.model.jpa.MatchingBibEntity;
 import org.recap.model.jpa.MatchingMatchPointsEntity;
 import org.recap.model.search.resolver.BibValueResolver;
 import org.recap.model.search.resolver.impl.bib.TitleSubFieldAValueResolver;
+import org.recap.model.search.resolver.impl.bib.TitleMatchValueResolver;
 import org.recap.model.search.resolver.impl.bib.RootValueResolver;
 import org.recap.model.search.resolver.impl.bib.BibIdValueResolver;
 import org.recap.model.search.resolver.impl.bib.IdValueResolver;
@@ -207,6 +207,7 @@ public class SaveMatchingBibsCallable implements Callable {
             bibValueResolvers.add(new OwningInstitutionBibIdValueResolver());
             bibValueResolvers.add(new OwningInstitutionValueResolver());
             bibValueResolvers.add(new TitleSubFieldAValueResolver());
+            bibValueResolvers.add(new TitleMatchValueResolver());
             bibValueResolvers.add(new IsDeletedBibValueResolver());
         }
         return bibValueResolvers;

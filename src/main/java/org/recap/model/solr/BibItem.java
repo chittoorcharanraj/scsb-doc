@@ -38,6 +38,9 @@ public class BibItem {
     @Field("Title_subfield_a")
     private String titleSubFieldA;
 
+    @Field("Title_match")
+    private String titleMatch;
+
     @Field("Author_display")
     private String authorDisplay;
 
