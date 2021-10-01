@@ -322,7 +322,7 @@ public class BibJSONUtil extends MarcUtil {
             bib.setBibCatalogingStatus(bibliographicEntity.getCatalogingStatus());
             bib.setMatchingIdentifier(bibliographicEntity.getMatchingIdentity());
             bib.setMatchScore(bibliographicEntity.getMatchScore());
-            bib.setAnamolyFlag(bibliographicEntity.getAnamolyFlag());
+            bib.setAnamolyFlag(bibliographicEntity.isAnamolyFlag());
             bib.setMaQualifier(bibliographicEntity.getMaQualifier());
             return bib;
         } catch (Exception e) {
