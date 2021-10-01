@@ -13,6 +13,7 @@ public final class ScsbConstants {
     public static final String CGD_CHANGE_LOG_SHARED_TO_PRIVATE = "SharedToPrivate";
     public static final String CGD_CHANGE_LOG_OPEN_TO_PRIVATE = "OpenToPrivate";
     public static final String TITLE_SUBFIELD_A = "Title_subfield_a";
+    public static final String TITLE_MATCH_SOLR = "Title_match";
     public static final String USE_RESTRICTION_DISPLAY = "UseRestriction_display";
     public static final String SUCCESS = "success";
     public static final String TITLE_MATCHED = "Matched";
@@ -332,6 +333,11 @@ public final class ScsbConstants {
     public static final String ISBNISSN = "ISBN-ISSN";
     public static final String ISBNLCCN = "ISBN-LCCN";
     public static final String ISSNLCCN = "ISSN-LCCN";
+    public static final String OCLCTITLE = "OCLCNumber-TITLE";
+    public static final String ISBNTITLE = "ISBN-TITLE";
+    public static final String ISSNTITLE = "ISSN-TITLE";
+    public static final String LCCNTITLE = "LCCN-TITLE";
+    public static final String TITLE = "TITLE";
     public static final String IN_PROGRESS = "IN PROGRESS";
     public static final String COMPLETED = "COMPLETED";
     public static final String TITLE_REPORT_MESSAGE_IN_PROGRESS = "Title Match export is going on for other request. Please try to export after sometime.";

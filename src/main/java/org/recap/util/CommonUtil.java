@@ -21,6 +21,7 @@ import org.recap.model.search.resolver.impl.bib.AnomalyFlagValueResolver;
 import org.recap.model.search.resolver.impl.bib.MatchScoreValueResolver;
 import org.recap.model.search.resolver.impl.bib.MatchingIdentifierValueResolver;
 import org.recap.model.search.resolver.impl.bib.TitleSubFieldAValueResolver;
+import org.recap.model.search.resolver.impl.bib.TitleMatchValueResolver;
 import org.recap.model.search.resolver.impl.bib.AuthorDisplayValueResolver;
 import org.recap.model.search.resolver.impl.bib.AuthorSearchValueResolver;
 import org.recap.model.search.resolver.impl.bib.BibCreatedDateValueResolver;
@@ -174,6 +175,7 @@ public class CommonUtil {
             bibValueResolvers.add(new TitleSearchValueResolver());
             bibValueResolvers.add(new TitleSortValueResolver());
             bibValueResolvers.add(new TitleSubFieldAValueResolver());
+            bibValueResolvers.add(new TitleMatchValueResolver());
             bibValueResolvers.add(new IsDeletedBibValueResolver());
             bibValueResolvers.add(new BibCreatedDateValueResolver());
             bibValueResolvers.add(new MatchingIdentifierValueResolver());
