@@ -1167,7 +1167,6 @@ public class MatchingAlgorithmUtil {
                         bibliographicEntity.setMatchScore(bibItem.getMatchScore());
                     }
                     else {
-                        logger.info("Inside null");
                         bibliographicEntity.setMatchScore(0);
                     }
                     bibliographicEntity.setMatchingIdentity(matchingIdentity);

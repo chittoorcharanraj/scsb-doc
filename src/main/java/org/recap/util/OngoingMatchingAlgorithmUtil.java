@@ -454,7 +454,6 @@ public class OngoingMatchingAlgorithmUtil {
         if (bibItemMap.size() > 0) {
             for (Iterator<String> bibItemIterator = bibItemMap.keySet().iterator(); bibItemIterator.hasNext(); ) {
                 matchpoint = bibItemIterator.next();
-                logger.info("matchpoint is >>> " + matchpoint);
                 if (matchpoint.contains("-")) {
                     multiMatchBibItemMap.put(matchpoint, bibItemMap.get(matchpoint));
                 } else {
@@ -554,9 +553,7 @@ public class OngoingMatchingAlgorithmUtil {
         if (titleBibItemMap != null && titleBibItemMap.size() > 1) {
             for (Map.Entry<Integer, BibItem> entry : titleBibItemMap.entrySet()) {
                 titleBibIds.add(entry.getKey());
-                logger.info("title is >>> " + entry.getValue().getTitleMatch());
             }
-            logger.info("titleBibIds >>> " + titleBibIds);
         }
             Collection oclcisbn = CollectionUtils.intersection(oclcBibIds, isbnBibIds);
             Collection oclcissn = CollectionUtils.intersection(oclcBibIds, issnBibIds);
@@ -683,27 +680,20 @@ public class OngoingMatchingAlgorithmUtil {
 //            titleBibIds.removeAll(isbnTitle);
 //            titleBibIds.removeAll(issnTitle);
 //            titleBibIds.removeAll(lccnTitle);
-        logger.info("titleBibIds after removal >>> " + titleBibIds);
-
 
         if (!oclcBibIds.isEmpty()  && oclcBibItemMap.size() > 1) {
-            logger.info("oclcBibIds >>>>>>>> " + oclcBibIds);
             bibItemMap.put(ScsbCommonConstants.OCLC_NUMBER, oclcBibItemMap);
         }
         if (!isbnBibIds.isEmpty() && isbnBibItemMap.size() > 1) {
-            logger.info("isbnBibIds >>>>>>>> " + isbnBibIds);
             bibItemMap.put(ScsbCommonConstants.ISBN_CRITERIA, isbnBibItemMap);
         }
         if (!issnBibIds.isEmpty() && issnBibItemMap.size() > 1) {
-            logger.info("issnBibIds >>>>>>>> " + issnBibIds);
             bibItemMap.put(ScsbCommonConstants.ISSN_CRITERIA, issnBibItemMap);
         }
         if (!lccnBibIds.isEmpty() && lccnBibItemMap.size() > 1) {
-            logger.info("lccnBibIds >>>>>>>> " + lccnBibIds);
             bibItemMap.put(ScsbCommonConstants.LCCN_CRITERIA, lccnBibItemMap);
         }
         if (!titleBibIds.isEmpty() && titleBibItemMap.size() > 1) {
-            logger.info("titleBibIds >>>>>>>> " + titleBibIds);
             bibItemMap.put(ScsbConstants.TITLE, titleBibItemMap);
         }
        return bibItemMap;
@@ -748,7 +738,6 @@ public class OngoingMatchingAlgorithmUtil {
         Map<Integer, BibItem> bibItemMap = new HashMap<>();
         for (Iterator<String> bibMatchIterator = singleMatchedBibItemMap.keySet().iterator(); bibMatchIterator.hasNext(); ) {
             matchPointString = bibMatchIterator.next();
-            logger.info("matchPointString in single match >>>>>> " + matchPointString);
             bibItemMap = singleMatchedBibItemMap.get(matchPointString);
             for (Iterator<Integer> iterator = bibItemMap.keySet().iterator(); iterator.hasNext(); ) {
                 Integer bibId = iterator.next();
@@ -893,18 +882,13 @@ public class OngoingMatchingAlgorithmUtil {
                 if(!matchPointString.contains(matchPoint)) {
                     matchPointString.add(matchPoint);
                     matchPointStrings.add(matchPoint);
-                    logger.info("matchScore before calculating >>>> " + matchScoreCal);
                     matchScoreCal = MatchScoreUtil.calculateMatchScore(matchScoreCal, MatchScoreUtil.getMatchScoreForMatchPoint(matchPoint));
                 }
-                logger.info("matchScore after calculating >>>> " + matchScoreCal);
             }
             matchScore = matchScoreCal;
-            logger.info("matchPointString in multi match is >>> " + matchPointString);
 
             bibItemMap = multiMatchedBibItemMap.get(bibMatchPoint);
             for (Map.Entry<Integer, BibItem> integerBibItemEntry : bibItemMap.entrySet()) {
-                logger.info("integerBibItemEntry.getKey() >>>>>> " + integerBibItemEntry.getKey());
-                logger.info("integerBibItemEntry.getValue().getMatchScore() >>>>>> " + integerBibItemEntry.getValue().getMatchScore());
                if(integerBibItemEntry.getValue().getMatchScore() != null && integerBibItemEntry.getValue().getMatchScore() > 0) {
                    Integer matchScoreNew = MatchScoreUtil.calculateMatchScore(matchScoreCal, integerBibItemEntry.getValue().getMatchScore());
                    integerBibItemEntry.getValue().setMatchScore(matchScoreNew);
@@ -1085,8 +1069,6 @@ public class OngoingMatchingAlgorithmUtil {
 
     private void groupBibsAndUpdateInDB(List<Integer> bibIdList, Map<Integer, BibItem> bibItemMap) {
         List<BibliographicEntity> bibliographicEntityList = bibliographicDetailsRepository.findByIdIn(bibIdList);
-        logger.info("bibIdList size >> " + bibIdList.size());
-        logger.info("bibItemMap size >> " + bibItemMap.size());
         Optional<Map<Integer,BibliographicEntity>> bibliographicEntityOptional= matchingAlgorithmUtil.updateBibsForMatchingIdentifier(bibliographicEntityList, bibItemMap);
         if(bibliographicEntityOptional.isPresent()) {
             Map<Integer, BibliographicEntity> bibliographicEntityListToBeSaved = bibliographicEntityOptional.get();
