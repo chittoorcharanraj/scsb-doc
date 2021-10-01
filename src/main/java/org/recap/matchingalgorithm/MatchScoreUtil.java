@@ -2,6 +2,7 @@ package org.recap.matchingalgorithm;
 
 import lombok.experimental.UtilityClass;
 import org.recap.ScsbCommonConstants;
+import org.recap.ScsbConstants;
 
 @UtilityClass
 public class MatchScoreUtil {
@@ -19,10 +20,16 @@ public class MatchScoreUtil {
     public static final Integer ISBN_ISSN_SCORE =18;
     public static final Integer ISBN_LCCN_SCORE =20;
     public static final Integer OCLC_ISBN_SCORE =24;
+    public static final Integer OCLC_TITLE_SCORE =9;
+    public static final Integer ISBN_TITLE_SCORE =17;
+    public static final Integer ISSN_TITLE_SCORE =3;
+    public static final Integer LCCN_TITLE_SCORE =5;
+
     public static final Integer ISSN_SCORE = 2;
     public static final Integer LCCN_SCORE = 4;
     public static final Integer OCLC_SCORE = 8;
     public static final Integer ISBN_SCORE = 16;
+    public static final Integer TITLE_SCORE = 1;
 
     public static int convertBinaryToDecimal(String binaryString) {
         return Integer.parseInt(binaryString, 2);
@@ -73,6 +80,7 @@ public class MatchScoreUtil {
             case ScsbCommonConstants.MATCH_POINT_FIELD_ISBN: return ISBN_SCORE;
             case ScsbCommonConstants.MATCH_POINT_FIELD_LCCN: return LCCN_SCORE;
             case ScsbCommonConstants.MATCH_POINT_FIELD_ISSN: return ISSN_SCORE;
+            case ScsbConstants.TITLE: return TITLE_SCORE;
             default:return 0;
         }
     }
