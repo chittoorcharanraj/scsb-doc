@@ -114,6 +114,10 @@ public class MatchingAlgorithmUtilUT extends BaseTestCaseUT4 {
     @Mock
     CoreAdminRequest coreAdminRequest;
 
+    @Mock
+    MatchingAlgorithmUtil MatchingAlgorithmUtil;
+    
+
     @Before
     public void setup() throws Exception {
         MockitoAnnotations.initMocks(this);
@@ -133,17 +137,6 @@ public class MatchingAlgorithmUtilUT extends BaseTestCaseUT4 {
         assertNotNull(id);
     }
 
-    @Test
-    public void updateBibsForMatchingIdentifier() throws Exception {
-        List<Integer> bibIdList=new ArrayList<>();
-        bibIdList.add(1);
-        List<BibliographicEntity> bibliographicEntityList=new ArrayList<>();
-        bibliographicEntityList.add(bibliographicEntity);
-        Mockito.when(bibliographicEntity.getMatchingIdentity()).thenReturn("");
-        Mockito.when(bibliographicDetailsRepository.findByIdIn(Mockito.anyList())).thenReturn(bibliographicEntityList);
-        Optional<Map<Integer,BibliographicEntity>> id= mockMatchingAlgorithmUtil.groupBibsForInitialMatching(bibliographicEntityList,1);
-        assertNotNull(id);
-    }
 
     @Test
     public void getReportDataEntity() throws Exception {
@@ -406,6 +399,16 @@ public class MatchingAlgorithmUtilUT extends BaseTestCaseUT4 {
         return matchingBibEntity;
     }
 
+@Test
+public void intialMatchingGroupBibsForExistingEntries() throws Exception
+{
 
+    Integer matchScore =  1;
+    String matchingIdentity = "test";
+    Map<Boolean,List<BibliographicEntity>> partionedByMatchingIdentity=new HashMap<>();
+    List<BibliographicEntity> bibliographicEntities=new ArrayList<>();
+    bibliographicEntities.add(bibliographicEntity);
+    partionedByMatchingIdentity.put(false,bibliographicEntities);
+    ReflectionTestUtils.invokeMethod(mockMatchingAlgorithmUtil,"intialMatchingGroupBibsForExistingEntries",1,partionedByMatchingIdentity,"matchingIdentity");
 
-}
+}}
