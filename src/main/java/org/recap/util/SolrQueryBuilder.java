@@ -255,26 +255,7 @@ public class SolrQueryBuilder {
                 String[] fieldValues = fieldValue.split("\\s+");
 
                 if(fieldName.equalsIgnoreCase(ScsbCommonConstants.TITLE_STARTS_WITH)) {
-                    String fieldValueTitleBrowse = fieldValue.replaceAll("\\s+", "\\\\ ");
-                    stringBuilder.append("(");
-                    stringBuilder.append(ScsbConstants.TITLE_245).append(":").append("(");
-                    stringBuilder.append(fieldValueTitleBrowse).append("*").append(")");
-                    stringBuilder.append(or);
-                    stringBuilder.append(ScsbConstants.TITLE_246).append(":").append("(");
-                    stringBuilder.append(fieldValueTitleBrowse).append("*").append(")");
-                    stringBuilder.append(or);
-                    stringBuilder.append(ScsbConstants.TITLE_130).append(":").append("(");
-                    stringBuilder.append(fieldValueTitleBrowse).append("*").append(")");
-                    stringBuilder.append(or);
-                    stringBuilder.append(ScsbConstants.TITLE_730).append(":").append("(");
-                    stringBuilder.append(fieldValueTitleBrowse).append("*").append(")");
-                    stringBuilder.append(or);
-                    stringBuilder.append(ScsbConstants.TITLE_740).append(":").append("(");
-                    stringBuilder.append(fieldValueTitleBrowse).append("*").append(")");
-                    stringBuilder.append(or);
-                    stringBuilder.append(ScsbConstants.TITLE_830).append(":").append("(");
-                    stringBuilder.append(fieldValueTitleBrowse).append("*").append(")");
-                    stringBuilder.append(")");
+                    prepareQueryForTitleBrowse(stringBuilder, fieldValue);
                 } else {
                     if(fieldValues.length > 1) {
                         List<String> fieldValuesList = Arrays.asList(fieldValues);
@@ -313,6 +294,29 @@ public class SolrQueryBuilder {
         return "";
     }
 
+    private void prepareQueryForTitleBrowse(StringBuilder stringBuilder, String fieldValue) {
+        String fieldValueTitleBrowse = fieldValue.replaceAll("\\s+", "\\\\ ");
+        stringBuilder.append("(");
+        stringBuilder.append(ScsbConstants.TITLE_245).append(":").append("(");
+        stringBuilder.append(fieldValueTitleBrowse).append("*").append(")");
+        stringBuilder.append(or);
+        stringBuilder.append(ScsbConstants.TITLE_246).append(":").append("(");
+        stringBuilder.append(fieldValueTitleBrowse).append("*").append(")");
+        stringBuilder.append(or);
+        stringBuilder.append(ScsbConstants.TITLE_130).append(":").append("(");
+        stringBuilder.append(fieldValueTitleBrowse).append("*").append(")");
+        stringBuilder.append(or);
+        stringBuilder.append(ScsbConstants.TITLE_730).append(":").append("(");
+        stringBuilder.append(fieldValueTitleBrowse).append("*").append(")");
+        stringBuilder.append(or);
+        stringBuilder.append(ScsbConstants.TITLE_740).append(":").append("(");
+        stringBuilder.append(fieldValueTitleBrowse).append("*").append(")");
+        stringBuilder.append(or);
+        stringBuilder.append(ScsbConstants.TITLE_830).append(":").append("(");
+        stringBuilder.append(fieldValueTitleBrowse).append("*").append(")");
+        stringBuilder.append(")");
+    }
+
     /**
      * Gets count query for field criteria.
      *
@@ -329,8 +333,8 @@ public class SolrQueryBuilder {
                     || fieldName.equalsIgnoreCase(ScsbCommonConstants.ISBN_CRITERIA) || fieldName.equalsIgnoreCase(ScsbCommonConstants.OCLC_NUMBER) || fieldName.equalsIgnoreCase(ScsbCommonConstants.ISSN_CRITERIA))) {
                 String[] fieldValues = fieldValue.split("\\s+");
                 if(fieldName.equalsIgnoreCase(ScsbCommonConstants.TITLE_STARTS_WITH)) {
-                    String fieldValueTitleBrowse = fieldValue.replaceAll("\\s+", "\\\\ ");
-                    stringBuilder.append(parentQuery).append(ScsbConstants.TITLE_DISPLAY).append(":").append("(").append(fieldValueTitleBrowse).append("*").append(")");
+                    stringBuilder.append(parentQuery);
+                    prepareQueryForTitleBrowse(stringBuilder,fieldValue);
                 } else {
                     if(fieldValues.length > 1) {
                         List<String> fieldValuesList = Arrays.asList(fieldValues);
