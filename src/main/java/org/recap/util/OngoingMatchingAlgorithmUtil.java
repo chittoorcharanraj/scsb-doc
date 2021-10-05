@@ -652,7 +652,7 @@ public class OngoingMatchingAlgorithmUtil {
             }
         }
         if (lccnTitle.size() > 1) {
-            for (Iterator<Integer> iterator = issnTitle.iterator(); iterator.hasNext(); ) {
+            for (Iterator<Integer> iterator = lccnTitle.iterator(); iterator.hasNext(); ) {
                 Integer bibId = iterator.next();
                 BibItem lccntitlebibItem = lccnBibItemMap.get(bibId);
                 lccntitleBibItemMap.put(bibId, lccntitlebibItem);
