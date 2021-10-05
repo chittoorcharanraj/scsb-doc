@@ -100,6 +100,8 @@ public class ReportsServiceUtilUT extends BaseTestCaseUT4 {
     @Mock
     TitleMatchReportExportService titleMatchReportExportService;
 
+
+
     @Before
     public void setup()throws Exception{
         MockitoAnnotations.initMocks(this);
@@ -174,6 +176,46 @@ public class ReportsServiceUtilUT extends BaseTestCaseUT4 {
     }
 
     @Test
+    public void titleMatchReportsExportS3() throws Exception {
+        List<String> titleMatch=new ArrayList<>();
+        titleMatch.add(ScsbConstants.TITLE_MATCHED);
+        Mockito.when(titleMatchedReport.getTitleMatch()).thenReturn(String.valueOf(titleMatch));
+        List<String> owningInst=new ArrayList<>();
+        owningInst.add(ScsbCommonConstants.PRINCETON);
+        Mockito.when(titleMatchedReport.getOwningInst()).thenReturn(String.valueOf(owningInst));
+        Mockito.when(titleMatchReportExportService.process(titleMatchedReport)).thenReturn(titleMatchedReport);
+        List<String> cgd=new ArrayList<>();
+        cgd.add(ScsbConstants.SHARED);
+        Mockito.when(titleMatchedReport.getCgd()).thenReturn(cgd);
+        Mockito.when(titleMatchedReport.getFromDate()).thenReturn(new Date());
+        Mockito.when(titleMatchedReport.getToDate()).thenReturn(new Date());
+        Mockito.when(titleMatchedReport.getPageSize()).thenReturn(1);
+        Mockito.when(titleMatchedReport.getPageNumber()).thenReturn(1);
+        Mockito.when(titleMatchedReport.getTotalRecordsCount()).thenReturn(1L);
+        SolrTemplate mocksolrTemplate1 = PowerMockito.mock(SolrTemplate.class);
+        ReflectionTestUtils.setField(reportsServiceUtil,"titleReportExportBibsLimitPerFile",1);
+        ReflectionTestUtils.setField(reportsServiceUtil,"solrTemplate",mocksolrTemplate1);
+        SolrClient solrClient=PowerMockito.mock(SolrClient.class);
+        QueryResponse queryResponse=Mockito.mock(QueryResponse.class);
+        PowerMockito.when(mocksolrTemplate1.getSolrClient()).thenReturn(solrClient);
+        Mockito.when(solrClient.query(Mockito.any(SolrQuery.class))).thenReturn(queryResponse);
+        Mockito.when(solrQueryBuilder.buildQueryTitleMatchedReport(Mockito.anyString(),Mockito.any(),Mockito.any(),Mockito.any(),Mockito.anyString())).thenCallRealMethod();
+
+        SolrDocumentList solrDocumentList=new SolrDocumentList();
+        solrDocumentList.add(bibSolrDocument);
+        solrDocumentList.setNumFound(1l);
+        Collection<String> fieldNames=new ArrayList<>();
+        fieldNames.add("bib");
+        Mockito.when(bibSolrDocument.getFieldNames()).thenReturn(fieldNames);
+        Mockito.when(bibSolrDocument.getFieldValue(Mockito.anyString())).thenReturn(fieldNames);
+        Mockito.when(queryResponse.getResults()).thenReturn(solrDocumentList);
+        ReflectionTestUtils.setField(bibSolrDocumentRepository,"commonUtil",commonUtil);
+        Mockito.when(commonUtil.getBibItemFromSolrFieldNames(Mockito.any(),Mockito.anyList(),Mockito.any())).thenCallRealMethod();
+        Mockito.doCallRealMethod().when(bibSolrDocumentRepository).populateBibItem(Mockito.any(),Mockito.any());
+        TitleMatchedReport titleMatchCount=reportsServiceUtil.titleMatchReportsExport(titleMatchedReport);
+        assertNotNull(titleMatchCount);
+    }
+   @Test
     public void titleMatchReportsExport() throws Exception {
         List<String> titleMatch=new ArrayList<>();
         titleMatch.add(ScsbConstants.TITLE_MATCHED);
