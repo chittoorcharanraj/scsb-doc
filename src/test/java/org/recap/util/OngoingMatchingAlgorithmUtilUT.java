@@ -13,6 +13,7 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.Spy;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
@@ -23,15 +24,7 @@ import org.recap.matchingalgorithm.MatchScoreUtil;
 import org.recap.matchingalgorithm.MatchingAlgorithmCGDProcessor;
 import org.recap.matchingalgorithm.MatchingCounter;
 import org.recap.matchingalgorithm.service.OngoingMatchingReportsService;
-import org.recap.model.jpa.BibliographicEntity;
-import org.recap.model.jpa.CollectionGroupEntity;
-import org.recap.model.jpa.HoldingsEntity;
-import org.recap.model.jpa.InstitutionEntity;
-import org.recap.model.jpa.ItemEntity;
-import org.recap.model.jpa.ItemStatusEntity;
-import org.recap.model.jpa.MatchingAlgorithmReportEntity;
-import org.recap.model.jpa.ReportDataEntity;
-import org.recap.model.jpa.ReportEntity;
+import org.recap.model.jpa.*;
 import org.recap.model.solr.BibItem;
 import org.recap.repository.jpa.BibliographicDetailsRepository;
 import org.recap.repository.jpa.CollectionGroupDetailsRepository;
@@ -44,17 +37,8 @@ import org.recap.repository.jpa.ReportDetailRepository;
 import org.springframework.data.solr.core.SolrTemplate;
 import org.springframework.test.util.ReflectionTestUtils;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
-import java.util.Set;
+import java.io.IOException;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -69,14 +53,15 @@ import static org.mockito.ArgumentMatchers.*;
 @PrepareForTest({SolrTemplate.class,SolrClient.class})
 public class OngoingMatchingAlgorithmUtilUT extends BaseTestCaseUT4 {
 
+
+
     @InjectMocks
     OngoingMatchingAlgorithmUtil ongoingMatchingAlgorithmUtil;
 
-    @Mock
-    MatchingAlgorithmUtil matchingAlgorithmUtil;
 
     @Mock
-     MatchingAlgorithmUtil mockedmatchingAlgorithmUtil;
+    MatchingAlgorithmUtil mockedmatchingAlgorithmUtil;
+
 
     @Mock
     OngoingMatchingReportsService ongoingMatchingReportsService;
@@ -126,14 +111,15 @@ public class OngoingMatchingAlgorithmUtilUT extends BaseTestCaseUT4 {
     @Mock
     MatchingAlgorithmReportEntity unMatchReportEntity;
 
+
     @Test
     public void processCGDAndReportsForUnMatchingTitles() throws Exception {
         Map<String, String> titleMap=new HashMap<>();
         Set<String> unMatchingTitleHeaderSet=new HashSet<>();
         unMatchingTitleHeaderSet.add("1");
-        ReflectionTestUtils.setField(ongoingMatchingAlgorithmUtil,"matchingAlgorithmUtil",matchingAlgorithmUtil);
-        Mockito.doCallRealMethod().when(matchingAlgorithmUtil).prepareReportForUnMatchingTitles(Mockito.anyMap(),Mockito.anyList(),Mockito.anyList(),Mockito.anyList(),Mockito.anyList(),Mockito.anySet(),Mockito.anyList(),Mockito.anyList(),Mockito.anyList(),Mockito.anyList(),Mockito.anyList());
-        Mockito.when(matchingAlgorithmUtil.buildReportEntity(Mockito.anyString())).thenReturn(unMatchReportEntity);
+        ReflectionTestUtils.setField(ongoingMatchingAlgorithmUtil,"matchingAlgorithmUtil",mockedmatchingAlgorithmUtil);
+        Mockito.doCallRealMethod().when(mockedmatchingAlgorithmUtil).prepareReportForUnMatchingTitles(Mockito.anyMap(),Mockito.anyList(),Mockito.anyList(),Mockito.anyList(),Mockito.anyList(),Mockito.anySet(),Mockito.anyList(),Mockito.anyList(),Mockito.anyList(),Mockito.anyList(),Mockito.anyList());
+        Mockito.when(mockedmatchingAlgorithmUtil.buildReportEntity(Mockito.anyString())).thenReturn(unMatchReportEntity);
         MatchingAlgorithmReportEntity unMatchReportEntity1= ongoingMatchingAlgorithmUtil.processCGDAndReportsForUnMatchingTitles("filename",titleMap,Arrays.asList(1),Arrays.asList("shared"),Arrays.asList("pul"),Arrays.asList("1"),"matchPointValue",unMatchingTitleHeaderSet,"matchPointString");
         assertNotNull(unMatchReportEntity1);
     }
@@ -142,7 +128,7 @@ public class OngoingMatchingAlgorithmUtilUT extends BaseTestCaseUT4 {
     public void fetchUpdatedRecordsByDateRangeAndStartProcess() throws Exception {
         SolrTemplate mocksolrTemplate1 = PowerMockito.mock(SolrTemplate.class);
         ReflectionTestUtils.setField(ongoingMatchingAlgorithmUtil, "solrTemplate", mocksolrTemplate1);
-        ReflectionTestUtils.setField(ongoingMatchingAlgorithmUtil, "matchingAlgorithmUtil", matchingAlgorithmUtil);
+        ReflectionTestUtils.setField(ongoingMatchingAlgorithmUtil, "matchingAlgorithmUtil", mockedmatchingAlgorithmUtil);
         ReflectionTestUtils.setField(ongoingMatchingAlgorithmUtil, "commonUtil", commonUtil);
         QueryResponse queryResponse = Mockito.mock(QueryResponse.class);
         SolrClient solrClient = PowerMockito.mock(SolrClient.class);
@@ -164,7 +150,7 @@ public class OngoingMatchingAlgorithmUtilUT extends BaseTestCaseUT4 {
     public void fetchUpdatedRecordsByBibIdsAndStartProcess() throws Exception {
         SolrTemplate mocksolrTemplate1 = PowerMockito.mock(SolrTemplate.class);
         ReflectionTestUtils.setField(ongoingMatchingAlgorithmUtil, "solrTemplate", mocksolrTemplate1);
-        ReflectionTestUtils.setField(ongoingMatchingAlgorithmUtil, "matchingAlgorithmUtil", matchingAlgorithmUtil);
+        ReflectionTestUtils.setField(ongoingMatchingAlgorithmUtil, "matchingAlgorithmUtil", mockedmatchingAlgorithmUtil);
         ReflectionTestUtils.setField(ongoingMatchingAlgorithmUtil, "commonUtil", commonUtil);
         QueryResponse queryResponse = Mockito.mock(QueryResponse.class);
         SolrClient solrClient = PowerMockito.mock(SolrClient.class);
@@ -310,7 +296,7 @@ public class OngoingMatchingAlgorithmUtilUT extends BaseTestCaseUT4 {
         String[]  matchPoints={ScsbCommonConstants.OCLC_NUMBER,ScsbCommonConstants.ISBN_CRITERIA,ScsbCommonConstants.ISSN_CRITERIA,ScsbCommonConstants.LCCN_CRITERIA};
         for (String matchPoint:matchPoints) {
             SolrDocumentList solrDocumentList = getSolrDocumentsSingle(matchPoint);
-            ReflectionTestUtils.setField(ongoingMatchingAlgorithmUtil,"matchingAlgorithmUtil",matchingAlgorithmUtil);
+            ReflectionTestUtils.setField(ongoingMatchingAlgorithmUtil,"matchingAlgorithmUtil",mockedmatchingAlgorithmUtil);
             ReflectionTestUtils.setField(ongoingMatchingAlgorithmUtil,"ongoingMatchingReportsService",ongoingMatchingReportsService);
             ReflectionTestUtils.setField(ongoingMatchingAlgorithmUtil,"solrQueryBuilder",solrQueryBuilder);
             ReflectionTestUtils.setField(ongoingMatchingAlgorithmUtil,"commonUtil",commonUtil);
@@ -322,7 +308,7 @@ public class OngoingMatchingAlgorithmUtilUT extends BaseTestCaseUT4 {
             Mockito.doCallRealMethod().when(mockedmatchingAlgorithmUtil).populateMatchingCounter();
             Mockito.when(solrQueryBuilder.fetchBibsForGroupingProcess(Mockito.anyString(),Mockito.anyBoolean())).thenReturn("testquery");
             Mockito.when(solrQueryBuilder.solrQueryForOngoingMatching(ScsbCommonConstants.OCLC_NUMBER,"test")).thenReturn("testquery");
-            Mockito.when(matchingAlgorithmUtil.getMatchingAndUnMatchingBibsOnTitleVerification(Mockito.anyMap())).thenReturn(unMatchingTitleHeaderSet);
+            Mockito.when(mockedmatchingAlgorithmUtil.getMatchingAndUnMatchingBibsOnTitleVerification(Mockito.anyMap())).thenReturn(unMatchingTitleHeaderSet);
             Mockito.when(collectionGroupDetailsRepository.findAll()).thenReturn(collectionGroupEntities);
             Mockito.when(institutionDetailsRepository.findAll()).thenReturn(institutionEntities);
             ongoingMatchingAlgorithmUtil.updateCGDForItemInSolr(itemIds);
@@ -355,7 +341,7 @@ public class OngoingMatchingAlgorithmUtilUT extends BaseTestCaseUT4 {
         List<Integer> itemIds=new ArrayList<>();
         itemIds.add(1);
         SolrDocumentList solrDocumentList = getSolrDocumentsSingle(ScsbCommonConstants.OCLC_NUMBER);
-        ReflectionTestUtils.setField(ongoingMatchingAlgorithmUtil,"matchingAlgorithmUtil",matchingAlgorithmUtil);
+        ReflectionTestUtils.setField(ongoingMatchingAlgorithmUtil,"matchingAlgorithmUtil",mockedmatchingAlgorithmUtil);
         ReflectionTestUtils.setField(ongoingMatchingAlgorithmUtil,"ongoingMatchingReportsService",ongoingMatchingReportsService);
         ReflectionTestUtils.setField(ongoingMatchingAlgorithmUtil,"solrQueryBuilder",solrQueryBuilder);
         ReflectionTestUtils.setField(ongoingMatchingAlgorithmUtil,"commonUtil",commonUtil);
@@ -367,7 +353,7 @@ public class OngoingMatchingAlgorithmUtilUT extends BaseTestCaseUT4 {
         Mockito.doCallRealMethod().when(mockedmatchingAlgorithmUtil).populateMatchingCounter();
         Mockito.when(solrQueryBuilder.fetchBibsForGroupingProcess(Mockito.anyString(),Mockito.anyBoolean())).thenReturn("testquery");
         Mockito.when(solrQueryBuilder.solrQueryForOngoingMatching(ScsbCommonConstants.OCLC_NUMBER,"test")).thenReturn("testquery");
-        Mockito.when(matchingAlgorithmUtil.getMatchingAndUnMatchingBibsOnTitleVerification(Mockito.anyMap())).thenReturn(unMatchingTitleHeaderSet);
+        Mockito.when(mockedmatchingAlgorithmUtil.getMatchingAndUnMatchingBibsOnTitleVerification(Mockito.anyMap())).thenReturn(unMatchingTitleHeaderSet);
         Mockito.when(collectionGroupDetailsRepository.findAll()).thenReturn(collectionGroupEntities);
         Mockito.when(institutionDetailsRepository.findAll()).thenReturn(institutionEntities);
         List<BibliographicEntity> bibliographicEntities = new ArrayList<>();
@@ -407,7 +393,7 @@ public class OngoingMatchingAlgorithmUtilUT extends BaseTestCaseUT4 {
         List<Integer> itemIds=new ArrayList<>();
         itemIds.add(1);
         SolrDocumentList solrDocumentList = getSolrDocumentsSingle(ScsbCommonConstants.OCLC_NUMBER);
-        ReflectionTestUtils.setField(ongoingMatchingAlgorithmUtil,"matchingAlgorithmUtil",matchingAlgorithmUtil);
+        ReflectionTestUtils.setField(ongoingMatchingAlgorithmUtil,"matchingAlgorithmUtil",mockedmatchingAlgorithmUtil);
         ReflectionTestUtils.setField(ongoingMatchingAlgorithmUtil,"ongoingMatchingReportsService",ongoingMatchingReportsService);
         ReflectionTestUtils.setField(ongoingMatchingAlgorithmUtil,"solrQueryBuilder",solrQueryBuilder);
         ReflectionTestUtils.setField(ongoingMatchingAlgorithmUtil,"commonUtil",commonUtil);
@@ -419,7 +405,7 @@ public class OngoingMatchingAlgorithmUtilUT extends BaseTestCaseUT4 {
         Mockito.doCallRealMethod().when(mockedmatchingAlgorithmUtil).populateMatchingCounter();
         Mockito.when(solrQueryBuilder.fetchBibsForGroupingProcess(Mockito.anyString(),Mockito.anyBoolean())).thenReturn("testquery");
         Mockito.when(solrQueryBuilder.solrQueryForOngoingMatching(ScsbCommonConstants.OCLC_NUMBER,"test")).thenReturn("testquery");
-        Mockito.when(matchingAlgorithmUtil.getMatchingAndUnMatchingBibsOnTitleVerification(Mockito.anyMap())).thenReturn(unMatchingTitleHeaderSet);
+        Mockito.when(mockedmatchingAlgorithmUtil.getMatchingAndUnMatchingBibsOnTitleVerification(Mockito.anyMap())).thenReturn(unMatchingTitleHeaderSet);
         Mockito.when(collectionGroupDetailsRepository.findAll()).thenReturn(collectionGroupEntities);
         Mockito.when(institutionDetailsRepository.findAll()).thenReturn(institutionEntities);
         List<BibliographicEntity> bibliographicEntities = new ArrayList<>();
@@ -436,7 +422,7 @@ public class OngoingMatchingAlgorithmUtilUT extends BaseTestCaseUT4 {
         bibliographicEntity.setItemEntities(itemEntities1);
         bibliographicEntities.add(bibliographicEntity);
         Mockito.when(bibliographicDetailsRepository.findByIdIn(Mockito.anyList())).thenReturn(bibliographicEntities);
-        Mockito.doThrow(NullPointerException.class).when(matchingAlgorithmUtil).getReportDataEntity(Mockito.anyString(),Mockito.anyString(),Mockito.anyList());
+        Mockito.doThrow(NullPointerException.class).when(mockedmatchingAlgorithmUtil).getReportDataEntity(Mockito.anyString(),Mockito.anyString(),Mockito.anyList());
         ongoingMatchingAlgorithmUtil.updateCGDForItemInSolr(itemIds);
         String status = ongoingMatchingAlgorithmUtil.fetchUpdatedRecordsAndStartProcess(fromDate, 1, Boolean.FALSE, true);
         assertEquals(ScsbCommonConstants.SUCCESS, status);
@@ -520,7 +506,7 @@ public class OngoingMatchingAlgorithmUtilUT extends BaseTestCaseUT4 {
         Set<String> unMatchingTitleHeaderSet=new HashSet<>();
         unMatchingTitleHeaderSet.add("test");
         SolrDocumentList solrDocumentList = getSolrDocumentsSingle(ScsbCommonConstants.OCLC_NUMBER);
-        ReflectionTestUtils.setField(ongoingMatchingAlgorithmUtil,"matchingAlgorithmUtil",matchingAlgorithmUtil);
+        ReflectionTestUtils.setField(ongoingMatchingAlgorithmUtil,"matchingAlgorithmUtil",mockedmatchingAlgorithmUtil);
         ReflectionTestUtils.setField(ongoingMatchingAlgorithmUtil,"ongoingMatchingReportsService",ongoingMatchingReportsService);
         ReflectionTestUtils.setField(ongoingMatchingAlgorithmUtil,"solrQueryBuilder",solrQueryBuilder);
         ReflectionTestUtils.setField(ongoingMatchingAlgorithmUtil,"commonUtil",commonUtil);
@@ -532,7 +518,7 @@ public class OngoingMatchingAlgorithmUtilUT extends BaseTestCaseUT4 {
         Mockito.doCallRealMethod().when(mockedmatchingAlgorithmUtil).populateMatchingCounter();
         Mockito.when(solrQueryBuilder.fetchBibsForGroupingProcess(Mockito.anyString(),Mockito.anyBoolean())).thenReturn("testquery");
         Mockito.when(solrQueryBuilder.solrQueryForOngoingMatching(ScsbCommonConstants.OCLC_NUMBER,"test")).thenReturn("testquery");
-        Mockito.when(matchingAlgorithmUtil.getMatchingAndUnMatchingBibsOnTitleVerification(Mockito.anyMap())).thenReturn(unMatchingTitleHeaderSet);
+        Mockito.when(mockedmatchingAlgorithmUtil.getMatchingAndUnMatchingBibsOnTitleVerification(Mockito.anyMap())).thenReturn(unMatchingTitleHeaderSet);
         String status = ongoingMatchingAlgorithmUtil.fetchUpdatedRecordsAndStartProcess(fromDate, 1, Boolean.FALSE, true);
         assertEquals(ScsbCommonConstants.SUCCESS, status);
     }
@@ -551,7 +537,7 @@ public class OngoingMatchingAlgorithmUtilUT extends BaseTestCaseUT4 {
         Set<String> unMatchingTitleHeaderSet=new HashSet<>();
         unMatchingTitleHeaderSet.add("test");
         SolrDocumentList solrDocumentList = getSolrDocumentsSingleList(ScsbCommonConstants.OCLC_NUMBER);
-        ReflectionTestUtils.setField(ongoingMatchingAlgorithmUtil,"matchingAlgorithmUtil",matchingAlgorithmUtil);
+        ReflectionTestUtils.setField(ongoingMatchingAlgorithmUtil,"matchingAlgorithmUtil",mockedmatchingAlgorithmUtil);
         ReflectionTestUtils.setField(ongoingMatchingAlgorithmUtil,"ongoingMatchingReportsService",ongoingMatchingReportsService);
         ReflectionTestUtils.setField(ongoingMatchingAlgorithmUtil,"solrQueryBuilder",solrQueryBuilder);
         ReflectionTestUtils.setField(ongoingMatchingAlgorithmUtil,"commonUtil",commonUtil);
@@ -563,7 +549,7 @@ public class OngoingMatchingAlgorithmUtilUT extends BaseTestCaseUT4 {
         Mockito.doCallRealMethod().when(mockedmatchingAlgorithmUtil).populateMatchingCounter();
         Mockito.when(solrQueryBuilder.fetchBibsForGroupingProcess(Mockito.anyString(),Mockito.anyBoolean())).thenReturn("testquery");
         Mockito.when(solrQueryBuilder.solrQueryForOngoingMatching(ScsbCommonConstants.OCLC_NUMBER,"test")).thenReturn("testquery");
-        Mockito.when(matchingAlgorithmUtil.getMatchingAndUnMatchingBibsOnTitleVerification(Mockito.anyMap())).thenReturn(unMatchingTitleHeaderSet);
+        Mockito.when(mockedmatchingAlgorithmUtil.getMatchingAndUnMatchingBibsOnTitleVerification(Mockito.anyMap())).thenReturn(unMatchingTitleHeaderSet);
         Mockito.when(collectionGroupDetailsRepository.findAll()).thenThrow(NullPointerException.class);
         String status = ongoingMatchingAlgorithmUtil.fetchUpdatedRecordsAndStartProcess(fromDate, 1, Boolean.FALSE, true);
         assertEquals(ScsbCommonConstants.SUCCESS, status);
@@ -581,7 +567,7 @@ public class OngoingMatchingAlgorithmUtilUT extends BaseTestCaseUT4 {
         Date processDate = new Date();
         Date fromDate = getFromDate(processDate);
         SolrDocumentList solrDocumentList = getSolrDocumentsMulti();
-        ReflectionTestUtils.setField(ongoingMatchingAlgorithmUtil,"matchingAlgorithmUtil",matchingAlgorithmUtil);
+        ReflectionTestUtils.setField(ongoingMatchingAlgorithmUtil,"matchingAlgorithmUtil",mockedmatchingAlgorithmUtil);
         ReflectionTestUtils.setField(ongoingMatchingAlgorithmUtil,"ongoingMatchingReportsService",ongoingMatchingReportsService);
         ReflectionTestUtils.setField(ongoingMatchingAlgorithmUtil,"solrQueryBuilder",solrQueryBuilder);
         ReflectionTestUtils.setField(ongoingMatchingAlgorithmUtil,"commonUtil",commonUtil);
@@ -718,8 +704,10 @@ public class OngoingMatchingAlgorithmUtilUT extends BaseTestCaseUT4 {
         bibItem.setBibId(1);
         bibItemMap.put(1,bibItem);
         bibIdList.add(1);
-     //   Mockito.when(matchingAlgorithmUtil.updateBibsForMatchingIdentifier(anyList(),anyMap())).thenReturn(bibliographicEntityOptional);
-      //  ReflectionTestUtils.setField(ongoingMatchingAlgorithmUtil,"matchingAlgorithmUtil","test");
+        List<BibliographicEntity> bibliographicEntityList = new ArrayList<>();
+        bibliographicEntityList.add(bibliographicEntity);
+        Mockito.when(bibliographicDetailsRepository.findByIdIn(any())).thenReturn(bibliographicEntityList);
+        Mockito.when(mockedmatchingAlgorithmUtil.updateBibsForMatchingIdentifier(anyList(),anyMap())).thenReturn(Optional.of(bibliographicEntityOptional));
         try{
             ReflectionTestUtils.invokeMethod(ongoingMatchingAlgorithmUtil,"groupBibsAndUpdateInDB",bibIdList,bibItemMap);
         }catch (Exception e){}
@@ -749,7 +737,11 @@ public class OngoingMatchingAlgorithmUtilUT extends BaseTestCaseUT4 {
         bibItem.setLccn("12345");
         bibItem.setOclcNumber(test1);
         bibItem.setIssn(test2);
+        bibItem.setOwningInstitution("PUL");
+        BibItem bibItem1 = new BibItem();
+        bibItem1.setOwningInstitution("CUL");
         hashMap.put(1,bibItem);
+        hashMap.put(2,bibItem1);
         multiMatchedBibItemMap.put("test",hashMap);
         List<Integer> serialMvmBibIds = new ArrayList<>();
         serialMvmBibIds.add(1234);
@@ -757,4 +749,107 @@ public class OngoingMatchingAlgorithmUtilUT extends BaseTestCaseUT4 {
         ReflectionTestUtils.invokeMethod(ongoingMatchingAlgorithmUtil,"saveReportAndUpdateCGDForMultiMatch",multiMatchedBibItemMap,serialMvmBibIds,isCGDProcess);
     }
 
+    @Test
+    public  void findMatchingBibs() throws  Exception
+    {
+        SolrDocument solrDocument = new SolrDocument();
+        solrDocument.setField(ScsbCommonConstants.OCLC_NUMBER,String.valueOf(1));
+        solrDocument.setField(ScsbCommonConstants.ISBN_CRITERIA,String.valueOf(11));
+        solrDocument.setField(ScsbCommonConstants.ISSN_CRITERIA,String.valueOf(111));
+        solrDocument.setField(ScsbCommonConstants.LCCN_CRITERIA,String.valueOf(1111));
+        solrDocument.setField(ScsbConstants.BIB_ID,11111);
+        String fieldName = "test";
+        Integer matchScore = 1;
+        Map<Integer, BibItem> existingBibItemMap = new HashMap<>();
+        BibItem bibItem = new BibItem();
+        bibItem.setBibId(1);
+        bibItem.setMatchScore(1);
+        existingBibItemMap.put(1,bibItem);
+        List<String> fieldValue = new ArrayList<>();
+        fieldValue.add("test");
+        Mockito.when(solrQueryBuilder.solrQueryForOngoingMatching(any(),anyList())).thenReturn("test");
+        ReflectionTestUtils.invokeMethod(ongoingMatchingAlgorithmUtil,"findMatchingBibs",solrDocument,fieldName,matchScore,existingBibItemMap);
+
+
+    }
+
+    @Test
+    public void checkAndAddReportEntities() throws  Exception
+    {
+        List<MatchingAlgorithmReportDataEntity> reportDataEntities= new ArrayList<>();
+        MatchingAlgorithmReportDataEntity oclcNumberReportDataEntity = new MatchingAlgorithmReportDataEntity();
+        oclcNumberReportDataEntity.setId(1);
+        Set<String> oclcNumbers = new HashSet<>();
+        oclcNumbers.add("123456");
+        String oclcCriteria = "test";
+        reportDataEntities.add(oclcNumberReportDataEntity);
+        Mockito.when(mockedmatchingAlgorithmUtil.getReportDataEntityForCollectionValues(any(), any())).thenReturn(oclcNumberReportDataEntity);
+        ReflectionTestUtils.invokeMethod(ongoingMatchingAlgorithmUtil,"checkAndAddReportEntities",reportDataEntities,oclcNumbers,oclcCriteria);
 }
+
+  @Test
+    public  void updateCGDBasedOnMaterialTypes() throws  Exception
+  {
+      Map<Integer, ItemEntity> itemEntityMap = new HashMap<>();
+      ItemEntity itemEntity = new ItemEntity();
+      itemEntity.setBarcode("123456");
+      itemEntityMap.put(1,itemEntity);
+      Map parameterMap = new HashMap();
+      List<String> materialTypeList = new ArrayList<>();
+      materialTypeList.add("test");
+      List<Integer> bibIdList = new ArrayList<>();
+      bibIdList.add(1);
+      parameterMap.put(1,"test");
+      parameterMap.put(ScsbConstants.MATCH_POINT,ScsbCommonConstants.OCLC_NUMBER);
+      MatchingAlgorithmReportEntity reportEntity = new MatchingAlgorithmReportEntity();
+      reportEntity.setId(1);
+      reportEntity.setInstitutionName("PUL");
+      reportEntity.setType("xml");
+      Set<String> materialTypes= new HashSet<>();
+      materialTypes.add("Monograph");
+      Set<String> materialTypeSet = new HashSet<>();
+      materialTypeSet.add("test");
+      List<Integer> serialMvmBibIds = new ArrayList<>();
+      serialMvmBibIds.add(1);
+      String matchType  = "singlematch";
+      List<MatchingAlgorithmReportEntity> reportEntityList = new ArrayList<>();
+      MatchingAlgorithmReportEntity matchingAlgorithmReportEntity = new MatchingAlgorithmReportEntity();
+      matchingAlgorithmReportEntity.setInstitutionName("CUL");
+      matchingAlgorithmReportEntity.setId(1);
+      reportEntityList.add(0,matchingAlgorithmReportEntity);
+      Map<String,String> titleMap = new HashMap<>();
+      titleMap.put("test","test");
+      Integer matchScore = 1;
+      Map<Integer, BibItem> bibItemMap = new HashMap<>();
+      BibItem bibItem = new BibItem();
+      bibItem.setBibId(1);
+      bibItem.setId("2");
+      bibItem.setOwningInstitution("PUL");
+      bibItemMap.put(1,bibItem);
+      Boolean isCGDProcess = true;
+      Mockito.when(mockedmatchingAlgorithmUtil.buildReportEntity(any())).thenReturn(matchingAlgorithmReportEntity);
+     Mockito.when(mockedmatchingAlgorithmUtil.getMatchingAndUnMatchingBibsOnTitleVerification(any())).thenReturn(materialTypeSet);
+     Mockito.when(matchingAlgorithmCGDProcessor.checkForMonographAndPopulateValues(any(), anyMap(), anyList(),any(),any())).thenReturn(false);
+     ReflectionTestUtils.invokeMethod(ongoingMatchingAlgorithmUtil,"updateCGDBasedOnMaterialTypes",reportEntity,materialTypes,serialMvmBibIds,matchType,parameterMap,reportEntityList,titleMap,matchScore,bibItemMap,isCGDProcess);
+
+  }
+
+  @Test
+    public  void titleVerificationForSingleMatch()throws  Exception
+  {
+      List<Integer> bibIds = new ArrayList<>();
+      bibIds.add(1);
+      List<String> materialTypeList = new ArrayList<>();
+      materialTypeList.add("test");
+      String fileName = "test";
+      Map<String,String> titleMap = new HashMap<>();
+      titleMap.put("test","test");
+      Map parameterMap = new HashMap();
+      parameterMap.put("test","test");
+  ReflectionTestUtils.invokeMethod(ongoingMatchingAlgorithmUtil,"titleVerificationForSingleMatch",fileName,titleMap,bibIds,materialTypeList,parameterMap);
+
+
+  }
+}
+
+
