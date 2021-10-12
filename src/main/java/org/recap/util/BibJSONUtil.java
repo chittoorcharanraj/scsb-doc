@@ -112,6 +112,7 @@ public class BibJSONUtil extends MarcUtil {
         String lccnValue = getDataFieldValue(record, "010", null, null, "a");
         if (lccnValue != null) {
             lccnValue = lccnValue.trim();
+            lccnValue = lccnValue.replaceAll(ScsbConstants.NUMBER_PATTERN, "");
         }
         return lccnValue;
     }
