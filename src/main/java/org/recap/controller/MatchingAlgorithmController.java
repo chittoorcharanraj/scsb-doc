@@ -463,6 +463,10 @@ public class MatchingAlgorithmController {
         getMatchingAlgorithmHelperService().populateReportsForMatchPoints(batchSize, ScsbCommonConstants.MATCH_POINT_FIELD_ISBN, ScsbCommonConstants.MATCH_POINT_FIELD_ISSN, institutionCounterMap,MatchScoreUtil.ISBN_ISSN_SCORE);
         getMatchingAlgorithmHelperService().populateReportsForMatchPoints(batchSize, ScsbCommonConstants.MATCH_POINT_FIELD_ISBN, ScsbCommonConstants.MATCH_POINT_FIELD_LCCN, institutionCounterMap,MatchScoreUtil.ISBN_LCCN_SCORE);
         getMatchingAlgorithmHelperService().populateReportsForMatchPoints(batchSize, ScsbCommonConstants.MATCH_POINT_FIELD_ISSN, ScsbCommonConstants.MATCH_POINT_FIELD_LCCN, institutionCounterMap,MatchScoreUtil.ISSN_LCCN_SCORE);
+        getMatchingAlgorithmHelperService().populateReportsForMatchPoints(batchSize, ScsbCommonConstants.MATCH_POINT_FIELD_OCLC, ScsbCommonConstants.MATCH_POINT_FIELD_TITLE, institutionCounterMap,MatchScoreUtil.OCLC_TITLE_SCORE);
+        getMatchingAlgorithmHelperService().populateReportsForMatchPoints(batchSize, ScsbCommonConstants.MATCH_POINT_FIELD_ISBN, ScsbCommonConstants.MATCH_POINT_FIELD_TITLE, institutionCounterMap,MatchScoreUtil.ISBN_TITLE_SCORE);
+        getMatchingAlgorithmHelperService().populateReportsForMatchPoints(batchSize, ScsbCommonConstants.MATCH_POINT_FIELD_ISSN, ScsbCommonConstants.MATCH_POINT_FIELD_TITLE, institutionCounterMap,MatchScoreUtil.ISSN_TITLE_SCORE);
+        getMatchingAlgorithmHelperService().populateReportsForMatchPoints(batchSize, ScsbCommonConstants.MATCH_POINT_FIELD_LCCN, ScsbCommonConstants.MATCH_POINT_FIELD_TITLE, institutionCounterMap,MatchScoreUtil.LCCN_TITLE_SCORE);
         getMatchingAlgorithmHelperService().populateReportsForSingleMatch(batchSize,institutionCounterMap);
         getMatchingAlgorithmHelperService().saveMatchingSummaryCount(institutionCounterMap);
     }

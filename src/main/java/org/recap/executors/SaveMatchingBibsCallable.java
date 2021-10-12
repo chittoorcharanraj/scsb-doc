@@ -4,6 +4,7 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.solr.client.solrj.SolrQuery;
+import org.apache.solr.client.solrj.SolrRequest;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrDocumentList;
@@ -101,7 +102,7 @@ public class SaveMatchingBibsCallable implements Callable {
         if(CollectionUtils.isNotEmpty(matchPointsEntityList)) {
             List<String> matchingCriteriaValues = new ArrayList<>();
             SolrQuery solrQuery = solrQueryBuilder.solrQueryToFetchBibDetails(matchPointsEntityList, matchingCriteriaValues, matchCriteria);
-            QueryResponse queryResponse = solrTemplate.getSolrClient().query(solrQuery);
+            QueryResponse queryResponse = solrTemplate.getSolrClient().query(solrQuery, SolrRequest.METHOD.POST);
             SolrDocumentList solrDocumentList = queryResponse.getResults();
             List<MatchingBibEntity> matchingBibEntityList = new ArrayList<>();
             for (Iterator<SolrDocument> iterator = solrDocumentList.iterator(); iterator.hasNext(); ) {
@@ -115,7 +116,7 @@ public class SaveMatchingBibsCallable implements Callable {
                     matchingBibEntity.setRoot(bibItem.getRoot());
                     matchingBibEntity.setOwningInstitution(bibItem.getOwningInstitution());
                     matchingBibEntity.setOwningInstBibId(bibItem.getOwningInstitutionBibId());
-                    matchingBibEntity.setTitle(bibItem.getTitleSubFieldA());
+                    matchingBibEntity.setTitle(bibItem.getTitleMatch());
                     matchingBibEntity.setOclc(CollectionUtils.isNotEmpty(bibItem.getOclcNumber()) ? StringUtils.join(bibItem.getOclcNumber(), ",") : null);
                     matchingBibEntity.setIsbn(CollectionUtils.isNotEmpty(bibItem.getIsbn()) ? StringUtils.join(bibItem.getIsbn(), ",") : null);
                     matchingBibEntity.setIssn(CollectionUtils.isNotEmpty(bibItem.getIssn()) ? StringUtils.join(bibItem.getIssn(), ",") : null);
