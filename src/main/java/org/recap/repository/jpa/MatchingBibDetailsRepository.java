@@ -99,7 +99,6 @@ public interface MatchingBibDetailsRepository extends BaseRepository<MatchingBib
      */
     @Query(value = "select distinct bib_id from matching_bib_t where " +
             "bib_id in (select bib_id from matching_bib_t where MATCHING in ('OCLCNumber','ISSN') group by bib_id having count(bib_id) > 1) and " +
-            "bib_id not in ((select bib_id from matching_bib_t where MATCHING in ('OCLCNumber','ISBN') group by bib_id having count(bib_id) > 1)) and " +
             "MATCHING in ('OCLCNumber','ISSN') order by bib_id", nativeQuery = true)
     List<Integer> getMultiMatchBibIdsForOclcAndIssn();
 
@@ -110,8 +109,6 @@ public interface MatchingBibDetailsRepository extends BaseRepository<MatchingBib
      */
     @Query(value = "select distinct bib_id from matching_bib_t where " +
             "bib_id in (select bib_id from matching_bib_t where MATCHING in ('OCLCNumber','LCCN') group by bib_id having count(bib_id) > 1) and " +
-            "bib_id not in (select bib_id from matching_bib_t where MATCHING in ('OCLCNumber','ISSN') group by bib_id having count(bib_id) > 1) and " +
-            "bib_id not in ((select bib_id from matching_bib_t where MATCHING in ('OCLCNumber','ISBN') group by bib_id having count(bib_id) > 1)) and " +
             "MATCHING in ('OCLCNumber','LCCN') order by bib_id", nativeQuery = true)
     List<Integer> getMultiMatchBibIdsForOclcAndLccn();
 
@@ -122,9 +119,6 @@ public interface MatchingBibDetailsRepository extends BaseRepository<MatchingBib
      */
     @Query(value = "select distinct bib_id from matching_bib_t where " +
             "bib_id in (select bib_id from matching_bib_t where MATCHING in ('ISBN','ISSN') group by bib_id having count(bib_id) > 1) and " +
-            "bib_id not in (select bib_id from matching_bib_t where MATCHING in ('OCLCNumber','LCCN') group by bib_id having count(bib_id) > 1) and " +
-            "bib_id not in (select bib_id from matching_bib_t where MATCHING in ('OCLCNumber','ISSN') group by bib_id having count(bib_id) > 1) and " +
-            "bib_id not in (select bib_id from matching_bib_t where MATCHING in ('OCLCNumber','ISBN') group by bib_id having count(bib_id) > 1) and " +
             "MATCHING in ('ISBN','ISSN') order by bib_id", nativeQuery = true)
     List<Integer> getMultiMatchBibIdsForIsbnAndIssn();
 
@@ -135,11 +129,7 @@ public interface MatchingBibDetailsRepository extends BaseRepository<MatchingBib
      */
     @Query(value = "select distinct bib_id from matching_bib_t where " +
             "bib_id in (select bib_id from matching_bib_t where MATCHING in ('ISBN','LCCN') group by BIB_ID having count(bib_id) > 1) and " +
-            "bib_id not in (select bib_id from matching_bib_t where MATCHING in ('ISBN','ISSN') group by BIB_ID having count(bib_id) > 1) and " +
-            "bib_id not in (select bib_id from matching_bib_t where MATCHING in ('OCLCNumber','LCCN') group by BIB_ID having count(bib_id) > 1) and " +
-            "bib_id not in (select bib_id from matching_bib_t where MATCHING in ('OCLCNumber','ISSN') group by BIB_ID having count(bib_id) > 1) and " +
-            "bib_id not in (select bib_id from matching_bib_t where MATCHING in ('OCLCNumber','ISBN') group by BIB_ID having count(bib_id) > 1) and " +
-            "MATCHING in ('ISBN','ISSN') order by bib_id", nativeQuery = true)
+            "MATCHING in ('ISBN','LCCN') order by bib_id", nativeQuery = true)
     List<Integer> getMultiMatchBibIdsForIsbnAndLccn();
 
     /**
@@ -148,13 +138,49 @@ public interface MatchingBibDetailsRepository extends BaseRepository<MatchingBib
      * @return the multi match bib ids for issn and lccn
      */
     @Query(value = "select distinct bib_id from matching_bib_t where " +
+            "bib_id in (select bib_id from matching_bib_t where MATCHING in ('OCLCNumber','Title_match') group by BIB_ID having count(bib_id) > 1) and " +
+            "MATCHING in ('OCLCNumber','Title_match') order by bib_id", nativeQuery = true)
+    List<Integer> getMultiMatchBibIdsForOclcAndTitle();
+
+    /**
+     * Gets a list of bib ids which are multi match bib ids for issn and lccn matching criterias.
+     *
+     * @return the multi match bib ids for issn and lccn
+     */
+    @Query(value = "select distinct bib_id from matching_bib_t where " +
+            "bib_id in (select bib_id from matching_bib_t where MATCHING in ('ISBN','Title_match') group by BIB_ID having count(bib_id) > 1) and " +
+            "MATCHING in ('ISBN','Title_match') order by bib_id", nativeQuery = true)
+    List<Integer> getMultiMatchBibIdsForIsbnAndTitle();
+
+    /**
+     * Gets a list of bib ids which are multi match bib ids for issn and lccn matching criterias.
+     *
+     * @return the multi match bib ids for issn and lccn
+     */
+    @Query(value = "select distinct bib_id from matching_bib_t where " +
+            "bib_id in (select bib_id from matching_bib_t where MATCHING in ('ISSN','Title_match') group by BIB_ID having count(bib_id) > 1) and " +
+            "MATCHING in ('ISSN','Title_match') order by bib_id", nativeQuery = true)
+    List<Integer> getMultiMatchBibIdsForIssnAndTitle();
+
+    /**
+     * Gets a list of bib ids which are multi match bib ids for issn and lccn matching criterias.
+     *
+     * @return the multi match bib ids for issn and lccn
+     */
+    @Query(value = "select distinct bib_id from matching_bib_t where " +
+            "bib_id in (select bib_id from matching_bib_t where MATCHING in ('LCCN','Title_match') group by BIB_ID having count(bib_id) > 1) and " +
+            "MATCHING in ('LCCN','Title_match') order by bib_id", nativeQuery = true)
+    List<Integer> getMultiMatchBibIdsForLccnAndTitle();
+
+
+    /**
+     * Gets a list of bib ids which are multi match bib ids for issn and lccn matching criterias.
+     *
+     * @return the multi match bib ids for issn and lccn
+     */
+    @Query(value = "select distinct bib_id from matching_bib_t where " +
             "bib_id in (select bib_id from matching_bib_t where MATCHING in ('ISSN','LCCN') group by BIB_ID having count(bib_id) > 1) and " +
-            "bib_id not in (select bib_id from matching_bib_t where MATCHING in ('OCLCNumber','ISBN') group by BIB_ID having count(bib_id) > 1) and " +
-            "bib_id not in (select bib_id from matching_bib_t where MATCHING in ('ISBN','LCCN') group by BIB_ID having count(bib_id) > 1) and " +
-            "bib_id not in (select bib_id from matching_bib_t where MATCHING in ('ISBN','ISSN') group by BIB_ID having count(bib_id) > 1) and " +
-            "bib_id not in (select bib_id from matching_bib_t where MATCHING in ('OCLCNumber','LCCN') group by BIB_ID having count(bib_id) > 1) and " +
-            "bib_id not in (select bib_id from matching_bib_t where MATCHING in ('OCLCNumber','ISSN') group by BIB_ID having count(bib_id) > 1) and " +
-            "MATCHING in ('ISBN','ISSN') order by bib_id", nativeQuery = true)
+            "MATCHING in ('ISSN','LCCN') order by bib_id", nativeQuery = true)
     List<Integer> getMultiMatchBibIdsForIssnAndLccn();
 
     /**

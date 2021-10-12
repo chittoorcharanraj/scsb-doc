@@ -231,7 +231,7 @@ public final class ScsbConstants {
     public static final String OPEN = "Open";
     public static final String COMMITTED="Committed";
     public static final String LOGGER_MSG = " : {0}";
-    public static final List<String> MATCHING_MATCH_POINTS = Arrays.asList(ScsbCommonConstants.MATCH_POINT_FIELD_OCLC,ScsbCommonConstants.MATCH_POINT_FIELD_ISBN,ScsbCommonConstants.MATCH_POINT_FIELD_LCCN,ScsbCommonConstants.MATCH_POINT_FIELD_ISSN);
+    public static final List<String> MATCHING_MATCH_POINTS = Arrays.asList(ScsbCommonConstants.MATCH_POINT_FIELD_OCLC,ScsbCommonConstants.MATCH_POINT_FIELD_ISBN,ScsbCommonConstants.MATCH_POINT_FIELD_LCCN,ScsbCommonConstants.MATCH_POINT_FIELD_ISSN,ScsbCommonConstants.MATCH_POINT_FIELD_TITLE);
     public static final String LOG_EXECUTION_TIME = "Time taken to execute {} : {}";
     public static final String INSTITUTION = "Institution";
     public static final String CGD_ROUND_TRIP_EXCEPTION_MESSAGE = "The reported item is not found";
