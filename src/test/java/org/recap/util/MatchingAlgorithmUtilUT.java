@@ -49,6 +49,9 @@ import java.util.Optional;
 import java.util.Set;
 
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyList;
 
 /**
  * Created by Anitha on 10/10/20.
@@ -61,6 +64,8 @@ public class MatchingAlgorithmUtilUT extends BaseTestCaseUT4 {
 
     @InjectMocks
     MatchingAlgorithmUtil mockMatchingAlgorithmUtil;
+
+
 
 
     @Mock
@@ -133,17 +138,6 @@ public class MatchingAlgorithmUtilUT extends BaseTestCaseUT4 {
         assertNotNull(id);
     }
 
-    @Test
-    public void updateBibsForMatchingIdentifier() throws Exception {
-        List<Integer> bibIdList=new ArrayList<>();
-        bibIdList.add(1);
-        List<BibliographicEntity> bibliographicEntityList=new ArrayList<>();
-        bibliographicEntityList.add(bibliographicEntity);
-        Mockito.when(bibliographicEntity.getMatchingIdentity()).thenReturn("");
-        Mockito.when(bibliographicDetailsRepository.findByIdIn(Mockito.anyList())).thenReturn(bibliographicEntityList);
-        Optional<Map<Integer,BibliographicEntity>> id= mockMatchingAlgorithmUtil.groupBibsForInitialMatching(bibliographicEntityList,1);
-        assertNotNull(id);
-    }
 
     @Test
     public void getReportDataEntity() throws Exception {
@@ -227,7 +221,7 @@ public class MatchingAlgorithmUtilUT extends BaseTestCaseUT4 {
         facetFields.add(facetField);
         facetFields.add(facetField1);
         Mockito.when(queryResponse.getFacetFields()).thenReturn(facetFields);
-        Mockito.when(solrClient.query(Mockito.any(SolrQuery.class))).thenReturn(queryResponse);
+        Mockito.when(solrClient.query(any(SolrQuery.class))).thenReturn(queryResponse);
         List<MatchingMatchPointsEntity> countsMap= mockMatchingAlgorithmUtil.getMatchingMatchPointsEntity(ScsbCommonConstants.MATCH_POINT_FIELD_ISBN);
         assertNotNull(countsMap);
     }
@@ -280,7 +274,7 @@ public class MatchingAlgorithmUtilUT extends BaseTestCaseUT4 {
         SolrClient solrClient = PowerMockito.mock(SolrClient.class);
         PowerMockito.when(mocksolrTemplate1.getSolrClient()).thenReturn(solrClient);
         QueryResponse queryResponse = Mockito.mock(QueryResponse.class);
-        Mockito.when(solrClient.query(Mockito.any(SolrQuery.class))).thenReturn(queryResponse);
+        Mockito.when(solrClient.query(any(SolrQuery.class))).thenReturn(queryResponse);
         SolrDocumentList solrDocumentList = getSolrDocuments();
         solrDocumentList.setNumFound(1);
         Mockito.when(queryResponse.getResults()).thenReturn(solrDocumentList);
@@ -308,7 +302,7 @@ public class MatchingAlgorithmUtilUT extends BaseTestCaseUT4 {
         SolrClient solrClient = PowerMockito.mock(SolrClient.class);
         PowerMockito.when(mocksolrTemplate1.getSolrClient()).thenReturn(solrClient);
         QueryResponse queryResponse = Mockito.mock(QueryResponse.class);
-        Mockito.when(solrClient.query(Mockito.any(SolrQuery.class))).thenReturn(queryResponse);
+        Mockito.when(solrClient.query(any(SolrQuery.class))).thenReturn(queryResponse);
         List<String> allInstitutionCodeExceptSupportInstitution=Arrays.asList(ScsbCommonConstants.COLUMBIA,ScsbCommonConstants.PRINCETON,ScsbCommonConstants.NYPL);
         Mockito.when(commonUtil.findAllInstitutionCodesExceptSupportInstitution()).thenReturn(allInstitutionCodeExceptSupportInstitution);
         SolrDocumentList solrDocumentList = getSolrDocuments();
@@ -331,7 +325,7 @@ public class MatchingAlgorithmUtilUT extends BaseTestCaseUT4 {
             bibEntities.addAll(Arrays.asList(getMatchingBibEntity(re, 1, "PUL", "Middleware for 1"), getMatchingBibEntity(re, 2, "CUL", "Middleware for 2"), getMatchingBibEntity(re, 3, "NYPL", "Middleware for 3")));
             ReflectionTestUtils.setField(mockMatchingAlgorithmUtil, "solrTemplate", mocksolrTemplate1);
             PowerMockito.when(mocksolrTemplate1.getSolrClient()).thenReturn(solrClient);
-            Mockito.when(solrClient.query(Mockito.any(SolrQuery.class))).thenReturn(queryResponse);
+            Mockito.when(solrClient.query(any(SolrQuery.class))).thenReturn(queryResponse);
             Mockito.when(queryResponse.getResults()).thenReturn(solrDocumentList);
             Mockito.when(solrQueryBuilder.solrQueryForOngoingMatching(re, Arrays.asList("129393"))).thenReturn("test");
             Mockito.when(matchingBibDetailsRepository.findByMatchingAndBibIdIn(Mockito.anyString(), Mockito.anyList())).thenReturn(bibEntities);
@@ -406,6 +400,118 @@ public class MatchingAlgorithmUtilUT extends BaseTestCaseUT4 {
         return matchingBibEntity;
     }
 
+@Test
+    public void groupBibsForInitialMatching() throws  Exception
+   {
+       List<BibliographicEntity> bibliographicEntityList = new ArrayList<>();
+       BibliographicEntity bibliographicEntity = new BibliographicEntity();
+       bibliographicEntity.setId(6);
+       bibliographicEntity.setMatchingIdentity("test");
+       bibliographicEntity.setMatchScore(10);
+       bibliographicEntityList.add(0,bibliographicEntity);
+       Integer matchScore = 18;
+       Set<String> matchingIdentities = new HashSet<>();
+       matchingIdentities.add("test");
+      Optional<Map<Integer,BibliographicEntity>> integerBibliographicEntityMap =  mockMatchingAlgorithmUtil.groupBibsForInitialMatching(bibliographicEntityList,matchScore);
+      assertNotNull(integerBibliographicEntityMap);
+   }
 
+   @Test
+    public void resetMAQualifier() throws Exception
+   {
+       List<Integer> bibIds =  new ArrayList<>();
+       bibIds.add(15667);
+       boolean isCGDProcess = true;
+       Mockito.when(bibliographicDetailsRepository.resetMAQualifier(any())).thenReturn(1);
+       Mockito.when(bibliographicDetailsRepository.resetMAQualifierForGrouping(bibIds)).thenReturn(1);
+       mockMatchingAlgorithmUtil.resetMAQualifier(bibIds,isCGDProcess);
+   }
+
+   @Test
+    public  void updateBibsForMatchingIdentifier() throws  Exception
+   {
+
+       List<BibliographicEntity> bibliographicEntityList = new ArrayList<>();
+       BibliographicEntity bibliographicEntity = new BibliographicEntity();
+       bibliographicEntity.setMatchScore(1);
+       bibliographicEntity.setId(1);
+       bibliographicEntity.setMatchingIdentity("PUL");
+       bibliographicEntityList.add(0,bibliographicEntity);
+       Map<Integer, BibItem> bibItemMap = new HashMap<>();
+       BibItem bibItem = new BibItem();
+       bibItem.setBibId(1);
+       bibItem.setOwningInstitution("PUL");
+       bibItem.setBarcode("123456");
+       bibItemMap.put(1,bibItem);
+       List<BibliographicEntity> newlyGroupedBibs=new ArrayList<>();
+       List<BibliographicEntity> updatedWithExistingGroupedBibs=new ArrayList<>();
+       List<BibliographicEntity> combinedBibs=new ArrayList<>();
+       newlyGroupedBibs.add(0,bibliographicEntity);
+       updatedWithExistingGroupedBibs.add(0,bibliographicEntity);
+       combinedBibs.add(0,bibliographicEntity);
+       try {
+           Optional<Map<Integer, BibliographicEntity>> integerBibliographicEntityMap = mockMatchingAlgorithmUtil.updateBibsForMatchingIdentifier(bibliographicEntityList, bibItemMap);
+           assertNotNull(integerBibliographicEntityMap);
+       }catch (Exception e){}
+   }
+
+   @Test
+    public void combineGroupedBibs() throws  Exception
+   {
+       Set<String> matchingIdentities = new HashSet<>();
+       matchingIdentities.add("test");
+       List<BibliographicEntity> bibliographicEntityList = new ArrayList<>();
+       BibliographicEntity bibliographicEntity = new BibliographicEntity();
+       bibliographicEntity.setId(1);
+       bibliographicEntity.setMatchScore(1);
+       bibliographicEntity.setMatchingIdentity("PUL");
+       bibliographicEntity.setAnamolyFlag(true);
+       bibliographicEntityList.add(0,bibliographicEntity);
+       Map<Integer, BibItem> bibItemMap = new HashMap<>();
+       BibItem bibItem = new BibItem();
+       bibItem.setBibId(1);
+       bibItem.setMatchScore(1);
+       bibItem.setMaterialType("test");
+       bibItemMap.put(1,bibItem);
+      ReflectionTestUtils.invokeMethod(mockMatchingAlgorithmUtil,"combineGroupedBibs",matchingIdentities,bibliographicEntityList,bibItemMap);
+   }
+
+   @Test
+    public  void combineGroupedBibsForInitialMatching() throws  Exception
+   {
+       Set<String> matchingIdentities = new HashSet<>();
+       matchingIdentities.add("test");
+       List<BibliographicEntity> bibliographicEntityList = new ArrayList<>();
+       BibliographicEntity bibliographicEntity = new BibliographicEntity();
+       bibliographicEntity.setId(1);
+       bibliographicEntity.setMatchScore(1);
+       bibliographicEntity.setMatchingIdentity("PUL");
+       bibliographicEntity.setAnamolyFlag(true);
+       bibliographicEntityList.add(0,bibliographicEntity);
+       Map<Integer, BibItem> bibItemMap = new HashMap<>();
+       BibItem bibItem = new BibItem();
+       bibItem.setBibId(1);
+       bibItem.setMatchScore(1);
+       bibItem.setMaterialType("test");
+       bibItemMap.put(1,bibItem);
+       Integer matchscore = 1;
+       ReflectionTestUtils.invokeMethod(mockMatchingAlgorithmUtil,"combineGroupedBibsForInitialMatching",matchingIdentities,bibliographicEntityList,matchscore);
+   }
+
+   @Test
+    public void initialMatchingroupBibsForNewEntries() throws  Exception
+   {
+       Integer matchScore = 1;
+       String matchingIdentity = "PUL";
+       Map<Boolean, List<BibliographicEntity>> partionedByMatchingIdentity = new HashMap<>();
+       BibliographicEntity bibliographicEntity = new BibliographicEntity();
+       bibliographicEntity.setMatchScore(1);
+       bibliographicEntity.setId(1);
+       bibliographicEntity.setAnamolyFlag(true);
+       bibliographicEntity.setMatchingIdentity("PUL");
+       partionedByMatchingIdentity.put(false,Arrays.asList(bibliographicEntity));
+       partionedByMatchingIdentity.put(true,Arrays.asList(bibliographicEntity));
+       ReflectionTestUtils.invokeMethod(mockMatchingAlgorithmUtil,"initialMatchingroupBibsForNewEntries",matchScore,matchingIdentity,partionedByMatchingIdentity);
+   }
 
 }
