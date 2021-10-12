@@ -117,6 +117,8 @@ SearchRecordsRequest implements Serializable {
         this.getCollectionGroupDesignations().add("Shared");
         this.getCollectionGroupDesignations().add("Private");
         this.getCollectionGroupDesignations().add("Open");
+        this.getCollectionGroupDesignations().add("Committed");
+        this.getCollectionGroupDesignations().add("Uncommittable");
 
         this.getAvailability().add("Available");
         this.getAvailability().add("NotAvailable");
@@ -128,6 +130,9 @@ SearchRecordsRequest implements Serializable {
         this.getUseRestrictions().add("NoRestrictions");
         this.getUseRestrictions().add("InLibraryUse");
         this.getUseRestrictions().add("SupervisedUse");
+
+        this.getTitleMatch().add("Matched");
+        this.getTitleMatch().add("Not Matched");
 
         this.setPageNumber(0);
         this.setPageSize(10);
