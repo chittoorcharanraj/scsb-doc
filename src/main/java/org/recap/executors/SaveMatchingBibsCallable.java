@@ -1,9 +1,11 @@
 package org.recap.executors;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.camel.ProducerTemplate;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.solr.client.solrj.SolrQuery;
+import org.apache.solr.client.solrj.SolrRequest;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrDocumentList;
@@ -42,6 +44,7 @@ import java.util.concurrent.Callable;
 /**
  * Created by angelind on 4/11/16.
  */
+@Slf4j
 public class SaveMatchingBibsCallable implements Callable {
 
     private MatchingMatchPointsDetailsRepository matchingMatchPointsDetailsRepository;
@@ -101,7 +104,7 @@ public class SaveMatchingBibsCallable implements Callable {
         if(CollectionUtils.isNotEmpty(matchPointsEntityList)) {
             List<String> matchingCriteriaValues = new ArrayList<>();
             SolrQuery solrQuery = solrQueryBuilder.solrQueryToFetchBibDetails(matchPointsEntityList, matchingCriteriaValues, matchCriteria);
-            QueryResponse queryResponse = solrTemplate.getSolrClient().query(solrQuery);
+            QueryResponse queryResponse = solrTemplate.getSolrClient().query(solrQuery, SolrRequest.METHOD.POST);
             SolrDocumentList solrDocumentList = queryResponse.getResults();
             List<MatchingBibEntity> matchingBibEntityList = new ArrayList<>();
             for (Iterator<SolrDocument> iterator = solrDocumentList.iterator(); iterator.hasNext(); ) {
@@ -115,9 +118,9 @@ public class SaveMatchingBibsCallable implements Callable {
                     matchingBibEntity.setRoot(bibItem.getRoot());
                     matchingBibEntity.setOwningInstitution(bibItem.getOwningInstitution());
                     matchingBibEntity.setOwningInstBibId(bibItem.getOwningInstitutionBibId());
-                    matchingBibEntity.setTitle(bibItem.getTitleSubFieldA());
+                    matchingBibEntity.setTitle(bibItem.getTitleMatch());
                     matchingBibEntity.setOclc(CollectionUtils.isNotEmpty(bibItem.getOclcNumber()) ? StringUtils.join(bibItem.getOclcNumber(), ",") : null);
-                    matchingBibEntity.setIsbn(CollectionUtils.isNotEmpty(bibItem.getIsbn()) ? StringUtils.join(bibItem.getIsbn(), ",") : null);
+                    matchingBibEntity.setIsbn(getTruncatedIsbnValue(bibItem.getIsbn(), bibId));
                     matchingBibEntity.setIssn(CollectionUtils.isNotEmpty(bibItem.getIssn()) ? StringUtils.join(bibItem.getIssn(), ",") : null);
                     matchingBibEntity.setLccn(bibItem.getLccn());
                     matchingBibEntity.setMaterialType(bibItem.getLeaderMaterialType());
@@ -134,6 +137,18 @@ public class SaveMatchingBibsCallable implements Callable {
             }
         }
         return size;
+    }
+
+    private String getTruncatedIsbnValue(List<String> isbn, Integer bibId) {
+        String isbnValue = null;
+        if (CollectionUtils.isNotEmpty(isbn)) {
+            isbnValue = StringUtils.join(isbn, ",");
+            if (isbnValue.length() > 10000) {
+                log.info("Length of the isbn value with size greater than 10000 - Bib Id - {}, size - {}", bibId, isbnValue.length());
+                isbnValue = isbnValue.substring(0,10000);
+            }
+        }
+        return isbnValue;
     }
 
     /**
