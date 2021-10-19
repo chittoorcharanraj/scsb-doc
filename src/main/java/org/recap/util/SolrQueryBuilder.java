@@ -903,15 +903,13 @@ public class SolrQueryBuilder {
     }
 
     public SolrQuery buildQueryTitleMatchedReport(String date, String owningInst, List<String> cgds, String matchingIdentifier, String match) {
-        StringBuilder joinQueryOnMatchingId = new StringBuilder();
+        String joinQueryOnMatchingId = "";
         if (match.equalsIgnoreCase(ScsbConstants.TITLE_MATCHED)) {
-            joinQueryOnMatchingId.append(joinQueryOnMatchingIdentifier);
-            joinQueryOnMatchingId.append("MatchingIdentifier:");
-            joinQueryOnMatchingId.append(joinQueryOnMatchingIdentifier);
+            joinQueryOnMatchingId = joinQueryOnMatchingIdentifier;
         }
         SolrQuery solrQuery = new SolrQuery();
         solrQuery.setQuery(joinQueryOnMatchingId + getBibFilterQueryForTitleMatchReport(owningInst, matchingIdentifier));
-        solrQuery.setFilterQueries(getCoreParentFilterQueryForTitleMatchReport(date, cgds));
+        solrQuery.setFilterQueries(joinQueryOnMatchingId + getCoreParentFilterQueryForTitleMatchReport(date, cgds));
         return solrQuery;
     }
 
