@@ -9,6 +9,7 @@ import org.recap.PropertyKeyConstants;
 import org.recap.ScsbCommonConstants;
 import org.recap.ScsbConstants;
 import org.recap.executors.BibItemIndexExecutorService;
+import org.recap.executors.MatchingAlgorithmReportsCallable;
 import org.recap.executors.SaveMatchingBibsCallable;
 import org.recap.matchingalgorithm.MatchScoreReport;
 import org.recap.matchingalgorithm.MatchScoreUtil;
@@ -47,6 +48,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
@@ -673,5 +675,45 @@ public class MatchingAlgorithmHelperService {
             }
         } while (!bibIdsToIndex.isEmpty());
         return totalBibsIndexed;
+    }
+
+    public void runReportsForMatchingAlgorithm(Integer batchSize) {
+        List<String> allInstitutionCodeExceptSupportInstitution = commonUtil.findAllInstitutionCodesExceptSupportInstitution();
+        Map<String, Integer> institutionCounterMap = allInstitutionCodeExceptSupportInstitution.stream().collect(Collectors.toMap(Function.identity(), institution -> 0));
+        populateReportsForMultiMatch(batchSize, institutionCounterMap);
+        populateReportsForSingleMatch(batchSize, institutionCounterMap);
+        saveMatchingSummaryCount(institutionCounterMap);
+    }
+
+    public void populateReportsForMultiMatch(Integer batchSize, Map<String, Integer> institutionCounterMap) {
+        ExecutorService executorServiceForMultiMatchReports = getExecutorService(10);
+        Map<String, Integer> matchPointsCombinationMap = matchingAlgorithmUtil.getMatchPointsCombinationMap();
+        List<Future> futures = new ArrayList<>();
+        for (Map.Entry<String, Integer> matchPointCombinationEntry : matchPointsCombinationMap.entrySet()) {
+            Callable<Map<String, Integer>> callable = new MatchingAlgorithmReportsCallable(getMatchingBibDetailsRepository(), batchSize, institutionCounterMap, getMatchingAlgorithmUtil(), matchPointCombinationEntry.getKey(), matchPointCombinationEntry.getValue());
+            futures.add(executorServiceForMultiMatchReports.submit(callable));
+        }
+        collectFuturesAndProcessForReports(futures, institutionCounterMap);
+        executorServiceForMultiMatchReports.shutdown();
+    }
+
+    private void collectFuturesAndProcessForReports(List<Future> futures, Map<String, Integer> institutionCounterMap) {
+        for (Future future : futures) {
+            try {
+                Map<String, Integer> responseMap = (Map<String, Integer>) future.get();
+                for (Map.Entry<String, Integer> resInstitutionEntry : responseMap.entrySet()) {
+                    String key = resInstitutionEntry.getKey();
+                    Integer countValue = resInstitutionEntry.getValue();
+                    if (institutionCounterMap.containsKey(key)) {
+                        Integer currentCount = institutionCounterMap.get(key);
+                        institutionCounterMap.replace(key, currentCount + countValue);
+                    } else {
+                        institutionCounterMap.put(key, countValue);
+                    }
+                }
+            } catch (Exception e) {
+                logger.error(ScsbCommonConstants.LOG_ERROR, e);
+            }
+        }
     }
 }

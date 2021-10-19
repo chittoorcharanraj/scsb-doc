@@ -627,7 +627,7 @@ public class BibJSONUtil extends MarcUtil {
         String normalizedTitle = Normalizer.normalize(title, Normalizer.Form.NFD);
         normalizedTitle = normalizedTitle.replaceAll("[^\\p{ASCII}]", "");
         normalizedTitle = normalizedTitle.replaceAll("\\p{M}", "");
-        return normalizedTitle;
+        return normalizedTitle.toLowerCase();
     }
 
     /**
@@ -660,7 +660,7 @@ public class BibJSONUtil extends MarcUtil {
                 }
             }
         }
-        return titleToMatch.replaceAll("\\s", "");
+        return titleToMatch.replaceAll("\\s", "").toLowerCase();
     }
 
     private String getTitleToMatch(String titleToMatch, int count, String tempTitle) {
@@ -673,7 +673,7 @@ public class BibJSONUtil extends MarcUtil {
             stringBuilder.append(tempTitle);
             titleToMatch = stringBuilder.toString();
         }
-        return titleToMatch;
+        return titleToMatch.toLowerCase();
     }
 
 }
