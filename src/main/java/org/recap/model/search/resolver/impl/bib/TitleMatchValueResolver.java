@@ -16,6 +16,6 @@ public class TitleMatchValueResolver implements BibValueResolver {
 
     @Override
     public void setValue(BibItem bibItem, Object value) {
-        bibItem.setTitleMatch((String) value);
+        bibItem.setTitleMatch(((String) value).toLowerCase());
     }
 }
