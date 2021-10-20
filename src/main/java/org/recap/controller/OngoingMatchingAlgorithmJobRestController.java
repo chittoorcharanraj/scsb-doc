@@ -58,7 +58,7 @@ public class OngoingMatchingAlgorithmJobRestController {
         Date date = solrIndexRequest.getCreatedDate();
         solrIndexRequest.setFromDate(new SimpleDateFormat(ScsbConstants.ONGOING_MATCHING_DATE_FORMAT).format(date));
         solrIndexRequest.setMaProcessType(ScsbConstants.ONGOING_MA_BOTH_GROUPING_CGD_PROCESS);
-        solrIndexRequest.setMatchBy(ScsbConstants.FROM_DATE);
+        //solrIndexRequest.setMatchBy(ScsbConstants.FROM_DATE);
         solrIndexRequest.setIncludeMaQualifier(true);
         solrIndexRequest.setIndexBibsForOngoingMa(true);
         String status = "";
