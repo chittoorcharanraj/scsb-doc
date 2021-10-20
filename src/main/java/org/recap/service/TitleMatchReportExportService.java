@@ -36,6 +36,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.ParseException;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.List;
@@ -101,6 +102,9 @@ public class TitleMatchReportExportService {
         if (new File(titleReportDir).listFiles() != null) {
             Arrays.stream(new File(titleReportDir).listFiles()).filter(file -> file.getName().contains(".xlsx")).forEach(File::delete);
         }
+        if (new File(titleReportDir).listFiles() != null) {
+            Arrays.stream(new File(titleReportDir).listFiles()).filter(file -> file.getName().contains(".zip")).forEach(File::delete);
+        }
         titleMatchedReport = reportsServiceUtil.getTitleMatchedReportsExportS3(titleMatchedReport);
         String institution_name = titleMatchedReport.getOwningInst();
         int totalFiles = 0;
@@ -134,7 +138,8 @@ public class TitleMatchReportExportService {
                         workbook.write(fileOut);
                         fileOut.close();
                         workbook.close();
-                        tempFilename = createFileName(titleMatchedReport.getOwningInst(), fileCount, i + j);
+                        LocalTime time = LocalTime.now();
+                        tempFilename = createFileName(titleMatchedReport.getOwningInst(), fileCount, time.getMinute()+time.getSecond());
                         workbook = new XSSFWorkbook();
                         sheet = workbook.createSheet(tempFilename);
                         prepareWorkbook(titleMatchedReport, sheet);

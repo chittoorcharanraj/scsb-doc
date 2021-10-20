@@ -337,7 +337,6 @@ public class ReportGenerator {
         }
     }
 
-    @Async
     public TitleMatchedReport getItemMatchReportExportS3(TitleMatchedReport titleMatchedReport){
         try {
             return reportsServiceUtil.titleMatchReportsExportS3(titleMatchedReport);
