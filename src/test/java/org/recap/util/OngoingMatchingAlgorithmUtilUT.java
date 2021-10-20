@@ -971,6 +971,7 @@ public class OngoingMatchingAlgorithmUtilUT extends BaseTestCaseUT4 {
     {
         SolrDocument solrDocument = new SolrDocument();
         solrDocument.setField(ScsbCommonConstants.OCLC_NUMBER,"111");
+        solrDocument.setField(ScsbCommonConstants.OCLC_NUMBER,"1111");
         solrDocument.setField(ScsbCommonConstants.ISBN_CRITERIA,"1111");
         solrDocument.setField(ScsbCommonConstants.ISSN_CRITERIA,"111111");
         solrDocument.setField(ScsbCommonConstants.LCCN_CRITERIA,"111");
@@ -985,16 +986,16 @@ public class OngoingMatchingAlgorithmUtilUT extends BaseTestCaseUT4 {
         //Mockito.when(ongoingMatchingAlgorithmUtil.findMatchingBibs(any(),any(),any(),any())).thenReturn();
        List<String> oclc = new ArrayList<>();
        oclc.add("12345");
+       oclc.add("45676");
        List<String> Issn = new ArrayList<>();
         Issn.add("34567");
+        Issn.add("67799");
        List<String> Isbn = new ArrayList<>();
        Isbn.add("6768");
+       Isbn.add("57689");
         Map<String, HashMap<Integer, BibItem>> bibItemMap = new HashMap<>();
         HashMap<Integer, BibItem> bibItemHashMap = new HashMap<>();
-        Map<Integer, BibItem> bibItemMap1 = new HashMap<>();
         BibItem  bibItem = new BibItem();
-        //BibItem  bibItem1 = new BibItem();
-       /// bibItem1.setId("2");
         bibItem.setTitle("test");
         bibItem.setId("1");
         bibItem.setBibId(1);
@@ -1004,11 +1005,34 @@ public class OngoingMatchingAlgorithmUtilUT extends BaseTestCaseUT4 {
         bibItem.setLccn("123765");
         bibItem.setIsbn(Isbn);
         bibItemHashMap.put(1,bibItem);
-        bibItemHashMap.put(2,bibItem);
         bibItemMap.put("test1",bibItemHashMap);
-        bibItemMap.put("test2",bibItemHashMap);
-        bibItemMap1.put(1,bibItem);
-        bibItemMap1.put(2,bibItem);
+
+        HashMap<Integer, BibItem> bibItemHashMap2 = new HashMap<>();
+        BibItem  bibItem2 = new BibItem();
+        bibItem2.setTitle("test2");
+        bibItem2.setId("2");
+        bibItem2.setBibId(2);
+        bibItem2.setMatchScore(1);
+        bibItem2.setOclcNumber(oclc);
+        bibItem2.setIssn(Issn);
+        bibItem2.setLccn("123765");
+        bibItem2.setIsbn(Isbn);
+        bibItemHashMap2.put(2,bibItem2);
+        bibItemMap.put("test2",bibItemHashMap2);
+
+        HashMap<Integer, BibItem> bibItemHashMap3 = new HashMap<>();
+        BibItem  bibItem3 = new BibItem();
+        bibItem3.setTitle("test3");
+        bibItem3.setId("3");
+        bibItem3.setBibId(3);
+        bibItem3.setMatchScore(1);
+        bibItem3.setOclcNumber(oclc);
+        bibItem3.setIssn(Issn);
+        bibItem3.setLccn("123765");
+        bibItem3.setIsbn(Isbn);
+        bibItemHashMap3.put(3,bibItem3);
+        bibItemMap.put("test3",bibItemHashMap3);
+
         Mockito.when(commonUtil.getBibItemFromSolrFieldNames(any(),any(),any())).thenReturn(bibItem);
         Mockito.when(solrQueryBuilder.solrQueryForOngoingMatching(any(),anyString())).thenReturn("test");
         ReflectionTestUtils.invokeMethod(ongoingMatchingAlgorithmUtil,"getMatchingBibsAndMatchPoints",solrDocument,bibItemMap);
