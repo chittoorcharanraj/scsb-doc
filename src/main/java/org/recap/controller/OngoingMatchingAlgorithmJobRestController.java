@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
@@ -55,13 +56,17 @@ public class OngoingMatchingAlgorithmJobRestController {
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
         Date date = solrIndexRequest.getCreatedDate();
-        String status="";
+        solrIndexRequest.setFromDate(new SimpleDateFormat(ScsbConstants.ONGOING_MATCHING_DATE_FORMAT).format(date));
+        solrIndexRequest.setMaProcessType(ScsbConstants.ONGOING_MA_BOTH_GROUPING_CGD_PROCESS);
+        solrIndexRequest.setMatchBy(ScsbConstants.FROM_DATE);
+        solrIndexRequest.setIncludeMaQualifier(true);
+        solrIndexRequest.setIndexBibsForOngoingMa(true);
+        String status = "";
         Integer rows = Integer.valueOf(batchSize);
         try {
-            processOngoingMatchingAlgorithm(date, rows,false,true);
-            status=processOngoingMatchingAlgorithm(date, rows,true,true);
-
-            if(ScsbCommonConstants.SUCCESS.equalsIgnoreCase(status)) {
+            status = processGroupingForOngoingMatchingAlgorithm(solrIndexRequest, rows);
+            status = processCgdUpdatesForOngoingMatchingAlgorithm(solrIndexRequest, rows);
+            if (ScsbCommonConstants.SUCCESS.equalsIgnoreCase(status)) {
                 status = matchingBibInfoDetailService.populateMatchingBibInfo(dateUtil.getFromDate(date), dateUtil.getToDate(date));
             }
         } catch (Exception e) {
@@ -72,17 +77,21 @@ public class OngoingMatchingAlgorithmJobRestController {
         return status;
     }
 
-    private String processOngoingMatchingAlgorithm(Date date, Integer rows, boolean isCGDProcess, boolean isBasedOnMAQualifier) throws IOException, SolrServerException {
-        String status="";
-        StopWatch stopWatchForGrouping=new StopWatch();
+    private String processGroupingForOngoingMatchingAlgorithm(SolrIndexRequest solrIndexRequest, Integer rows) throws Exception {
+        StopWatch stopWatchForGrouping = new StopWatch();
         stopWatchForGrouping.start();
-        status=ongoingMatchingAlgorithmUtil.fetchUpdatedRecordsAndStartProcess(dateUtil.getFromDate(date), rows,isCGDProcess,isBasedOnMAQualifier);
+        String status = ongoingMatchingAlgorithmUtil.fetchUpdatedRecordsAndStartGroupingProcessBasedOnCriteria(solrIndexRequest, rows);
         stopWatchForGrouping.stop();
-        if(isCGDProcess){
-            logger.info(ScsbConstants.TOTAL_TIME_TAKEN+"for Updating CGD : "+stopWatchForGrouping.getTotalTimeSeconds());}
-        else {
-            logger.info(ScsbConstants.TOTAL_TIME_TAKEN+"for Grouping Bibs: "+stopWatchForGrouping.getTotalTimeSeconds());
-        }
+        logger.info("{}{}{}", ScsbConstants.TOTAL_TIME_TAKEN, "for Grouping Bibs: ", stopWatchForGrouping.getTotalTimeSeconds());
+        return status;
+    }
+
+    private String processCgdUpdatesForOngoingMatchingAlgorithm(SolrIndexRequest solrIndexRequest, Integer rows) throws Exception {
+        StopWatch stopWatchForCgdProcess = new StopWatch();
+        stopWatchForCgdProcess.start();
+        String status = ongoingMatchingAlgorithmUtil.fetchUpdatedRecordsAndStartCgdUpdateProcessBasedOnCriteria(solrIndexRequest, rows);
+        stopWatchForCgdProcess.stop();
+        logger.info("{}{}{}", ScsbConstants.TOTAL_TIME_TAKEN, "for Updating CGD : ", stopWatchForCgdProcess.getTotalTimeSeconds());
         return status;
     }
 
