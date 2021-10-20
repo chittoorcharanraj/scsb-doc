@@ -76,6 +76,7 @@ public class OngoingMatchingAlgorithmQueryUtil {
             String toBibId = solrIndexRequest.getToBibId();
             query = solrQueryBuilder.getQueryForOngoingMatchingBasedOnBibIdRangeForCgdUpdateProcessWithMaQualifier(fromBibId, toBibId);
         }
+        log.info("Cgd Update Query: {}", query);
         return query;
     }
 
@@ -119,6 +120,7 @@ public class OngoingMatchingAlgorithmQueryUtil {
             String toBibId = solrIndexRequest.getToBibId();
             query = solrQueryBuilder.getQueryForOngoingMatchingBasedOnBibIdRangeForGroupingProcessWithMaQualifier(fromBibId, toBibId);
         }
+        log.info("Grouping Query: {}", query);
         return query;
     }
 
