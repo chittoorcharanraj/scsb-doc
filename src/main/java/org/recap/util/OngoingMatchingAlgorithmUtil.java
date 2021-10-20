@@ -912,8 +912,10 @@ public class OngoingMatchingAlgorithmUtil {
                         titleVerificationForSingleMatch(reportEntity.getFileName(), titleMap, bibIdList, materialTypeList, parameterMap);
                         bibIdList.forEach(bibId -> {
                             BibItem bibItem = bibItemMap.get(bibId);
-                            Integer calculatedSingleMatchScore = MatchScoreUtil.getMatchScoreForSingleMatchAndTitle(bibItem.getMatchScore());
-                            bibItem.setMatchScore(calculatedSingleMatchScore);
+                            if (bibItem != null) {
+                                Integer calculatedSingleMatchScore = MatchScoreUtil.getMatchScoreForSingleMatchAndTitle(bibItem.getMatchScore());
+                                bibItem.setMatchScore(calculatedSingleMatchScore);
+                            }
                         });
                         groupBibsAndUpdateInDB(bibIdList, bibItemMap);
                     } else if (matchType.equalsIgnoreCase(ScsbConstants.MULTI_MATCH)) {
