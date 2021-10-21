@@ -1,6 +1,8 @@
 package org.recap.matchingalgorithm;
 
 import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.*;
 
@@ -10,6 +12,20 @@ import static org.recap.ScsbConstants.MATCHING_COUNTER_UPDATED_OPEN;
 import static org.recap.ScsbConstants.MATCHING_COUNTER_UPDATED_SHARED;
 
 public class MatchingCounterUT {
+
+    @InjectMocks
+    MatchingCounter matchingCounter;
+
+    @Test
+    public void MatchingCounter() throws  Exception
+    {
+        try{
+            ReflectionTestUtils.invokeMethod(matchingCounter,"MatchingCounter");
+        }catch (Exception e)
+        {
+        }
+    }
+
 
     @Test
     public void testMatchingCounter(){

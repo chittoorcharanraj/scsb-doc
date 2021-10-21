@@ -3,6 +3,7 @@ package org.recap.executors;
 import org.apache.camel.ProducerTemplate;
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrQuery;
+import org.apache.solr.client.solrj.SolrRequest;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrDocumentList;
@@ -34,6 +35,8 @@ import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 
 
 @RunWith(PowerMockRunner.class)
@@ -66,16 +69,17 @@ public class SaveMatchingBibsCallableUT extends BaseTestCaseUT4 {
         String matchCriteria="test";
         long batchSize=2l;
         int pageNum=1;
+        SolrQuery solrQuery = new SolrQuery();
         List<MatchingMatchPointsEntity> matchPointsEntityList=new ArrayList<>();
         MatchingMatchPointsEntity matchingMatchPointsEntity=new MatchingMatchPointsEntity();
         matchPointsEntityList.add(matchingMatchPointsEntity);
         SaveMatchingBibsCallable saveMatchingBibsCallable=new SaveMatchingBibsCallable(matchingMatchPointsDetailsRepository,matchCriteria,solrTemplate,producer,solrQueryBuilder,batchSize,pageNum,matchingAlgorithmUtil);
         Mockito.when(matchingMatchPointsDetailsRepository.getMatchPointEntityByCriteria(matchCriteria,pageNum*batchSize,batchSize)).thenReturn(matchPointsEntityList);
-        Mockito.when(solrQueryBuilder.solrQueryToFetchBibDetails(Mockito.anyList(),Mockito.anyList(),Mockito.anyString())).thenReturn(new SolrQuery());
+        Mockito.when(solrQueryBuilder.solrQueryToFetchBibDetails(Mockito.anyList(),Mockito.anyList(),Mockito.anyString())).thenReturn(solrQuery);
         SolrClient solrClient=PowerMockito.mock(SolrClient.class);
         PowerMockito.when(solrTemplate.getSolrClient()).thenReturn(solrClient);
         QueryResponse queryResponse=Mockito.mock(QueryResponse.class);
-        Mockito.when(solrClient.query(Mockito.any())).thenReturn(queryResponse);
+        Mockito.doReturn(queryResponse).when(solrClient).query(solrQuery, SolrRequest.METHOD.POST);
         SolrDocumentList solrDocumentList = getSolrDocumentList();
         Mockito.when(queryResponse.getResults()).thenReturn(solrDocumentList);
         Set<Integer> bibIdList=new HashSet<>();

@@ -20,8 +20,10 @@ import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.ArgumentMatchers.*;
 import static org.recap.ScsbConstants.*;
 import static org.recap.ScsbConstants.MATCHING_COUNTER_UPDATED_OPEN;
+import static org.recap.matchingalgorithm.MatchingCounter.updateCGDCounter;
 
 public class MatchingAlgorithmCGDProcessorUT extends BaseTestCaseUT {
 
@@ -85,7 +87,7 @@ public class MatchingAlgorithmCGDProcessorUT extends BaseTestCaseUT {
         ReflectionTestUtils.setField(matchingAlgorithmCGDProcessor,"matchingType",matchingType);
         Map<Integer, ItemEntity> itemEntityMap = getIntegerItemEntityMap();
         Mockito.when(institutionEntity.getInstitutionCode()).thenReturn("PUL");
-        Mockito.when(institutionDetailsRepository.findById(Mockito.any())).thenReturn(Optional.of(institutionEntity));
+        Mockito.when(institutionDetailsRepository.findById(any())).thenReturn(Optional.of(institutionEntity));
         matchingAlgorithmCGDProcessor.updateCGDProcess(itemEntityMap);
         assertNotNull(itemEntityMap);
     }
@@ -484,4 +486,50 @@ public class MatchingAlgorithmCGDProcessorUT extends BaseTestCaseUT {
         itemEntityMap.put(3,getItemEntity(3));
         return itemEntityMap;
     }
+
+    @Test
+   public void  findItemToBeSharedBasedOnCounter() throws Exception {
+            Map<String, Map<String, Integer>> institutionCounterMap = new HashMap<>();
+            Map<String, Integer> institutionCounterMap1 = new HashMap<>();
+            institutionCounterMap1.put("PUL", 1);
+            institutionCounterMap1.put("test1", 2);
+            institutionCounterMap.put("test", institutionCounterMap1);
+            List<Integer> integers = new ArrayList<>();
+            integers.add(1);
+            integers.add(2);
+            List<Integer> integers1 = new ArrayList<>();
+            integers1.add(1);
+            integers1.add(2);
+        InstitutionEntity institutionEntity = new InstitutionEntity();
+        institutionEntity.setInstitutionCode("PUL");
+        institutionEntity.setId(1);
+        InstitutionEntity institutionEntity1 = new InstitutionEntity();
+        institutionEntity1.setInstitutionCode("NYPL");
+        institutionEntity1.setId(3);
+            Map<Integer, ItemEntity> itemEntityMap = new HashMap<>();
+            ItemEntity itemEntity = new ItemEntity();
+            itemEntity.setBarcode("12345");
+            itemEntity.setCgdProtection(true);
+            itemEntityMap.put(1, itemEntity);
+            Map<Integer, List<ItemEntity>> institutionMap = new HashMap<>();
+            List<ItemEntity> itemEntities = new ArrayList<>();
+            ItemEntity itemEntity1 = new ItemEntity();
+            itemEntity1.setInstitutionEntity(institutionEntity);
+            itemEntity1.setBarcode("12345");
+            itemEntity1.setCgdProtection(true);
+            itemEntity1.setCgdChangeLog("test");
+            itemEntities.add(itemEntity1);
+            institutionMap.put(1, itemEntities);
+            ItemEntity itemEntity2 = new ItemEntity();
+            itemEntity2.setBarcode("12345");
+            itemEntity2.setCgdProtection(true);
+            itemEntity2.setCgdChangeLog("test");
+            itemEntity2.setInstitutionEntity(institutionEntity);
+            itemEntities.add(itemEntity2);
+            institutionMap.put(2, new ArrayList<>());
+            Mockito.when(institutionDetailsRepository.findById(1)).thenReturn(Optional.of(institutionEntity));
+            Mockito.when(institutionDetailsRepository.findById(2)).thenReturn(Optional.of(institutionEntity1));
+            ReflectionTestUtils.setField(matchingAlgorithmCGDProcessor, "matchingType", "InitialMatchingAlgorithm");
+            ReflectionTestUtils.invokeMethod(matchingAlgorithmCGDProcessor, "findItemToBeSharedBasedOnCounter", itemEntityMap, institutionMap);
+        }
 }

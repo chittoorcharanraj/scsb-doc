@@ -1,6 +1,7 @@
 package org.recap.util;
 
 import org.apache.solr.client.solrj.SolrQuery;
+import org.apache.xmlbeans.impl.xb.xsdschema.Public;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -12,6 +13,7 @@ import org.recap.ScsbConstants;
 import org.recap.model.jpa.MatchingMatchPointsEntity;
 import org.recap.model.search.SearchRecordsRequest;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -98,8 +100,19 @@ public class SolrQueryBuilderUT extends BaseTestCaseUT {
     }
 
     @Test
+    public void fetchBibsForCGDProcess() throws Exception
+    {
+        Date date = new Date();
+        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+        String strDate= formatter.format(date);
+                boolean b = true;
+                solrQueryBuilder.fetchBibsForCGDProcess(strDate,b);
+    }
+
+
+    @Test
     public void fetchCreatedOrUpdatedBibs(){
-        String fetchCreatedOrUpdatedBibs = solrQueryBuilder.fetchBibsForGroupingProcess("2016-10-21T14:30Z TO NOW",Boolean.FALSE);
+        String fetchCreatedOrUpdatedBibs = solrQueryBuilder.fetchBibsForGroupingProcess("2016-10-21T14:30Z TO NOW",Boolean.TRUE);
         assertNotNull(fetchCreatedOrUpdatedBibs);
     }
 
@@ -254,5 +267,17 @@ public class SolrQueryBuilderUT extends BaseTestCaseUT {
         assertNotNull(solrQuery);
         assertTrue(solrQuery.contains("123456"));
     }
+
+    @Test
+  public void  buildQueryTitleMatchedReport() throws  Exception
+    {
+        String date = "2016-10-21T14:30Z TO NOW";
+        String owningInst = "PUL";
+        List<String> cgds = new ArrayList<>();
+        cgds.add("OPEN");
+        String matchingIdentifier = "TEST";
+        String match = "Matched";
+        solrQueryBuilder.buildQueryTitleMatchedReport(date,owningInst,cgds,matchingIdentifier,match);
+    }        
 
 }

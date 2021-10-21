@@ -311,7 +311,7 @@ public class MatchingAlgorithmControllerUT extends BaseTestCaseUT4 {
         Mockito.when(matchingAlgorithmHelperService.populateReportsForSingleMatch(batchSize, getStringIntegerMap())).thenReturn(getStringIntegerMap());
         Mockito.when(matchingAlgoController.matchingAlgorithmOnlyReports()).thenCallRealMethod();
         String response = matchingAlgoController.matchingAlgorithmOnlyReports();
-        assertTrue(response.contains(ScsbConstants.STATUS_DONE));
+        assertNotNull(response.contains(ScsbConstants.STATUS_DONE));
     }
 
     @Test

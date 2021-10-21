@@ -65,9 +65,6 @@ public class MatchingAlgorithmUtilUT extends BaseTestCaseUT4 {
     @InjectMocks
     MatchingAlgorithmUtil mockMatchingAlgorithmUtil;
 
-
-
-
     @Mock
     private SolrQueryBuilder solrQueryBuilder;
 
@@ -168,11 +165,12 @@ public class MatchingAlgorithmUtilUT extends BaseTestCaseUT4 {
         bibItemMap.put(1,bibid);
         BibliographicEntity bibliographicEntity = new BibliographicEntity();
         bibliographicEntity.setId(1);
-        bibliographicEntity.setMatchScore(1);
+        bibliographicEntity.setMatchScore(2);
         mockMatchingAlgorithmUtil.indexBibs(bibIds);
         mockMatchingAlgorithmUtil.removeMatchingIdsInDB();
         Map<Boolean,List<BibliographicEntity>> partionedByMatchingIdentity=new HashMap<>();
         List<BibliographicEntity> bibliographicEntities=new ArrayList<>();
+        bibliographicEntity.setAnamolyFlag(false);
         bibliographicEntities.add(bibliographicEntity);
         partionedByMatchingIdentity.put(false,bibliographicEntities);
         ReflectionTestUtils.invokeMethod(mockMatchingAlgorithmUtil,"groupCGDForExistingEntries",bibItemMap,partionedByMatchingIdentity,"matchingIdentity");
@@ -341,9 +339,9 @@ public class MatchingAlgorithmUtilUT extends BaseTestCaseUT4 {
 
     private Map<String, Integer> getStringIntegerMap() {
         Map<String, Integer> matchingAlgoMap = new HashMap<>();
-        matchingAlgoMap.put("pulMatchingCount", 1);
-        matchingAlgoMap.put("culMatchingCount", 2);
-        matchingAlgoMap.put("nyplMatchingCount", 3);
+        matchingAlgoMap.put("PUL", 1);
+        matchingAlgoMap.put("CUL", 2);
+        matchingAlgoMap.put("NYPL", 3);
         return matchingAlgoMap;
     }
 
@@ -430,7 +428,8 @@ public class MatchingAlgorithmUtilUT extends BaseTestCaseUT4 {
    @Test
     public  void updateBibsForMatchingIdentifier() throws  Exception
    {
-
+       Set<String> matchingIdentities  = new HashSet<>();
+       matchingIdentities.add("title");
        List<BibliographicEntity> bibliographicEntityList = new ArrayList<>();
        BibliographicEntity bibliographicEntity = new BibliographicEntity();
        bibliographicEntity.setMatchScore(1);
@@ -463,7 +462,7 @@ public class MatchingAlgorithmUtilUT extends BaseTestCaseUT4 {
        List<BibliographicEntity> bibliographicEntityList = new ArrayList<>();
        BibliographicEntity bibliographicEntity = new BibliographicEntity();
        bibliographicEntity.setId(1);
-       bibliographicEntity.setMatchScore(1);
+       bibliographicEntity.setMatchScore(2);
        bibliographicEntity.setMatchingIdentity("PUL");
        bibliographicEntity.setAnamolyFlag(true);
        bibliographicEntityList.add(0,bibliographicEntity);
@@ -481,17 +480,19 @@ public class MatchingAlgorithmUtilUT extends BaseTestCaseUT4 {
    {
        Set<String> matchingIdentities = new HashSet<>();
        matchingIdentities.add("test");
+       matchingIdentities.add("sample");
+       matchingIdentities.add("data");
        List<BibliographicEntity> bibliographicEntityList = new ArrayList<>();
        BibliographicEntity bibliographicEntity = new BibliographicEntity();
        bibliographicEntity.setId(1);
-       bibliographicEntity.setMatchScore(1);
+       bibliographicEntity.setMatchScore(2);
        bibliographicEntity.setMatchingIdentity("PUL");
        bibliographicEntity.setAnamolyFlag(true);
        bibliographicEntityList.add(0,bibliographicEntity);
        Map<Integer, BibItem> bibItemMap = new HashMap<>();
        BibItem bibItem = new BibItem();
        bibItem.setBibId(1);
-       bibItem.setMatchScore(1);
+       bibItem.setMatchScore(2);
        bibItem.setMaterialType("test");
        bibItemMap.put(1,bibItem);
        Integer matchscore = 1;
@@ -513,5 +514,32 @@ public class MatchingAlgorithmUtilUT extends BaseTestCaseUT4 {
        partionedByMatchingIdentity.put(true,Arrays.asList(bibliographicEntity));
        ReflectionTestUtils.invokeMethod(mockMatchingAlgorithmUtil,"initialMatchingroupBibsForNewEntries",matchScore,matchingIdentity,partionedByMatchingIdentity);
    }
+
+   @Test
+    public void groupCGDForNewEntries() throws  Exception
+   {
+       InstitutionEntity institutionEntity = new InstitutionEntity();
+       institutionEntity.setInstitutionCode("PUL");
+       institutionEntity.setInstitutionCode("CUL");
+       Map<Integer, BibItem> bibItemMap = new HashMap<>();
+       BibItem bibItem = new BibItem();
+       bibItem.setBibId(2);
+       bibItem.setId("1");
+       bibItem.setMatchScore(2);
+       bibItemMap.put(1,bibItem);
+       String matchingIdentity = "test";
+       Map<Boolean, List<BibliographicEntity>> partionedByMatchingIdentity= new HashMap<>();
+       List<BibliographicEntity> bibliographicEntities = new ArrayList<>();
+       BibliographicEntity bibliographicEntity = new BibliographicEntity();
+       bibliographicEntity.setId(1);
+       bibliographicEntity.setMatchScore(1);
+       bibliographicEntity.setMatchingIdentity("test");
+       bibliographicEntity.setAnamolyFlag(true);
+       bibliographicEntity.setInstitutionEntity(institutionEntity);
+       bibliographicEntities.add(0,bibliographicEntity);
+       partionedByMatchingIdentity.put(true,bibliographicEntities);
+       ReflectionTestUtils.invokeMethod(mockMatchingAlgorithmUtil,"groupCGDForNewEntries",bibItemMap,matchingIdentity,partionedByMatchingIdentity);
+   }
+
 
 }
