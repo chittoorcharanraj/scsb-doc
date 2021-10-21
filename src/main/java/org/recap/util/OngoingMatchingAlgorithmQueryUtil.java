@@ -69,7 +69,7 @@ public class OngoingMatchingAlgorithmQueryUtil {
             log.info("From Date : {}", solrIndexRequest.getFromDate());
             query = solrQueryBuilder.getQueryForOngoingMatchingBasedOnDateForGroupingOrCgdUpdateProcess(getFormattedDateString(getFormattedDate(solrIndexRequest.getFromDate())), includeMaQualifier, isCgdProcess);
         } else if (matchBy.equalsIgnoreCase(ScsbConstants.DATE_RANGE)) {
-            log.info("From Date : {}, To Date : {}", solrIndexRequest.getFromDate(), solrIndexRequest.getToDate());
+            log.info("From Date : {}, To Date : {}", solrIndexRequest.getDateFrom(), solrIndexRequest.getDateTo());
             query = solrQueryBuilder.getQueryForOngoingMatchingBasedOnDateRangeForGroupingOrCgdUpdateProcess(getFormattedDateString(getFormattedDateFrom(solrIndexRequest.getDateFrom())), getFormattedDateString(getFormattedDateTo(solrIndexRequest.getDateTo())), includeMaQualifier, isCgdProcess);
         } else if (matchBy.equalsIgnoreCase(ScsbConstants.BIB_ID_LIST)) {
             query = solrQueryBuilder.getQueryForOngoingMatchingBasedOnBibIdsForGroupingOrCgdUpdateProcess(solrIndexRequest.getBibIds(), includeMaQualifier, isCgdProcess);
@@ -77,6 +77,7 @@ public class OngoingMatchingAlgorithmQueryUtil {
             log.info("From Bib Id : {}, To Bib Id : {}", solrIndexRequest.getFromBibId(), solrIndexRequest.getToBibId());
             query = solrQueryBuilder.getQueryForOngoingMatchingBasedOnBibIdRangeForGroupingOrCgdUpdateProcess(solrIndexRequest.getFromBibId(), solrIndexRequest.getToBibId(), includeMaQualifier, isCgdProcess);
         }
+        log.info("CgdProcess - {} Query - {}", isCgdProcess, query);
         return query;
     }
 
