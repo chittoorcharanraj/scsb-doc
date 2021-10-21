@@ -42,41 +42,7 @@ public class OngoingMatchingAlgorithmQueryUtil {
      * @return the solr document list
      */
     public String prepareQueryForOngoingMatchingCgdUpdateProcessBasedOnCriteria(SolrIndexRequest solrIndexRequest) throws Exception {
-        String query = null;
-        String matchBy = solrIndexRequest.getMatchBy();
-        boolean includeMaQualifier = solrIndexRequest.isIncludeMaQualifier();
-        if (StringUtils.isBlank(matchBy) && !includeMaQualifier) {
-            query = solrQueryBuilder.getQueryForOngoingMatchingForCgdUpdateProcess();
-        } else if (StringUtils.isBlank(matchBy) && includeMaQualifier) {
-            query = solrQueryBuilder.getQueryForOngoingMatchingForCgdUpdateProcessWithMaQualifier();
-        } else if (matchBy.equalsIgnoreCase(ScsbConstants.FROM_DATE) && !includeMaQualifier) {
-            log.info("From Date : {}", solrIndexRequest.getFromDate());
-            query = solrQueryBuilder.getQueryForOngoingMatchingBasedOnDateForCgdUpdateProcess(getFormattedDateString(getFormattedDate(solrIndexRequest.getFromDate())));
-        } else if (matchBy.equalsIgnoreCase(ScsbConstants.FROM_DATE) && includeMaQualifier) {
-            log.info("From Date : {}", solrIndexRequest.getFromDate());
-            query = solrQueryBuilder.getQueryForOngoingMatchingBasedOnDateForCgdUpdateProcessWithMaQualifier(getFormattedDateString(getFormattedDate(solrIndexRequest.getFromDate())));
-        } else if (matchBy.equalsIgnoreCase(ScsbConstants.DATE_RANGE) && !includeMaQualifier) {
-            log.info("From Date : {}, To Date : {}", solrIndexRequest.getFromDate(), solrIndexRequest.getToDate());
-            query = solrQueryBuilder.getQueryForOngoingMatchingBasedOnDateRangeForCgdUpdateProcess(getFormattedDateString(getFormattedDateFrom(solrIndexRequest.getDateFrom())), getFormattedDateString(getFormattedDateFrom(solrIndexRequest.getDateTo())));
-        } else if (matchBy.equalsIgnoreCase(ScsbConstants.DATE_RANGE) && includeMaQualifier) {
-            log.info("From Date : {}, To Date : {}", solrIndexRequest.getFromDate(), solrIndexRequest.getToDate());
-            query = solrQueryBuilder.getQueryForOngoingMatchingBasedOnDateRangeForCgdUpdateProcessWithMaQualifier(getFormattedDateString(getFormattedDateFrom(solrIndexRequest.getDateFrom())), getFormattedDateString(getFormattedDateFrom(solrIndexRequest.getDateTo())));
-        } else if (matchBy.equalsIgnoreCase(ScsbConstants.BIB_ID_LIST) && !includeMaQualifier) {
-            query = solrQueryBuilder.getQueryForOngoingMatchingBasedOnBibIdsForCgdUpdateProcess(solrIndexRequest.getBibIds());
-        } else if (matchBy.equalsIgnoreCase(ScsbConstants.BIB_ID_LIST) && includeMaQualifier) {
-            query = solrQueryBuilder.getQueryForOngoingMatchingBasedOnBibIdsForCgdUpdateProcessWithMaQualifier(solrIndexRequest.getBibIds());
-        } else if (matchBy.equalsIgnoreCase(ScsbConstants.BIB_ID_RANGE) && !includeMaQualifier) {
-            log.info("From Bib Id : {}, To Bib Id : {}", solrIndexRequest.getFromBibId(), solrIndexRequest.getToBibId());
-            String fromBibId = solrIndexRequest.getFromBibId();
-            String toBibId = solrIndexRequest.getToBibId();
-            query = solrQueryBuilder.getQueryForOngoingMatchingBasedOnBibIdRangeForCgdUpdateProcess(fromBibId, toBibId);
-        } else if (matchBy.equalsIgnoreCase(ScsbConstants.BIB_ID_RANGE) && includeMaQualifier) {
-            log.info("From Bib Id : {}, To Bib Id : {}", solrIndexRequest.getFromBibId(), solrIndexRequest.getToBibId());
-            String fromBibId = solrIndexRequest.getFromBibId();
-            String toBibId = solrIndexRequest.getToBibId();
-            query = solrQueryBuilder.getQueryForOngoingMatchingBasedOnBibIdRangeForCgdUpdateProcessWithMaQualifier(fromBibId, toBibId);
-        }
-        return query;
+        return prepareQueryForOngoingMatchingGroupingOrCgdUpdateProcessBasedOnCriteria(solrIndexRequest, true);
     }
 
     /**
@@ -85,39 +51,31 @@ public class OngoingMatchingAlgorithmQueryUtil {
      * @return the solr document list
      */
     public String prepareQueryForOngoingMatchingGroupingProcessBasedOnCriteria(SolrIndexRequest solrIndexRequest) throws Exception {
+        return prepareQueryForOngoingMatchingGroupingOrCgdUpdateProcessBasedOnCriteria(solrIndexRequest, false);
+    }
+
+    /**
+     * This method gets query for ongoing matching for Grouping Process.
+     *
+     * @return the solr document list
+     */
+    public String prepareQueryForOngoingMatchingGroupingOrCgdUpdateProcessBasedOnCriteria(SolrIndexRequest solrIndexRequest, boolean isCgdProcess) throws Exception {
         String query = null;
         String matchBy = solrIndexRequest.getMatchBy();
         boolean includeMaQualifier = solrIndexRequest.isIncludeMaQualifier();
-        if (StringUtils.isBlank(matchBy) && !includeMaQualifier) {
-            query = solrQueryBuilder.getQueryForOngoingMatchingForGroupingProcess();
-        } else if (StringUtils.isBlank(matchBy) && includeMaQualifier) {
-            query = solrQueryBuilder.getQueryForOngoingMatchingForGroupingProcessWithMaQualifier();
-        } else if (matchBy.equalsIgnoreCase(ScsbConstants.FROM_DATE) && !includeMaQualifier) {
+        if (StringUtils.isBlank(matchBy)) {
+            query = solrQueryBuilder.getQueryForOngoingMatchingForGroupingOrCgdUpdateProcess(includeMaQualifier, isCgdProcess);
+        } else if (matchBy.equalsIgnoreCase(ScsbConstants.FROM_DATE)) {
             log.info("From Date : {}", solrIndexRequest.getFromDate());
-            query = solrQueryBuilder.getQueryForOngoingMatchingBasedOnDateForGroupingProcess(getFormattedDateString(getFormattedDate(solrIndexRequest.getFromDate())));
-        } else if (matchBy.equalsIgnoreCase(ScsbConstants.FROM_DATE) && includeMaQualifier) {
-            log.info("From Date : {}", solrIndexRequest.getFromDate());
-            query = solrQueryBuilder.getQueryForOngoingMatchingBasedOnDateForGroupingProcessWithMaQualifier(getFormattedDateString(getFormattedDate(solrIndexRequest.getFromDate())));
-        } else if (matchBy.equalsIgnoreCase(ScsbConstants.DATE_RANGE) && !includeMaQualifier) {
+            query = solrQueryBuilder.getQueryForOngoingMatchingBasedOnDateForGroupingOrCgdUpdateProcess(getFormattedDateString(getFormattedDate(solrIndexRequest.getFromDate())), includeMaQualifier, isCgdProcess);
+        } else if (matchBy.equalsIgnoreCase(ScsbConstants.DATE_RANGE)) {
             log.info("From Date : {}, To Date : {}", solrIndexRequest.getFromDate(), solrIndexRequest.getToDate());
-            query = solrQueryBuilder.getQueryForOngoingMatchingBasedOnDateRangeForGroupingProcess(getFormattedDateString(getFormattedDateFrom(solrIndexRequest.getDateFrom())), getFormattedDateString(getFormattedDateTo(solrIndexRequest.getDateTo())));
-        } else if (matchBy.equalsIgnoreCase(ScsbConstants.DATE_RANGE) && includeMaQualifier) {
-            log.info("From Date : {}, To Date : {}", solrIndexRequest.getFromDate(), solrIndexRequest.getToDate());
-            query = solrQueryBuilder.getQueryForOngoingMatchingBasedOnDateRangeForGroupingProcessWithMaQualifier(getFormattedDateString(getFormattedDateFrom(solrIndexRequest.getDateFrom())), getFormattedDateString(getFormattedDateTo(solrIndexRequest.getDateTo())));
-        } else if (matchBy.equalsIgnoreCase(ScsbConstants.BIB_ID_LIST) && !includeMaQualifier) {
-            query = solrQueryBuilder.getQueryForOngoingMatchingBasedOnBibIdsForGroupingProcess(solrIndexRequest.getBibIds());
-        } else if (matchBy.equalsIgnoreCase(ScsbConstants.BIB_ID_LIST) && includeMaQualifier) {
-            query = solrQueryBuilder.getQueryForOngoingMatchingBasedOnBibIdsForGroupingProcessWithMaQualifier(solrIndexRequest.getBibIds());
-        } else if (matchBy.equalsIgnoreCase(ScsbConstants.BIB_ID_RANGE) && !includeMaQualifier) {
+            query = solrQueryBuilder.getQueryForOngoingMatchingBasedOnDateRangeForGroupingOrCgdUpdateProcess(getFormattedDateString(getFormattedDateFrom(solrIndexRequest.getDateFrom())), getFormattedDateString(getFormattedDateTo(solrIndexRequest.getDateTo())), includeMaQualifier, isCgdProcess);
+        } else if (matchBy.equalsIgnoreCase(ScsbConstants.BIB_ID_LIST)) {
+            query = solrQueryBuilder.getQueryForOngoingMatchingBasedOnBibIdsForGroupingOrCgdUpdateProcess(solrIndexRequest.getBibIds(), includeMaQualifier, isCgdProcess);
+        } else if (matchBy.equalsIgnoreCase(ScsbConstants.BIB_ID_RANGE)) {
             log.info("From Bib Id : {}, To Bib Id : {}", solrIndexRequest.getFromBibId(), solrIndexRequest.getToBibId());
-            String fromBibId = solrIndexRequest.getFromBibId();
-            String toBibId = solrIndexRequest.getToBibId();
-            query = solrQueryBuilder.getQueryForOngoingMatchingBasedOnBibIdRangeForGroupingProcess(fromBibId, toBibId);
-        } else if (matchBy.equalsIgnoreCase(ScsbConstants.BIB_ID_RANGE) && includeMaQualifier) {
-            log.info("From Bib Id : {}, To Bib Id : {}", solrIndexRequest.getFromBibId(), solrIndexRequest.getToBibId());
-            String fromBibId = solrIndexRequest.getFromBibId();
-            String toBibId = solrIndexRequest.getToBibId();
-            query = solrQueryBuilder.getQueryForOngoingMatchingBasedOnBibIdRangeForGroupingProcessWithMaQualifier(fromBibId, toBibId);
+            query = solrQueryBuilder.getQueryForOngoingMatchingBasedOnBibIdRangeForGroupingOrCgdUpdateProcess(solrIndexRequest.getFromBibId(), solrIndexRequest.getToBibId(), includeMaQualifier, isCgdProcess);
         }
         return query;
     }

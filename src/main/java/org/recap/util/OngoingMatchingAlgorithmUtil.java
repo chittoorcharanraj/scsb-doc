@@ -160,7 +160,7 @@ public class OngoingMatchingAlgorithmUtil {
         }
         ongoingMatchingReportsService.generateTitleExceptionReport(getFromDateFromRequest(solrIndexRequest), rows);
         ongoingMatchingReportsService.generateSummaryReport(matchingSummaryReports);
-        if (solrIndexRequest.isIndexBibsForOngoingMa()) {
+        if (CollectionUtils.isNotEmpty(bibIdListToIndex) && solrIndexRequest.isIndexBibsForOngoingMa()) {
             matchingAlgorithmUtil.indexBibs(bibIdListToIndex);
         }
         ongoingMatchingStopWatch.stop();
@@ -210,10 +210,12 @@ public class OngoingMatchingAlgorithmUtil {
         if (CollectionUtils.isNotEmpty(serialMvmBibIds)) {
             bibIdListToIndex.addAll(serialMvmBibIds);
         }
-        List<Integer> bibIdListToIndexUnique = bibIdListToIndex.stream().distinct().collect(Collectors.toList());
-        matchingAlgorithmUtil.updateAnamolyFlagForBibs(bibIdListToIndexUnique);
-        if (solrIndexRequest.isIndexBibsForOngoingMa()) {
-            matchingAlgorithmUtil.indexBibs(bibIdListToIndexUnique);
+        if (CollectionUtils.isNotEmpty(bibIdListToIndex)) {
+            List<Integer> bibIdListToIndexUnique = bibIdListToIndex.stream().distinct().collect(Collectors.toList());
+            matchingAlgorithmUtil.updateAnamolyFlagForBibs(bibIdListToIndexUnique);
+            if (solrIndexRequest.isIndexBibsForOngoingMa()) {
+                matchingAlgorithmUtil.indexBibs(bibIdListToIndexUnique);
+            }
         }
         ongoingMatchingStopWatch.stop();
         return status;
