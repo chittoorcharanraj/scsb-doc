@@ -963,7 +963,8 @@ public class SolrQueryBuilder {
     public String getQueryForOngoingMatchingForGroupingOrCgdUpdateProcess(boolean includeMaQualifier, boolean isCgdProcess) {
         StringBuilder query = new StringBuilder();
         if (includeMaQualifier) {
-            query.append(prepareQueryForMaQualifier(Arrays.asList(ScsbCommonConstants.MA_QUALIFIER_2, ScsbCommonConstants.MA_QUALIFIER_3))).append(and);
+            List<Integer> maQualifiers = isCgdProcess ? Arrays.asList(ScsbCommonConstants.MA_QUALIFIER_2, ScsbCommonConstants.MA_QUALIFIER_3) : Arrays.asList(ScsbCommonConstants.MA_QUALIFIER_1, ScsbCommonConstants.MA_QUALIFIER_3);
+            query.append(prepareQueryForMaQualifier(maQualifiers)).append(and);
         }
         query.append(ScsbCommonConstants.IS_DELETED_BIB).append(":").append(ScsbConstants.FALSE)
                 .append(and).append(ScsbConstants.BIB_CATALOGING_STATUS).append(":").append(ScsbCommonConstants.COMPLETE_STATUS);
@@ -980,7 +981,8 @@ public class SolrQueryBuilder {
     public String getQueryForOngoingMatchingBasedOnDateForGroupingOrCgdUpdateProcess(String date, boolean includeMaQualifier, boolean isCgdProcess) {
         StringBuilder query = new StringBuilder();
         if (includeMaQualifier) {
-            query.append(prepareQueryForMaQualifier(Arrays.asList(ScsbCommonConstants.MA_QUALIFIER_2, ScsbCommonConstants.MA_QUALIFIER_3))).append(and);
+            List<Integer> maQualifiers = isCgdProcess ? Arrays.asList(ScsbCommonConstants.MA_QUALIFIER_2, ScsbCommonConstants.MA_QUALIFIER_3) : Arrays.asList(ScsbCommonConstants.MA_QUALIFIER_1, ScsbCommonConstants.MA_QUALIFIER_3);
+            query.append(prepareQueryForMaQualifier(maQualifiers)).append(and);
         }
         query.append("(").append(ScsbConstants.BIB_CREATED_DATE).append(":").append("[").append(date).append("]")
                 .append(or).append(ScsbConstants.BIB_LAST_UPDATED_DATE).append(":").append("[").append(date).append("]").append(")")
@@ -1000,7 +1002,8 @@ public class SolrQueryBuilder {
     public String getQueryForOngoingMatchingBasedOnDateRangeForGroupingOrCgdUpdateProcess(String fromDate, String toDate, boolean includeMaQualifier, boolean isCgdProcess) {
         StringBuilder query = new StringBuilder();
         if (includeMaQualifier) {
-            query.append(prepareQueryForMaQualifier(Arrays.asList(ScsbCommonConstants.MA_QUALIFIER_2, ScsbCommonConstants.MA_QUALIFIER_3))).append(and);
+            List<Integer> maQualifiers = isCgdProcess ? Arrays.asList(ScsbCommonConstants.MA_QUALIFIER_2, ScsbCommonConstants.MA_QUALIFIER_3) : Arrays.asList(ScsbCommonConstants.MA_QUALIFIER_1, ScsbCommonConstants.MA_QUALIFIER_3);
+            query.append(prepareQueryForMaQualifier(maQualifiers)).append(and);
         }
         query.append("(").append(ScsbConstants.BIB_CREATED_DATE).append(":").append("[").append(fromDate).append(to).append(toDate).append("]")
                 .append(or).append(ScsbConstants.BIB_LAST_UPDATED_DATE).append(":").append("[").append(fromDate).append(to).append(toDate).append("]").append(")")
@@ -1020,7 +1023,8 @@ public class SolrQueryBuilder {
         StringBuilder query = new StringBuilder();
         String[] fieldValues = bibIds.split(",");
         if (includeMaQualifier) {
-            query.append(prepareQueryForMaQualifier(Arrays.asList(ScsbCommonConstants.MA_QUALIFIER_2, ScsbCommonConstants.MA_QUALIFIER_3))).append(and);
+            List<Integer> maQualifiers = isCgdProcess ? Arrays.asList(ScsbCommonConstants.MA_QUALIFIER_2, ScsbCommonConstants.MA_QUALIFIER_3) : Arrays.asList(ScsbCommonConstants.MA_QUALIFIER_1, ScsbCommonConstants.MA_QUALIFIER_3);
+            query.append(prepareQueryForMaQualifier(maQualifiers)).append(and);
         }
         query.append(buildQueryForMatchChildReturnParent(ScsbConstants.BIB_ID, Arrays.asList(fieldValues)))
                 .append(and).append(ScsbCommonConstants.IS_DELETED_BIB).append(":").append(ScsbConstants.FALSE)
@@ -1039,7 +1043,8 @@ public class SolrQueryBuilder {
     public String getQueryForOngoingMatchingBasedOnBibIdRangeForGroupingOrCgdUpdateProcess(String fromBibId, String toBibId, boolean includeMaQualifier, boolean isCgdProcess) {
         StringBuilder query = new StringBuilder();
         if (includeMaQualifier) {
-            query.append(prepareQueryForMaQualifier(Arrays.asList(ScsbCommonConstants.MA_QUALIFIER_2, ScsbCommonConstants.MA_QUALIFIER_3))).append(and);
+            List<Integer> maQualifiers = isCgdProcess ? Arrays.asList(ScsbCommonConstants.MA_QUALIFIER_2, ScsbCommonConstants.MA_QUALIFIER_3) : Arrays.asList(ScsbCommonConstants.MA_QUALIFIER_1, ScsbCommonConstants.MA_QUALIFIER_3);
+            query.append(prepareQueryForMaQualifier(maQualifiers)).append(and);
         }
         query.append(ScsbConstants.BIB_ID).append(":").append("[").append(fromBibId).append(to).append(toBibId).append("]")
                 .append(and).append(ScsbCommonConstants.IS_DELETED_BIB).append(":").append(ScsbConstants.FALSE)
