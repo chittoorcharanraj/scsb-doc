@@ -64,8 +64,8 @@ public class OngoingMatchingAlgorithmJobRestController {
         String status = "";
         Integer rows = Integer.valueOf(batchSize);
         try {
-            status = processGroupingForOngoingMatchingAlgorithm(solrIndexRequest, rows);
             status = processCgdUpdatesForOngoingMatchingAlgorithm(solrIndexRequest, rows);
+            status = processGroupingForOngoingMatchingAlgorithm(solrIndexRequest, rows);
             if (ScsbCommonConstants.SUCCESS.equalsIgnoreCase(status)) {
                 status = matchingBibInfoDetailService.populateMatchingBibInfo(dateUtil.getFromDate(date), dateUtil.getToDate(date));
             }
