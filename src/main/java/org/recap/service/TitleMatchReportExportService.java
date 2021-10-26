@@ -98,6 +98,7 @@ public class TitleMatchReportExportService {
     }
 
     private void generateTitleMatchReport(TitleMatchedReport titleMatchedReport) throws ParseException, SolrServerException, IOException {
+        int count = (titleMatchedReport.getTitleMatch().equalsIgnoreCase(ScsbConstants.TITLE_MATCHED)) ? 1000:100;
         log.info("Title Match Export process started");
         if (new File(titleReportDir).listFiles() != null) {
             Arrays.stream(new File(titleReportDir).listFiles()).filter(file -> file.getName().contains(".xlsx")).forEach(File::delete);
@@ -109,16 +110,16 @@ public class TitleMatchReportExportService {
         String institution_name = titleMatchedReport.getOwningInst();
         int totalFiles = 0;
         int fileCount = titleMatchedReport.getTotalPageCount();
-        if (fileCount < 100) {
+        if (fileCount < count) {
             totalFiles = 1;
         } else {
-            totalFiles = Math.round(fileCount / 100);
+            totalFiles = Math.round(fileCount / count);
         }
-        int iterationCount = 100;
+        int iterationCount = count;
         try {
             for (int j = 1; j <= totalFiles; j++) {
                 if (j == totalFiles && j > 1) {
-                    iterationCount = fileCount % 100;
+                    iterationCount = fileCount % count;
                 } else if (j == 1 && totalFiles == 1) {
                     iterationCount = titleMatchedReport.getTotalPageCount();
                 }
