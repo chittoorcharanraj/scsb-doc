@@ -596,6 +596,8 @@ public class MatchingAlgorithmUtil {
             return matchingBibEntity.getIssn();
         } else if (matchCriteria.equalsIgnoreCase(ScsbCommonConstants.MATCH_POINT_FIELD_LCCN)) {
             return matchingBibEntity.getLccn();
+        } else if (matchCriteria.equalsIgnoreCase(ScsbCommonConstants.MATCH_POINT_FIELD_TITLE)) {
+            return matchingBibEntity.getTitle();
         }
         return "";
     }
@@ -1268,13 +1270,13 @@ public class MatchingAlgorithmUtil {
         matchPointsCombinationMap.put(ScsbCommonConstants.MATCH_POINT_FIELD_OCLC + "," + ScsbCommonConstants.MATCH_POINT_FIELD_ISBN, MatchScoreUtil.OCLC_ISBN_SCORE);
         matchPointsCombinationMap.put(ScsbCommonConstants.MATCH_POINT_FIELD_OCLC + "," + ScsbCommonConstants.MATCH_POINT_FIELD_ISSN, MatchScoreUtil.OCLC_ISSN_SCORE);
         matchPointsCombinationMap.put(ScsbCommonConstants.MATCH_POINT_FIELD_OCLC + "," + ScsbCommonConstants.MATCH_POINT_FIELD_LCCN, MatchScoreUtil.OCLC_LCCN_SCORE);
-        matchPointsCombinationMap.put(ScsbCommonConstants.MATCH_POINT_FIELD_OCLC + "," + ScsbCommonConstants.MATCH_POINT_FIELD_TITLE, MatchScoreUtil.OCLC_TITLE_SCORE);
+        matchPointsCombinationMap.put(ScsbCommonConstants.MATCH_POINT_FIELD_TITLE + "," + ScsbCommonConstants.MATCH_POINT_FIELD_OCLC, MatchScoreUtil.OCLC_TITLE_SCORE);
         matchPointsCombinationMap.put(ScsbCommonConstants.MATCH_POINT_FIELD_ISBN + "," + ScsbCommonConstants.MATCH_POINT_FIELD_ISSN, MatchScoreUtil.ISBN_ISSN_SCORE);
         matchPointsCombinationMap.put(ScsbCommonConstants.MATCH_POINT_FIELD_ISBN + "," + ScsbCommonConstants.MATCH_POINT_FIELD_LCCN, MatchScoreUtil.ISBN_LCCN_SCORE);
-        matchPointsCombinationMap.put(ScsbCommonConstants.MATCH_POINT_FIELD_ISBN + "," + ScsbCommonConstants.MATCH_POINT_FIELD_TITLE, MatchScoreUtil.ISBN_TITLE_SCORE);
+        matchPointsCombinationMap.put(ScsbCommonConstants.MATCH_POINT_FIELD_TITLE + "," + ScsbCommonConstants.MATCH_POINT_FIELD_ISBN, MatchScoreUtil.ISBN_TITLE_SCORE);
         matchPointsCombinationMap.put(ScsbCommonConstants.MATCH_POINT_FIELD_ISSN + "," + ScsbCommonConstants.MATCH_POINT_FIELD_LCCN, MatchScoreUtil.ISSN_LCCN_SCORE);
-        matchPointsCombinationMap.put(ScsbCommonConstants.MATCH_POINT_FIELD_ISSN + "," + ScsbCommonConstants.MATCH_POINT_FIELD_TITLE, MatchScoreUtil.ISSN_TITLE_SCORE);
-        matchPointsCombinationMap.put(ScsbCommonConstants.MATCH_POINT_FIELD_LCCN + "," + ScsbCommonConstants.MATCH_POINT_FIELD_TITLE, MatchScoreUtil.LCCN_TITLE_SCORE);
+        matchPointsCombinationMap.put(ScsbCommonConstants.MATCH_POINT_FIELD_TITLE + "," + ScsbCommonConstants.MATCH_POINT_FIELD_ISSN, MatchScoreUtil.ISSN_TITLE_SCORE);
+        matchPointsCombinationMap.put(ScsbCommonConstants.MATCH_POINT_FIELD_TITLE + "," + ScsbCommonConstants.MATCH_POINT_FIELD_LCCN, MatchScoreUtil.LCCN_TITLE_SCORE);
         return matchPointsCombinationMap;
     }
 }
