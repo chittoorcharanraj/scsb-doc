@@ -903,13 +903,9 @@ public class SolrQueryBuilder {
     }
 
     public SolrQuery buildQueryTitleMatchedReport(String date, String owningInst, List<String> cgds, String matchingIdentifier, String match) {
-        String joinQueryOnMatchingId = "";
-        if (match.equalsIgnoreCase(ScsbConstants.TITLE_MATCHED)) {
-            joinQueryOnMatchingId = joinQueryOnMatchingIdentifier;
-        }
         SolrQuery solrQuery = new SolrQuery();
-        solrQuery.setQuery(joinQueryOnMatchingId + getBibFilterQueryForTitleMatchReport(owningInst, matchingIdentifier));
-        solrQuery.setFilterQueries(joinQueryOnMatchingId + getCoreParentFilterQueryForTitleMatchReport(date, cgds));
+        solrQuery.setQuery(getBibFilterQueryForTitleMatchReport(owningInst, matchingIdentifier));
+        solrQuery.setFilterQueries(getCoreParentFilterQueryForTitleMatchReport(date, cgds));
         return solrQuery;
     }
 
@@ -927,6 +923,13 @@ public class SolrQueryBuilder {
                 and).append(ScsbConstants.ITEM_CATALOGING_STATUS).append(":").append(ScsbCommonConstants.COMPLETE_STATUS).append(
                 and).append(ScsbCommonConstants.IS_DELETED_ITEM).append(":").append(ScsbConstants.FALSE);
         return queryBuilder.toString();
+    }
+
+    StringBuilder buildQueryForTitleMatchReportPreviewAndExport(StringBuilder matchingIdentifierAppendResult) {
+        StringBuilder filterQueryForBib = new StringBuilder();
+        filterQueryForBib.append(ScsbCommonConstants.DOCTYPE).append(":").append(ScsbCommonConstants.BIB).append(
+                and).append(ScsbConstants.MATCHING_IDENTIFIER).append(":(").append(matchingIdentifierAppendResult).append(")");
+        return filterQueryForBib;
     }
 
     private String getBibFilterQueryForTitleMatchReport(String owningInst, String matchingIdentifier) {

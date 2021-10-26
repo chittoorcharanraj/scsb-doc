@@ -317,9 +317,9 @@ public class ReportGenerator {
             return titleMatchedReport;
         }
     }
-    public TitleMatchedReport getItemMatchReport(TitleMatchedReport titleMatchedReport){
+    public TitleMatchedReport getItemMatchReportPreview(TitleMatchedReport titleMatchedReport){
         try {
-            TitleMatchedReport titleMatchedReportRes= reportsServiceUtil.titleMatchReports(titleMatchedReport);
+            TitleMatchedReport titleMatchedReportRes= reportsServiceUtil.titleMatchReportsPreview(titleMatchedReport);
             titleMatchedReportRes.setExportLimit(titleExportLimit);
             titleMatchedReportRes.setReportMessage(ScsbConstants.TITLE_MATCH_REPORT_MESSAGE + s3BucketName +ScsbConstants.TITLE_MATCH_REPORT_PATH + ScsbConstants.TITLE_MATCH_REPORT_MESSAGE_APPEND);
             return titleMatchedReportRes;
