@@ -671,6 +671,7 @@ public class OngoingMatchingAlgorithmUtil {
      * @throws SolrServerException
      */
     private List<Integer> saveReportAndUpdateCGDForMultiMatch(Map<String, HashMap<Integer, BibItem>>  multiMatchedBibItemMap, List<Integer> serialMvmBibIds, Boolean isCGDProcess) throws IOException, SolrServerException {
+        calculateAndSetMatchScores(multiMatchedBibItemMap);
         MatchingAlgorithmReportEntity reportEntity = new MatchingAlgorithmReportEntity();
         reportEntity.setFileName(ScsbCommonConstants.ONGOING_MATCHING_ALGORITHM);
         reportEntity.setCreatedDate(new Date());
@@ -710,10 +711,10 @@ public class OngoingMatchingAlgorithmUtil {
             for (Map.Entry<Integer, BibItem> integerBibItemEntry : bibItemMap.entrySet()) {
                if(integerBibItemEntry.getValue().getMatchScore() != null && integerBibItemEntry.getValue().getMatchScore() > 0) {
                    Integer matchScoreNew = MatchScoreUtil.calculateMatchScore(matchScoreCal, integerBibItemEntry.getValue().getMatchScore());
-                   integerBibItemEntry.getValue().setMatchScore(matchScoreNew);
+                   //integerBibItemEntry.getValue().setMatchScore(matchScoreNew);
                }
                else {
-                  integerBibItemEntry.getValue().setMatchScore(matchScoreCal);
+                  //integerBibItemEntry.getValue().setMatchScore(matchScoreCal);
               }
             }
 
@@ -759,6 +760,46 @@ public class OngoingMatchingAlgorithmUtil {
             }
         }
         return itemIds;
+    }
+
+    private void calculateAndSetMatchScores(Map<String, HashMap<Integer, BibItem>> multiMatchedBibItemMap) {
+        if (!multiMatchedBibItemMap.isEmpty()) {
+            Map<Integer, BibItem> distinctBibItemMap = new HashMap<>();
+            for (Map.Entry<String, HashMap<Integer, BibItem>> entryMultiMatchedBibItemMap : multiMatchedBibItemMap.entrySet()) {
+                HashMap<Integer, BibItem> multiMatchCombinationBibItemMap = entryMultiMatchedBibItemMap.getValue();
+                distinctBibItemMap.putAll(multiMatchCombinationBibItemMap);
+
+            }
+            for (Map.Entry<String, HashMap<Integer, BibItem>> entryMultiMatchedBibItemMap : multiMatchedBibItemMap.entrySet()) {
+                String multiMatchCombination = entryMultiMatchedBibItemMap.getKey();
+                HashMap<Integer, BibItem> multiMatchCombinationBibItemMap = entryMultiMatchedBibItemMap.getValue();
+                String[] matchPointTokens = multiMatchCombination.split("-");
+                Integer matchScore = 0;
+                for (String matchPoint : matchPointTokens) {
+                    matchScore = MatchScoreUtil.calculateMatchScore(matchScore, MatchScoreUtil.getMatchScoreForMatchPoint(matchPoint));
+                }
+                for (Map.Entry<Integer, BibItem> entryMultiMatchCombinationBibItemMap : multiMatchCombinationBibItemMap.entrySet()) {
+                    Integer bibId = entryMultiMatchCombinationBibItemMap.getKey();
+                    BibItem bibItem = distinctBibItemMap.get(bibId);
+                    if (bibItem.getMatchScore() != null && bibItem.getMatchScore() > 0) {
+                        Integer matchScoreNew = MatchScoreUtil.calculateMatchScore(matchScore, bibItem.getMatchScore());
+                        bibItem.setMatchScore(matchScoreNew);
+                    } else {
+                        bibItem.setMatchScore(matchScore);
+                    }
+                }
+            }
+
+            for (Map.Entry<String, HashMap<Integer, BibItem>> entryMultiMatchedBibItemMap : multiMatchedBibItemMap.entrySet()) {
+                HashMap<Integer, BibItem> multiMatchCombinationBibItemMap = entryMultiMatchedBibItemMap.getValue();
+                for (Map.Entry<Integer, BibItem> entryMultiMatchCombinationBibItemMap : multiMatchCombinationBibItemMap.entrySet()) {
+                    Integer bibId = entryMultiMatchCombinationBibItemMap.getKey();
+                    BibItem bibItem = entryMultiMatchCombinationBibItemMap.getValue();
+                    BibItem distinctBibItem = distinctBibItemMap.get(bibId);
+                    bibItem.setMatchScore(distinctBibItem.getMatchScore());
+                }
+            }
+        }
     }
 
     private void checkAndAddReportEntities(List<MatchingAlgorithmReportDataEntity> reportDataEntities, Set<String> oclcNumbers, String oclcCriteria) {
