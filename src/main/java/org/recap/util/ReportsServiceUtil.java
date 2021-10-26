@@ -496,7 +496,7 @@ public class ReportsServiceUtil {
         }
         Integer fetchCount;
         if (titleMatchedReport.getTitleMatch().equals(ScsbConstants.TITLE_MATCHED)) {
-            fetchCount = 5000;
+            fetchCount = 900;
         } else {
             fetchCount = this.titleReportExportLimitPerTransaction;
         }
