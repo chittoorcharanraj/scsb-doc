@@ -181,7 +181,7 @@ public class OngoingMatchingAlgorithmUtil {
         StopWatch ongoingMatchingStopWatch = new StopWatch();
         ongoingMatchingStopWatch.start();
         String status;
-        List<Integer> serialMvmBibIds = new ArrayList<>();
+        List<Integer> matchedBibIds = new ArrayList<>();
         List<Integer> bibIdListToIndex = new ArrayList<>();
         Integer start = 0;
         int totalProcessed = 0;
@@ -197,7 +197,7 @@ public class OngoingMatchingAlgorithmUtil {
         logger.info("{} : {}/{} ", ScsbConstants.CURRENT_PAGE, 1, totalPages);
         SolrDocumentList solrDocumentList = queryResponse.getResults();
         totalProcessed = totalProcessed + solrDocumentList.size();
-        status = processOngoingMatchingAlgorithm(solrDocumentList, serialMvmBibIds, false, bibIdListToIndex);
+        status = processOngoingMatchingAlgorithm(solrDocumentList, matchedBibIds, false, bibIdListToIndex);
 
         for (int pageNum = 1; pageNum < totalPages; pageNum++) {
             logger.info("{} : {}/{} ", ScsbConstants.CURRENT_PAGE, pageNum + 1, totalPages);
@@ -205,10 +205,10 @@ public class OngoingMatchingAlgorithmUtil {
             queryResponse = ongoingMatchingAlgorithmQueryUtil.fetchDataByQuery(query, rows, start);
             solrDocumentList = queryResponse.getResults();
             totalProcessed = totalProcessed + solrDocumentList.size();
-            status = processOngoingMatchingAlgorithm(solrDocumentList, serialMvmBibIds, false, bibIdListToIndex);
+            status = processOngoingMatchingAlgorithm(solrDocumentList, matchedBibIds, false, bibIdListToIndex);
         }
-        if (CollectionUtils.isNotEmpty(serialMvmBibIds)) {
-            bibIdListToIndex.addAll(serialMvmBibIds);
+        if (CollectionUtils.isNotEmpty(matchedBibIds)) {
+            bibIdListToIndex.addAll(matchedBibIds);
         }
         if (CollectionUtils.isNotEmpty(bibIdListToIndex)) {
             List<Integer> bibIdListToIndexUnique = bibIdListToIndex.stream().distinct().collect(Collectors.toList());
