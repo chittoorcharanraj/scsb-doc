@@ -213,8 +213,7 @@ public class ReportsServiceUtilUT extends BaseTestCaseUT4 {
         ReflectionTestUtils.setField(bibSolrDocumentRepository,"commonUtil",commonUtil);
         Mockito.when(commonUtil.getBibItemFromSolrFieldNames(any(), anyList(), any())).thenCallRealMethod();
         Mockito.doCallRealMethod().when(bibSolrDocumentRepository).populateBibItem(any(), any());
-        TitleMatchedReport titleMatchCount=reportsServiceUtil.titleMatchReportsExport(titleMatchedReport);
-        assertNotNull(titleMatchCount);
+        reportsServiceUtil.titleMatchReportsExport(titleMatchedReport);
     }
    @Test
     public void titleMatchReportsExport() throws Exception {

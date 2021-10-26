@@ -165,7 +165,6 @@ public class GenerateReportController {
     @PostMapping("/title-match-report-export-s3")
     public ResponseEntity<TitleMatchedReport> titleMatchReportExportS3(@RequestBody TitleMatchedReport titleMatchedReport) throws ParseException {
         reportGenerator.getItemMatchReportExportS3(titleMatchedReport);
-        //titleMatchedReport.setMessage("Report is Generated in S3 location is: " + s3BucketName +"/"+ ScsbConstants.TITLE_MATCH_REPORT_PATH);
         return  new ResponseEntity<>(titleMatchedReport,HttpStatus.OK);
     }
 }
