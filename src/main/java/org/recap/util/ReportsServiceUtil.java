@@ -83,7 +83,7 @@ public class ReportsServiceUtil {
 
 
     @Value("${" + PropertyKeyConstants.TITLE_REPORT_LIMIT_BIBS_PER_FILE + "}")
-    private Integer titleReportExportBibsLimitPerFile;
+    private Integer titleReportExportLimitPerTransaction;
 
 
 
@@ -448,24 +448,109 @@ public class ReportsServiceUtil {
         return titleMatchedReport;
     }
 
-    public TitleMatchedReport titleMatchReports(TitleMatchedReport titleMatchedReport) throws Exception {
+    public TitleMatchedReport titleMatchReportsPreview(TitleMatchedReport titleMatchedReport) throws Exception {
         List<MatchingScoreTranslationEntity> msList = (List<MatchingScoreTranslationEntity>) matchingScoreTranslationRepository.findAll();
         Map<Integer, String> msMap = prepareMSMap(msList);
         List<BibItem> bibItems = new ArrayList<>();
         SolrQuery query = appendSolrQueryForTitle(titleMatchedReport);
         query.setRows(titleMatchedReport.getPageSize());
         query.setStart((titleMatchedReport.getPageNumber() * (titleMatchedReport.getPageSize())));
-        if (titleMatchedReport.getTitleMatch().equalsIgnoreCase(ScsbConstants.TITLE_MATCHED))
-            query.setSort(ScsbConstants.MATCHING_IDENTIFIER, SolrQuery.ORDER.desc);
-        else
-            query.setSort(ScsbConstants.BIB_CREATED_DATE, SolrQuery.ORDER.desc);
+        query = setSortBy(titleMatchedReport, query);
         QueryResponse queryResponse = solrTemplate.getSolrClient().query(query);
         titleMatchedReport.setTotalRecordsCount(queryResponse.getResults().getNumFound());
         int totalPagesCount = (int) Math.ceil((double) (titleMatchedReport.getTotalRecordsCount()) / (double) (titleMatchedReport.getPageSize()));
         titleMatchedReport.setTotalPageCount(totalPagesCount);
         SolrDocumentList bibSolrDocumentList = queryResponse.getResults();
         setDataForBibItems(bibSolrDocumentList,bibItems);
+        if (titleMatchedReport.getTitleMatch().equals(ScsbConstants.TITLE_MATCHED)) {
+            getTitleMatchReporforPreviewAndLocaExportAndMatched(titleMatchedReport, bibItems);
+        }
         return setBibItems(titleMatchedReport, bibItems,msMap);
+    }
+
+    public TitleMatchedReport titleMatchReportsExport(TitleMatchedReport titleMatchedReport) throws Exception {
+        return getTitleMatchedReportsExport(titleMatchedReport);
+    }
+
+    public TitleMatchedReport titleMatchReportsExportS3(TitleMatchedReport titleMatchedReport) throws Exception {
+        return titleMatchReportExportService.process(titleMatchedReport);
+    }
+
+    public TitleMatchedReport getTitleMatchedReportsExport(TitleMatchedReport titleMatchedReport) throws ParseException, SolrServerException, IOException {
+        List<BibItem> bibItems = new ArrayList<>();
+        SolrQuery query = appendSolrQueryForTitle(titleMatchedReport);
+        query.setRows(Integer.MAX_VALUE);
+        query = setSortBy(titleMatchedReport,query);
+        QueryResponse queryResponse = solrTemplate.getSolrClient().query(query);
+        SolrDocumentList bibSolrDocumentList = queryResponse.getResults();
+        setDataForBibItems(bibSolrDocumentList, bibItems);
+        if (titleMatchedReport.getTitleMatch().equals(ScsbConstants.TITLE_MATCHED)) {
+            getTitleMatchReporforPreviewAndLocaExportAndMatched(titleMatchedReport, bibItems);
+        }
+        return setBibItemsExport(titleMatchedReport, bibItems);
+    }
+
+    public TitleMatchedReport getTitleMatchedReportsExportS3(TitleMatchedReport titleMatchedReport) throws ParseException, SolrServerException, IOException {
+        if (titleMatchedReport.getTitleMatchedReports() != null && titleMatchedReport.getTitleMatchedReports().size() > 0) {
+            titleMatchedReport.getTitleMatchedReports().clear();
+        }
+        Integer fetchCount;
+        if (titleMatchedReport.getTitleMatch().equals(ScsbConstants.TITLE_MATCHED)) {
+            fetchCount = 5000;
+        } else {
+            fetchCount = this.titleReportExportLimitPerTransaction;
+        }
+        List<BibItem> bibItems = new ArrayList<>();
+        SolrQuery query = appendSolrQueryForTitle(titleMatchedReport);
+        query.setRows(fetchCount);
+        query.setStart(titleMatchedReport.getPageNumber() * fetchCount);
+        query = setSortBy(titleMatchedReport, query);
+        QueryResponse queryResponse = solrTemplate.getSolrClient().query(query);
+        titleMatchedReport.setTotalRecordsCount(queryResponse.getResults().getNumFound());
+        int totalPagesCount = (int) Math.ceil((double) (titleMatchedReport.getTotalRecordsCount()) / (double) (fetchCount));
+        titleMatchedReport.setTotalPageCount(totalPagesCount);
+        SolrDocumentList bibSolrDocumentList = queryResponse.getResults();
+        setDataForBibItems(bibSolrDocumentList, bibItems);
+        if (titleMatchedReport.getTitleMatch().equals(ScsbConstants.TITLE_MATCHED)) {
+            getTitleMatchReporforPreviewAndLocaExportAndMatched(titleMatchedReport, bibItems);
+        }
+        return setBibItemsExport(titleMatchedReport, bibItems);
+    }
+
+
+    private void getTitleMatchReporforPreviewAndLocaExportAndMatched(TitleMatchedReport titleMatchedReport, List<BibItem> bibItems) throws SolrServerException, IOException {
+        SolrQuery solrQueryPreview = new SolrQuery();
+        solrQueryPreview.setQuery(titleMatchPreviewQuery(bibItems));
+        bibItems.clear();
+        solrQueryPreview = setSortBy(titleMatchedReport,solrQueryPreview);
+        solrQueryPreview.setRows(Integer.MAX_VALUE);
+        solrQueryPreview.setStart(0);
+        QueryResponse queryResponsePreview = solrTemplate.getSolrClient().query(solrQueryPreview, SolrRequest.METHOD.POST);
+        SolrDocumentList bibSolrDocumentPreviewList = queryResponsePreview.getResults();
+        setDataForBibItems(bibSolrDocumentPreviewList, bibItems);
+    }
+
+    private SolrQuery setSortBy(TitleMatchedReport titleMatchedReport, SolrQuery query) {
+        if (titleMatchedReport.getTitleMatch().equalsIgnoreCase(ScsbConstants.TITLE_MATCHED))
+            query.setSort(ScsbConstants.MATCHING_IDENTIFIER, SolrQuery.ORDER.desc);
+        else
+            query.setSort(ScsbConstants.BIB_CREATED_DATE, SolrQuery.ORDER.desc);
+
+        return query;
+    }
+
+    private String titleMatchPreviewQuery(List<BibItem> bibItems) {
+        StringBuilder matchingIdentifierAppendResult = prepareMatchingIdentifierList(bibItems);
+        return solrQueryBuilder.buildQueryForTitleMatchReportPreviewAndExport(matchingIdentifierAppendResult).toString();
+    }
+
+    private StringBuilder prepareMatchingIdentifierList(List<BibItem> bibItems) {
+        StringBuilder matchingIdentifierAppendResult = new StringBuilder();
+        for (BibItem bibItem:
+             bibItems) {
+            matchingIdentifierAppendResult.append(bibItem.getMatchingIdentifier()+" ");
+        }
+        return matchingIdentifierAppendResult;
     }
 
     private TitleMatchedReport setBibItems(TitleMatchedReport titleMatchedReport, List<BibItem> bibItems, Map<Integer, String> msMap) {
@@ -568,46 +653,6 @@ public class ReportsServiceUtil {
         return (bibItem.getItems().size() == 1) ? bibItem.getItems().get(0).getCollectionGroupDesignation() : "";
     }
 
-    public TitleMatchedReport titleMatchReportsExport(TitleMatchedReport titleMatchedReport) throws Exception {
-            return getTitleMatchedReportsExport(titleMatchedReport);
-    }
-
-    public TitleMatchedReport titleMatchReportsExportS3(TitleMatchedReport titleMatchedReport) throws Exception {
-            return titleMatchReportExportService.process(titleMatchedReport);
-    }
-
-    public TitleMatchedReport getTitleMatchedReportsExport(TitleMatchedReport titleMatchedReport) throws ParseException, SolrServerException, IOException {
-        List<BibItem> bibItems = new ArrayList<>();
-        SolrQuery query = appendSolrQueryForTitle(titleMatchedReport);
-        query.setRows(Integer.MAX_VALUE);
-        if (titleMatchedReport.getTitleMatch().equalsIgnoreCase(ScsbConstants.TITLE_MATCHED))
-            query.setSort(ScsbConstants.MATCHING_IDENTIFIER, SolrQuery.ORDER.desc);
-        else
-            query.setSort(ScsbConstants.BIB_CREATED_DATE, SolrQuery.ORDER.desc);
-        QueryResponse queryResponse = solrTemplate.getSolrClient().query(query);
-        SolrDocumentList bibSolrDocumentList = queryResponse.getResults();
-        setDataForBibItems(bibSolrDocumentList, bibItems);
-        return setBibItemsExport(titleMatchedReport, bibItems);
-    }
-
-    public TitleMatchedReport getTitleMatchedReportsExportS3(TitleMatchedReport titleMatchedReport) throws ParseException, SolrServerException, IOException {
-        List<BibItem> bibItems = new ArrayList<>();
-        SolrQuery query = appendSolrQueryForTitle(titleMatchedReport);
-        query.setRows(titleReportExportBibsLimitPerFile);
-        query.setStart(titleMatchedReport.getPageNumber()*titleReportExportBibsLimitPerFile);
-        if (titleMatchedReport.getTitleMatch().equalsIgnoreCase(ScsbConstants.TITLE_MATCHED))
-            query.setSort(ScsbConstants.MATCHING_IDENTIFIER, SolrQuery.ORDER.desc);
-        else
-            query.setSort(ScsbConstants.BIB_CREATED_DATE, SolrQuery.ORDER.desc);
-
-        QueryResponse queryResponse = solrTemplate.getSolrClient().query(query);
-        titleMatchedReport.setTotalRecordsCount(queryResponse.getResults().getNumFound());
-        int totalPagesCount = (int) Math.ceil((double) (titleMatchedReport.getTotalRecordsCount()) / (double) (titleReportExportBibsLimitPerFile));
-        titleMatchedReport.setTotalPageCount(totalPagesCount);
-        SolrDocumentList bibSolrDocumentList = queryResponse.getResults();
-        setDataForBibItems(bibSolrDocumentList, bibItems);
-        return setBibItemsExport(titleMatchedReport, bibItems);
-    }
 
     private TitleMatchedReport setBibItemsExport(TitleMatchedReport titleMatchedReport, List<BibItem> bibItems) {
         List<MatchingScoreTranslationEntity> msList = (List<MatchingScoreTranslationEntity>) matchingScoreTranslationRepository.findAll();

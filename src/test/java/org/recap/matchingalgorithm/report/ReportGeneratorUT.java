@@ -99,8 +99,8 @@ public class ReportGeneratorUT extends BaseTestCaseUT {
 
     @Test
     public void getItemMatchReport() throws Exception {
-        Mockito.when(reportsServiceUtil.titleMatchReports(Mockito.any())).thenReturn(titleMatchedReport);
-        TitleMatchedReport titleMatchedReport1=reportGenerator.getItemMatchReport(titleMatchedReport);
+        Mockito.when(reportsServiceUtil.titleMatchReportsPreview(Mockito.any())).thenReturn(titleMatchedReport);
+        TitleMatchedReport titleMatchedReport1=reportGenerator.getItemMatchReportPreview(titleMatchedReport);
         assertEquals(titleMatchedReport,titleMatchedReport1);
     }
 

@@ -142,8 +142,8 @@ public class GenerateReportController {
      * @throws ParseException
      */
     @PostMapping("/titleMatchReport")
-    public ResponseEntity<TitleMatchedReport> titleMatchReport(@RequestBody TitleMatchedReport titleMatchedReport) throws ParseException {
-        return  new ResponseEntity<>(reportGenerator.getItemMatchReport(titleMatchedReport),HttpStatus.OK);
+    public ResponseEntity<TitleMatchedReport> titleMatchReportPreviw(@RequestBody TitleMatchedReport titleMatchedReport) throws ParseException {
+        return  new ResponseEntity<>(reportGenerator.getItemMatchReportPreview(titleMatchedReport),HttpStatus.OK);
     }
 
     /**

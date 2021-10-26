@@ -73,8 +73,8 @@ public class GenerateReportControllerUT extends BaseTestCaseUT {
     @Test
     @DisplayName("Test title Match Report")
     public void testTitleMatchReport() throws Exception{
-        Mockito.when(reportGenerator.getItemMatchReport(any())).thenCallRealMethod();
-        ResponseEntity<TitleMatchedReport> reportResponseEntity=generateReportController.titleMatchReport(titleMatchedReport);
+        Mockito.when(reportGenerator.getItemMatchReportPreview(any())).thenCallRealMethod();
+        ResponseEntity<TitleMatchedReport> reportResponseEntity=generateReportController.titleMatchReportPreviw(titleMatchedReport);
         assertNotNull(reportResponseEntity);
     }
 
