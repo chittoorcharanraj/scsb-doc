@@ -330,26 +330,77 @@ function getInstitutions(selectId) {
         });
 }
 function showOngoingMatchFromDate(){
-    $("#OngoingMatchFromDateView").show();
-    $("#OngoingMatchBibIdRangeView").hide();
-    $("#OngoingMatchBibIdListView").hide();
-    $("#OngoingMatchDateRangeView").hide();
+    if ($("#ongoingMatchFromDate").is(":checked")) {
+        $("#OngoingMatchFromDateView").show();
+        $("#OngoingMatchBibIdRangeView").hide();
+        $("#OngoingMatchBibIdListView").hide();
+        $("#OngoingMatchDateRangeView").hide();
+
+        $('#ongoingMatchSubmit').hide();
+        $('#ongoingMatchBibIdList').prop('checked', false);
+        $('#ongoingMatchBibIdRange').prop('checked', false);
+        $('#ongoingMatchDateRange').prop('checked', false);
+    } else {
+        $('#ongoingMatchSubmit').show();
+        $("#OngoingMatchFromDateView").hide();
+    }
 }
 function showOngoingMatchBibIdRange(){
-    $("#OngoingMatchFromDateView").hide();
-    $("#OngoingMatchBibIdListView").hide();
-    $("#OngoingMatchDateRangeView").hide();
-    $("#OngoingMatchBibIdRangeView").show();
+    if ($("#ongoingMatchBibIdRange").is(":checked")) {
+        $("#OngoingMatchFromDateView").hide();
+        $("#OngoingMatchBibIdListView").hide();
+        $("#OngoingMatchDateRangeView").hide();
+        $("#OngoingMatchBibIdRangeView").show();
+
+        $('#ongoingMatchSubmit').hide();
+        $('#ongoingMatchFromDate').prop('checked', false);
+        $('#ongoingMatchBibIdList').prop('checked', false);
+        $('#ongoingMatchDateRange').prop('checked', false);
+    } else {
+        $('#ongoingMatchSubmit').show();
+        $("#OngoingMatchBibIdRangeView").hide();
+    }
 }
 function showOngoingMatchBibIdList(){
-    $("#OngoingMatchBibIdListView").show();
-    $("#OngoingMatchFromDateView").hide();
-    $("#OngoingMatchBibIdRangeView").hide();
-    $("#OngoingMatchDateRangeView").hide();
+    if ($("#ongoingMatchBibIdList").is(":checked")) {
+        $("#OngoingMatchBibIdListView").show();
+        $("#OngoingMatchFromDateView").hide();
+        $("#OngoingMatchBibIdRangeView").hide();
+        $("#OngoingMatchDateRangeView").hide();
+
+        $('#ongoingMatchSubmit').hide();
+        $('#ongoingMatchFromDate').prop('checked', false);
+        $('#ongoingMatchBibIdRange').prop('checked', false);
+        $('#ongoingMatchDateRange').prop('checked', false);
+    } else {
+        $('#ongoingMatchSubmit').show();
+        $("#OngoingMatchBibIdListView").hide();
+    }
 }
 function showOngoingMatchBibIdDateRange(){
-    $("#OngoingMatchDateRangeView").show();
-    $("#OngoingMatchBibIdListView").hide();
-    $("#OngoingMatchFromDateView").hide();
-    $("#OngoingMatchBibIdRangeView").hide();
+    if ($("#ongoingMatchDateRange").is(":checked")) {
+        $("#OngoingMatchDateRangeView").show();
+        $("#OngoingMatchBibIdListView").hide();
+        $("#OngoingMatchFromDateView").hide();
+        $("#OngoingMatchBibIdRangeView").hide();
+
+        $('#ongoingMatchSubmit').hide();
+        $('#ongoingMatchFromDate').prop('checked', false);
+        $('#ongoingMatchBibIdList').prop('checked', false);
+        $('#ongoingMatchBibIdRange').prop('checked', false);
+    } else {
+        $('#ongoingMatchSubmit').show();
+        $("#OngoingMatchDateRangeView").hide();
+    }
+}
+
+function showMaProcessType() {
+    var criteria = $('#jobType').val();
+    if (criteria === 'ongoingMatchingAlgorithmJob') {
+        $('#maProcessTypeDiv').show();
+        $('#maQualifierDiv').show();
+    } else {
+        $('#maProcessTypeDiv').hide();
+        $('#maQualifierDiv').hide();
+    }
 }

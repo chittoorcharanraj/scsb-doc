@@ -129,12 +129,8 @@ public class SolrIndexService {
         bibJSONUtil.setNonHoldingInstitutions(nonHoldingInstitutionList);
         SolrInputDocument solrInputDocument = bibJSONUtil.generateBibAndItemsForIndex(bibliographicEntity, getSolrTemplate(), getBibliographicDetailsRepository(), getHoldingsDetailsRepository());
         if (solrInputDocument !=null) {
-            StopWatch stopWatchIndexDocument = new StopWatch();
-            stopWatchIndexDocument.start();
             getSolrTemplate().saveDocument(solrCore, solrInputDocument);
             getSolrTemplate().commit(solrCore);
-            stopWatchIndexDocument.stop();
-            logger.info("Time taken to index the doc--->{}sec",stopWatchIndexDocument.getTotalTimeSeconds());
         }
         return solrInputDocument;
     }

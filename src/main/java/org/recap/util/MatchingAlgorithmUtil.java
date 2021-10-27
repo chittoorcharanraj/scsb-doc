@@ -1243,17 +1243,26 @@ public class MatchingAlgorithmUtil {
     }
 
     public String indexBibs(List<Integer> bibIds) {
-        SolrIndexRequest solrIndexRequest=new SolrIndexRequest();
-        solrIndexRequest.setNumberOfThreads(5);
-        solrIndexRequest.setNumberOfDocs(1000);
-        solrIndexRequest.setCommitInterval(10000);
-        solrIndexRequest.setPartialIndexType("BibIdList");
-        logger.info("Total number of BibIds to index from queue: {}", bibIds.size());
-        String collect = bibIds.stream().map(bibId -> String.valueOf(bibId)).collect(Collectors.joining(","));
-        solrIndexRequest.setBibIds(collect);
-        String bibsIndexed = bibItemIndexExecutorService.partialIndex(solrIndexRequest);
-        logger.info("Status of Index : {}",bibsIndexed);
-        return "Success";
+        if (!bibIds.isEmpty() && bibIds.size() >= 1000) {
+            SolrIndexRequest solrIndexRequest = new SolrIndexRequest();
+            solrIndexRequest.setNumberOfThreads(1);
+            solrIndexRequest.setNumberOfDocs(1000);
+            solrIndexRequest.setCommitInterval(10000);
+            solrIndexRequest.setPartialIndexType("BibIdList");
+            logger.info("Total number of BibIds to index from queue: {}", bibIds.size());
+            String collect = bibIds.stream().map(bibId -> String.valueOf(bibId)).collect(Collectors.joining(","));
+            solrIndexRequest.setBibIds(collect);
+            String bibsIndexed = bibItemIndexExecutorService.partialIndex(solrIndexRequest);
+            logger.info("Status of Index : {}", bibsIndexed);
+            return "Success";
+        } else {
+            return bibItemIndexExecutorService.indexByBibliographicId(bibIds);
+        }
+    }
+
+    public void updateAnamolyFlagForBibs(List<Integer> bibIds) {
+        int count = bibliographicDetailsRepository.updateAnamolyFlagForBibIds(bibIds);
+        logger.info("Total number of bibs updated with Anamoly Flag: {}", count);
     }
 
     public Map<String, Integer> getMatchPointsCombinationMap() {
