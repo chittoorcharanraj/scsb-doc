@@ -180,6 +180,8 @@ public final class ScsbConstants {
 
     public static final String NUMBER_PATTERN="[^0-9]";
 
+    public static final String LCCN_PATTERN="[\\^\\#]";
+
     public static final String FILE = "file:";
     public static final String DELETE_FILE_OPTION = "?delete=true";
     public static final String FILE_NAME = "fileName";
