@@ -957,4 +957,134 @@ public class SolrQueryBuilder {
         }
         return cgdAppend;
     }
+
+    /**
+     * This query is used to Fetch created or updated bibs for Grouping or CGD Update Process with/without MA Qualifier.
+     *
+     * @return the string
+     */
+    public String getQueryForOngoingMatchingForGroupingOrCgdUpdateProcess(boolean includeMaQualifier, boolean isCgdProcess) {
+        StringBuilder query = new StringBuilder();
+        if (includeMaQualifier) {
+            List<Integer> maQualifiers = isCgdProcess ? Arrays.asList(ScsbCommonConstants.MA_QUALIFIER_2, ScsbCommonConstants.MA_QUALIFIER_3) : Arrays.asList(ScsbCommonConstants.MA_QUALIFIER_1, ScsbCommonConstants.MA_QUALIFIER_3);
+            query.append(prepareQueryForMaQualifier(maQualifiers)).append(and);
+        }
+        query.append(ScsbCommonConstants.IS_DELETED_BIB).append(":").append(ScsbConstants.FALSE)
+                .append(and).append(ScsbConstants.BIB_CATALOGING_STATUS).append(":").append(ScsbCommonConstants.COMPLETE_STATUS);
+        query.append(and).append(isCgdProcess ? getCoreParentFilterQueryForCgdProcess() : getCoreParentFilterQueryForGroupingProcess());
+        return query.toString();
+    }
+
+    /**
+     * This query is used to Fetch created or updated bibs based on the date and MA Qualifier for Grouping or CGD Update Process.
+     *
+     * @param date the date
+     * @return the string
+     */
+    public String getQueryForOngoingMatchingBasedOnDateForGroupingOrCgdUpdateProcess(String date, boolean includeMaQualifier, boolean isCgdProcess) {
+        StringBuilder query = new StringBuilder();
+        if (includeMaQualifier) {
+            List<Integer> maQualifiers = isCgdProcess ? Arrays.asList(ScsbCommonConstants.MA_QUALIFIER_2, ScsbCommonConstants.MA_QUALIFIER_3) : Arrays.asList(ScsbCommonConstants.MA_QUALIFIER_1, ScsbCommonConstants.MA_QUALIFIER_3);
+            query.append(prepareQueryForMaQualifier(maQualifiers)).append(and);
+        }
+        query.append("(").append(ScsbConstants.BIB_CREATED_DATE).append(":").append("[").append(date).append("]")
+                .append(or).append(ScsbConstants.BIB_LAST_UPDATED_DATE).append(":").append("[").append(date).append("]").append(")")
+                .append(and).append(ScsbCommonConstants.IS_DELETED_BIB).append(":").append(ScsbConstants.FALSE)
+                .append(and).append(ScsbConstants.BIB_CATALOGING_STATUS).append(":").append(ScsbCommonConstants.COMPLETE_STATUS);
+        query.append(and).append(isCgdProcess ? getCoreParentFilterQueryForCgdProcess() : getCoreParentFilterQueryForGroupingProcess());
+        return query.toString();
+    }
+
+    /**
+     * This query is used to Fetch created or updated bibs based on the date range and MA Qualifier for Grouping or CGD Update Process.
+     *
+     * @param fromDate the from date
+     * @param toDate the to date
+     * @return the string
+     */
+    public String getQueryForOngoingMatchingBasedOnDateRangeForGroupingOrCgdUpdateProcess(String fromDate, String toDate, boolean includeMaQualifier, boolean isCgdProcess) {
+        StringBuilder query = new StringBuilder();
+        if (includeMaQualifier) {
+            List<Integer> maQualifiers = isCgdProcess ? Arrays.asList(ScsbCommonConstants.MA_QUALIFIER_2, ScsbCommonConstants.MA_QUALIFIER_3) : Arrays.asList(ScsbCommonConstants.MA_QUALIFIER_1, ScsbCommonConstants.MA_QUALIFIER_3);
+            query.append(prepareQueryForMaQualifier(maQualifiers)).append(and);
+        }
+        query.append("(").append(ScsbConstants.BIB_CREATED_DATE).append(":").append("[").append(fromDate).append(to).append(toDate).append("]")
+                .append(or).append(ScsbConstants.BIB_LAST_UPDATED_DATE).append(":").append("[").append(fromDate).append(to).append(toDate).append("]").append(")")
+                .append(and).append(ScsbCommonConstants.IS_DELETED_BIB).append(":").append(ScsbConstants.FALSE)
+                .append(and).append(ScsbConstants.BIB_CATALOGING_STATUS).append(":").append(ScsbCommonConstants.COMPLETE_STATUS);
+        query.append(and).append(isCgdProcess ? getCoreParentFilterQueryForCgdProcess() : getCoreParentFilterQueryForGroupingProcess());
+        return query.toString();
+    }
+
+    /**
+     * This query is used to Fetch bibs based on Bib Ids and MA Qualifier for Grouping or CGD Update Process.
+     *
+     * @param bibIds the Bib Ids
+     * @return the string
+     */
+    public String getQueryForOngoingMatchingBasedOnBibIdsForGroupingOrCgdUpdateProcess(String bibIds, boolean includeMaQualifier, boolean isCgdProcess) {
+        StringBuilder query = new StringBuilder();
+        String[] fieldValues = bibIds.split(",");
+        if (includeMaQualifier) {
+            List<Integer> maQualifiers = isCgdProcess ? Arrays.asList(ScsbCommonConstants.MA_QUALIFIER_2, ScsbCommonConstants.MA_QUALIFIER_3) : Arrays.asList(ScsbCommonConstants.MA_QUALIFIER_1, ScsbCommonConstants.MA_QUALIFIER_3);
+            query.append(prepareQueryForMaQualifier(maQualifiers)).append(and);
+        }
+        query.append(buildQueryForMatchChildReturnParent(ScsbConstants.BIB_ID, Arrays.asList(fieldValues)))
+                .append(and).append(ScsbCommonConstants.IS_DELETED_BIB).append(":").append(ScsbConstants.FALSE)
+                .append(and).append(ScsbConstants.BIB_CATALOGING_STATUS).append(":").append(ScsbCommonConstants.COMPLETE_STATUS);
+        query.append(and).append(isCgdProcess ? getCoreParentFilterQueryForCgdProcess() : getCoreParentFilterQueryForGroupingProcess());
+        return query.toString();
+    }
+
+    /**
+     * This query is used to Fetch bibs based on Bib Id Range and MA Qualifier for Grouping or CGD Update Process.
+     *
+     * @param fromBibId the from Bib Id
+     * @param toBibId the to Bib Id
+     * @return the string
+     */
+    public String getQueryForOngoingMatchingBasedOnBibIdRangeForGroupingOrCgdUpdateProcess(String fromBibId, String toBibId, boolean includeMaQualifier, boolean isCgdProcess) {
+        StringBuilder query = new StringBuilder();
+        if (includeMaQualifier) {
+            List<Integer> maQualifiers = isCgdProcess ? Arrays.asList(ScsbCommonConstants.MA_QUALIFIER_2, ScsbCommonConstants.MA_QUALIFIER_3) : Arrays.asList(ScsbCommonConstants.MA_QUALIFIER_1, ScsbCommonConstants.MA_QUALIFIER_3);
+            query.append(prepareQueryForMaQualifier(maQualifiers)).append(and);
+        }
+        query.append(ScsbConstants.BIB_ID).append(":").append("[").append(fromBibId).append(to).append(toBibId).append("]")
+                .append(and).append(ScsbCommonConstants.IS_DELETED_BIB).append(":").append(ScsbConstants.FALSE)
+                .append(and).append(ScsbConstants.BIB_CATALOGING_STATUS).append(":").append(ScsbCommonConstants.COMPLETE_STATUS);
+        query.append(and).append(isCgdProcess ? getCoreParentFilterQueryForCgdProcess() : getCoreParentFilterQueryForGroupingProcess());
+        return query.toString();
+    }
+
+    private String getCoreParentFilterQueryForCgdProcess() {
+        StringBuilder query = new StringBuilder();
+        query.append(coreParentFilterQuery).append(ScsbCommonConstants.COLLECTION_GROUP_DESIGNATION).append(":").append(ScsbCommonConstants.SHARED_CGD)
+                .append(and).append(coreParentFilterQuery).append(ScsbCommonConstants.IS_DELETED_ITEM).append(":").append(ScsbConstants.FALSE)
+                .append(and).append(coreParentFilterQuery).append(ScsbConstants.ITEM_CATALOGING_STATUS).append(":").append(ScsbCommonConstants.COMPLETE_STATUS);
+        return query.toString();
+    }
+
+    private String getCoreParentFilterQueryForGroupingProcess() {
+        StringBuilder query = new StringBuilder();
+        query.append(coreParentFilterQuery).append(ScsbCommonConstants.IS_DELETED_ITEM).append(":").append(ScsbConstants.FALSE)
+                .append(and).append(coreParentFilterQuery).append(ScsbConstants.ITEM_CATALOGING_STATUS).append(":").append(ScsbCommonConstants.COMPLETE_STATUS);
+        return query.toString();
+    }
+
+    private String prepareQueryForMaQualifier(List<Integer> maQualifiers) {
+        StringBuilder query = new StringBuilder();
+        if (!maQualifiers.isEmpty()) {
+            query.append("(");
+            for (Iterator<Integer> iterator = maQualifiers.iterator(); iterator.hasNext(); ) {
+                Integer maQualifier = iterator.next();
+                query.append(ScsbConstants.MATCHING_QUALIFIER).append(":").append(maQualifier);
+                if (iterator.hasNext()) {
+                    query.append(or);
+                }
+            }
+            query.append(")");
+        }
+        return query.toString();
+    }
+
 }

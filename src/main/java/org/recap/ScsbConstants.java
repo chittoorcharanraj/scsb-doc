@@ -342,5 +342,9 @@ public final class ScsbConstants {
     public static final String COMPLETED = "COMPLETED";
     public static final String TITLE_REPORT_MESSAGE_IN_PROGRESS = "Title Match export is going on for other request. Please try to export after sometime.";
 
+    public static final String ONGOING_MA_BOTH_GROUPING_CGD_PROCESS = "bothGroupingAndCGDProcess";
+    public static final String ONGOING_MA_UPDATE_CGD_PROCESS = "updateCGDProcess";
+    public static final String ONGOING_MA_ONLY_GROUPING = "onlyGrouping";
+
     private ScsbConstants(){}
 }

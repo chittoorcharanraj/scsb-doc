@@ -9,7 +9,6 @@
     <link rel="stylesheet" type="text/css" th:href="@{../css/bootstrap-datetimepicker.css}"/>
     <script type="text/javascript" th:src="@{../lib/jquery.js}"></script>
     <script type="text/javascript" th:src="@{../lib/Bootstrap/js/bootstrap.js}"></script>
-    <script type="text/javascript" th:src="@{../lib/Buttons/js/buttons.colVis.js}"></script>
     <script type="text/javascript" th:src="@{../js/bootstrap-datepicker.js}"></script>
     <script type="text/javascript" th:src="@{../js/bootstrap-datetimepicker.js}"></script>
     <script type="text/javascript" th:src="@{../js/solrIndexer.js}"></script>
@@ -475,40 +474,73 @@
                                                     <div class="form-group">
                                                         <label for="jobType" class="col-sm-4">Job Type</label>
                                                         <div class="col-sm-4">
-                                                            <select id="jobType"
-                                                                    class="form-control" th:field="*{processType}">
+                                                            <select id="jobType" style="width: 280px;"
+                                                                    class="form-control" th:field="*{processType}" th:onchange="'javascript:showMaProcessType()'">
                                                                 <option value="ongoingMatchingAlgorithmJob">Ongoing Matching Algorithm Job</option>
                                                                 <option value="populateDataForDataDumpJob">Populate Data For DataDump Job</option>
                                                             </select>
                                                         </div>
                                                     </div>
 
-                                                    <div class="form-group" style="padding-left: 40px;">
-                                                        <label for="ongoingMatchFromDate" accesskey="R" class="radio-inline report-hide-shadow" style="padding-right: 30px;" tabindex="0">
-                                                            <input type="radio" name="OngoingMatchFromDate"
+                                                    <div class="form-group" id="maProcessTypeDiv">
+                                                        <label for="maProcessType" class="col-sm-4">Process Type</label>
+                                                        <div class="col-sm-4">
+                                                            <select id="maProcessType" style="width: 280px;"
+                                                                    class="form-control" th:field="*{maProcessType}">
+                                                                <option value="bothGroupingAndCGDProcess">Both Grouping and CGD Process</option>
+                                                                <option value="updateCGDProcess">Update CGD Process</option>
+                                                                <option value="onlyGrouping">Group Bibs</option>
+                                                            </select>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="form-group">
+                                                        <div class="col-sm-7">
+                                                            <label for="includeMaQualifier">Include Only MA Qualified Records</label>&nbsp;&nbsp;
+                                                            <input type="checkbox" id="includeMaQualifier" name="includeMaQualifierName" th:field="*{includeMaQualifier}"/>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="form-group">
+                                                        <div class="col-sm-7">
+                                                            <label for="indexBibsOngoingMa">Index Bibs</label>&nbsp;&nbsp;
+                                                            <input type="checkbox" id="indexBibsOngoingMa" name="indexBibsOngoingMaName" th:field="*{indexBibsForOngoingMa}"/>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="form-group">
+                                                        <label for="ongoingMatchFromDate" accesskey="R" class="radio-inline report-hide-shadow" style="padding-right: 15px;" tabindex="0">
+                                                            <input type="checkbox" name="OngoingMatchFromDate"
                                                                    id="ongoingMatchFromDate" value="FromDate"
                                                                    onclick="showOngoingMatchFromDate()" th:field="*{matchBy}"/>
                                                             Date From
                                                         </label>
-                                                        <label for="ongoingMatchBibIdList" accesskey="C" class="radio-inline report-hide-shadow" style="padding-right: 30px;" tabindex="0">
-                                                            <input type="radio" name="OngoingMatchBibIdList"
+                                                        <label for="ongoingMatchBibIdList" accesskey="C" class="radio-inline report-hide-shadow" style="padding-right: 15px;" tabindex="0">
+                                                            <input type="checkbox" name="OngoingMatchBibIdList"
                                                                    id="ongoingMatchBibIdList" value="BibIdList"
                                                                    onclick="showOngoingMatchBibIdList()" th:field="*{matchBy}"/>
                                                             Bib Id List
                                                         </label>
-                                                        <label for="ongoingMatchBibIdRange" accesskey="A" class="radio-inline report-hide-shadow" style="padding-right: 30px;" tabindex="0">
-                                                            <input type="radio" name="OngoingMatchBibIdRange"
+                                                        <label for="ongoingMatchBibIdRange" accesskey="A" class="radio-inline report-hide-shadow" style="padding-right: 15px;" tabindex="0">
+                                                            <input type="checkbox" name="OngoingMatchBibIdRange"
                                                                    id="ongoingMatchBibIdRange" value="BibIdRange"
                                                                    onclick="showOngoingMatchBibIdRange()" th:field="*{matchBy}"/>
                                                             Bib Id Range
                                                         </label>
-                                                        <label for="ongoingMatchDateRange" accesskey="D" class="radio-inline report-hide-shadow" style="padding-right: 30px" tabindex="0">
-                                                            <input type="radio" name="OngoingMatchDateRange"
+                                                        <label for="ongoingMatchDateRange" accesskey="D" class="radio-inline report-hide-shadow" style="padding-right: 15px" tabindex="0">
+                                                            <input type="checkbox" name="OngoingMatchDateRange"
                                                                    id="ongoingMatchDateRange"
                                                                    value="DateRange"
                                                                    onclick="showOngoingMatchBibIdDateRange()" th:field="*{matchBy}"/>
-                                                            Bib Id Date Range
+                                                            Bib Date Range
                                                         </label>
+                                                    </div>
+
+                                                    <div style="margin-top: 30px; padding-left: 200px;">
+                                                        <button class="btn btn-info active"
+                                                                id="ongoingMatchSubmit"
+                                                                type="submit"> Submit
+                                                        </button>
                                                     </div>
 
                                                     <div>
