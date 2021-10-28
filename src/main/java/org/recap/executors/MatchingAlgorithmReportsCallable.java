@@ -89,9 +89,9 @@ public class MatchingAlgorithmReportsCallable implements Callable<Map<String, In
                 StringBuilder matchPoints2 = new StringBuilder();
                 matchPoint1Set.add(matchPoint);
                 Set<Integer> bibIds = matchPoint1AndBibIdMap.get(matchPoint);
-                //Set<Integer> notMatchedBibIds = matchingAlgorithmUtil.verifyMatchingCombinationValuesForMultiMatchBibs(bibIds, bibEntityMap, matchPoint1, matchPoint2);
-                //Set<Integer> matchedBibIds = new HashSet<>(bibIds);
-                //matchedBibIds.removeAll(notMatchedBibIds);
+                Set<Integer> notMatchedBibIds = matchingAlgorithmUtil.verifyMatchingCombinationValuesForMultiMatchBibs(bibIds, bibEntityMap, matchPoint1, matchPoint2);
+                Set<Integer> matchedBibIds = new HashSet<>(bibIds);
+                matchedBibIds.removeAll(notMatchedBibIds);
                 Set<Integer> tempBibIds = new HashSet<>(bibIds);
                 if (!bibIds.isEmpty()) {
                     for (Integer bibId : bibIds) {
