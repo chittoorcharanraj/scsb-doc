@@ -89,7 +89,7 @@ public class TitleMatchReportExportService {
                     generateTitleMatchReport(titleMatchedReport);
                 }
             });
-            titleMatchedReport.setReportMessage(ScsbConstants.TITLE_MATCH_REPORT_MESSAGE + s3BucketName +ScsbConstants.TITLE_MATCH_REPORT_PATH + ScsbConstants.TITLE_MATCH_REPORT_MESSAGE_APPEND);
+            titleMatchedReport.setReportMessage(ScsbConstants.TITLE_MATCH_REPORT_MESSAGE + s3BucketName + "/" + ScsbConstants.TITLE_MATCH_REPORT_PATH + ScsbConstants.TITLE_MATCH_REPORT_MESSAGE_APPEND);
             return titleMatchedReport;
         } else {
             titleMatchedReport.setReportMessage(ScsbConstants.TITLE_REPORT_MESSAGE_IN_PROGRESS);
