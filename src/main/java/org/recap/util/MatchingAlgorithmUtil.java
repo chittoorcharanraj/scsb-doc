@@ -325,7 +325,6 @@ public class MatchingAlgorithmUtil {
      * @return boolean
      */
     private boolean verifyMatchingCombinationValuesForMultiMatchBib(Set<Integer> bibIds, Integer bibId, Map<Integer, MatchingBibEntity> bibEntityMap, String matchPoint1, String matchPoint2, Set<Integer> notMatchedBibIds) {
-        boolean hasMatching = false;
         MatchingBibEntity matchingBibEntity = bibEntityMap.get(bibId);
 
         String matchCriteriaValue1 = getMatchCriteriaValue(matchPoint1, matchingBibEntity);
@@ -333,12 +332,6 @@ public class MatchingAlgorithmUtil {
 
         String matchCriteriaValue2 = getMatchCriteriaValue(matchPoint2, matchingBibEntity);
         List<String> matchCriteriaValue2List = Arrays.asList(matchCriteriaValue2.split(","));
-
-        if (matchPoint1.equalsIgnoreCase(ScsbCommonConstants.MATCH_POINT_FIELD_TITLE) && matchPoint2.equalsIgnoreCase(ScsbCommonConstants.MATCH_POINT_FIELD_ISSN)) {
-            logger.info("Bib Id: {}", bibId);
-            logger.info("{}: {}", matchPoint1, matchCriteriaValue1);
-            logger.info("{}: {}", matchPoint2, matchCriteriaValue2);
-        }
 
         for (Integer bibIdInner : bibIds) {
             if (bibId.intValue() != bibIdInner.intValue() && !notMatchedBibIds.contains(bibIdInner)) {
@@ -350,19 +343,13 @@ public class MatchingAlgorithmUtil {
                 String matchCriteriaValue2Inner = getMatchCriteriaValue(matchPoint2, matchingBibEntityInner);
                 List<String> matchCriteriaValue2ListInner = Arrays.asList(matchCriteriaValue2Inner.split(","));
 
-                if (matchPoint1.equalsIgnoreCase(ScsbCommonConstants.MATCH_POINT_FIELD_TITLE) && matchPoint2.equalsIgnoreCase(ScsbCommonConstants.MATCH_POINT_FIELD_ISSN)) {
-                    logger.info("Bib Id Inner: {}", bibIdInner);
-                    logger.info("Inner {}: {}", matchPoint1, matchCriteriaValue1Inner);
-                    logger.info("Inner {}: {}", matchPoint2, matchCriteriaValue2Inner);
-                }
-
-                hasMatching = CollectionUtils.containsAny(matchCriteriaValue1List, matchCriteriaValue1ListInner) && CollectionUtils.containsAny(matchCriteriaValue2List, matchCriteriaValue2ListInner);
-                if (matchPoint1.equalsIgnoreCase(ScsbCommonConstants.MATCH_POINT_FIELD_TITLE) && matchPoint2.equalsIgnoreCase(ScsbCommonConstants.MATCH_POINT_FIELD_ISSN)) {
-                    logger.info("BibId : {} Inner BibId : {} Has Matching: {}", bibId, bibIdInner, hasMatching);
+                boolean hasMatching = CollectionUtils.containsAny(matchCriteriaValue1List, matchCriteriaValue1ListInner) && CollectionUtils.containsAny(matchCriteriaValue2List, matchCriteriaValue2ListInner);
+                if (hasMatching) {
+                    return true;
                 }
             }
         }
-        return hasMatching;
+        return false;
     }
 
     /**
