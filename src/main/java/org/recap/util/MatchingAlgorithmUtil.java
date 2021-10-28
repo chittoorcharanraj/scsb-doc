@@ -674,7 +674,7 @@ public class MatchingAlgorithmUtil {
      */
     public Map<String,Integer> populateAndSaveReportEntity(Set<Integer> bibIds, Map<Integer, MatchingBibEntity> bibEntityMap, String header1, String header2, String oclcNumbers, String isbns, Map<String, Integer> institutionCounterMap, Integer matchScore) {
         MatchingAlgorithmReportEntity reportEntity = new MatchingAlgorithmReportEntity();
-        Set<String> owningInstSet = new HashSet<>();
+        List<String> owningInstAllList = new ArrayList<>();
         List<MatchingAlgorithmReportDataEntity> reportDataEntities = new ArrayList<>();
         reportEntity.setFileName(header1 + "," + header2);
         reportEntity.setCreatedDate(new Date());
@@ -689,7 +689,7 @@ public class MatchingAlgorithmUtil {
         for (Iterator<Integer> integerIterator = bibIds.iterator(); integerIterator.hasNext(); ) {
             Integer bibId = integerIterator.next();
             MatchingBibEntity matchingBibEntity = bibEntityMap.get(bibId);
-            owningInstSet.add(matchingBibEntity.getOwningInstitution());
+            owningInstAllList.add(matchingBibEntity.getOwningInstitution());
             owningInstList.add(matchingBibEntity.getOwningInstitution());
             bibIdList.add(matchingBibEntity.getBibId());
             materialTypes.add(matchingBibEntity.getMaterialType());
@@ -701,7 +701,7 @@ public class MatchingAlgorithmUtil {
         } else {
             reportEntity.setType(ScsbConstants.MATERIAL_TYPE_EXCEPTION);
         }
-        if(owningInstSet.size() > 1) {
+        if(owningInstAllList.size() > 1) {
             getReportDataEntityList(reportDataEntities, owningInstList, bibIdList, materialTypeList, owningInstBibIds,matchScore);
             owningInstList.forEach(owningInst -> institutionCounterMap.replace(owningInst, institutionCounterMap.get(owningInst) + 1));
             if(StringUtils.isNotBlank(oclcNumbers)) {
