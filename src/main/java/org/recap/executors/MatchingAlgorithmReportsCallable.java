@@ -92,9 +92,9 @@ public class MatchingAlgorithmReportsCallable implements Callable<Map<String, In
                 Set<Integer> notMatchedBibIds = matchingAlgorithmUtil.verifyMatchingCombinationValuesForMultiMatchBibs(bibIds, bibEntityMap, matchPoint1, matchPoint2);
                 Set<Integer> matchedBibIds = new HashSet<>(bibIds);
                 matchedBibIds.removeAll(notMatchedBibIds);
-                Set<Integer> tempBibIds = new HashSet<>(bibIds);
-                if (!bibIds.isEmpty()) {
-                    for (Integer bibId : bibIds) {
+                Set<Integer> tempBibIds = new HashSet<>(matchedBibIds);
+                if (!matchedBibIds.isEmpty()) {
+                    for (Integer bibId : matchedBibIds) {
                         MatchingBibEntity matchingBibEntity = bibEntityMap.get(bibId);
                         if (matchPoint1.equalsIgnoreCase(ScsbCommonConstants.MATCH_POINT_FIELD_OCLC) && matchPoint2.equalsIgnoreCase(ScsbCommonConstants.MATCH_POINT_FIELD_ISBN)) {
                             matchPoints1.append(StringUtils.isNotBlank(matchPoints1.toString()) ? "," : "").append(matchingBibEntity.getOclc());
