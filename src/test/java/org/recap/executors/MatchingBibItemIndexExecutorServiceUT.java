@@ -96,7 +96,7 @@ public class MatchingBibItemIndexExecutorServiceUT extends BaseTestCaseUT4 {
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
         ReflectionTestUtils.setField(matchingBibItemIndexExecutorService,"batchSize",batchSize);
-        ReflectionTestUtils.setField(matchingBibItemIndexExecutorService,"commitInterval",commitInterval);
+        ReflectionTestUtils.setField(matchingBibItemIndexExecutorService,"commitInterval",0);
         ReflectionTestUtils.setField(matchingBibItemIndexExecutorService,"solrCore",solrCore);
         ReflectionTestUtils.setField(matchingBibItemIndexExecutorService,"solrUrl",solrUrl);
         ReflectionTestUtils.setField(matchingBibItemIndexExecutorService,"solrRouterURI",solrRouterURI);

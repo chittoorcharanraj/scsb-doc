@@ -2,9 +2,11 @@ package org.recap.service;
 
 import org.junit.Test;
 import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.recap.BaseTestCaseUT;
 import org.recap.BaseTestCaseUT4;
 import org.recap.PropertyKeyConstants;
+import org.recap.model.queueinfo.QueueSizeInfoJson;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.test.util.ReflectionTestUtils;
 
@@ -14,6 +16,9 @@ public class ActiveMqQueuesInfoUT extends BaseTestCaseUT4 {
 
     @InjectMocks
     ActiveMqQueuesInfo activeMqQueuesInfo;
+
+    @Mock
+    QueueSizeInfoJson queueSizeInfoJson;
 
     @Value("${" + PropertyKeyConstants.ACTIVEMQ_JOLOKIA_API_URL + "}")
     private String activeMqApiUrl;
