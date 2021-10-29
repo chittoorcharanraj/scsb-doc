@@ -295,6 +295,64 @@ public class MatchingAlgorithmUtil {
     }
 
     /**
+     * This method gets unmatched bib ids for Multi-Match combination for the given criteria values.
+     *
+     * @param bibIds        bib Ids
+     * @param bibEntityMap  bib Entity Map
+     * @param matchPoint1   match Point 1
+     * @param matchPoint2   match Point 1
+     * @return unmatched bib ids
+     */
+    public Set<Integer> verifyMatchingCombinationValuesForMultiMatchBibs(Set<Integer> bibIds, Map<Integer, MatchingBibEntity> bibEntityMap, String matchPoint1, String matchPoint2) {
+        Set<Integer> notMatchedBibIds = new HashSet<>();
+        for (Integer bibId : bibIds) {
+            if (!verifyMatchingCombinationValuesForMultiMatchBib(bibIds, bibId, bibEntityMap, matchPoint1, matchPoint2, notMatchedBibIds)) {
+                notMatchedBibIds.add(bibId);
+            }
+        }
+        return notMatchedBibIds;
+    }
+
+    /**
+     * This method checks if the bib's Multi-Match combination values are matched with any other bibs
+     *
+     * @param bibIds            bib Ids
+     * @param bibId             bib Id
+     * @param bibEntityMap      bib Entity Map
+     * @param matchPoint1       match Point 1
+     * @param matchPoint2       match Point 1
+     * @param notMatchedBibIds  not Matched Bib Ids
+     * @return boolean
+     */
+    private boolean verifyMatchingCombinationValuesForMultiMatchBib(Set<Integer> bibIds, Integer bibId, Map<Integer, MatchingBibEntity> bibEntityMap, String matchPoint1, String matchPoint2, Set<Integer> notMatchedBibIds) {
+        MatchingBibEntity matchingBibEntity = bibEntityMap.get(bibId);
+
+        String matchCriteriaValue1 = getMatchCriteriaValue(matchPoint1, matchingBibEntity);
+        List<String> matchCriteriaValue1List = Arrays.asList(matchCriteriaValue1.split(","));
+
+        String matchCriteriaValue2 = getMatchCriteriaValue(matchPoint2, matchingBibEntity);
+        List<String> matchCriteriaValue2List = Arrays.asList(matchCriteriaValue2.split(","));
+
+        for (Integer bibIdInner : bibIds) {
+            if (bibId.intValue() != bibIdInner.intValue() && !notMatchedBibIds.contains(bibIdInner)) {
+                MatchingBibEntity matchingBibEntityInner = bibEntityMap.get(bibIdInner);
+
+                String matchCriteriaValue1Inner = getMatchCriteriaValue(matchPoint1, matchingBibEntityInner);
+                List<String> matchCriteriaValue1ListInner = Arrays.asList(matchCriteriaValue1Inner.split(","));
+
+                String matchCriteriaValue2Inner = getMatchCriteriaValue(matchPoint2, matchingBibEntityInner);
+                List<String> matchCriteriaValue2ListInner = Arrays.asList(matchCriteriaValue2Inner.split(","));
+
+                boolean hasMatching = CollectionUtils.containsAny(matchCriteriaValue1List, matchCriteriaValue1ListInner) && CollectionUtils.containsAny(matchCriteriaValue2List, matchCriteriaValue2ListInner);
+                if (hasMatching) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
      * This method replaces diacritics(~= accents) characters by replacing them to normal characters in title.
      *
      * @param title the title
@@ -596,6 +654,8 @@ public class MatchingAlgorithmUtil {
             return matchingBibEntity.getIssn();
         } else if (matchCriteria.equalsIgnoreCase(ScsbCommonConstants.MATCH_POINT_FIELD_LCCN)) {
             return matchingBibEntity.getLccn();
+        } else if (matchCriteria.equalsIgnoreCase(ScsbCommonConstants.MATCH_POINT_FIELD_TITLE)) {
+            return matchingBibEntity.getTitle();
         }
         return "";
     }
@@ -614,7 +674,7 @@ public class MatchingAlgorithmUtil {
      */
     public Map<String,Integer> populateAndSaveReportEntity(Set<Integer> bibIds, Map<Integer, MatchingBibEntity> bibEntityMap, String header1, String header2, String oclcNumbers, String isbns, Map<String, Integer> institutionCounterMap, Integer matchScore) {
         MatchingAlgorithmReportEntity reportEntity = new MatchingAlgorithmReportEntity();
-        Set<String> owningInstSet = new HashSet<>();
+        List<String> owningInstAllList = new ArrayList<>();
         List<MatchingAlgorithmReportDataEntity> reportDataEntities = new ArrayList<>();
         reportEntity.setFileName(header1 + "," + header2);
         reportEntity.setCreatedDate(new Date());
@@ -629,7 +689,7 @@ public class MatchingAlgorithmUtil {
         for (Iterator<Integer> integerIterator = bibIds.iterator(); integerIterator.hasNext(); ) {
             Integer bibId = integerIterator.next();
             MatchingBibEntity matchingBibEntity = bibEntityMap.get(bibId);
-            owningInstSet.add(matchingBibEntity.getOwningInstitution());
+            owningInstAllList.add(matchingBibEntity.getOwningInstitution());
             owningInstList.add(matchingBibEntity.getOwningInstitution());
             bibIdList.add(matchingBibEntity.getBibId());
             materialTypes.add(matchingBibEntity.getMaterialType());
@@ -641,7 +701,7 @@ public class MatchingAlgorithmUtil {
         } else {
             reportEntity.setType(ScsbConstants.MATERIAL_TYPE_EXCEPTION);
         }
-        if(owningInstSet.size() > 1) {
+        if(owningInstAllList.size() > 1) {
             getReportDataEntityList(reportDataEntities, owningInstList, bibIdList, materialTypeList, owningInstBibIds,matchScore);
             owningInstList.forEach(owningInst -> institutionCounterMap.replace(owningInst, institutionCounterMap.get(owningInst) + 1));
             if(StringUtils.isNotBlank(oclcNumbers)) {
@@ -1241,17 +1301,26 @@ public class MatchingAlgorithmUtil {
     }
 
     public String indexBibs(List<Integer> bibIds) {
-        SolrIndexRequest solrIndexRequest=new SolrIndexRequest();
-        solrIndexRequest.setNumberOfThreads(5);
-        solrIndexRequest.setNumberOfDocs(1000);
-        solrIndexRequest.setCommitInterval(10000);
-        solrIndexRequest.setPartialIndexType("BibIdList");
-        logger.info("Total number of BibIds to index from queue: {}", bibIds.size());
-        String collect = bibIds.stream().map(bibId -> String.valueOf(bibId)).collect(Collectors.joining(","));
-        solrIndexRequest.setBibIds(collect);
-        String bibsIndexed = bibItemIndexExecutorService.partialIndex(solrIndexRequest);
-        logger.info("Status of Index : {}",bibsIndexed);
-        return "Success";
+        if (!bibIds.isEmpty() && bibIds.size() >= 1000) {
+            SolrIndexRequest solrIndexRequest = new SolrIndexRequest();
+            solrIndexRequest.setNumberOfThreads(1);
+            solrIndexRequest.setNumberOfDocs(1000);
+            solrIndexRequest.setCommitInterval(10000);
+            solrIndexRequest.setPartialIndexType("BibIdList");
+            logger.info("Total number of BibIds to index from queue: {}", bibIds.size());
+            String collect = bibIds.stream().map(bibId -> String.valueOf(bibId)).collect(Collectors.joining(","));
+            solrIndexRequest.setBibIds(collect);
+            String bibsIndexed = bibItemIndexExecutorService.partialIndex(solrIndexRequest);
+            logger.info("Status of Index : {}", bibsIndexed);
+            return "Success";
+        } else {
+            return bibItemIndexExecutorService.indexByBibliographicId(bibIds);
+        }
+    }
+
+    public void updateAnamolyFlagForBibs(List<Integer> bibIds) {
+        int count = bibliographicDetailsRepository.updateAnamolyFlagForBibIds(bibIds);
+        logger.info("Total number of bibs updated with Anamoly Flag: {}", count);
     }
 
     public Map<String, Integer> getMatchPointsCombinationMap() {
@@ -1259,13 +1328,13 @@ public class MatchingAlgorithmUtil {
         matchPointsCombinationMap.put(ScsbCommonConstants.MATCH_POINT_FIELD_OCLC + "," + ScsbCommonConstants.MATCH_POINT_FIELD_ISBN, MatchScoreUtil.OCLC_ISBN_SCORE);
         matchPointsCombinationMap.put(ScsbCommonConstants.MATCH_POINT_FIELD_OCLC + "," + ScsbCommonConstants.MATCH_POINT_FIELD_ISSN, MatchScoreUtil.OCLC_ISSN_SCORE);
         matchPointsCombinationMap.put(ScsbCommonConstants.MATCH_POINT_FIELD_OCLC + "," + ScsbCommonConstants.MATCH_POINT_FIELD_LCCN, MatchScoreUtil.OCLC_LCCN_SCORE);
-        matchPointsCombinationMap.put(ScsbCommonConstants.MATCH_POINT_FIELD_OCLC + "," + ScsbCommonConstants.MATCH_POINT_FIELD_TITLE, MatchScoreUtil.OCLC_TITLE_SCORE);
+        matchPointsCombinationMap.put(ScsbCommonConstants.MATCH_POINT_FIELD_TITLE + "," + ScsbCommonConstants.MATCH_POINT_FIELD_OCLC, MatchScoreUtil.OCLC_TITLE_SCORE);
         matchPointsCombinationMap.put(ScsbCommonConstants.MATCH_POINT_FIELD_ISBN + "," + ScsbCommonConstants.MATCH_POINT_FIELD_ISSN, MatchScoreUtil.ISBN_ISSN_SCORE);
         matchPointsCombinationMap.put(ScsbCommonConstants.MATCH_POINT_FIELD_ISBN + "," + ScsbCommonConstants.MATCH_POINT_FIELD_LCCN, MatchScoreUtil.ISBN_LCCN_SCORE);
-        matchPointsCombinationMap.put(ScsbCommonConstants.MATCH_POINT_FIELD_ISBN + "," + ScsbCommonConstants.MATCH_POINT_FIELD_TITLE, MatchScoreUtil.ISBN_TITLE_SCORE);
+        matchPointsCombinationMap.put(ScsbCommonConstants.MATCH_POINT_FIELD_TITLE + "," + ScsbCommonConstants.MATCH_POINT_FIELD_ISBN, MatchScoreUtil.ISBN_TITLE_SCORE);
         matchPointsCombinationMap.put(ScsbCommonConstants.MATCH_POINT_FIELD_ISSN + "," + ScsbCommonConstants.MATCH_POINT_FIELD_LCCN, MatchScoreUtil.ISSN_LCCN_SCORE);
-        matchPointsCombinationMap.put(ScsbCommonConstants.MATCH_POINT_FIELD_ISSN + "," + ScsbCommonConstants.MATCH_POINT_FIELD_TITLE, MatchScoreUtil.ISSN_TITLE_SCORE);
-        matchPointsCombinationMap.put(ScsbCommonConstants.MATCH_POINT_FIELD_LCCN + "," + ScsbCommonConstants.MATCH_POINT_FIELD_TITLE, MatchScoreUtil.LCCN_TITLE_SCORE);
+        matchPointsCombinationMap.put(ScsbCommonConstants.MATCH_POINT_FIELD_TITLE + "," + ScsbCommonConstants.MATCH_POINT_FIELD_ISSN, MatchScoreUtil.ISSN_TITLE_SCORE);
+        matchPointsCombinationMap.put(ScsbCommonConstants.MATCH_POINT_FIELD_TITLE + "," + ScsbCommonConstants.MATCH_POINT_FIELD_LCCN, MatchScoreUtil.LCCN_TITLE_SCORE);
         return matchPointsCombinationMap;
     }
 }

@@ -35,20 +35,22 @@ public class OngoingMatchingAlgorithmReportGenerator {
         Predicate<String> checkForMatchPoints = p -> ScsbCommonConstants.MATCH_POINT_FIELD_OCLC.contains(p) || p.equals(ScsbCommonConstants.MATCH_POINT_FIELD_ISBN) ||
                 p.equals(ScsbCommonConstants.MATCH_POINT_FIELD_ISSN) || p.equals(ScsbCommonConstants.MATCH_POINT_FIELD_LCCN);
 
-        for (Iterator<MatchingAlgorithmReportDataEntity> iterator = reportDataEntities.iterator(); iterator.hasNext(); ) {
-            MatchingAlgorithmReportDataEntity report =  iterator.next();
-            if(checkForMatchPoints.test(report.getHeaderName())){
-                headerName = report.getHeaderName().toLowerCase();
-            }else{
-                headerName = report.getHeaderName();
-            }
-            String headerValue = report.getHeaderValue();
-            Method setterMethod = getSetterMethod(headerName);
-            if(null != setterMethod){
-                try {
-                    setterMethod.invoke(titleExceptionReport, headerValue);
-                } catch (Exception e) {
-                    logger.error(ScsbCommonConstants.LOG_ERROR,e.getMessage());
+        if (!reportDataEntities.isEmpty()) {
+            for (Iterator<MatchingAlgorithmReportDataEntity> iterator = reportDataEntities.iterator(); iterator.hasNext(); ) {
+                MatchingAlgorithmReportDataEntity report = iterator.next();
+                if (checkForMatchPoints.test(report.getHeaderName())) {
+                    headerName = report.getHeaderName().toLowerCase();
+                } else {
+                    headerName = report.getHeaderName();
+                }
+                String headerValue = report.getHeaderValue();
+                Method setterMethod = getSetterMethod(headerName);
+                if (null != setterMethod) {
+                    try {
+                        setterMethod.invoke(titleExceptionReport, headerValue);
+                    } catch (Exception e) {
+                        logger.error(ScsbCommonConstants.LOG_ERROR, e.getMessage());
+                    }
                 }
             }
         }

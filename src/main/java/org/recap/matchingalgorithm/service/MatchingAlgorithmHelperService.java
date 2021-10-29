@@ -681,7 +681,7 @@ public class MatchingAlgorithmHelperService {
         List<String> allInstitutionCodeExceptSupportInstitution = commonUtil.findAllInstitutionCodesExceptSupportInstitution();
         Map<String, Integer> institutionCounterMap = allInstitutionCodeExceptSupportInstitution.stream().collect(Collectors.toMap(Function.identity(), institution -> 0));
         populateReportsForMultiMatch(batchSize, institutionCounterMap);
-        populateReportsForSingleMatch(batchSize, institutionCounterMap);
+        //populateReportsForSingleMatch(batchSize, institutionCounterMap);
         saveMatchingSummaryCount(institutionCounterMap);
     }
 

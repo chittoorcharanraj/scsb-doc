@@ -150,7 +150,7 @@ public class ReportsServiceUtilUT extends BaseTestCaseUT4 {
         Mockito.when(matchingScoreTranslationEntity.getDecMaScore()).thenReturn(1);
         Mockito.when(matchingScoreTranslationEntity.getStringMaScore()).thenReturn("1");
         Mockito.when(matchingScoreTranslationRepository.findAll()).thenReturn(msList);
-        TitleMatchedReport titleMatchCount=reportsServiceUtil.titleMatchReports(titleMatchedReport);
+        TitleMatchedReport titleMatchCount=reportsServiceUtil.titleMatchReportsPreview(titleMatchedReport);
         assertNotNull(titleMatchCount);
     }
 
