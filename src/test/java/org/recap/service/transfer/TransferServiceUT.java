@@ -603,4 +603,11 @@ public class TransferServiceUT extends BaseTestCaseUT4 {
 
         return bibliographicEntity;
     }
+
+    @Test
+    public void TransferValidationResponse() throws Exception {
+        boolean valid = true;
+        String message = "test";
+
+    }
 }

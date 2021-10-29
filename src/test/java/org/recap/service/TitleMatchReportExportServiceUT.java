@@ -106,7 +106,7 @@ public class TitleMatchReportExportServiceUT extends BaseTestCaseUT {
     {
         TitleMatchedReport titleMatchedReport = new TitleMatchedReport();
         ReflectionTestUtils.setField(titleMatchReportExportService, "s3BucketName", "test");
-        ReflectionTestUtils.setField(titleMatchReportExportService, "titleReportStatusFileName", "BibContent.xml");
+        ReflectionTestUtils.setField(titleMatchReportExportService, "titleReportStatusFileName", "org/recap/service/deaccession/BibContent1.xml");
         try {
             titleMatchReportExportService.process(titleMatchedReport);
         } catch (Exception e) {
@@ -117,15 +117,15 @@ public class TitleMatchReportExportServiceUT extends BaseTestCaseUT {
     public void generateTitleMatchReport() throws Exception {
         TitleMatchedReport titleMatchedReport = new TitleMatchedReport();
         titleMatchedReport.setOwningInst("PUL");
-        titleMatchedReport.setTotalPageCount(1);
+        titleMatchedReport.setTotalPageCount(2);
+        titleMatchedReport.setTotalRecordsCount(1048500);
         String filename = "test";
         String institution_name = "PUL";
-        int fileCount = 1;
+        int fileCount = 2;
         Mockito.when(reportsServiceUtil.getTitleMatchedReportsExportS3(any())).thenReturn(titleMatchedReport);
         ReflectionTestUtils.setField(titleMatchReportExportService, "titleReportDir", "test");
         ReflectionTestUtils.setField(titleMatchReportExportService, "s3Client", amazonS3);
         ReflectionTestUtils.setField(titleMatchReportExportService, "s3BucketName", "test");
-
         try {
             ReflectionTestUtils.invokeMethod(titleMatchReportExportService, "generateTitleMatchReport", titleMatchedReport);
         } catch (Exception e) {
