@@ -953,13 +953,6 @@ public class OngoingMatchingAlgorithmUtil {
                 if(isMonograph) {
                     if (matchType.equalsIgnoreCase(ScsbConstants.SINGLE_MATCH)) {
                         titleVerificationForSingleMatch(reportEntity.getFileName(), titleMap, bibIdList, materialTypeList, parameterMap);
-                        bibIdList.forEach(bibId -> {
-                            BibItem bibItem = bibItemMap.get(bibId);
-                            if (bibItem != null) {
-                                Integer calculatedSingleMatchScore = MatchScoreUtil.getMatchScoreForSingleMatchAndTitle(bibItem.getMatchScore());
-                                bibItem.setMatchScore(calculatedSingleMatchScore);
-                            }
-                        });
                         groupBibsAndUpdateInDB(bibIdList, bibItemMap);
                     } else if (matchType.equalsIgnoreCase(ScsbConstants.MULTI_MATCH)) {
                         groupBibsAndUpdateInDB(bibIdList, bibItemMap);
