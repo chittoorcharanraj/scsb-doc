@@ -18,6 +18,7 @@ import org.recap.PropertyKeyConstants;
 import org.recap.ScsbConstants;
 import org.recap.model.reports.TitleMatchedReport;
 import org.recap.model.reports.TitleMatchedReports;
+import org.recap.util.CsvUtil;
 import org.recap.util.ReportsServiceUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,10 +36,12 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.Executors;
@@ -75,6 +78,13 @@ public class TitleMatchReportExportService {
     @Autowired
     private ReportsServiceUtil reportsServiceUtil;
 
+    @Autowired
+    private CsvUtil csvUtil;
+
+    public CsvUtil getCsvUtil() {
+        return csvUtil;
+    }
+
     private Integer rowNumber = 1;
 
     private static String[] columns = {"Owning Institution", "BibId", "SCSB Id", "Item Barcode", "CGD", "ISBN", "OCLC", "LCCN", "ISSN", "Title", "Matching Identifier", "Anomaly Flag", "Match Score", "Match Score Translated", "Publisher", "Publication Date", "Chronology And Enum"};
@@ -101,68 +111,22 @@ public class TitleMatchReportExportService {
         int count = (titleMatchedReport.getTitleMatch().equalsIgnoreCase(ScsbConstants.TITLE_MATCHED)) ? 1000:100;
         log.info("Title Match Export process started");
         if (new File(titleReportDir).listFiles() != null) {
-            Arrays.stream(new File(titleReportDir).listFiles()).filter(file -> file.getName().contains(".xlsx")).forEach(File::delete);
+            Arrays.stream(new File(titleReportDir).listFiles()).filter(file -> file.getName().contains(".csv")).forEach(File::delete);
         }
         if (new File(titleReportDir).listFiles() != null) {
             Arrays.stream(new File(titleReportDir).listFiles()).filter(file -> file.getName().contains(".zip")).forEach(File::delete);
         }
         titleMatchedReport = reportsServiceUtil.getTitleMatchedReportsExportS3(titleMatchedReport);
         String institution_name = titleMatchedReport.getOwningInst();
-        int totalFiles = 0;
-        int fileCount = titleMatchedReport.getTotalPageCount();
-        if (fileCount < count) {
-            totalFiles = 1;
-        } else {
-            totalFiles = Math.round(fileCount / count);
-        }
-        int iterationCount = count;
         try {
-            for (int j = 1; j <= totalFiles; j++) {
-                if (j == totalFiles && j > 1) {
-                    iterationCount = fileCount % count;
-                } else if (j == 1 && totalFiles == 1) {
-                    iterationCount = titleMatchedReport.getTotalPageCount();
-                }
-                String filename = createFileName(titleMatchedReport.getOwningInst(), fileCount, j);
-                String tempFilename = null;
-                Workbook workbook = new XSSFWorkbook();
-                Sheet sheet = workbook.createSheet(filename);
-                rowNumber = 1;
-                for (int i = 0; i < iterationCount; i++) {
-                    if (!(i <= 0)) {
-                        titleMatchedReport.setPageNumber(i);
-                        titleMatchedReport = reportsServiceUtil.getTitleMatchedReportsExportS3(titleMatchedReport);
-                    }
-                    if ((rowNumber + titleMatchedReport.getTotalRecordsCount()) > 1048500) {
-                        rowNumber = 1;
-                        FileOutputStream fileOut = new FileOutputStream(titleReportDir + filename);
-                        workbook.write(fileOut);
-                        fileOut.close();
-                        workbook.close();
-                        LocalTime time = LocalTime.now();
-                        tempFilename = createFileName(titleMatchedReport.getOwningInst(), fileCount, time.getMinute()+time.getSecond());
-                        workbook = new XSSFWorkbook();
-                        sheet = workbook.createSheet(tempFilename);
-                        prepareWorkbook(titleMatchedReport, sheet);
-                    } else {
-                        prepareWorkbook(titleMatchedReport, sheet);
-                    }
-                }
-                FileOutputStream fileOut = null;
-                if (tempFilename != null) {
-                    fileOut = new FileOutputStream(titleReportDir + tempFilename);
-                } else {
-                    fileOut = new FileOutputStream(titleReportDir + filename);
-                }
-                workbook.write(fileOut);
-                fileOut.close();
-                workbook.close();
-            }
-
+            SimpleDateFormat sdf = new SimpleDateFormat(ScsbConstants.DATE_FORMAT_FOR_REPORTS);
+            String formattedDate = sdf.format(new Date());
+            String fileNameWithExtension = titleReportDir + File.separator + institution_name + ScsbConstants.TITLE_MATCH + ScsbConstants.UNDER_SCORE + formattedDate + ScsbConstants.CSV_EXTENSION;
+            File file = getCsvUtil().createTitleMatchReportFile(fileNameWithExtension, titleMatchedReport);
             zipFiles();
             uploadFilesinS3(institution_name);
             updateStatusCompleteInFile();
-            logger.info("Title Match Export process completed and file placed in s3");
+            logger.info("Title Match Export process completed and file placed in s3 is :: {}",file.getAbsolutePath());
         } catch (IOException e) {
             logger.info("Exception occured while doing zip the files: {}", e.getMessage());
             updateStatusCompleteInFile();
@@ -229,10 +193,10 @@ public class TitleMatchReportExportService {
                 .map(Path::toFile)
                 .collect(Collectors.toList());
         try {
-            Optional<File> firstFile = filePaths.stream().filter(file -> file.getName().contains(".xlsx")).findFirst();
+            Optional<File> firstFile = filePaths.stream().filter(file -> file.getName().contains("csv")).findFirst();
             String zipFileName = null;
             if (firstFile.isPresent()) {
-                zipFileName = firstFile.get().getName().replace(".xlsx", "").concat(".zip");
+                zipFileName = firstFile.get().getName().replace(".csv", "").concat(".zip");
             }
 
             FileOutputStream fos = new FileOutputStream(titleReportDir + zipFileName);
