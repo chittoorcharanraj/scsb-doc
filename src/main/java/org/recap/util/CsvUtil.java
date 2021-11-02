@@ -3,8 +3,11 @@ package org.recap.util;
 import com.csvreader.CsvWriter;
 import org.recap.ScsbCommonConstants;
 import org.recap.model.matchingreports.TitleExceptionReport;
+import org.recap.model.reports.TitleMatchedReport;
+import org.recap.model.reports.TitleMatchedReports;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
@@ -19,6 +22,9 @@ import java.util.List;
 public class CsvUtil {
 
     private static final Logger logger = LoggerFactory.getLogger(CsvUtil.class);
+
+    @Autowired
+    private ReportsServiceUtil reportsServiceUtil;
 
     /**
      * Create title exception report file file.
@@ -100,5 +106,91 @@ public class CsvUtil {
      */
     public void writeHeaderRowForSerilsAndMvmsReport(CsvWriter csvWriter) throws IOException {
 
+    }
+
+    public void writeDataRowForTitleMatchExportReport(TitleMatchedReports titleMatchedReports, CsvWriter csvOutput) throws IOException {
+
+        csvOutput.write(titleMatchedReports.getOwningInstitution());
+
+        csvOutput.write(titleMatchedReports.getBibId());
+
+        csvOutput.write(String.valueOf(titleMatchedReports.getScsbId()));
+
+        csvOutput.write(titleMatchedReports.getItemBarcode());
+
+        csvOutput.write(titleMatchedReports.getCgd());
+
+        csvOutput.write(titleMatchedReports.getIsbn());
+
+        csvOutput.write(titleMatchedReports.getOclc());
+
+        csvOutput.write(titleMatchedReports.getLccn());
+
+        csvOutput.write(titleMatchedReports.getIssn());
+
+        csvOutput.write(titleMatchedReports.getTitle());
+
+        csvOutput.write(titleMatchedReports.getDuplicateCode());
+
+        csvOutput.write(titleMatchedReports.getAnamolyFlag());
+
+        csvOutput.write(titleMatchedReports.getMatchScore());
+
+        csvOutput.write(titleMatchedReports.getMatchScoreTranslated());
+
+        csvOutput.write(titleMatchedReports.getPublisher());
+
+        csvOutput.write(titleMatchedReports.getPublicationDate());
+
+        csvOutput.write(titleMatchedReports.getChronologyAndEnum());
+
+        csvOutput.endRecord();
+    }
+
+    public void writeHeaderRowForTitleMatchReport(CsvWriter csvOutput) throws IOException {
+        csvOutput.write("OwningInstitution");
+        csvOutput.write("BibId");
+        csvOutput.write("SCSBId");
+        csvOutput.write("ItemBarcode");
+        csvOutput.write("CGD");
+        csvOutput.write("ISBN");
+        csvOutput.write("OCLC");
+        csvOutput.write("LCCN");
+        csvOutput.write("ISSN");
+        csvOutput.write("Title");
+        csvOutput.write("MatchingIdentifier");
+        csvOutput.write("AnomalyFLag");
+        csvOutput.write("MatchScore");
+        csvOutput.write("MaTchScoreTranslated");
+        csvOutput.write("Publisher");
+        csvOutput.write("PublicationDate");
+        csvOutput.write("ChronologyAndEnum");
+        csvOutput.endRecord();
+    }
+
+    public File createTitleMatchReportFile(String fileNameWithExtension, TitleMatchedReport titleMatchedReport) {
+        File file = new File(fileNameWithExtension);
+        CsvWriter csvOutput = null;
+        try (FileWriter fileWriter = new FileWriter(file, true)){
+            csvOutput = new CsvWriter(fileWriter, ',');
+            writeHeaderRowForTitleMatchReport(csvOutput);
+
+            for (int i = 0; i <titleMatchedReport.getTotalPageCount() ; i++) {
+                titleMatchedReport.setPageNumber(i);
+                titleMatchedReport = reportsServiceUtil.getTitleMatchedReportsExportS3(titleMatchedReport);
+                for(TitleMatchedReports titleMatchedReports : titleMatchedReport.getTitleMatchedReports()) {
+                    writeDataRowForTitleMatchExportReport(titleMatchedReports, csvOutput);
+                }
+            }
+
+        } catch (Exception e) {
+            logger.error(ScsbCommonConstants.LOG_ERROR,e);
+        } finally {
+            if(csvOutput != null) {
+                csvOutput.flush();
+                csvOutput.close();
+            }
+        }
+        return file;
     }
 }
