@@ -70,7 +70,7 @@ public class OngoingMatchingAlgorithmQueryUtil {
             query = solrQueryBuilder.getQueryForOngoingMatchingBasedOnDateForGroupingOrCgdUpdateProcess(getFormattedDateString(getFormattedDate(solrIndexRequest.getFromDate())), includeMaQualifier, isCgdProcess);
         } else if (matchBy.equalsIgnoreCase(ScsbConstants.DATE_RANGE)) {
             log.info("From Date : {}, To Date : {}", solrIndexRequest.getDateFrom(), solrIndexRequest.getDateTo());
-            query = solrQueryBuilder.getQueryForOngoingMatchingBasedOnDateRangeForGroupingOrCgdUpdateProcess(getFormattedDateString(getFormattedDateFrom(solrIndexRequest.getDateFrom())), getFormattedDateString(getFormattedDateTo(solrIndexRequest.getDateTo())), includeMaQualifier, isCgdProcess);
+            query = solrQueryBuilder.getQueryForOngoingMatchingBasedOnDateRangeForGroupingOrCgdUpdateProcess(getUTCFormatDateString(getFormattedDateFrom(solrIndexRequest.getDateFrom())), getUTCFormatDateString(getFormattedDateTo(solrIndexRequest.getDateTo())), includeMaQualifier, isCgdProcess);
         } else if (matchBy.equalsIgnoreCase(ScsbConstants.BIB_ID_LIST)) {
             query = solrQueryBuilder.getQueryForOngoingMatchingBasedOnBibIdsForGroupingOrCgdUpdateProcess(solrIndexRequest.getBibIds(), includeMaQualifier, isCgdProcess);
         } else if (matchBy.equalsIgnoreCase(ScsbConstants.BIB_ID_RANGE)) {
@@ -102,6 +102,10 @@ public class OngoingMatchingAlgorithmQueryUtil {
      * @return the formatted date string
      */
     public String getFormattedDateString(Date inputDate) {
+        return getUTCFormatDateString(inputDate) + ScsbCommonConstants.SOLR_DATE_RANGE_TO_NOW;
+    }
+
+    private String getUTCFormatDateString(Date inputDate) {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(ScsbCommonConstants.DATE_FORMAT_YYYYMMDDHHMM);
         String utcStr = null;
         try {
@@ -113,7 +117,7 @@ public class OngoingMatchingAlgorithmQueryUtil {
         } catch (ParseException e) {
             log.error(e.getMessage());
         }
-        return utcStr + ScsbCommonConstants.SOLR_DATE_RANGE_TO_NOW;
+        return utcStr;
     }
 
     /**
