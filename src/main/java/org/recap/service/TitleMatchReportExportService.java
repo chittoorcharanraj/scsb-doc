@@ -165,8 +165,8 @@ public class TitleMatchReportExportService {
     }
 
     private String getFileName(String owningInst, Integer fileNumber, String formattedDate, int fileCount) {
-        String fileName = (fileCount == 1) ? owningInst + "_Title_Match_" + formattedDate + ".xlsx" :
-                owningInst + "_Title_Match_" + formattedDate + "_" + fileNumber + ".xlsx";
+        String fileName = (fileCount == 1) ? owningInst + "_Title_Match_" + formattedDate + ".csv" :
+                owningInst + "_Title_Match_" + formattedDate + "_" + fileNumber + ".csv";
         return fileName;
     }
 
@@ -203,7 +203,7 @@ public class TitleMatchReportExportService {
             ZipOutputStream zos = new ZipOutputStream(fos);
 
             for (File aFile : filePaths) {
-                if (aFile.getName().contains(".xlsx")) {
+                if (aFile.getName().contains(".csv")) {
                     zos.putNextEntry(new ZipEntry(aFile.getName()));
                     byte[] bytes = Files.readAllBytes(Path.of(aFile.getPath()));
                     zos.write(bytes, 0, bytes.length);
