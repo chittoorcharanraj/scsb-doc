@@ -69,6 +69,9 @@ public class OngoingMatchingAlgorithmUtil {
     private BibliographicDetailsRepository bibliographicDetailsRepository;
 
     @Autowired
+    private BibliographicDetailsRepositoryForMatching bibliographicDetailsRepositoryForMatching;
+
+    @Autowired
     private ItemDetailsRepository itemDetailsRepository;
 
     @Autowired
@@ -978,11 +981,11 @@ public class OngoingMatchingAlgorithmUtil {
     private void groupBibsAndUpdateInDB(List<Integer> bibIdList, Map<Integer, BibItem> bibItemMap) {
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
-        List<BibliographicEntity> bibliographicEntityList = bibliographicDetailsRepository.findByIdIn(bibIdList);
-        Optional<Map<Integer,BibliographicEntity>> bibliographicEntityOptional = matchingAlgorithmUtil.updateBibsForMatchingIdentifier(bibliographicEntityList, bibItemMap);
+        List<BibliographicEntityForMatching> bibliographicEntityList = bibliographicDetailsRepositoryForMatching.findAllById(bibIdList);
+        Optional<Map<Integer,BibliographicEntityForMatching>> bibliographicEntityOptional = matchingAlgorithmUtil.updateBibsForMatchingIdentifier(bibliographicEntityList, bibItemMap);
         if (bibliographicEntityOptional.isPresent()) {
-            Map<Integer, BibliographicEntity> bibliographicEntityListToBeSaved = bibliographicEntityOptional.get();
-            matchingAlgorithmUtil.saveGroupedBibsToDb(bibliographicEntityListToBeSaved.values());
+            Map<Integer, BibliographicEntityForMatching> bibliographicEntityListToBeSaved = bibliographicEntityOptional.get();
+            matchingAlgorithmUtil.saveGroupedBibsToDbForOngoing(bibliographicEntityListToBeSaved.values());
             //matchingAlgorithmUtil.indexBibs(bibIdList);
         }
         stopWatch.stop();
