@@ -221,6 +221,7 @@ public class OngoingMatchingAlgorithmUtil {
             }
         }
         ongoingMatchingStopWatch.stop();
+        logger.info("{} for OngoingMatching Grouping process {} for a total bibs of : {}", ScsbConstants.TOTAL_TIME_TAKEN, ongoingMatchingStopWatch.getTotalTimeSeconds(), bibIdListToIndex.size());
         return status;
     }
 

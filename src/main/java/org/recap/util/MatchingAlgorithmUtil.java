@@ -1323,9 +1323,11 @@ public class MatchingAlgorithmUtil {
             solrIndexRequest.setBibIds(collect);
             String bibsIndexed = bibItemIndexExecutorService.partialIndex(solrIndexRequest);
             logger.info("Status of Index : {}", bibsIndexed);
-            return "Success";
+            return ScsbCommonConstants.SUCCESS;
         } else {
-            return bibItemIndexExecutorService.indexByBibliographicId(bibIds);
+            String status = bibItemIndexExecutorService.indexByBibliographicId(bibIds);
+            logger.info("Status of Index : {}, Total number of records indexed : {}", status, bibIds.size());
+            return status;
         }
     }
 
