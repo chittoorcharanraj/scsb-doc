@@ -348,5 +348,7 @@ public final class ScsbConstants {
     public static final String ONGOING_MA_UPDATE_CGD_PROCESS = "updateCGDProcess";
     public static final String ONGOING_MA_ONLY_GROUPING = "onlyGrouping";
 
+    public static final String OCOLC = "OCoLC";
+
     private ScsbConstants(){}
 }
