@@ -1294,20 +1294,6 @@ public class MatchingAlgorithmUtil {
         entityManager.clear();
     }
 
-    @Transactional
-    public void resetMAQualifier(List<Integer> bibIds,boolean isCGDProcess) {
-        logger.info("Thread name : {}",Thread.currentThread().getName());
-        logger.info("Updating MAQualfier for Bibs DB . Total size of bibs : {}",bibIds.size());
-        if(isCGDProcess){
-            bibliographicDetailsRepository.resetMAQualifier(bibIds);
-        }
-        else {
-            bibliographicDetailsRepository.resetMAQualifierForGrouping(bibIds);
-        }
-        entityManager.flush();
-        entityManager.clear();
-    }
-
     public int removeMatchingIdsInDB() {
         return bibliographicDetailsRepository.removeMatchingIdentifiers();
     }
@@ -1343,9 +1329,30 @@ public class MatchingAlgorithmUtil {
         }
     }
 
+    @Transactional
+    public void resetMAQualifier(List<Integer> bibIds,boolean isCGDProcess) {
+        logger.info("Updating MAQualifier for Bibs in DB. Total size of bibs : {}", bibIds.size());
+        StopWatch stopWatchForMAQualifierUpdate=new StopWatch();
+        stopWatchForMAQualifierUpdate.start();
+        if (isCGDProcess) {
+            bibliographicDetailsRepository.resetMAQualifier(bibIds);
+        } else {
+            bibliographicDetailsRepository.resetMAQualifierForGrouping(bibIds);
+        }
+        entityManager.flush();
+        entityManager.clear();
+        stopWatchForMAQualifierUpdate.stop();
+        logger.info("Total time taken for updating MAQualifier in DB {} for size {}", stopWatchForMAQualifierUpdate.getTotalTimeSeconds(), bibIds.size());
+    }
+
     public void updateAnamolyFlagForBibs(List<Integer> bibIds) {
+        logger.info("Updating Anamoly Flag for Bibs in DB. Total size of bibs : {}", bibIds.size());
+        StopWatch stopWatchForAnamolyFlagUpdate = new StopWatch();
+        stopWatchForAnamolyFlagUpdate.start();
         int count = bibliographicDetailsRepository.updateAnamolyFlagForBibIds(bibIds);
         logger.info("Total number of bibs updated with Anamoly Flag: {}", count);
+        stopWatchForAnamolyFlagUpdate.stop();
+        logger.info("Total time taken for updating Anamoly Flag in DB {} for size {}", stopWatchForAnamolyFlagUpdate.getTotalTimeSeconds(), bibIds.size());
     }
 
     public Map<String, Integer> getMatchPointsCombinationMap() {
