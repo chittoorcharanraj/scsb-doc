@@ -1337,9 +1337,9 @@ public class MatchingAlgorithmUtil {
         StopWatch stopWatchForMAQualifierUpdate=new StopWatch();
         stopWatchForMAQualifierUpdate.start();
         if (isCGDProcess) {
-            bibliographicDetailsRepository.resetMAQualifier(bibIds);
+            bibliographicDetailsRepository.resetMAQualifier(bibIds, Collections.singletonList(ScsbCommonConstants.MA_QUALIFIER_2));
         } else {
-            bibliographicDetailsRepository.resetMAQualifierForGrouping(bibIds);
+            bibliographicDetailsRepository.resetMAQualifier(bibIds, Arrays.asList(ScsbCommonConstants.MA_QUALIFIER_1, ScsbCommonConstants.MA_QUALIFIER_3));
         }
         entityManager.flush();
         entityManager.clear();
@@ -1347,6 +1347,7 @@ public class MatchingAlgorithmUtil {
         logger.info("Total time taken for updating MAQualifier in DB {} for size {}", stopWatchForMAQualifierUpdate.getTotalTimeSeconds(), bibIds.size());
     }
 
+    @Transactional
     public void updateAnamolyFlagForBibs(List<Integer> bibIds) {
         logger.info("Updating Anamoly Flag for Bibs in DB. Total size of bibs : {}", bibIds.size());
         StopWatch stopWatchForAnamolyFlagUpdate = new StopWatch();
