@@ -299,64 +299,6 @@ public class MatchingAlgorithmUtil {
     }
 
     /**
-     * This method gets unmatched bib ids for Multi-Match combination for the given criteria values.
-     *
-     * @param bibIds        bib Ids
-     * @param bibEntityMap  bib Entity Map
-     * @param matchPoint1   match Point 1
-     * @param matchPoint2   match Point 1
-     * @return unmatched bib ids
-     */
-    public Set<Integer> verifyMatchingCombinationValuesForMultiMatchBibs(Set<Integer> bibIds, Map<Integer, MatchingBibEntity> bibEntityMap, String matchPoint1, String matchPoint2) {
-        Set<Integer> notMatchedBibIds = new HashSet<>();
-        for (Integer bibId : bibIds) {
-            if (!verifyMatchingCombinationValuesForMultiMatchBib(bibIds, bibId, bibEntityMap, matchPoint1, matchPoint2, notMatchedBibIds)) {
-                notMatchedBibIds.add(bibId);
-            }
-        }
-        return notMatchedBibIds;
-    }
-
-    /**
-     * This method checks if the bib's Multi-Match combination values are matched with any other bibs
-     *
-     * @param bibIds            bib Ids
-     * @param bibId             bib Id
-     * @param bibEntityMap      bib Entity Map
-     * @param matchPoint1       match Point 1
-     * @param matchPoint2       match Point 1
-     * @param notMatchedBibIds  not Matched Bib Ids
-     * @return boolean
-     */
-    private boolean verifyMatchingCombinationValuesForMultiMatchBib(Set<Integer> bibIds, Integer bibId, Map<Integer, MatchingBibEntity> bibEntityMap, String matchPoint1, String matchPoint2, Set<Integer> notMatchedBibIds) {
-        MatchingBibEntity matchingBibEntity = bibEntityMap.get(bibId);
-
-        String matchCriteriaValue1 = getMatchCriteriaValue(matchPoint1, matchingBibEntity);
-        List<String> matchCriteriaValue1List = Arrays.asList(matchCriteriaValue1.split(","));
-
-        String matchCriteriaValue2 = getMatchCriteriaValue(matchPoint2, matchingBibEntity);
-        List<String> matchCriteriaValue2List = Arrays.asList(matchCriteriaValue2.split(","));
-
-        for (Integer bibIdInner : bibIds) {
-            if (bibId.intValue() != bibIdInner.intValue() && !notMatchedBibIds.contains(bibIdInner)) {
-                MatchingBibEntity matchingBibEntityInner = bibEntityMap.get(bibIdInner);
-
-                String matchCriteriaValue1Inner = getMatchCriteriaValue(matchPoint1, matchingBibEntityInner);
-                List<String> matchCriteriaValue1ListInner = Arrays.asList(matchCriteriaValue1Inner.split(","));
-
-                String matchCriteriaValue2Inner = getMatchCriteriaValue(matchPoint2, matchingBibEntityInner);
-                List<String> matchCriteriaValue2ListInner = Arrays.asList(matchCriteriaValue2Inner.split(","));
-
-                boolean hasMatching = CollectionUtils.containsAny(matchCriteriaValue1List, matchCriteriaValue1ListInner) && CollectionUtils.containsAny(matchCriteriaValue2List, matchCriteriaValue2ListInner);
-                if (!hasMatching) {
-                    return false;
-                }
-            }
-        }
-        return true;
-    }
-
-    /**
      * This method replaces diacritics(~= accents) characters by replacing them to normal characters in title.
      *
      * @param title the title
@@ -624,7 +566,6 @@ public class MatchingAlgorithmUtil {
      * @param value       the value
      */
     public void populateCriteriaMap(Map<String, Set<Integer>> criteriaMap, Integer bibId, String value) {
-
         String[] criteriaValues = value.split(",");
         for(String criteriaValue : criteriaValues) {
             if(StringUtils.isNotBlank(criteriaValue)) {
