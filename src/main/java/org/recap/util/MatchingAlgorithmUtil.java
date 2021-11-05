@@ -348,12 +348,12 @@ public class MatchingAlgorithmUtil {
                 List<String> matchCriteriaValue2ListInner = Arrays.asList(matchCriteriaValue2Inner.split(","));
 
                 boolean hasMatching = CollectionUtils.containsAny(matchCriteriaValue1List, matchCriteriaValue1ListInner) && CollectionUtils.containsAny(matchCriteriaValue2List, matchCriteriaValue2ListInner);
-                if (hasMatching) {
-                    return true;
+                if (!hasMatching) {
+                    return false;
                 }
             }
         }
-        return false;
+        return true;
     }
 
     /**
