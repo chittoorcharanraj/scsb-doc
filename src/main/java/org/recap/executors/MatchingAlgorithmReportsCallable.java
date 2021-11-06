@@ -128,8 +128,8 @@ public class MatchingAlgorithmReportsCallable implements Callable<Map<String, In
                                 matchPoints1.append(StringUtils.isNotBlank(matchPoints1.toString()) ? "," : "").append(matchingBibEntity.getTitle());
                                 matchPoints2.append(StringUtils.isNotBlank(matchPoints2.toString()) ? "," : "").append(matchingBibEntity.getLccn());
                             }
-                            String[] matchPoint1List = matchPoints1.toString().split(",");
-                            tempBibIds.addAll(matchingAlgorithmUtil.getBibIdsForCriteriaValue(matchPoint1AndBibIdMap, matchPoint1Set, matchPoint1Key, matchPoint1, matchPoint1List, bibEntityMap, matchPoints1));
+                            //String[] matchPoint1List = matchPoints1.toString().split(",");
+                            //tempBibIds.addAll(matchingAlgorithmUtil.getBibIdsForCriteriaValue(matchPoint1AndBibIdMap, matchPoint1Set, matchPoint1Key, matchPoint1, matchPoint1List, bibEntityMap, matchPoints1));
                         }
                         matchingAlgorithmUtil.populateAndSaveReportEntity(tempBibIds, bibEntityMap, matchPoint1.equalsIgnoreCase(ScsbCommonConstants.MATCH_POINT_FIELD_OCLC) ? ScsbCommonConstants.OCLC_CRITERIA : matchPoint1.equalsIgnoreCase(ScsbCommonConstants.MATCH_POINT_FIELD_TITLE) ? ScsbCommonConstants.TITLE : matchPoint1, matchPoint2.equalsIgnoreCase(ScsbCommonConstants.MATCH_POINT_FIELD_TITLE) ? ScsbCommonConstants.TITLE : matchPoint2.equalsIgnoreCase(ScsbCommonConstants.MATCH_POINT_FIELD_OCLC) ? ScsbCommonConstants.OCLC_CRITERIA : matchPoint2, matchPoints1.toString(), matchPoints2.toString(), institutionCounterMap, matchPointScore);
                     }
