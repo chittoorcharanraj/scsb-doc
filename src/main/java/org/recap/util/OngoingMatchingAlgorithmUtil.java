@@ -69,6 +69,9 @@ public class OngoingMatchingAlgorithmUtil {
     private BibliographicDetailsRepository bibliographicDetailsRepository;
 
     @Autowired
+    private BibliographicDetailsRepositoryForMatching bibliographicDetailsRepositoryForMatching;
+
+    @Autowired
     private ItemDetailsRepository itemDetailsRepository;
 
     @Autowired
@@ -218,6 +221,7 @@ public class OngoingMatchingAlgorithmUtil {
             }
         }
         ongoingMatchingStopWatch.stop();
+        logger.info("{} for OngoingMatching Grouping process {} for a total bibs of : {}", ScsbConstants.TOTAL_TIME_TAKEN, ongoingMatchingStopWatch.getTotalTimeSeconds(), bibIdListToIndex.size());
         return status;
     }
 
@@ -228,22 +232,20 @@ public class OngoingMatchingAlgorithmUtil {
      * @param serialMvmBibIds  the serial mvm bib ids
      * @return the string
      */
-    public String processOngoingMatchingAlgorithm(SolrDocumentList solrDocumentList, List<Integer> serialMvmBibIds, Boolean isCGDProcess, List<Integer> bibIdList) {
+    public String processOngoingMatchingAlgorithm(SolrDocumentList solrDocumentList, List<Integer> serialMvmBibIds, Boolean isCGDProcess, List<Integer> bibIdListToIndex) {
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
         String status = ScsbCommonConstants.SUCCESS;
-        if(CollectionUtils.isNotEmpty(solrDocumentList)) {
+        List<Integer> bibIdList = new ArrayList<>();
+        if (CollectionUtils.isNotEmpty(solrDocumentList)) {
             for (Iterator<SolrDocument> iterator = solrDocumentList.iterator(); iterator.hasNext(); ) {
                 SolrDocument solrDocument = iterator.next();
                 int bibId = (Integer) solrDocument.getFieldValue(ScsbConstants.BIB_ID);
+                bibIdListToIndex.add(bibId);
                 bibIdList.add(bibId);
                 status = processMatchingForBib(solrDocument, serialMvmBibIds, isCGDProcess);
             }
-            StopWatch stopWatchForMAQualifierUpdate=new StopWatch();
-            stopWatchForMAQualifierUpdate.start();
             matchingAlgorithmUtil.resetMAQualifier(bibIdList, isCGDProcess);
-            stopWatchForMAQualifierUpdate.stop();
-            logger.info("Total time taken for updating and indexing MAQualifier {} for size {}",stopWatchForMAQualifierUpdate.getTotalTimeSeconds(),bibIdList.size());
         }
         stopWatch.stop();
         logger.info("Total Time taken to executing matching algorithm only for {} records : {}" , solrDocumentList.size(), stopWatch.getTotalTimeSeconds());
@@ -287,7 +289,7 @@ public class OngoingMatchingAlgorithmUtil {
                     status = ScsbCommonConstants.FAILURE;
                 }
             }
-            if (singleMatchBibItemMap.size() > 0) {
+            if (singleMatchBibItemMap.size() > 0 && isCGDProcess) {
                 // Single Match
                 logger.info("Single Match Found for Bib Id: {}", bibId);
                 try {
@@ -299,7 +301,7 @@ public class OngoingMatchingAlgorithmUtil {
                     status = ScsbCommonConstants.FAILURE;
                 }
             }
-            if (CollectionUtils.isNotEmpty(itemIds)) {
+            if (CollectionUtils.isNotEmpty(itemIds) && isCGDProcess) {
                 updateCGDForItemInSolr(itemIds);
             }
         }
@@ -316,7 +318,7 @@ public class OngoingMatchingAlgorithmUtil {
         }
         String fieldValue = String.valueOf(solrDocument.getFieldValue(matchPointString)).replaceAll("(^\\[|\\]$)", "");
         String bibIds = bibItemMap.keySet().stream().map(Objects::toString).collect(joining(","));
-        logger.info("Field Value : {} bibIds {}", fieldValue, bibIds);
+        logger.info("Field Value : {} bibIds {}", fieldValue, bibItemMap.size());
         List<MatchingAlgorithmReportDataEntity> reportDataEntityList = reportDataDetailsRepository.getReportDataEntityForSingleMatch(LocalDate.now().toString(), matchPointString, fieldValue, bibIds);
         return reportDataEntityList.isEmpty();
     }
@@ -602,9 +604,7 @@ public class OngoingMatchingAlgorithmUtil {
                 try {
                     matchScore=MatchScoreUtil.getMatchScoreForMatchPoint(matchPointString);
                     if (isCGDProcess) {
-                        itemIds = updateCGDBasedOnMaterialTypes(reportEntity, materialTypeSet, serialMvmBibIds, ScsbConstants.SINGLE_MATCH, parameterMap, reportEntitiesToSave, titleMap, matchScore, bibItemMap, isCGDProcess);
-                    } else {
-                        itemIds = groupBibsBasedOnMaterialTypes(reportEntity, materialTypeSet, serialMvmBibIds, ScsbConstants.SINGLE_MATCH, parameterMap, titleMap, matchScore, bibItemMap);
+                        itemIds = updateCGDBasedOnMaterialTypes(reportEntity, materialTypeSet, serialMvmBibIds, ScsbConstants.SINGLE_MATCH, parameterMap, reportEntitiesToSave, titleMap, matchScore, bibItemMap);
                     }
                     materialTypeList = (List<String>) parameterMap.get(ScsbConstants.MATERIAL_TYPE);
                     reportEntity.setType(ScsbConstants.SINGLE_MATCH.concat("-").concat(matchPointString));
@@ -689,7 +689,7 @@ public class OngoingMatchingAlgorithmUtil {
         Set<String> lccns = new HashSet<>();
         Set<String> titleMatches = new HashSet<>();
 
-        List<Integer> itemIds = new ArrayList<>();
+        List<Integer> ids = new ArrayList<>();
         Integer matchScore = 0;
         Set<String> matchPointStrings = new HashSet<>();
         Map<Integer, BibItem> bibItemMap = new HashMap<>();
@@ -744,7 +744,7 @@ public class OngoingMatchingAlgorithmUtil {
             parameterMap.put(ScsbCommonConstants.BIB_ID, bibIdList);
             parameterMap.put(ScsbConstants.MATERIAL_TYPE, materialTypeList);
             if (isCGDProcess) {
-                itemIds = updateCGDBasedOnMaterialTypes(reportEntity, materialTypes, serialMvmBibIds, ScsbConstants.MULTI_MATCH, parameterMap, new ArrayList<>(), null,matchScore,bibItemMap,isCGDProcess);
+                ids = updateCGDBasedOnMaterialTypes(reportEntity, materialTypes, serialMvmBibIds, ScsbConstants.MULTI_MATCH, parameterMap, new ArrayList<>(), null,matchScore,bibItemMap);
                 materialTypeList = (List<String>) parameterMap.get(ScsbConstants.MATERIAL_TYPE);
                 matchingAlgorithmUtil.getReportDataEntityList(reportDataEntities, owningInstList, bibIdList, materialTypeList, owningInstBibIds, matchScore);
                 checkAndAddReportEntities(reportDataEntities, oclcNumbers, ScsbCommonConstants.OCLC_CRITERIA);
@@ -756,10 +756,11 @@ public class OngoingMatchingAlgorithmUtil {
                 reportEntity.addAll(reportDataEntities);
                 producerTemplate.sendBody("scsbactivemq:queue:saveMatchingReportsQ", Arrays.asList(reportEntity));
             } else {
-                itemIds = groupBibsBasedOnMaterialTypes(reportEntity, materialTypes, serialMvmBibIds, ScsbConstants.MULTI_MATCH, parameterMap, null, matchScore, bibItemMap);
+                groupBibsAndUpdateInDB(bibIdList, bibItemMap);
+                ids = bibIdList;
             }
         }
-        return itemIds;
+        return ids;
     }
 
     private void calculateAndSetMatchScores(Map<String, HashMap<Integer, BibItem>> multiMatchedBibItemMap) {
@@ -824,7 +825,7 @@ public class OngoingMatchingAlgorithmUtil {
      * @throws SolrServerException the solr server exception
      */
     private List<Integer> updateCGDBasedOnMaterialTypes(MatchingAlgorithmReportEntity reportEntity, Set<String> materialTypes, List<Integer> serialMvmBibIds, String matchType, Map parameterMap,
-                                                        List<MatchingAlgorithmReportEntity> reportEntityList, Map<String,String> titleMap,Integer matchScore,Map<Integer, BibItem> bibItemMap,Boolean isCGDProcess) throws IOException, SolrServerException {
+                                                        List<MatchingAlgorithmReportEntity> reportEntityList, Map<String,String> titleMap,Integer matchScore,Map<Integer, BibItem> bibItemMap) throws IOException, SolrServerException {
         List<Integer> itemIds = new ArrayList<>();
         List<String> materialTypeList = (List<String>) parameterMap.get(ScsbConstants.MATERIAL_TYPE);
         List<Integer> bibIdList = (List<Integer>) parameterMap.get(ScsbCommonConstants.BIB_ID);
@@ -835,7 +836,7 @@ public class OngoingMatchingAlgorithmUtil {
             Map<Integer, ItemEntity> itemEntityMap = new HashMap<>();
             if(materialTypes.contains(ScsbCommonConstants.MONOGRAPH)) {
                 Set<String> materialTypeSet = new HashSet<>();
-                boolean isMonograph = matchingAlgorithmCGDProcessor.checkForMonographAndPopulateValues(materialTypeSet, itemEntityMap, bibIdList,ScsbConstants.ONGOING_MATCHING_OPERATION_TYPE,isCGDProcess);
+                boolean isMonograph = matchingAlgorithmCGDProcessor.checkForMonographAndPopulateValues(materialTypeSet, itemEntityMap, bibIdList,ScsbConstants.ONGOING_MATCHING_OPERATION_TYPE);
                 if(isMonograph) {
                     if(matchType.equalsIgnoreCase(ScsbConstants.SINGLE_MATCH)) {
                         MatchingAlgorithmReportEntity reportEntityForTitleException = titleVerificationForSingleMatch(reportEntity.getFileName(), titleMap, bibIdList, materialTypeList, parameterMap);
@@ -844,26 +845,13 @@ public class OngoingMatchingAlgorithmUtil {
                             reportEntityList.add(reportEntityForTitleException);
                         }
                         else {
-                            if (!itemEntityMap.isEmpty() && isCGDProcess) {
+                            if (!itemEntityMap.isEmpty()) {
                                 matchingAlgorithmCGDProcessor.updateCGDProcess(itemEntityMap);
-                            }
-                            else if(!isCGDProcess){
-                                bibIdList.forEach(bibId->{
-                                    BibItem bibItem = bibItemMap.get(bibId);
-                                    Integer calculatedSingleMatchScore = MatchScoreUtil.getMatchScoreForSingleMatchAndTitle(bibItem.getMatchScore());
-                                    bibItem.setMatchScore(calculatedSingleMatchScore);
-                                });
-                                groupBibsAndUpdateInDB(bibIdList,bibItemMap);
                             }
                         }
                     }
-                    else if(matchType.equalsIgnoreCase(ScsbConstants.MULTI_MATCH)){
-                        if (!itemEntityMap.isEmpty() && isCGDProcess) {
-                            matchingAlgorithmCGDProcessor.updateCGDProcess(itemEntityMap);
-                        }
-                        else if(!isCGDProcess){
-                            groupBibsAndUpdateInDB(bibIdList, bibItemMap);
-                        }
+                    else if(matchType.equalsIgnoreCase(ScsbConstants.MULTI_MATCH) && !itemEntityMap.isEmpty()){
+                        matchingAlgorithmCGDProcessor.updateCGDProcess(itemEntityMap);
                     }
                 } else {
                     if(materialTypeSet.size() > 1) {
@@ -875,8 +863,6 @@ public class OngoingMatchingAlgorithmUtil {
                             if(reportEntityForTitleException != null) {
                                 logger.info(ScsbConstants.MATCHING_ALGORITHM_UPDATE_CGD_MESSAGE);
                                 reportEntityList.add(reportEntityForTitleException);
-                            }else{
-                                matchScore = MatchScoreUtil.getMatchScoreForSingleMatchAndTitle(matchScore);
                             }
                         }
                         if(materialTypeSet.contains(ScsbConstants.MONOGRAPHIC_SET)) {
@@ -885,14 +871,9 @@ public class OngoingMatchingAlgorithmUtil {
                             for(int i = 0; i < size; i++) {
                                 materialTypeList.add(ScsbConstants.MONOGRAPHIC_SET);
                             }
-                            if(isCGDProcess){
-                                matchingAlgorithmCGDProcessor.updateItemsCGD(itemEntityMap);
-                            }
+                            matchingAlgorithmCGDProcessor.updateItemsCGD(itemEntityMap);
                             serialMvmBibIds.addAll(bibIdList);
                         }
-                    }
-                    if(!isCGDProcess){
-                        groupBibsAndUpdateInDB(bibIdList, bibItemMap);
                     }
                 }
             } else if(materialTypes.contains(ScsbCommonConstants.SERIAL)) {
@@ -903,23 +884,15 @@ public class OngoingMatchingAlgorithmUtil {
                         reportEntityList.add(reportEntityForTitleException);
                     }
                     else {
-                        matchScore = MatchScoreUtil.getMatchScoreForSingleMatchAndTitle(matchScore);
                         matchingAlgorithmCGDProcessor.populateItemEntityMap(itemEntityMap, bibIdList);
-                        if(isCGDProcess){
-                            matchingAlgorithmCGDProcessor.updateItemsCGD(itemEntityMap);
-                        }
+                        matchingAlgorithmCGDProcessor.updateItemsCGD(itemEntityMap);
                         serialMvmBibIds.addAll(bibIdList);
                     }
                 }
                 else if(matchType.equalsIgnoreCase(ScsbConstants.MULTI_MATCH)){
                     matchingAlgorithmCGDProcessor.populateItemEntityMap(itemEntityMap, bibIdList);
-                    if(isCGDProcess){
-                        matchingAlgorithmCGDProcessor.updateItemsCGD(itemEntityMap);
-                    }
+                    matchingAlgorithmCGDProcessor.updateItemsCGD(itemEntityMap);
                     serialMvmBibIds.addAll(bibIdList);
-                }
-                if(!isCGDProcess) {
-                    groupBibsAndUpdateInDB(bibIdList, bibItemMap);
                 }
             }
         } else {
@@ -929,64 +902,17 @@ public class OngoingMatchingAlgorithmUtil {
         return itemIds;
     }
 
-    /**
-     * This method checks for monograph and updates the CGD
-     *
-     * @param reportEntity     the report entity
-     * @param materialTypes    the material types
-     * @param matchType        the match type
-     * @param parameterMap     the parameter map
-     * @param titleMap         the title map
-     * @return the list
-     */
-    private List<Integer> groupBibsBasedOnMaterialTypes(MatchingAlgorithmReportEntity reportEntity, Set<String> materialTypes, List<Integer> matchedBibIds, String matchType, Map parameterMap, Map<String,String> titleMap,Integer matchScore,Map<Integer, BibItem> bibItemMap) {
-        List<Integer> itemIds = new ArrayList<>();
-        List<String> materialTypeList = (List<String>) parameterMap.get(ScsbConstants.MATERIAL_TYPE);
-        List<Integer> bibIdList = (List<Integer>) parameterMap.get(ScsbCommonConstants.BIB_ID);
-        MatchingAlgorithmCGDProcessor matchingAlgorithmCGDProcessor = new MatchingAlgorithmCGDProcessor(bibliographicDetailsRepository, producerTemplate,
-                getCollectionGroupMap(), getInstitutionEntityMap(), itemChangeLogDetailsRepository, ScsbConstants.ONGOING_MATCHING_OPERATION_TYPE, collectionGroupDetailsRepository, itemDetailsRepository, institutionDetailsRepository,nonHoldingInstitutionList);
-        if (materialTypes.size() == 1) {
-            Map<Integer, ItemEntity> itemEntityMap = new HashMap<>();
-            if (materialTypes.contains(ScsbCommonConstants.MONOGRAPH)) {
-                Set<String> materialTypeSet = new HashSet<>();
-                boolean isMonograph = matchingAlgorithmCGDProcessor.checkForMonographAndPopulateValues(materialTypeSet, itemEntityMap, bibIdList,ScsbConstants.ONGOING_MATCHING_OPERATION_TYPE, false);
-                if(isMonograph) {
-                    if (matchType.equalsIgnoreCase(ScsbConstants.SINGLE_MATCH)) {
-                        titleVerificationForSingleMatch(reportEntity.getFileName(), titleMap, bibIdList, materialTypeList, parameterMap);
-                    } else if (matchType.equalsIgnoreCase(ScsbConstants.MULTI_MATCH)) {
-                        groupBibsAndUpdateInDB(bibIdList, bibItemMap);
-                    }
-                } else {
-                    if (materialTypeSet.size() == 1 && matchType.equalsIgnoreCase(ScsbConstants.SINGLE_MATCH)) {
-                        titleVerificationForSingleMatch(reportEntity.getFileName(), titleMap, bibIdList, materialTypeList, parameterMap);
-                    } else if (matchType.equalsIgnoreCase(ScsbConstants.MULTI_MATCH)) {
-                        groupBibsAndUpdateInDB(bibIdList, bibItemMap);
-                    }
-                }
-            } else if(materialTypes.contains(ScsbCommonConstants.SERIAL)) {
-                if (matchType.equalsIgnoreCase(ScsbConstants.SINGLE_MATCH)) {
-                    titleVerificationForSingleMatch(reportEntity.getFileName(), titleMap, bibIdList, materialTypeList, parameterMap);
-                } else if (matchType.equalsIgnoreCase(ScsbConstants.MULTI_MATCH)) {
-                    groupBibsAndUpdateInDB(bibIdList, bibItemMap);
-                }
-            }
-        }
-        matchedBibIds.addAll(bibIdList);
-        return itemIds;
-    }
-
     private void groupBibsAndUpdateInDB(List<Integer> bibIdList, Map<Integer, BibItem> bibItemMap) {
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
-        List<BibliographicEntity> bibliographicEntityList = bibliographicDetailsRepository.findByIdIn(bibIdList);
-        Optional<Map<Integer,BibliographicEntity>> bibliographicEntityOptional = matchingAlgorithmUtil.updateBibsForMatchingIdentifier(bibliographicEntityList, bibItemMap);
+        List<BibliographicEntityForMatching> bibliographicEntityList = bibliographicDetailsRepositoryForMatching.findAllById(bibIdList);
+        Optional<Map<Integer,BibliographicEntityForMatching>> bibliographicEntityOptional = matchingAlgorithmUtil.updateBibsForMatchingIdentifier(bibliographicEntityList, bibItemMap);
         if (bibliographicEntityOptional.isPresent()) {
-            Map<Integer, BibliographicEntity> bibliographicEntityListToBeSaved = bibliographicEntityOptional.get();
-            matchingAlgorithmUtil.saveGroupedBibsToDb(bibliographicEntityListToBeSaved.values());
-            //matchingAlgorithmUtil.indexBibs(bibIdList);
+            Map<Integer, BibliographicEntityForMatching> bibliographicEntityListToBeSaved = bibliographicEntityOptional.get();
+            matchingAlgorithmUtil.saveGroupedBibsToDbForOngoing(bibliographicEntityListToBeSaved.values());
         }
         stopWatch.stop();
-        logger.info("Total Time taken to save and index grouped Bibs : {}" , stopWatch.getTotalTimeSeconds());
+        logger.info("Total Time taken to save grouped Bibs : {}" , stopWatch.getTotalTimeSeconds());
     }
 
     /**
