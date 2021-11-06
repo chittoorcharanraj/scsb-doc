@@ -86,8 +86,8 @@ public class OngoingMatchingAlgorithmJobController {
                 Integer rows = Integer.valueOf(getBatchSize());
                 logger.info("MA Process Type : {}, Match By : {}, Batch Size : {}, Include MA Qualifier : {}, Index Bibs : {}", maProcessType, matchBy, rows, includeMaQualifier, indexBibs);
                 if (maProcessType.equalsIgnoreCase(ScsbConstants.ONGOING_MA_BOTH_GROUPING_CGD_PROCESS)) {
-                    status = getOngoingMatchingAlgorithmUtil().fetchUpdatedRecordsAndStartGroupingProcessBasedOnCriteria(solrIndexRequest, rows);
                     status = getOngoingMatchingAlgorithmUtil().fetchUpdatedRecordsAndStartCgdUpdateProcessBasedOnCriteria(solrIndexRequest, rows);
+                    status = getOngoingMatchingAlgorithmUtil().fetchUpdatedRecordsAndStartGroupingProcessBasedOnCriteria(solrIndexRequest, rows);
                 } else if (maProcessType.equalsIgnoreCase(ScsbConstants.ONGOING_MA_UPDATE_CGD_PROCESS)) {
                     status = getOngoingMatchingAlgorithmUtil().fetchUpdatedRecordsAndStartCgdUpdateProcessBasedOnCriteria(solrIndexRequest, rows);
                 } else if (maProcessType.equalsIgnoreCase(ScsbConstants.ONGOING_MA_ONLY_GROUPING)) {

@@ -119,31 +119,56 @@ public class BibJSONUtil extends MarcUtil {
 
     /**
      * This method is used to get OCLC numbers from the records.
-     * @param record
-     * @param institutionCode
-     * @return
+     *
+     * @param record the marc record
+     * @param institutionCode institution Code
+     * @return the list
      */
     private List<String> getOCLCNumbers(Record record, String institutionCode) {
         List<String> oclcNumbers = new ArrayList<>();
-        List<String> oclcNumberList = getMultiDataFieldValues(record, "035", null, null, "a");
-        for (String oclcNumber : oclcNumberList) {
-            if (StringUtils.isNotBlank(oclcNumber) && oclcNumber.contains("OCoLC")) {
-                String modifiedOclc = oclcNumber.replaceAll(ScsbConstants.NUMBER_PATTERN, "");
-                modifiedOclc = StringUtils.stripStart(modifiedOclc, "0");
-                oclcNumbers.add(modifiedOclc);
-            }
-        }
-        if (CollectionUtils.isEmpty(oclcNumbers) && StringUtils.isNotBlank(institutionCode) && nonHoldingInstitutions.contains(institutionCode)) {
+        if (StringUtils.isNotBlank(institutionCode) && nonHoldingInstitutions.contains(institutionCode)) {
             String oclcTag = getControlFieldValue(record, "003");
-            if (StringUtils.isNotBlank(oclcTag) && "OCoLC".equalsIgnoreCase(oclcTag)) {
+            if (StringUtils.isNotBlank(oclcTag) && ScsbConstants.OCOLC.equalsIgnoreCase(oclcTag)) {
                 oclcTag = getControlFieldValue(record, "001");
+                if (StringUtils.isNotBlank(oclcTag)) {
+                    oclcNumbers.add(getNormalizedOCLCNumber(oclcTag));
+                }
+            } else {
+                List<String> oclcNumberList = getMultiDataFieldValues(record, "991", null, null, "y");
+                for (String oclcNumber : oclcNumberList) {
+                    if (StringUtils.isNotBlank(oclcNumber)) {
+                        oclcNumbers.add(getNormalizedOCLCNumber(oclcNumber));
+                    }
+                }
+                if (CollectionUtils.isEmpty(oclcNumbers)) {
+                    getOclcNumberFrom035a(record, oclcNumbers);
+                }
             }
-            oclcTag = StringUtils.stripStart(oclcTag, "0");
-            if (StringUtils.isNotBlank(oclcTag)) {
-                oclcNumbers.add(oclcTag);
-            }
+        } else {
+            getOclcNumberFrom035a(record, oclcNumbers);
         }
         return oclcNumbers;
+    }
+
+    /**
+     * Gets oclc number list from the record from field 035 $a.
+     *
+     * @param record the record
+     * @param oclcNumbers oclc Numbers
+     */
+    private void getOclcNumberFrom035a(Record record, List<String> oclcNumbers) {
+        List<String> oclcNumberList = getMultiDataFieldValues(record, "035", null, null, "a");
+        for (String oclcNumber : oclcNumberList) {
+            if (StringUtils.isNotBlank(oclcNumber) && oclcNumber.contains(ScsbConstants.OCOLC)) {
+                oclcNumbers.add(getNormalizedOCLCNumber(oclcNumber));
+            }
+        }
+    }
+
+    private String getNormalizedOCLCNumber(String oclcNumber) {
+        String modifiedOclc = oclcNumber.replaceAll(ScsbConstants.NUMBER_PATTERN, "");
+        modifiedOclc = StringUtils.stripStart(modifiedOclc, "0");
+        return modifiedOclc;
     }
 
     /**

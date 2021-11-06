@@ -48,12 +48,12 @@ jQuery(document).ready(function ($) {
         format: "yyyy/mm/dd"
     });
 
-    $('#ongoingMatchDateRangeFromDate').datepicker({
-        format: "yyyy/mm/dd"
+    $('#ongoingMatchDateRangeFromDate').datetimepicker({
+        format: "dd-mm-yyyy hh:ii"
     });
 
-    $('#ongoingMatchDateRangeToDate').datepicker({
-        format: "yyyy/mm/dd"
+    $('#ongoingMatchDateRangeToDate').datetimepicker({
+        format: "dd-mm-yyyy hh:ii"
     });
 
     $('#partialIndexFromDate').datetimepicker({

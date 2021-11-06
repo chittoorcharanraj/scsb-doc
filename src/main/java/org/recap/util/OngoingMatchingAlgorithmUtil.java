@@ -939,7 +939,7 @@ public class OngoingMatchingAlgorithmUtil {
      * @param titleMap         the title map
      * @return the list
      */
-    private List<Integer> groupBibsBasedOnMaterialTypes(MatchingAlgorithmReportEntity reportEntity, Set<String> materialTypes, List<Integer> serialMvmBibIds, String matchType, Map parameterMap, Map<String,String> titleMap,Integer matchScore,Map<Integer, BibItem> bibItemMap) {
+    private List<Integer> groupBibsBasedOnMaterialTypes(MatchingAlgorithmReportEntity reportEntity, Set<String> materialTypes, List<Integer> matchedBibIds, String matchType, Map parameterMap, Map<String,String> titleMap,Integer matchScore,Map<Integer, BibItem> bibItemMap) {
         List<Integer> itemIds = new ArrayList<>();
         List<String> materialTypeList = (List<String>) parameterMap.get(ScsbConstants.MATERIAL_TYPE);
         List<Integer> bibIdList = (List<Integer>) parameterMap.get(ScsbCommonConstants.BIB_ID);
@@ -953,31 +953,25 @@ public class OngoingMatchingAlgorithmUtil {
                 if(isMonograph) {
                     if (matchType.equalsIgnoreCase(ScsbConstants.SINGLE_MATCH)) {
                         titleVerificationForSingleMatch(reportEntity.getFileName(), titleMap, bibIdList, materialTypeList, parameterMap);
-                        bibIdList.forEach(bibId -> {
-                            BibItem bibItem = bibItemMap.get(bibId);
-                            if (bibItem != null) {
-                                Integer calculatedSingleMatchScore = MatchScoreUtil.getMatchScoreForSingleMatchAndTitle(bibItem.getMatchScore());
-                                bibItem.setMatchScore(calculatedSingleMatchScore);
-                            }
-                        });
-                        groupBibsAndUpdateInDB(bibIdList, bibItemMap);
                     } else if (matchType.equalsIgnoreCase(ScsbConstants.MULTI_MATCH)) {
                         groupBibsAndUpdateInDB(bibIdList, bibItemMap);
                     }
                 } else {
                     if (materialTypeSet.size() == 1 && matchType.equalsIgnoreCase(ScsbConstants.SINGLE_MATCH)) {
                         titleVerificationForSingleMatch(reportEntity.getFileName(), titleMap, bibIdList, materialTypeList, parameterMap);
+                    } else if (matchType.equalsIgnoreCase(ScsbConstants.MULTI_MATCH)) {
+                        groupBibsAndUpdateInDB(bibIdList, bibItemMap);
                     }
-                    groupBibsAndUpdateInDB(bibIdList, bibItemMap);
                 }
             } else if(materialTypes.contains(ScsbCommonConstants.SERIAL)) {
                 if (matchType.equalsIgnoreCase(ScsbConstants.SINGLE_MATCH)) {
                     titleVerificationForSingleMatch(reportEntity.getFileName(), titleMap, bibIdList, materialTypeList, parameterMap);
+                } else if (matchType.equalsIgnoreCase(ScsbConstants.MULTI_MATCH)) {
+                    groupBibsAndUpdateInDB(bibIdList, bibItemMap);
                 }
-                groupBibsAndUpdateInDB(bibIdList, bibItemMap);
             }
         }
-        serialMvmBibIds.addAll(bibIdList);
+        matchedBibIds.addAll(bibIdList);
         return itemIds;
     }
 
