@@ -281,7 +281,7 @@ public class OngoingMatchingAlgorithmUtil {
             }
             if (multiMatchBibItemMap.size() > 0) {
                 // Multi Match
-                logger.info("Multi Match Found for Bib Id: {}", bibId);
+                // logger.info("Multi Match Found for Bib Id: {}", bibId);
                 try {
                     itemIds = saveReportAndUpdateCGDForMultiMatch(multiMatchBibItemMap, serialMvmBibIds, isCGDProcess);
                 } catch (IOException | SolrServerException e) {
@@ -291,7 +291,7 @@ public class OngoingMatchingAlgorithmUtil {
             }
             if (singleMatchBibItemMap.size() > 0 && isCGDProcess) {
                 // Single Match
-                logger.info("Single Match Found for Bib Id: {}", bibId);
+                // logger.info("Single Match Found for Bib Id: {}", bibId);
                 try {
                     if (checkIfReportForSingleMatchExists(solrDocument, singleMatchBibItemMap)) {
                         itemIds = saveReportAndUpdateCGDForSingleMatch(singleMatchBibItemMap, serialMvmBibIds, isCGDProcess);
