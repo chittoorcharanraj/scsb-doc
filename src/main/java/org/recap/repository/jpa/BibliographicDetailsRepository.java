@@ -292,6 +292,8 @@ public interface BibliographicDetailsRepository extends BaseRepository<Bibliogra
 
     List<BibliographicEntity> findByOwningInstitutionIdInAndIdIn(List<Integer> owningInstitutionIds,List<Integer> bibliographicIds);
 
+    List<BibliographicEntity> findByOwningInstitutionIdInAndMatchingIdentityIn(List<Integer> allInstitutionIdsExceptSupportInstitution, List<String> matchingIdentifiers);
+
     @Modifying(clearAutomatically = true)
     @Transactional
     @Query("UPDATE BibliographicEntity bib SET bib.matchingIdentity = NULL, bib.matchScore = 0, bib.anamolyFlag = false WHERE bib.matchingIdentity IS NOT NULL")
@@ -304,18 +306,10 @@ public interface BibliographicDetailsRepository extends BaseRepository<Bibliogra
     @Transactional
     void updateAnamolyFlag(@Param("bibliographicIds")List<Integer> bibIds);
 
-    List<BibliographicEntity> findByOwningInstitutionIdInAndMatchingIdentityIn(List<Integer> allInstitutionIdsExceptSupportInstitution, List<String> matchingIdentifiers);
-
-    @Modifying
-    @Query(value = "UPDATE `BIBLIOGRAPHIC_T` SET `MA_QUALIFIER`='0' WHERE `BIBLIOGRAPHIC_ID` in (:bibliographicIds) AND `MA_QUALIFIER` in (2)",nativeQuery = true)
+    @Modifying(clearAutomatically = true)
     @Transactional
-    int resetMAQualifier(@Param("bibliographicIds")List<Integer> bibIdList);
-
-
-    @Modifying
-    @Query(value = "UPDATE `BIBLIOGRAPHIC_T` SET `MA_QUALIFIER`='0' WHERE `BIBLIOGRAPHIC_ID` in (:bibliographicIds) AND `MA_QUALIFIER` in (1,3)",nativeQuery = true)
-    @Transactional
-    int resetMAQualifierForGrouping(@Param("bibliographicIds")List<Integer> bibIds);
+    @Query("UPDATE BibliographicEntity bib SET bib.maQualifier = 0 WHERE bib.id IN :bibliographicIds AND bib.maQualifier IN :maQualifiers")
+    int resetMAQualifier(@Param("bibliographicIds") List<Integer> bibliographicIds, @Param("maQualifiers") List<Integer> maQualifiers);
 
     @Modifying
     @Query(value = "UPDATE bibliographic_t AS a inner JOIN (select distinct(b1.MATCHING_IDENTITY) from bibliographic_t b1, bibliographic_t b2 where b1.MATCH_SCORE <> b2.MATCH_SCORE and b1.MATCHING_IDENTITY = b2.MATCHING_IDENTITY and b1.BIBLIOGRAPHIC_ID in (:bibliographicIds) group by b1.MATCHING_IDENTITY ) AS b ON a.MATCHING_IDENTITY = b.MATCHING_IDENTITY set ANAMOLY_FLAG = 1",nativeQuery = true)
