@@ -757,6 +757,7 @@ public class OngoingMatchingAlgorithmUtil {
                 producerTemplate.sendBody("scsbactivemq:queue:saveMatchingReportsQ", Arrays.asList(reportEntity));
             } else {
                 groupBibsAndUpdateInDB(bibIdList, bibItemMap);
+                serialMvmBibIds.addAll(bibIdList);
                 ids = bibIdList;
             }
         }
