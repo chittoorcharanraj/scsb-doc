@@ -911,7 +911,7 @@ public class OngoingMatchingAlgorithmUtil {
             matchingAlgorithmUtil.saveGroupedBibsToDbForOngoing(bibliographicEntityListToBeSaved.values());
         }
         stopWatch.stop();
-        logger.info("Total Time taken to save grouped Bibs : {}" , stopWatch.getTotalTimeSeconds());
+        logger.debug("Total Time taken to save grouped Bibs : {}" , stopWatch.getTotalTimeSeconds());
     }
 
     /**
