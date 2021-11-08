@@ -707,20 +707,18 @@ public class OngoingMatchingAlgorithmUtil {
             }
             matchScore = matchScoreCal;
 
-            bibItemMap = multiMatchedBibItemMap.get(bibMatchPoint);
-            for (Map.Entry<Integer, BibItem> integerBibItemEntry : bibItemMap.entrySet()) {
-               if(integerBibItemEntry.getValue().getMatchScore() != null && integerBibItemEntry.getValue().getMatchScore() > 0) {
-                   Integer matchScoreNew = MatchScoreUtil.calculateMatchScore(matchScoreCal, integerBibItemEntry.getValue().getMatchScore());
-                   //integerBibItemEntry.getValue().setMatchScore(matchScoreNew);
+            Map<Integer, BibItem> tempBibItemMap = multiMatchedBibItemMap.get(bibMatchPoint);
+            for (Map.Entry<Integer, BibItem> integerBibItemEntry : tempBibItemMap.entrySet()) {
+               Integer bibId = integerBibItemEntry.getKey();
+               BibItem bibItem = integerBibItemEntry.getValue();
+               if (null != bibItem) {
+                   bibItemMap.put(bibId, bibItem);
                }
-               else {
-                  //integerBibItemEntry.getValue().setMatchScore(matchScoreCal);
-              }
             }
 
-            for (Iterator<Integer> iterator = bibItemMap.keySet().iterator(); iterator.hasNext(); ) {
+            for (Iterator<Integer> iterator = tempBibItemMap.keySet().iterator(); iterator.hasNext(); ) {
                 Integer bibId = iterator.next();
-                BibItem bibItem = bibItemMap.get(bibId);
+                BibItem bibItem = tempBibItemMap.get(bibId);
                 owningInstSet.add(bibItem.getOwningInstitution());
                 owningInstList.add(bibItem.getOwningInstitution());
                 bibIdList.add(bibItem.getBibId());
