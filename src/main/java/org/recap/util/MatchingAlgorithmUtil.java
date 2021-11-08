@@ -1229,7 +1229,7 @@ public class MatchingAlgorithmUtil {
 
     @Transactional
     public void saveGroupedBibsToDbForOngoing(Collection<BibliographicEntityForMatching> bibliographicEntities) {
-        logger.info("Saving grouped Bibliographic entities to DB . Total size of bibs : {}",bibliographicEntities.size());
+        logger.debug("Saving grouped Bibliographic entities to DB . Total size of bibs : {}",bibliographicEntities.size());
         bibliographicDetailsRepositoryForMatching.saveAll(bibliographicEntities);
         entityManager.flush();
         entityManager.clear();
