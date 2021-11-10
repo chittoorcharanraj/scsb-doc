@@ -312,7 +312,12 @@ public interface BibliographicDetailsRepository extends BaseRepository<Bibliogra
     int resetMAQualifier(@Param("bibliographicIds") List<Integer> bibliographicIds, @Param("maQualifiers") List<Integer> maQualifiers);
 
     @Modifying
-    @Query(value = "UPDATE bibliographic_t AS a inner JOIN (select distinct(b1.MATCHING_IDENTITY) from bibliographic_t b1, bibliographic_t b2 where b1.MATCH_SCORE <> b2.MATCH_SCORE and b1.MATCHING_IDENTITY = b2.MATCHING_IDENTITY and b1.BIBLIOGRAPHIC_ID in (:bibliographicIds) group by b1.MATCHING_IDENTITY ) AS b ON a.MATCHING_IDENTITY = b.MATCHING_IDENTITY set ANAMOLY_FLAG = 1",nativeQuery = true)
+    @Query(value = "update recap.bibliographic_t AS a inner JOIN (select distinct MATCHING_IDENTITY from recap.bibliographic_t where BIBLIOGRAPHIC_ID In (:bibliographicIds) group by MATCHING_IDENTITY, MATCH_SCORE having count(MATCHING_IDENTITY) = 1) AS b ON a.MATCHING_IDENTITY = b.MATCHING_IDENTITY and a.OWNING_INST_ID = 1 set ANAMOLY_FLAG = 1", nativeQuery = true)
     @Transactional
-    int updateAnamolyFlagForBibIds(@Param("bibliographicIds")List<Integer> bibIds);
+    int updateAnamolyFlagFirstForBibIds(@Param("bibliographicIds") List<Integer> bibIds);
+
+    @Modifying
+    @Query(value = "update recap.bibliographic_t AS a inner JOIN (select distinct(b1.MATCHING_IDENTITY) from recap.bibliographic_t b1, bibliographic_t b2 where b1.MATCH_SCORE <> b2.MATCH_SCORE and b1.MATCHING_IDENTITY = b2.MATCHING_IDENTITY and b1.BIBLIOGRAPHIC_ID in (:bibliographicIds) group by b1.MATCHING_IDENTITY ) AS b ON a.MATCHING_IDENTITY = b.MATCHING_IDENTITY and a.ANAMOLY_FLAG = 0 set ANAMOLY_FLAG = 1", nativeQuery = true)
+    @Transactional
+    int updateAnamolyFlagSecondForBibIds(@Param("bibliographicIds") List<Integer> bibIds);
 }

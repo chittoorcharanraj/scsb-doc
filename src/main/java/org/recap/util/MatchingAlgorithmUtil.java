@@ -1293,8 +1293,10 @@ public class MatchingAlgorithmUtil {
         logger.info("Updating Anamoly Flag for Bibs in DB. Total size of bibs : {}", bibIds.size());
         StopWatch stopWatchForAnamolyFlagUpdate = new StopWatch();
         stopWatchForAnamolyFlagUpdate.start();
-        int count = bibliographicDetailsRepository.updateAnamolyFlagForBibIds(bibIds);
-        logger.info("Total number of bibs updated with Anamoly Flag: {}", count);
+        int countFirst = bibliographicDetailsRepository.updateAnamolyFlagFirstForBibIds(bibIds);
+        logger.info("Total number of bibs updated with First Anamoly Flag Query: {}", countFirst);
+        int countSecond = bibliographicDetailsRepository.updateAnamolyFlagSecondForBibIds(bibIds);
+        logger.info("Total number of bibs updated with Second Anamoly Flag Query: {}", countSecond);
         stopWatchForAnamolyFlagUpdate.stop();
         logger.info("Total time taken for updating Anamoly Flag in DB {} for size {}", stopWatchForAnamolyFlagUpdate.getTotalTimeSeconds(), bibIds.size());
     }
