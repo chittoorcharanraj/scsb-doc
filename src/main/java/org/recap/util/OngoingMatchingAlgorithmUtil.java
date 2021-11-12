@@ -737,27 +737,25 @@ public class OngoingMatchingAlgorithmUtil {
                     titleMatches.add(bibItem.getTitleMatch());
             }
         }
-        if(owningInstSet.size() > 1) {
+        if (owningInstSet.size() > 1 && isCGDProcess) {
             Map parameterMap = new HashMap();
             parameterMap.put(ScsbCommonConstants.BIB_ID, bibIdList);
             parameterMap.put(ScsbConstants.MATERIAL_TYPE, materialTypeList);
-            if (isCGDProcess) {
-                ids = updateCGDBasedOnMaterialTypes(reportEntity, materialTypes, serialMvmBibIds, ScsbConstants.MULTI_MATCH, parameterMap, new ArrayList<>(), null,matchScore,bibItemMap);
-                materialTypeList = (List<String>) parameterMap.get(ScsbConstants.MATERIAL_TYPE);
-                matchingAlgorithmUtil.getReportDataEntityList(reportDataEntities, owningInstList, bibIdList, materialTypeList, owningInstBibIds, matchScore);
-                checkAndAddReportEntities(reportDataEntities, oclcNumbers, ScsbCommonConstants.OCLC_CRITERIA);
-                checkAndAddReportEntities(reportDataEntities, isbns, ScsbCommonConstants.ISBN_CRITERIA);
-                checkAndAddReportEntities(reportDataEntities, issns, ScsbCommonConstants.ISSN_CRITERIA);
-                checkAndAddReportEntities(reportDataEntities, lccns, ScsbCommonConstants.LCCN_CRITERIA);
-                checkAndAddReportEntities(reportDataEntities, titleMatches, ScsbConstants.TITLE);
-                checkAndAddReportEntities(reportDataEntities, matchPointStrings, "MatchPoints");
-                reportEntity.addAll(reportDataEntities);
-                producerTemplate.sendBody("scsbactivemq:queue:saveMatchingReportsQ", Arrays.asList(reportEntity));
-            } else {
-                groupBibsAndUpdateInDB(bibIdList, bibItemMap);
-                serialMvmBibIds.addAll(bibIdList);
-                ids = bibIdList;
-            }
+            ids = updateCGDBasedOnMaterialTypes(reportEntity, materialTypes, serialMvmBibIds, ScsbConstants.MULTI_MATCH, parameterMap, new ArrayList<>(), null,matchScore,bibItemMap);
+            materialTypeList = (List<String>) parameterMap.get(ScsbConstants.MATERIAL_TYPE);
+            matchingAlgorithmUtil.getReportDataEntityList(reportDataEntities, owningInstList, bibIdList, materialTypeList, owningInstBibIds, matchScore);
+            checkAndAddReportEntities(reportDataEntities, oclcNumbers, ScsbCommonConstants.OCLC_CRITERIA);
+            checkAndAddReportEntities(reportDataEntities, isbns, ScsbCommonConstants.ISBN_CRITERIA);
+            checkAndAddReportEntities(reportDataEntities, issns, ScsbCommonConstants.ISSN_CRITERIA);
+            checkAndAddReportEntities(reportDataEntities, lccns, ScsbCommonConstants.LCCN_CRITERIA);
+            checkAndAddReportEntities(reportDataEntities, titleMatches, ScsbConstants.TITLE);
+            checkAndAddReportEntities(reportDataEntities, matchPointStrings, "MatchPoints");
+            reportEntity.addAll(reportDataEntities);
+            producerTemplate.sendBody("scsbactivemq:queue:saveMatchingReportsQ", Arrays.asList(reportEntity));
+        } else if (owningInstList.size() > 1 && !isCGDProcess) {
+            groupBibsAndUpdateInDB(bibIdList, bibItemMap);
+            serialMvmBibIds.addAll(bibIdList);
+            ids = bibIdList;
         }
         return ids;
     }
