@@ -1,5 +1,6 @@
 package org.recap.util;
 
+import com.google.common.collect.Lists;
 import org.apache.camel.ProducerTemplate;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -133,31 +134,11 @@ public class OngoingMatchingAlgorithmUtil {
         List<MatchingSummaryReport> matchingSummaryReports = ongoingMatchingReportsService.populateSummaryReportBeforeMatching();
         List<Integer> serialMvmBibIds = new ArrayList<>();
         List<Integer> bibIdListToIndex = new ArrayList<>();
-        Integer start = 0;
-        int totalProcessed = 0;
-        String query = ongoingMatchingAlgorithmQueryUtil.prepareQueryForOngoingMatchingCgdUpdateProcessBasedOnCriteria(solrIndexRequest);
-        QueryResponse queryResponse = ongoingMatchingAlgorithmQueryUtil.fetchDataByQuery(query, rows, start);
-        Integer totalNumFound = Math.toIntExact(queryResponse.getResults().getNumFound());
-        int quotient = totalNumFound / (rows);
-        int remainder = totalNumFound % (rows);
-        Integer totalPages = remainder == 0 ? quotient : quotient + 1;
-        logger.info("Total Number of Records Found : {}", totalNumFound);
-        logger.info("Batch Size : {} ", rows);
-        logger.info("Total Pages : {} ", totalPages);
-        logger.info("{} : {}/{} ", ScsbConstants.CURRENT_PAGE, 1, totalPages);
-        SolrDocumentList solrDocumentList = queryResponse.getResults();
-        totalProcessed = totalProcessed + solrDocumentList.size();
-        status = processOngoingMatchingAlgorithm(solrDocumentList, serialMvmBibIds, true, bibIdListToIndex);
-
-        for (int pageNum = 1; pageNum < totalPages; pageNum++) {
-            logger.info("{} : {}/{} ", ScsbConstants.CURRENT_PAGE, pageNum + 1, totalPages);
-            start = pageNum * rows;
-            queryResponse = ongoingMatchingAlgorithmQueryUtil.fetchDataByQuery(query, rows, start);
-            solrDocumentList = queryResponse.getResults();
-            totalProcessed = totalProcessed + solrDocumentList.size();
-            status = processOngoingMatchingAlgorithm(solrDocumentList, serialMvmBibIds, true, bibIdListToIndex);
+        if (ScsbConstants.BIB_ID_LIST.equalsIgnoreCase(solrIndexRequest.getMatchBy())) {
+            status = processOngoingMatchingForBibIds(solrIndexRequest, rows, serialMvmBibIds, bibIdListToIndex, true);
+        } else {
+            status = processOngoingMatching(solrIndexRequest, rows, serialMvmBibIds, bibIdListToIndex, true);
         }
-        logger.info("Total Number of Records Processed for Ongoing Matching Algorithm: {} ", totalProcessed);
         if (CollectionUtils.isNotEmpty(serialMvmBibIds)) {
             ongoingMatchingReportsService.generateSerialAndMVMsReport(serialMvmBibIds);
         }
@@ -186,29 +167,10 @@ public class OngoingMatchingAlgorithmUtil {
         String status;
         List<Integer> matchedBibIds = new ArrayList<>();
         List<Integer> bibIdListToIndex = new ArrayList<>();
-        Integer start = 0;
-        int totalProcessed = 0;
-        String query = ongoingMatchingAlgorithmQueryUtil.prepareQueryForOngoingMatchingGroupingProcessBasedOnCriteria(solrIndexRequest);
-        QueryResponse queryResponse = ongoingMatchingAlgorithmQueryUtil.fetchDataByQuery(query, rows, start);
-        Integer totalNumFound = Math.toIntExact(queryResponse.getResults().getNumFound());
-        int quotient = totalNumFound / (rows);
-        int remainder = totalNumFound % (rows);
-        Integer totalPages = remainder == 0 ? quotient : quotient + 1;
-        logger.info("Total Number of Records Found : {}", totalNumFound);
-        logger.info("Batch Size : {} ", rows);
-        logger.info("Total Pages : {} ", totalPages);
-        logger.info("{} : {}/{} ", ScsbConstants.CURRENT_PAGE, 1, totalPages);
-        SolrDocumentList solrDocumentList = queryResponse.getResults();
-        totalProcessed = totalProcessed + solrDocumentList.size();
-        status = processOngoingMatchingAlgorithm(solrDocumentList, matchedBibIds, false, bibIdListToIndex);
-
-        for (int pageNum = 1; pageNum < totalPages; pageNum++) {
-            logger.info("{} : {}/{} ", ScsbConstants.CURRENT_PAGE, pageNum + 1, totalPages);
-            start = pageNum * rows;
-            queryResponse = ongoingMatchingAlgorithmQueryUtil.fetchDataByQuery(query, rows, start);
-            solrDocumentList = queryResponse.getResults();
-            totalProcessed = totalProcessed + solrDocumentList.size();
-            status = processOngoingMatchingAlgorithm(solrDocumentList, matchedBibIds, false, bibIdListToIndex);
+        if (ScsbConstants.BIB_ID_LIST.equalsIgnoreCase(solrIndexRequest.getMatchBy())) {
+            status = processOngoingMatchingForBibIds(solrIndexRequest, rows, matchedBibIds, bibIdListToIndex, false);
+        } else {
+           status = processOngoingMatching(solrIndexRequest, rows, matchedBibIds, bibIdListToIndex, false);
         }
         if (CollectionUtils.isNotEmpty(matchedBibIds)) {
             bibIdListToIndex.addAll(matchedBibIds);
@@ -225,6 +187,58 @@ public class OngoingMatchingAlgorithmUtil {
         return status;
     }
 
+    private String processOngoingMatching(SolrIndexRequest solrIndexRequest, Integer rows, List<Integer> matchedBibIds, List<Integer> bibIdListToIndex, boolean isCGDProcess) throws Exception {
+        int start = 0;
+        int totalProcessed = 0;
+        String query = ongoingMatchingAlgorithmQueryUtil.prepareQueryForOngoingMatchingGroupingProcessBasedOnCriteria(solrIndexRequest);
+        QueryResponse queryResponse = ongoingMatchingAlgorithmQueryUtil.fetchDataByQuery(query, rows, start);
+        Integer totalNumFound = Math.toIntExact(queryResponse.getResults().getNumFound());
+        int quotient = totalNumFound / (rows);
+        int remainder = totalNumFound % (rows);
+        Integer totalPages = remainder == 0 ? quotient : quotient + 1;
+        logger.info("Total Number of Records Found : {}", totalNumFound);
+        logger.info("Batch Size : {} ", rows);
+        logger.info("Total Pages : {} ", totalPages);
+        logger.info("{} : {}/{} ", ScsbConstants.CURRENT_PAGE, 1, totalPages);
+        SolrDocumentList solrDocumentList = queryResponse.getResults();
+        totalProcessed = totalProcessed + solrDocumentList.size();
+        String status = processOngoingMatchingAlgorithm(solrDocumentList, matchedBibIds, isCGDProcess, bibIdListToIndex, solrIndexRequest.isIncludeMaQualifier());
+
+        for (int pageNum = 1; pageNum < totalPages; pageNum++) {
+            logger.info("{} : {}/{} ", ScsbConstants.CURRENT_PAGE, pageNum + 1, totalPages);
+            start = pageNum * rows;
+            queryResponse = ongoingMatchingAlgorithmQueryUtil.fetchDataByQuery(query, rows, start);
+            solrDocumentList = queryResponse.getResults();
+            totalProcessed = totalProcessed + solrDocumentList.size();
+            status = processOngoingMatchingAlgorithm(solrDocumentList, matchedBibIds, isCGDProcess, bibIdListToIndex, solrIndexRequest.isIncludeMaQualifier());
+        }
+        logger.info("Total Number of Records Processed for Ongoing Matching Algorithm: {} ", totalProcessed);
+        return status;
+    }
+
+    private String processOngoingMatchingForBibIds(SolrIndexRequest solrIndexRequest, Integer rows, List<Integer> matchedBibIds, List<Integer> bibIdListToIndex, boolean isCGDProcess) throws Exception {
+        int start = 0;
+        int totalProcessed = 0;
+        String status = null;
+        List<String> bibIdsToProcess = Arrays.asList(solrIndexRequest.getBibIds().split(","));
+        logger.info("Bib Ids Size : {}", bibIdsToProcess.size());
+        List<List<String>> partitionedBibIds = Lists.partition(bibIdsToProcess, rows);
+        int totalPages = partitionedBibIds.size();
+        for (int pageNum = 0; pageNum < totalPages; pageNum++) {
+            logger.info("{} : {}/{} ", ScsbConstants.CURRENT_PAGE, pageNum + 1, totalPages);
+            List<String> bibIdsInPage = partitionedBibIds.get(pageNum);
+            solrIndexRequest.setBibIds(StringUtils.join(bibIdsInPage, ","));
+            logger.info("Page Num {} Bib Ids of Size {} : {}", pageNum, bibIdsInPage.size(), solrIndexRequest.getBibIds());
+            String query = ongoingMatchingAlgorithmQueryUtil.prepareQueryForOngoingMatchingGroupingProcessBasedOnCriteria(solrIndexRequest);
+            QueryResponse queryResponse = ongoingMatchingAlgorithmQueryUtil.fetchDataByQuery(query, rows, start);
+            SolrDocumentList solrDocumentList = queryResponse.getResults();
+            totalProcessed = totalProcessed + solrDocumentList.size();
+            status = processOngoingMatchingAlgorithm(solrDocumentList, matchedBibIds, isCGDProcess, bibIdListToIndex, solrIndexRequest.isIncludeMaQualifier());
+        }
+        logger.info("Total Number of Records Processed for Ongoing Matching Algorithm: {} ", totalProcessed);
+        return status;
+    }
+
     /**
      * This method is used to process ongoing matching algorithm based on the given bibs in solrDocumentList and updates the CGD and generates report in solr and database.
      *
@@ -232,7 +246,7 @@ public class OngoingMatchingAlgorithmUtil {
      * @param serialMvmBibIds  the serial mvm bib ids
      * @return the string
      */
-    public String processOngoingMatchingAlgorithm(SolrDocumentList solrDocumentList, List<Integer> serialMvmBibIds, Boolean isCGDProcess, List<Integer> bibIdListToIndex) {
+    public String processOngoingMatchingAlgorithm(SolrDocumentList solrDocumentList, List<Integer> serialMvmBibIds, Boolean isCGDProcess, List<Integer> bibIdListToIndex, boolean includeMAQualifier) {
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
         String status = ScsbCommonConstants.SUCCESS;
@@ -245,7 +259,9 @@ public class OngoingMatchingAlgorithmUtil {
                 bibIdList.add(bibId);
                 status = processMatchingForBib(solrDocument, serialMvmBibIds, isCGDProcess);
             }
-            matchingAlgorithmUtil.resetMAQualifier(bibIdList, isCGDProcess);
+            if (includeMAQualifier) {
+                matchingAlgorithmUtil.resetMAQualifier(bibIdList, isCGDProcess);
+            }
         }
         stopWatch.stop();
         logger.info("Total Time taken to executing matching algorithm only for {} records : {}" , solrDocumentList.size(), stopWatch.getTotalTimeSeconds());
