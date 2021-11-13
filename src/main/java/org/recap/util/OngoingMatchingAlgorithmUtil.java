@@ -144,9 +144,7 @@ public class OngoingMatchingAlgorithmUtil {
         }
         ongoingMatchingReportsService.generateTitleExceptionReport(getFromDateFromRequest(solrIndexRequest), rows);
         ongoingMatchingReportsService.generateSummaryReport(matchingSummaryReports);
-        if (CollectionUtils.isNotEmpty(bibIdListToIndex) && solrIndexRequest.isIndexBibsForOngoingMa()) {
-            matchingAlgorithmUtil.indexBibs(bibIdListToIndex);
-        }
+        indexForOngoingMatching(solrIndexRequest.isIndexBibsForOngoingMa(), bibIdListToIndex);
         ongoingMatchingStopWatch.stop();
         logger.info("{} for OngoingMatching CGD process {} for a total bibs of : {}", ScsbConstants.TOTAL_TIME_TAKEN, ongoingMatchingStopWatch.getTotalTimeSeconds(), bibIdListToIndex.size());
         return status;
@@ -175,12 +173,7 @@ public class OngoingMatchingAlgorithmUtil {
         if (CollectionUtils.isNotEmpty(matchedBibIds)) {
             bibIdListToIndex.addAll(matchedBibIds);
         }
-        if (CollectionUtils.isNotEmpty(bibIdListToIndex)) {
-            List<Integer> bibIdListToIndexUnique = bibIdListToIndex.stream().distinct().collect(Collectors.toList());
-            if (solrIndexRequest.isIndexBibsForOngoingMa()) {
-                matchingAlgorithmUtil.indexBibs(bibIdListToIndexUnique);
-            }
-        }
+        indexForOngoingMatching(solrIndexRequest.isIndexBibsForOngoingMa(), bibIdListToIndex);
         ongoingMatchingStopWatch.stop();
         logger.info("{} for OngoingMatching Grouping process {} for a total bibs of : {}", ScsbConstants.TOTAL_TIME_TAKEN, ongoingMatchingStopWatch.getTotalTimeSeconds(), bibIdListToIndex.size());
         return status;
@@ -234,6 +227,13 @@ public class OngoingMatchingAlgorithmUtil {
         }
         logger.info("Total Number of Records Processed for Ongoing Matching Algorithm: {} ", totalProcessed);
         return status;
+    }
+
+    private void indexForOngoingMatching(boolean isIndexBibsForOngoingMa, List<Integer> bibIdListToIndex) {
+        if (CollectionUtils.isNotEmpty(bibIdListToIndex) && isIndexBibsForOngoingMa) {
+            List<Integer> bibIdListToIndexUnique = bibIdListToIndex.stream().distinct().collect(Collectors.toList());
+            matchingAlgorithmUtil.indexBibs(bibIdListToIndexUnique);
+        }
     }
 
     /**
