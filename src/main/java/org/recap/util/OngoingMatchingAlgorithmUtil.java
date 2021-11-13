@@ -226,9 +226,7 @@ public class OngoingMatchingAlgorithmUtil {
         int totalPages = partitionedBibIds.size();
         for (int pageNum = 0; pageNum < totalPages; pageNum++) {
             logger.info("{} : {}/{} ", ScsbConstants.CURRENT_PAGE, pageNum + 1, totalPages);
-            List<String> bibIdsInPage = partitionedBibIds.get(pageNum);
-            solrIndexRequest.setBibIds(StringUtils.join(bibIdsInPage, ","));
-            logger.info("Page Num {} Bib Ids of Size {} : {}", pageNum, bibIdsInPage.size(), solrIndexRequest.getBibIds());
+            solrIndexRequest.setBibIds(StringUtils.join(partitionedBibIds.get(pageNum), ","));
             String query = ongoingMatchingAlgorithmQueryUtil.prepareQueryForOngoingMatchingGroupingProcessBasedOnCriteria(solrIndexRequest);
             QueryResponse queryResponse = ongoingMatchingAlgorithmQueryUtil.fetchDataByQuery(query, rows, start);
             SolrDocumentList solrDocumentList = queryResponse.getResults();
