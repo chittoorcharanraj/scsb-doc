@@ -338,7 +338,7 @@ public class OngoingMatchingAlgorithmUtil {
         }
         String fieldValue = String.valueOf(solrDocument.getFieldValue(matchPointString)).replaceAll("(^\\[|\\]$)", "");
         String bibIds = bibItemMap.keySet().stream().map(Objects::toString).collect(joining(","));
-        logger.info("Field Value : {} bibIds {}", fieldValue, bibItemMap.size());
+        logger.debug("Field Value : {} bibIds {}", fieldValue, bibItemMap.size());
         List<MatchingAlgorithmReportDataEntity> reportDataEntityList = reportDataDetailsRepository.getReportDataEntityForSingleMatch(LocalDate.now().toString(), matchPointString, fieldValue, bibIds);
         return reportDataEntityList.isEmpty();
     }

@@ -318,7 +318,7 @@ public final class ScsbConstants {
     public static final String EMAIL_HEADER_TO = "${header.emailPayLoad.to}";
     public static final String EMAIL_HEADER_CC = "${header.emailPayLoad.cc}";
     public static final String MATCHING_REPORT_FILE_NAME_CAMEL_HEADER = "${in.header.fileName}-${date:now:ddMMMyyyyHHmmss}.csv";
-    public static final String MATCHING_ALGORITHM_UPDATE_CGD_MESSAGE = "updateCGDBasedOnMaterialTypes, Match type is Single Match, TileException Found";
+    public static final String MATCHING_ALGORITHM_UPDATE_CGD_MESSAGE = "updateCGDBasedOnMaterialTypes, Match type is Single Match, TitleException Found";
 
     public static final String ONGOING_MATCHING_DATE_FORMAT = "yyyy/MM/dd";
     public static final String ONGOING_MATCHING_DATE_TIME_FORMAT = "dd-MM-yyyy hh:mm";
