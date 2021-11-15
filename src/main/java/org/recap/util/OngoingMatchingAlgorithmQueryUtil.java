@@ -42,24 +42,6 @@ public class OngoingMatchingAlgorithmQueryUtil {
      *
      * @return the solr document list
      */
-    public String prepareQueryForOngoingMatchingCgdUpdateProcessBasedOnCriteria(SolrIndexRequest solrIndexRequest) throws Exception {
-        return prepareQueryForOngoingMatchingGroupingOrCgdUpdateProcessBasedOnCriteria(solrIndexRequest, true);
-    }
-
-    /**
-     * This method gets query for ongoing matching for Grouping Process.
-     *
-     * @return the solr document list
-     */
-    public String prepareQueryForOngoingMatchingGroupingProcessBasedOnCriteria(SolrIndexRequest solrIndexRequest) throws Exception {
-        return prepareQueryForOngoingMatchingGroupingOrCgdUpdateProcessBasedOnCriteria(solrIndexRequest, false);
-    }
-
-    /**
-     * This method gets query for ongoing matching for Grouping Process.
-     *
-     * @return the solr document list
-     */
     public String prepareQueryForOngoingMatchingGroupingOrCgdUpdateProcessBasedOnCriteria(SolrIndexRequest solrIndexRequest, boolean isCgdProcess) throws Exception {
         String query = null;
         String matchBy = solrIndexRequest.getMatchBy();
