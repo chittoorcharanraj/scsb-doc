@@ -81,6 +81,8 @@
         </encoder>
     </appender>
 
+	<logger name="org.hibernate" level="ERROR" />
+
 	<root level="INFO">
 		<appender-ref ref="jsonConsoleAppender" />
 		<appender-ref ref="FILE_ROLLER_DATE_SIZE" />

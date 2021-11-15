@@ -3,6 +3,7 @@ package org.recap.util;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.solr.client.solrj.SolrQuery;
+import org.apache.solr.client.solrj.SolrRequest;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.recap.ScsbCommonConstants;
@@ -132,7 +133,7 @@ public class OngoingMatchingAlgorithmQueryUtil {
             SolrQuery solrQuery = new SolrQuery(query);
             solrQuery.setStart(start);
             solrQuery.setRows(batchSize);
-            return solrTemplate.getSolrClient().query(solrQuery);
+            return solrTemplate.getSolrClient().query(solrQuery, SolrRequest.METHOD.POST);
 
         } catch (SolrServerException | IOException e) {
             log.error(ScsbCommonConstants.LOG_ERROR,e);
