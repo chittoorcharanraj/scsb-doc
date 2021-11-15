@@ -1253,17 +1253,20 @@ public class MatchingAlgorithmUtil {
     }
 
     public String indexBibs(List<Integer> bibIds) {
-        logger.info("Total number of BibIds received to index : {}", bibIds.size());
+        logger.info("Started Indexing - Total number of BibIds received to index : {}", bibIds.size());
         if (!bibIds.isEmpty() && bibIds.size() >= 1000) {
-            SolrIndexRequest solrIndexRequest = new SolrIndexRequest();
-            solrIndexRequest.setNumberOfThreads(1);
-            solrIndexRequest.setNumberOfDocs(1000);
-            solrIndexRequest.setCommitInterval(10000);
-            solrIndexRequest.setPartialIndexType("BibIdList");
-            String collect = bibIds.stream().map(bibId -> String.valueOf(bibId)).collect(Collectors.joining(","));
-            solrIndexRequest.setBibIds(collect);
-            String bibsIndexed = bibItemIndexExecutorService.partialIndex(solrIndexRequest);
-            logger.info("Status of Index : {}", bibsIndexed);
+            List<List<Integer>> partitionBibIdsList = Lists.partition(bibIds, 50000);
+            for (List<Integer> partitionBibIds : partitionBibIdsList) {
+                SolrIndexRequest solrIndexRequest = new SolrIndexRequest();
+                solrIndexRequest.setNumberOfThreads(2);
+                solrIndexRequest.setNumberOfDocs(10000);
+                solrIndexRequest.setCommitInterval(20000);
+                solrIndexRequest.setPartialIndexType("BibIdList");
+                String collectedBibIds = partitionBibIds.stream().map(String::valueOf).collect(Collectors.joining(","));
+                solrIndexRequest.setBibIds(collectedBibIds);
+                String bibsIndexed = bibItemIndexExecutorService.partialIndex(solrIndexRequest);
+                logger.info("Status of Index : {}", bibsIndexed);
+            }
             return ScsbCommonConstants.SUCCESS;
         } else {
             String status = bibItemIndexExecutorService.indexByBibliographicId(bibIds);
