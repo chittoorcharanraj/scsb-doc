@@ -102,7 +102,7 @@ public class DataDumpSolrDocumentRepositoryImpl implements CustomDocumentReposit
         queryForParentAndChildCriteria.setStart(searchRecordsRequest.getPageNumber() * searchRecordsRequest.getPageSize());
         queryForParentAndChildCriteria.setRows(searchRecordsRequest.getPageSize());
         queryForParentAndChildCriteria.setSort(ScsbCommonConstants.TITLE_SORT, SolrQuery.ORDER.asc);
-        logger.info("Search by bib query string : {}", queryForParentAndChildCriteria);
+        logger.debug("Search by bib query string : {}", queryForParentAndChildCriteria);
         QueryResponse queryResponse = solrTemplate.getSolrClient().query(queryForParentAndChildCriteria);
         SolrDocumentList bibSolrDocumentList = queryResponse.getResults();
         if(CollectionUtils.isNotEmpty(bibSolrDocumentList)) {
@@ -213,7 +213,7 @@ public class DataDumpSolrDocumentRepositoryImpl implements CustomDocumentReposit
         queryForChildAndParentCriteria.setStart(searchRecordsRequest.getPageNumber() * searchRecordsRequest.getPageSize());
         queryForChildAndParentCriteria.setRows(searchRecordsRequest.getPageSize());
         queryForChildAndParentCriteria.setSort(ScsbCommonConstants.TITLE_SORT, SolrQuery.ORDER.asc);
-        logger.info("Search by item query string : {}", queryForChildAndParentCriteria);
+        logger.debug("Search by item query string : {}", queryForChildAndParentCriteria);
         QueryResponse queryResponse = solrTemplate.getSolrClient().query(queryForChildAndParentCriteria);
         SolrDocumentList itemSolrDocumentList = queryResponse.getResults();
         if(CollectionUtils.isNotEmpty(itemSolrDocumentList)) {
@@ -238,7 +238,7 @@ public class DataDumpSolrDocumentRepositoryImpl implements CustomDocumentReposit
      */
     public void populateItemInfo(List<BibItem> bibItems, SearchRecordsRequest searchRecordsRequest) {
         boolean nonFullTreeInst = isIncrementalNonFullTreeInstitution(searchRecordsRequest);
-        logger.info("nonFullTreeInst---->{}",nonFullTreeInst);
+        logger.debug("nonFullTreeInst---->{}",nonFullTreeInst);
         String queryStringForMatchParentReturnChild = solrQueryBuilder.getQueryStringForMatchParentReturnChild(searchRecordsRequest);
         String querForItemString = "_root_:" + getRootIds(bibItems) + and + ScsbCommonConstants.DOCTYPE + ":" + ScsbCommonConstants.ITEM + and
                 + queryStringForMatchParentReturnChild + and + ScsbCommonConstants.IS_DELETED_ITEM + ":" + searchRecordsRequest.isDeleted() + and + ScsbConstants.ITEM_CATALOGING_STATUS + ":"
@@ -246,7 +246,7 @@ public class DataDumpSolrDocumentRepositoryImpl implements CustomDocumentReposit
         if((nonFullTreeInst && !isPartialFullDump(searchRecordsRequest.getFieldValue())) && searchRecordsRequest.getFieldName().contains(ScsbConstants.BIBITEM_LASTUPDATED_DATE)){
             querForItemString = querForItemString + and + ScsbConstants.ITEM_LASTUPDATED_DATE + ":["+searchRecordsRequest.getFieldValue()+"]";
         }
-        logger.info("query string for export--->{}",querForItemString);
+        logger.debug("query string for export--->{}",querForItemString);
         SolrQuery solrQueryForItem = solrQueryBuilder.getSolrQueryForBibItem(querForItemString) ;
         try {
             SolrDocumentList solrDocuments = commonUtil.getSolrDocumentsByDocType(solrQueryForItem, solrTemplate);
@@ -408,7 +408,7 @@ public class DataDumpSolrDocumentRepositoryImpl implements CustomDocumentReposit
 
     private boolean isIncrementalNonFullTreeInstitution(SearchRecordsRequest searchRecordsRequest){
         String requestingInstitution = searchRecordsRequest.getRequestingInstitution();
-        logger.info("incrementalNonFullTreeInstitution--->{}",incrementalNonFullTreeInstitution);
+        logger.debug("incrementalNonFullTreeInstitution--->{}",incrementalNonFullTreeInstitution);
         List<String> incrementalNonFullTreeInstitutionList = getInstitutionList(incrementalNonFullTreeInstitution);
         return incrementalNonFullTreeInstitutionList.contains(requestingInstitution);
     }
