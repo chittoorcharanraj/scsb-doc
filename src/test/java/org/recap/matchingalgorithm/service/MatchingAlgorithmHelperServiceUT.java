@@ -423,6 +423,24 @@ public class MatchingAlgorithmHelperServiceUT extends BaseTestCaseUT {
         assertNotEquals(producerTemplate, matchingAlgoHelperService.getProducerTemplate());
         assertNotEquals(matchingMatchPointsDetailsRepository, matchingAlgoHelperService.getMatchingMatchPointsDetailsRepository());
     }
+@Test
+public void runReportsForMatchingAlgorithm() throws Exception
+{
+    List<String> strings = new ArrayList<>();
+    strings.add("test");
+    Integer batchSize = 2;
+   // Mockito.when(commonUtil.findAllInstitutionCodesExceptSupportInstitution()).thenReturn(strings);
+    matchingAlgoHelperService.runReportsForMatchingAlgorithm(batchSize);
+}
+
+@Test
+public void populateReportsForMultiMatch() throws Exception
+{
+       Integer batchSize = 10;
+        Map<String, Integer> institutionCounterMap = new HashMap<>();
+        institutionCounterMap.put("test",1);
+        matchingAlgoHelperService.populateReportsForMultiMatch(batchSize,institutionCounterMap);
+}
 
     public Page<MatchingBibEntity> getMatchingBibEntity(List<MatchingBibEntity> matchingBibEntities){
         Page<MatchingBibEntity> matchingBibEntityPage = new Page<MatchingBibEntity>() {

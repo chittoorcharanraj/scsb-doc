@@ -17,4 +17,38 @@ public class MatchScoreUtilUT extends BaseTestCaseUT {
     Integer m2 = 2;
     Integer result = matchScoreUtil.calculateMatchScore(m1,m2);
     assertNotNull(result);
-}}
+}
+@Test
+    public void getMatchScoreForMatchPoint() throws Exception
+{
+    String matchpoints = "OCLCNumber";
+    Integer result = matchScoreUtil.getMatchScoreForMatchPoint(matchpoints);
+}
+
+    @Test
+    public void getMatchScoreForMatchpoint() throws Exception
+    {
+        String matchpoints = "ISBN";
+        Integer result = matchScoreUtil.getMatchScoreForMatchPoint(matchpoints);
+    }
+    @Test
+    public void getMatchscoreFormatchpoint() throws Exception
+    {
+        String matchpoints = "LCCN";
+        Integer result = matchScoreUtil.getMatchScoreForMatchPoint(matchpoints);
+    }
+    @Test
+    public void getmatchscoreFormatchpoint() throws Exception
+    {
+        String matchpoints = "ISSN";
+        Integer result = matchScoreUtil.getMatchScoreForMatchPoint(matchpoints);
+    }
+
+    @Test
+    public void getmatchScoreFormatchpoint() throws Exception
+    {
+        String matchpoints = "TITLE";
+        Integer result = matchScoreUtil.getMatchScoreForMatchPoint(matchpoints);
+    }
+
+}

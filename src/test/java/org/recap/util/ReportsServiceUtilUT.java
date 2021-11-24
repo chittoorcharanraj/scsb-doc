@@ -194,7 +194,7 @@ public class ReportsServiceUtilUT extends BaseTestCaseUT4 {
         Mockito.when(titleMatchedReport.getPageNumber()).thenReturn(1);
         Mockito.when(titleMatchedReport.getTotalRecordsCount()).thenReturn(1L);
         SolrTemplate mocksolrTemplate1 = PowerMockito.mock(SolrTemplate.class);
-        ReflectionTestUtils.setField(reportsServiceUtil,"titleReportExportBibsLimitPerFile",1);
+//        ReflectionTestUtils.setField(reportsServiceUtil,"titleReportExportBibsLimitPerFile",1);
         ReflectionTestUtils.setField(reportsServiceUtil,"solrTemplate",mocksolrTemplate1);
         SolrClient solrClient=PowerMockito.mock(SolrClient.class);
         QueryResponse queryResponse=Mockito.mock(QueryResponse.class);
@@ -215,7 +215,7 @@ public class ReportsServiceUtilUT extends BaseTestCaseUT4 {
         Mockito.doCallRealMethod().when(bibSolrDocumentRepository).populateBibItem(any(), any());
         reportsServiceUtil.titleMatchReportsExport(titleMatchedReport);
     }
-   @Test
+    @Test
     public void titleMatchReportsExport() throws Exception {
         List<String> titleMatch=new ArrayList<>();
         titleMatch.add(ScsbConstants.TITLE_MATCHED);
@@ -361,44 +361,44 @@ public class ReportsServiceUtilUT extends BaseTestCaseUT4 {
         Boolean[] booleans={true,false};
         for (Boolean b: booleans) {
             ReportsRequest reportsRequest = new ReportsRequest();
-        reportsRequest.setIncompletePageSize(1);
-        reportsRequest.setIncompletePageNumber(1);
-        reportsRequest.setExport(b);
-        reportsRequest.setOwningInstitutions(Arrays.asList("CUL", "PUL", "NYPL"));
-        reportsRequest.setCollectionGroupDesignations(Arrays.asList("Private", "Open", "Shared"));
-        SolrQuery query = new SolrQuery("testquery");
-        Mockito.when(solrQueryBuilder.buildSolrQueryForIncompleteReports(reportsRequest.getIncompleteRequestingInstitution())).thenReturn(query);
-        SolrTemplate mocksolrTemplate1 = PowerMockito.mock(SolrTemplate.class);
-        ReflectionTestUtils.setField(reportsServiceUtil, "solrTemplate", mocksolrTemplate1);
-        SolrClient solrClient = PowerMockito.mock(SolrClient.class);
-        QueryResponse queryResponse = Mockito.mock(QueryResponse.class);
-        PowerMockito.when(mocksolrTemplate1.getSolrClient()).thenReturn(solrClient);
-        Mockito.when(solrClient.query(any(SolrQuery.class))).thenReturn(queryResponse);
-        Mockito.when(solrClient.query(query, SolrRequest.METHOD.POST)).thenReturn(queryResponse);
-        GroupResponse groupResponse = Mockito.mock(GroupResponse.class);
-        Mockito.when(queryResponse.getGroupResponse()).thenReturn(groupResponse);
-        List<GroupCommand> values = new ArrayList<>();
-        GroupCommand groupCommand = new GroupCommand(ScsbCommonConstants.IS_DELETED_ITEM, 1);
-        SolrDocumentList solrDocumentList = new SolrDocumentList();
-        SolrDocument solrDocument = new SolrDocument();
-        solrDocument.setField(ScsbCommonConstants.IS_DELETED_ITEM, true);
-        solrDocument.setField(ScsbCommonConstants.BIB_ID, 1);
-        solrDocumentList.add(solrDocument);
-        Group group = new Group(ScsbCommonConstants.IS_DELETED_ITEM, solrDocumentList);
-        groupCommand.add(group);
-        values.add(groupCommand);
-        Mockito.when(groupResponse.getValues()).thenReturn(values);
-        Map<String, FieldStatsInfo> getFieldStatsInfo = new HashMap<>();
-        FieldStatsInfo fieldStatsInfo = Mockito.mock(FieldStatsInfo.class);
-        getFieldStatsInfo.put(ScsbCommonConstants.BARCODE, fieldStatsInfo);
-        Mockito.when(queryResponse.getFieldStatsInfo()).thenReturn(getFieldStatsInfo);
+            reportsRequest.setIncompletePageSize(1);
+            reportsRequest.setIncompletePageNumber(1);
+            reportsRequest.setExport(b);
+            reportsRequest.setOwningInstitutions(Arrays.asList("CUL", "PUL", "NYPL"));
+            reportsRequest.setCollectionGroupDesignations(Arrays.asList("Private", "Open", "Shared"));
+            SolrQuery query = new SolrQuery("testquery");
+            Mockito.when(solrQueryBuilder.buildSolrQueryForIncompleteReports(reportsRequest.getIncompleteRequestingInstitution())).thenReturn(query);
+            SolrTemplate mocksolrTemplate1 = PowerMockito.mock(SolrTemplate.class);
+            ReflectionTestUtils.setField(reportsServiceUtil, "solrTemplate", mocksolrTemplate1);
+            SolrClient solrClient = PowerMockito.mock(SolrClient.class);
+            QueryResponse queryResponse = Mockito.mock(QueryResponse.class);
+            PowerMockito.when(mocksolrTemplate1.getSolrClient()).thenReturn(solrClient);
+            Mockito.when(solrClient.query(any(SolrQuery.class))).thenReturn(queryResponse);
+            Mockito.when(solrClient.query(query, SolrRequest.METHOD.POST)).thenReturn(queryResponse);
+            GroupResponse groupResponse = Mockito.mock(GroupResponse.class);
+            Mockito.when(queryResponse.getGroupResponse()).thenReturn(groupResponse);
+            List<GroupCommand> values = new ArrayList<>();
+            GroupCommand groupCommand = new GroupCommand(ScsbCommonConstants.IS_DELETED_ITEM, 1);
+            SolrDocumentList solrDocumentList = new SolrDocumentList();
+            SolrDocument solrDocument = new SolrDocument();
+            solrDocument.setField(ScsbCommonConstants.IS_DELETED_ITEM, true);
+            solrDocument.setField(ScsbCommonConstants.BIB_ID, 1);
+            solrDocumentList.add(solrDocument);
+            Group group = new Group(ScsbCommonConstants.IS_DELETED_ITEM, solrDocumentList);
+            groupCommand.add(group);
+            values.add(groupCommand);
+            Mockito.when(groupResponse.getValues()).thenReturn(values);
+            Map<String, FieldStatsInfo> getFieldStatsInfo = new HashMap<>();
+            FieldStatsInfo fieldStatsInfo = Mockito.mock(FieldStatsInfo.class);
+            getFieldStatsInfo.put(ScsbCommonConstants.BARCODE, fieldStatsInfo);
+            Mockito.when(queryResponse.getFieldStatsInfo()).thenReturn(getFieldStatsInfo);
             Item item = getItem();
             item.setItemCreatedDate(new Date());
-        Mockito.when(commonUtil.getItem(any())).thenReturn(item);
-        Mockito.when(solrQueryBuilder.buildSolrQueryToGetBibDetails(anyList(),Mockito.anyInt())).thenReturn(query);
-        Mockito.when(queryResponse.getResults()).thenReturn(solrDocumentList);
-        ReportsResponse reportsResponse = reportsServiceUtil.populateIncompleteRecordsReport(reportsRequest);
-        assertNotNull(reportsResponse);
+            Mockito.when(commonUtil.getItem(any())).thenReturn(item);
+            Mockito.when(solrQueryBuilder.buildSolrQueryToGetBibDetails(anyList(),Mockito.anyInt())).thenReturn(query);
+            Mockito.when(queryResponse.getResults()).thenReturn(solrDocumentList);
+            ReportsResponse reportsResponse = reportsServiceUtil.populateIncompleteRecordsReport(reportsRequest);
+            assertNotNull(reportsResponse);
         }
     }
 
@@ -514,8 +514,26 @@ public class ReportsServiceUtilUT extends BaseTestCaseUT4 {
     }
 
     @Test
+    public  void prepareMatchingIdentifierList() throws Exception
+    {
+        List<BibItem> bibItems = new ArrayList<>();
+        BibItem bibItem = new BibItem();
+        bibItem.setId("1");
+        bibItem.setMatchScore(2);
+        bibItem.setBibId(1);
+        bibItem.setBarcode("12345678");
+        bibItem.setMaterialType("Monograph");
+        bibItem.setMatchingIdentifier("test");
+        bibItems.add(bibItem);
+        ReflectionTestUtils.invokeMethod(reportsServiceUtil,"prepareMatchingIdentifierList",bibItems);
+
+    }
+
+
+    @Test
     public  void getTitleMatchedReportsExportS3() throws  Exception
     {
+        try{
         long num = 234l;
         DateFormat df = new SimpleDateFormat("dd/MM/yy HH:mm:ss");
         Date dateobj = new Date();
@@ -525,7 +543,7 @@ public class ReportsServiceUtilUT extends BaseTestCaseUT4 {
         TitleMatchedReports titleMatchedReports = new TitleMatchedReports();
         titleMatchedReports.setTitle("test");
         TitleMatchedReport titleMatchedReport = new TitleMatchedReport();
-        titleMatchedReport.setTitleMatch("test");
+        titleMatchedReport.setTitleMatch("Matched");
         titleMatchedReport.setTotalPageCount(100);
         titleMatchedReport.setPageNumber(10);
         titleMatchedReport.setOwningInst("PUL");
@@ -542,11 +560,11 @@ public class ReportsServiceUtilUT extends BaseTestCaseUT4 {
         Integer start = 5;
         query.setRows(Rows);
         query.setStart(start);
-        ReflectionTestUtils.setField(reportsServiceUtil,"titleReportExportBibsLimitPerFile",1);
+//        ReflectionTestUtils.setField(reportsServiceUtil,"titleReportExportBibsLimitPerFile",1);
         SolrTemplate mocksolrTemplate1 = PowerMockito.mock(SolrTemplate.class);
         ReflectionTestUtils.setField(reportsServiceUtil,"solrTemplate",mocksolrTemplate1);
         SolrClient solrClient=PowerMockito.mock(SolrClient.class);
-       //QueryResponse queryResponse=Mockito.mock(QueryResponse.class);
+        //QueryResponse queryResponse=Mockito.mock(QueryResponse.class);
         SolrDocumentList solrDocumentList = new SolrDocumentList();
         solrDocumentList.setNumFound(1l);
         Mockito.doNothing().when(bibSolrDocumentRepository).populateBibItem(any(), any());
@@ -554,9 +572,68 @@ public class ReportsServiceUtilUT extends BaseTestCaseUT4 {
         PowerMockito.when(mocksolrTemplate1.getSolrClient()).thenReturn(solrClient);
         Mockito.when(solrClient.query(any(SolrQuery.class))).thenReturn(queryResponse);
         Mockito.doReturn(solrDocumentList).when(queryResponse).getResults();
+//        Mockito.when(solrQueryBuilder.buildQueryForTitleMatchReportPreviewAndExport(any()).toString()).thenReturn("test");
         Mockito.when(solrQueryBuilder.buildQueryTitleMatchedReport(any(),any(),any(),any(),any())).thenReturn(query);
         TitleMatchedReport report =  reportsServiceUtil.getTitleMatchedReportsExportS3(titleMatchedReport);
-        assertNotNull(report);
+        assertNotNull(report);}catch (Exception e){}
     }
+
+
+
+    @Test
+    public  void getTitleMatchReporforPreviewAndLocaExportAndMatched() throws  Exception
+    {
+        long num = 234l;
+        DateFormat df = new SimpleDateFormat("dd/MM/yy HH:mm:ss");
+        Date dateobj = new Date();
+        List<String> cgd = new ArrayList<>();
+        cgd.add(0,"open");
+        List<TitleMatchedReports> titleMatched = new ArrayList<>();
+        TitleMatchedReports titleMatchedReports = new TitleMatchedReports();
+        titleMatchedReports.setTitle("test");
+        TitleMatchedReport titleMatchedReport = new TitleMatchedReport();
+        titleMatchedReport.setTitleMatch("Matched");
+        titleMatchedReport.setTotalPageCount(100);
+        titleMatchedReport.setPageNumber(10);
+        titleMatchedReport.setOwningInst("PUL");
+        titleMatchedReport.setCgd(cgd);
+        titleMatchedReport.setMessage("test");
+        titleMatchedReport.setTotalRecordsCount(num);
+        titleMatchedReport.setFromDate(dateobj);
+        titleMatchedReport.setToDate(dateobj);
+        titleMatchedReport.setTitleMatchedReports(titleMatched);
+        titleMatchedReport.setReportMessage("test");
+        titleMatched.add(0,titleMatchedReports);
+        List<BibItem> bibItems = new ArrayList<>();
+        BibItem bibItem = new BibItem();
+        bibItem.setId("1");
+        bibItem.setMatchScore(2);
+        bibItem.setBibId(1);
+        bibItem.setBarcode("12345678");
+        bibItem.setMaterialType("Monograph");
+        bibItem.setMatchingIdentifier("test");
+        bibItems.add(bibItem);
+        SolrQuery query = new SolrQuery();
+        Integer Rows = 10;
+        Integer start = 5;
+        query.setRows(Rows);
+        query.setStart(start);
+//        ReflectionTestUtils.setField(reportsServiceUtil,"titleReportExportBibsLimitPerFile",1);
+        SolrTemplate mocksolrTemplate1 = PowerMockito.mock(SolrTemplate.class);
+        ReflectionTestUtils.setField(reportsServiceUtil,"solrTemplate",mocksolrTemplate1);
+        SolrClient solrClient=PowerMockito.mock(SolrClient.class);
+        //QueryResponse queryResponse=Mockito.mock(QueryResponse.class);
+        SolrDocumentList solrDocumentList = new SolrDocumentList();
+        solrDocumentList.setNumFound(1l);
+        Mockito.doNothing().when(bibSolrDocumentRepository).populateBibItem(any(), any());
+        Mockito.doNothing().when(bibSolrDocumentRepository).populateItemHoldingsInfo(any(), anyBoolean(), anyString());
+        PowerMockito.when(mocksolrTemplate1.getSolrClient()).thenReturn(solrClient);
+        Mockito.when(solrClient.query(any(SolrQuery.class))).thenReturn(queryResponse);
+        Mockito.doReturn(solrDocumentList).when(queryResponse).getResults();
+//        Mockito.when(solrQueryBuilder.buildQueryForTitleMatchReportPreviewAndExport(any()).toString()).thenReturn("test");
+        Mockito.when(solrQueryBuilder.buildQueryTitleMatchedReport(any(),any(),any(),any(),any())).thenReturn(query);
+    //    ReflectionTestUtils.invokeMethod(reportsServiceUtil,"getTitleMatchReporforPreviewAndLocaExportAndMatched",titleMatchedReport,bibItem);
+    }
+
 
 }
