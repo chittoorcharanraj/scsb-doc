@@ -79,40 +79,40 @@ public class MarcToBibEntityConverterUT extends BaseTestCaseUT4 {
         accessionRequest.setCustomerCode("PA");
         accessionRequest.setItemBarcode("32101095533293");
         Record record = (Record) records.get(0);
-        MarcUtil marcUtil1=new MarcUtil();
+        MarcUtil marcUtil1 = new MarcUtil();
         Mockito.when(marcUtil.buildBibMarcRecord(Mockito.any(Record.class))).thenReturn(bibMarcRecord);
         Mockito.when(bibMarcRecord.getBibRecord()).thenReturn(bibRecord);
-        Map institutionEntityMap=new HashMap();
-        institutionEntityMap.put("PUL",1);
+        Map institutionEntityMap = new HashMap();
+        institutionEntityMap.put("PUL", 1);
         Mockito.when(commonUtil.getInstitutionEntityMap()).thenReturn(institutionEntityMap);
-        Mockito.when(marcUtil.getControlFieldValue(Mockito.any(),Mockito.anyString())).thenReturn("1");
+        Mockito.when(marcUtil.getControlFieldValue(Mockito.any(), Mockito.anyString())).thenReturn("1");
         String bibContent = marcUtil1.writeMarcXml(record);
         Mockito.when(marcUtil.writeMarcXml(Mockito.any())).thenReturn(bibContent);
         Mockito.when(marcUtil.isSubFieldExists(bibRecord, "245")).thenReturn(true);
         Mockito.when(bibRecord.getLeader()).thenReturn(leader);
         Mockito.when(leader.toString()).thenReturn("01750cam a2200493 i 4500");
-        Mockito.when(bibliographicDetailsRepository.findByOwningInstitutionIdAndOwningInstitutionBibIdAndIsDeletedFalse(Mockito.anyInt(),Mockito.anyString())).thenReturn(saveBibSingleHoldingsSingleItem("32101095533293","PA","1","1"));
-        List<HoldingsMarcRecord> holdingsMarcRecords=new ArrayList<>();
+        Mockito.when(bibliographicDetailsRepository.findByOwningInstitutionIdAndOwningInstitutionBibIdAndIsDeletedFalse(Mockito.anyInt(), Mockito.anyString())).thenReturn(saveBibSingleHoldingsSingleItem("32101095533293", "PA", "1", "1"));
+        List<HoldingsMarcRecord> holdingsMarcRecords = new ArrayList<>();
         holdingsMarcRecords.add(holdingsMarcRecord);
         Mockito.when(bibMarcRecord.getHoldingsMarcRecords()).thenReturn(holdingsMarcRecords);
         Mockito.when(holdingsMarcRecord.getHoldingsRecord()).thenReturn(record);
-        Mockito.when(commonUtil.buildHoldingsEntity(Mockito.any(),Mockito.any(),Mockito.any(),Mockito.anyString())).thenReturn(saveBibSingleHoldingsSingleItem("32101095533293","PA","1","1").getHoldingsEntities().get(0));
-        Mockito.when(marcUtil.getDataFieldValue(Mockito.any(Record.class),Mockito.anyString(),Mockito.anyChar())).thenReturn("1");
-        Map<String, Object> map1=new HashMap<>();
-        map1.put("holdingsEntity",saveBibSingleHoldingsSingleItem("32101095533293","PA","1","1").getHoldingsEntities().get(0));
-        Mockito.when(commonUtil.addHoldingsEntityToMap(Mockito.anyMap(),Mockito.any(),Mockito.anyString())).thenReturn(map1);
-        List<ItemMarcRecord> itemMarcRecordList=new ArrayList<>();
+        Mockito.when(commonUtil.buildHoldingsEntity(Mockito.any(), Mockito.any(), Mockito.any(), Mockito.anyString())).thenReturn(saveBibSingleHoldingsSingleItem("32101095533293", "PA", "1", "1").getHoldingsEntities().get(0));
+        Mockito.when(marcUtil.getDataFieldValue(Mockito.any(Record.class), Mockito.anyString(), Mockito.anyChar())).thenReturn("1");
+        Map<String, Object> map1 = new HashMap<>();
+        map1.put("holdingsEntity", saveBibSingleHoldingsSingleItem("32101095533293", "PA", "1", "1").getHoldingsEntities().get(0));
+        Mockito.when(commonUtil.addHoldingsEntityToMap(Mockito.anyMap(), Mockito.any(), Mockito.anyString())).thenReturn(map1);
+        List<ItemMarcRecord> itemMarcRecordList = new ArrayList<>();
         itemMarcRecordList.add(itemMarcRecord);
         Mockito.when(holdingsMarcRecord.getItemMarcRecordList()).thenReturn(itemMarcRecordList);
-        Mockito.when( marcUtil.getDataFieldValue(null,"876", 'p')).thenReturn("32101095533293");
-        Mockito.when( marcUtil.getDataFieldValue(null,"876", 't')).thenReturn("0");
-        Mockito.when( marcUtil.getDataFieldValue(null,"876", 'x')).thenReturn("Shared");
-        Mockito.when( marcUtil.getDataFieldValue(null,"876", 'h')).thenReturn("In Library Use");
-        Mockito.when( marcUtil.getDataFieldValue(null,"876", 'a')).thenReturn("7453441");
-        Map collectionGroupMap=new HashMap();
-        collectionGroupMap.put("Shared",1);
+        Mockito.when(marcUtil.getDataFieldValue(null, "876", 'p')).thenReturn("32101095533293");
+        Mockito.when(marcUtil.getDataFieldValue(null, "876", 't')).thenReturn("0");
+        Mockito.when(marcUtil.getDataFieldValue(null, "876", 'x')).thenReturn("Shared");
+        Mockito.when(marcUtil.getDataFieldValue(null, "876", 'h')).thenReturn("In Library Use");
+        Mockito.when(marcUtil.getDataFieldValue(null, "876", 'a')).thenReturn("7453441");
+        Map collectionGroupMap = new HashMap();
+        collectionGroupMap.put("Shared", 1);
         Mockito.when(commonUtil.getCollectionGroupMap()).thenReturn(collectionGroupMap);
-        Map map = marcToBibEntityConverter.convert(records.get(0), "PUL",accessionRequest);
+        Map map = marcToBibEntityConverter.convert(records.get(0), "PUL", accessionRequest);
         assertNotNull(map);
         BibliographicEntity bibliographicEntity = (BibliographicEntity) map.get("bibliographicEntity");
         assertNotNull(bibliographicEntity);
@@ -123,6 +123,7 @@ public class MarcToBibEntityConverterUT extends BaseTestCaseUT4 {
         assertNotNull(itemEntities);
         assertTrue(itemEntities.size() == 1);
     }
+
 
     @Test
     public void processAndValidateItemEntity() throws Exception {

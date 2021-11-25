@@ -109,6 +109,7 @@ public class TransferServiceUT extends BaseTestCaseUT4 {
         assertEquals(ScsbConstants.Transfer.SUCCESSFULLY_RELINKED,response.get(0).getMessage());
     }
 
+
     @Test
     public void processItemTransferSourceDeaccessioned() throws Exception{
         BibliographicEntity bibliographicEntity=getBibliographicEntity();
@@ -608,6 +609,14 @@ public class TransferServiceUT extends BaseTestCaseUT4 {
     public void TransferValidationResponse() throws Exception {
         boolean valid = true;
         String message = "test";
+
+
+    }
+    @Test
+    public void TransferValidationResponse1() throws Exception {
+        boolean valid = true;
+        String message = "test";
+
 
     }
 }
