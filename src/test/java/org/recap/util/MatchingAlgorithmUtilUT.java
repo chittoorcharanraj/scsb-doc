@@ -587,4 +587,83 @@ public class MatchingAlgorithmUtilUT extends BaseTestCaseUT4 {
          assertNotNull(points);
 
      }
+
+     @Test
+    public void setTrimmedHeaderValue() throws Exception
+     {
+         String headerName = "test";
+         MatchingAlgorithmReportDataEntity bibIdReportDataEntity = new MatchingAlgorithmReportDataEntity();
+         bibIdReportDataEntity.setId(1);
+         bibIdReportDataEntity.setHeaderName("test");
+         bibIdReportDataEntity.setHeaderValue("testdata");
+         String joinedHeaderValue = "test";
+         ReflectionTestUtils.invokeMethod(mockMatchingAlgorithmUtil,"setTrimmedHeaderValue", headerName,bibIdReportDataEntity,joinedHeaderValue);
+
+     }
+     
+     @Test
+    public void setTrimmedHeaderValue1() throws Exception
+     {
+         String headerName = "test";
+         String joinedHeaderValue = "Our expert bid writers will do the writing while you tell us about your business and your vision for the new contract. They know how to draw out the nuanced details which tell your story and present a unique strategy for the buyer.\n" +
+                 "Exceptional bid writing means going beyond compliance, and our bid writers are here to challenge you to create something truly compelling with your bid. Our research will uncover the deeper issues surrounding the contract, and together we can design a solution to the needs of the buyer.\n" +
+                 "We think deeply about our writing, and our whole organisation is built around using the written word to get the outcomes we desire. Every aspect of our bid writers work is deliberate ? from the initial ideas which underpin the story we?re telling, through to the structure and shape of the answers, and the tone of voice which defines each word choice.\n" +
+                 "Your bid will go through multiple review stages, at each point getting objective critique from the wider business. This networked approach means you?re never engaging a tender writer ? every bid has the full force of our company behind it.\n" +
+                 "Our expert bid writers will do the writing while you tell us about your business and your vision for the new contract. They know how to draw out the nuanced details which tell your story and present a unique strategy for the buyer.\n" +
+                 "Exceptional bid writing means going beyond compliance, and our bid writers are here to challenge you to create something truly compelling with your bid. Our research will uncover the deeper issues surrounding the contract, and together we can design a solution to the needs of the buyer.\n" +
+                 "We think deeply about our writing, and our whole organisation is built around using the written word to get the outcomes we desire. Every aspect of our bid writers work is deliberate ? from the initial ideas which underpin the story we?re telling, through to the structure and shape of the answers, and the tone of voice which defines each word choice.\n" +
+                 "Your bid will go through multiple review stages, at each point getting objective critique from the wider business. This networked approach means you?re never engaging a tender writer ? every bid has the full force of our company behind it.\n" +
+                 "Our expert bid writers will do the writing while you tell us about your business and your vision for the new contract. They know how to draw out the nuanced details which tell your story and present a unique strategy for the buyer.\n" +
+                 "Exceptional bid writing means going beyond compliance, and our bid writers are here to challenge you to create something truly compelling with your bid. Our research will uncover the deeper issues surrounding the contract, and together we can design a solution to the needs of the buyer.\n" +
+                 "We think deeply about our writing, and our whole organisation is built around using the written word to get the outcomes we desire. Every aspect of our bid writers work is deliberate ? from the initial ideas which underpin the story we?re telling, through to the structure and shape of the answers, and the tone of voice which defines each word choice.\n" +
+                 "Your bid will go through multiple review stages, at each point getting objective critique from the wider business. This networked approach means you?re never engaging a tender writer ? every bid has the full force of our company behind it.\n" +
+                 "Our expert bid writers will do the writing while you tell us about your business and your vision for the new contract. They know how to draw out the nuanced details which tell your story and present a unique strategy for the buyer.\n" +
+                 "Exceptional bid writing means going beyond compliance, and our bid writers are here to challenge you to create something truly compelling with your bid. Our research will uncover the deeper issues surrounding the contract, and together we can design a solution to the needs of the buyer.\n" +
+                 "We think deeply about our writing, and our whole organisation is built around using the written word to get the outcomes we desire. Every aspect of our bid writers work is deliberate ? from the initial ideas which underpin the story we?re telling, through to the structure and shape of the answers, and the tone of voice which defines each word choice.\n" +
+                 "Your bid will go through multiple review stages, at each point getting objective critique from the wider business. This networked approach means you?re never engaging a tender writer ? every bid has the full force of our company behind it.\n" +
+                 "Our expert bid writers will do the writing while you tell us about your business and your vision for the new contract. They know how to draw out the nuanced details which tell your story and present a unique strategy for the buyer.\n" +
+                 "Exceptional bid writing means going beyond compliance, and our bid writers are here to challenge you to create something truly compelling with your bid. Our research will uncover the deeper issues surrounding the contract, and together we can design a solution to the needs of the buyer.\n" +
+                 "We think deeply about our writing, and our whole organisation is built around using the written word to get the outcomes we desire. Every aspect of our bid writers work is deliberate ? from the initial ideas which underpin the story we?re telling, through to the structure and shape of the answers, and the tone of voice which defines each word choice.\n" +
+                 "Your bid will go through multiple review stages, at each point getting objective critique from the wider business. This networked approach means you?re never engaging a tender writer ? every bid has the full force of our company behind it.\n" +
+                 "Our expert bid writers will do the writing while you tell us about your business and your vision for the new contract. They know how to draw out the nuanced details which tell your story and present a unique strategy for the buyer.\n" +
+                 "Exceptional bid writing means going beyond compliance, and our bid writers are here to challenge you to create something truly compelling with your bid. Our research will uncover the deeper issues surrounding the contract, and together we can design a solution to the needs of the buyer.\n" +
+                 "We think deeply about our writing, and our whole organisation is built around using the written word to get the outcomes we desire. Every aspect of our bid writers work is deliberate ? from the initial ideas which underpin the story we?re telling, through to the structure and shape of the answers, and the tone of voice which defines each word choice.\n" +
+                 "Your bid will go through multiple review stages, at each point getting objective critique from the wider business. This networked approach means you?re never engaging a tender writer ? every bid has the full force of our company behind it.\n" +
+                 "Our expert bid writers will do the writing while you tell us about your business and your vision for the new contract. They know how to draw out the nuanced details which tell your story and present a unique strategy for the buyer.\n" +
+                 "Exceptional bid writing means going beyond compliance, and our bid writers are here to challenge you to create something truly compelling with your bid. Our research will uncover the deeper issues surrounding the contract, and together we can design a solution to the needs of the buyer.\n" +
+                 "We think deeply about our writing, and our whole organisation is built around using the written word to get the outcomes we desire. Every aspect of our bid writers work is deliberate ? from the initial ideas which underpin the story we?re telling, through to the structure and shape of the answers, and the tone of voice which defines each word choice.\n" +
+                 "Your bid will go through multiple review stages, at each point getting objective critique from the wider business. This networked approach means you?re never engaging a tender writer ? every bid has the full force of our company behind it.\n" +
+                 "Our expert bid writers will do the writing while you tell us about your business and your vision for the new contract. They know how to draw out the nuanced details which tell your story and present a unique strategy for the buyer.\n" +
+                 "Exceptional bid writing means going beyond compliance, and our bid writers are here to challenge you to create something truly compelling with your bid. Our research will uncover the deeper issues surrounding the contract, and together we can design a solution to the needs of the buyer.\n" +
+                 "We think deeply about our writing, and our whole organisation is built around using the written word to get the outcomes we desire. Every aspect of our bid writers work is deliberate ? from the initial ideas which underpin the story we?re telling, through to the structure and shape of the answers, and the tone of voice which defines each word choice.\n" +
+                 "Your bid will go through multiple review stages, at each point getting objective critique from the wider business. This networked approach means you?re never engaging a tender writer ? every bid has the full force of our company behind it.\n" +
+                 "Our expert bid writers will do the writing while you tell us about your business and your vision for the new contract. They know how to draw out the nuanced details which tell your story and present a unique strategy for the buyer.\n" +
+                 "Exceptional bid writing means going beyond compliance, and our bid writers are here to challenge you to create something truly compelling with your bid. Our research will uncover the deeper issues surrounding the contract, and together we can design a solution to the needs of the buyer.\n" +
+                 "We think deeply about our writing, and our whole organisation is built around using the written word to get the outcomes we desire. Every aspect of our bid writers work is deliberate ? from the initial ideas which underpin the story we?re telling, through to the structure and shape of the answers, and the tone of voice which defines each word choice.\n" +
+                 "Your bid will go through multiple review stages, at each point getting objective critique from the wider business. This networked approach means you?re never engaging a tender writer ? every bid has the full force of our company behind it.";
+         MatchingAlgorithmReportDataEntity bibIdReportDataEntity = new MatchingAlgorithmReportDataEntity();
+         ReflectionTestUtils.invokeMethod(mockMatchingAlgorithmUtil,"setTrimmedHeaderValue", headerName,bibIdReportDataEntity,joinedHeaderValue);
+
+     }
+     @Test
+    public void populateBibIdWithMatchingCriteriaValue() throws Exception
+     {
+         Map<String, Set<Integer>> criteria1Map = new HashMap<>();
+         Set<Integer> integers = new HashSet<>();
+         integers.add(1);
+         criteria1Map.put("test",integers);
+         List<MatchingBibEntity> matchingBibEntities = new ArrayList<>();
+         MatchingBibEntity matchingBibEntity = new MatchingBibEntity();
+         matchingBibEntity.setMatching("OCLC");
+         matchingBibEntity.setBibId(1);
+         matchingBibEntities.add(matchingBibEntity);
+         String matchCriteria1 = "OCLC";
+         Map<Integer, MatchingBibEntity> bibEntityMap = new HashMap<>();
+         MatchingBibEntity matchingBibEntity1 = new MatchingBibEntity();
+         matchingBibEntity1.setMatching("OlCL");
+         matchingBibEntity1.setBibId(2);
+         bibEntityMap.put(1,matchingBibEntity1);
+         mockMatchingAlgorithmUtil.populateBibIdWithMatchingCriteriaValue(criteria1Map,matchingBibEntities,matchCriteria1,bibEntityMap);
+
+     }
 }

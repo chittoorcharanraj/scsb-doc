@@ -101,6 +101,8 @@ public class TitleMatchReportExportServiceUT extends BaseTestCaseUT {
         ReflectionTestUtils.invokeMethod(titleMatchReportExportService, "writeTitleMatchReport", titleMatchedReports, headerRow);
     }
 
+
+
     @Test
     public  void process() throws Exception
     {
@@ -119,11 +121,12 @@ public class TitleMatchReportExportServiceUT extends BaseTestCaseUT {
         titleMatchedReport.setOwningInst("PUL");
         titleMatchedReport.setTotalPageCount(2);
         titleMatchedReport.setTotalRecordsCount(1048500);
-        String filename = "test";
+        titleMatchedReport.setTitleMatch("test1");
+        String filename = "test.zip";
         String institution_name = "PUL";
         int fileCount = 2;
         Mockito.when(reportsServiceUtil.getTitleMatchedReportsExportS3(any())).thenReturn(titleMatchedReport);
-        ReflectionTestUtils.setField(titleMatchReportExportService, "titleReportDir", "test");
+        ReflectionTestUtils.setField(titleMatchReportExportService, "titleReportDir", "csv.");
         ReflectionTestUtils.setField(titleMatchReportExportService, "s3Client", amazonS3);
         ReflectionTestUtils.setField(titleMatchReportExportService, "s3BucketName", "test");
         try {
@@ -145,8 +148,12 @@ public class TitleMatchReportExportServiceUT extends BaseTestCaseUT {
 
     @Test
     public void prepareWorkbook() throws Exception {
-        TitleMatchedReport titleMatchedReport = new TitleMatchedReport();
+        List<TitleMatchedReports> titleMatchedReports1 = new ArrayList<>();
         TitleMatchedReports titleMatchedReports = new TitleMatchedReports();
+        titleMatchedReports.setTitle("test");
+        titleMatchedReports.setMatchScore("1");
+        TitleMatchedReport titleMatchedReport = new TitleMatchedReport();
+        titleMatchedReport.setTitleMatchedReports(titleMatchedReports1);
         String filename = "test";
         Workbook workbook = new XSSFWorkbook();
         Sheet sheet = workbook.createSheet("TEST");
@@ -178,5 +185,34 @@ public class TitleMatchReportExportServiceUT extends BaseTestCaseUT {
          File file = new File("testPUL_Title_Match_20210929_192451.xlsx");
          ReflectionTestUtils.setField(titleMatchReportExportService, "titleReportStatusFileName", "test");
          ReflectionTestUtils.invokeMethod(titleMatchReportExportService, "setDataExportCurrentStatus");
+     }
+
+     @Test
+     public void setDataExportCurrentStatus1() throws  Exception {
+         try {
+             // ReflectionTestUtils.setField(titleMatchReportExportService, "titleReportStatusFileName", "test");
+             ReflectionTestUtils.invokeMethod(titleMatchReportExportService, "setDataExportCurrentStatus");
+         } catch (Exception e) {
+         }
+     }
+     @Test
+    public void uploadFilesinS3() throws Exception {
+         try {
+             String institution_name = "CUL";
+             ReflectionTestUtils.setField(titleMatchReportExportService, "s3Client", amazonS3);
+             ReflectionTestUtils.setField(titleMatchReportExportService, "s3BucketName", "test");
+             ReflectionTestUtils.setField(titleMatchReportExportService, "titleReportDir", "test");
+             ReflectionTestUtils.invokeMethod(titleMatchReportExportService, "uploadFilesinS3", institution_name);
+         } catch (Exception e) {
+         }
+     }
+     @Test
+    public  void zipFiles() throws Exception
+     {
+         ReflectionTestUtils.setField(titleMatchReportExportService,"titleReportStatusFileName","test");
+         ReflectionTestUtils.setField(titleMatchReportExportService, "s3Client", amazonS3);
+         ReflectionTestUtils.setField(titleMatchReportExportService, "s3BucketName", "test");
+         ReflectionTestUtils.setField(titleMatchReportExportService, "titleReportDir", "test");
+         ReflectionTestUtils.invokeMethod(titleMatchReportExportService,"zipFiles");
      }
 }
