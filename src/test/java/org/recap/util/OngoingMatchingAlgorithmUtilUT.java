@@ -1055,7 +1055,21 @@ public class OngoingMatchingAlgorithmUtilUT extends BaseTestCaseUT4 {
         bibItem.setLccn("123765");
         bibItem.setIsbn(Isbn);
         bibItemHashMap.put(1, bibItem);
+
+        HashMap<Integer, BibItem> bibItemHashMap1 = new HashMap<>();
+        BibItem bibItem1 = new BibItem();
+        bibItem1.setTitle("test");
+        bibItem1.setId("2");
+        bibItem1.setBibId(1);
+        bibItem1.setMatchScore(1);
+        bibItem1.setOclcNumber(oclc);
+        bibItem1.setIssn(Issn);
+        bibItem1.setLccn("123765");
+        bibItem1.setIsbn(Isbn);
+        bibItemHashMap1.put(2, bibItem);
         bibItemMap.put("test1", bibItemHashMap);
+        bibItemHashMap1.put(2,bibItem1);
+
 
         HashMap<Integer, BibItem> bibItemHashMap2 = new HashMap<>();
         BibItem bibItem2 = new BibItem();
@@ -1185,7 +1199,7 @@ public class OngoingMatchingAlgorithmUtilUT extends BaseTestCaseUT4 {
     @Test
     public void processMatchingForBib() throws Exception {
         BibItem bibItem = new BibItem();
-        bibItem.setBibId(1);
+        bibItem.setBibId(2);
         bibItem.setMaterialType("Monograph");
         bibItem.setBarcode("1234568910");
         bibItem.setId("1");

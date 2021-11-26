@@ -200,7 +200,7 @@ public class BibJSONUtilUT extends BaseTestCaseUT4 {
         SolrInputDocument solrInputDocument=new SolrInputDocument();
         Mockito.when(mocksolrTemplate1.convertBeanToSolrInputDocument(Mockito.any())).thenReturn(solrInputDocument);
         SolrInputDocument solrInputDocument1 = bibJSONUtil.generateBibAndItemsForIndex(bibliographicEntity, mocksolrTemplate1, bibliographicDetailsRepository, holdingsDetailsRepository);
-      //  assertNotNull(solrInputDocument1);
+
 
     }
 
@@ -208,7 +208,6 @@ public class BibJSONUtilUT extends BaseTestCaseUT4 {
     public void generateBibForIndex()throws Exception {
         BibliographicEntity bibliographicEntity = getBibliographicEntity();
         Bib generateBibForIndex = bibJSONUtil.generateBibForIndex(bibliographicEntity, bibliographicDetailsRepository, holdingsDetailsRepository);
-        //assertNotNull(generateBibForIndex);
         BibliographicEntity bibliographicEntity1= new BibliographicEntity();
         bibliographicEntity1.setId(1);
         bibliographicEntity1.setOwningInstitutionBibId("1");
