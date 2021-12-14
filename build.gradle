@@ -78,7 +78,6 @@ dependencies {
 	implementation 'org.apache.commons:commons-collections4:4.4'
 	implementation 'io.springfox:springfox-swagger-ui:2.9.2'
 	implementation 'io.springfox:springfox-swagger2:2.9.2'
-	implementation 'log4j:log4j:1.2.17'
 	implementation 'info.freelibrary:freelib-marc4j:2.6.12'
 	implementation 'net.sourceforge.javacsv:javacsv:2.0'
 	implementation 'commons-codec:commons-codec:1.14'
@@ -115,6 +114,14 @@ dependencies {
 	implementation 'com.google.code.gson:gson:2.8.6'
 	implementation 'org.modelmapper:modelmapper:2.4.3'
 
+}
+
+configurations.all {
+	resolutionStrategy.eachDependency { DependencyResolveDetails details ->
+		if (details.requested.group == 'org.apache.logging.log4j') {
+			details.useVersion '2.16.0'
+		}
+	}
 }
 
 dependencyManagement {
