@@ -1,7 +1,7 @@
 buildscript {
 	ext {
-		springBootVersion = '2.3.1.RELEASE'
-		set('springCloudVersion', "Hoxton.SR5")
+		springBootVersion = '2.5.8'
+		set('springCloudVersion', "2020.0.5")
 	}
 	repositories {
 		mavenCentral()
@@ -20,9 +20,9 @@ buildscript {
 }
 
 plugins {
-	id 'io.spring.dependency-management' version '1.0.9.RELEASE'
-	id 'org.springframework.boot' version '2.3.1.RELEASE'
-	id "org.sonarqube" version "2.8"
+	id 'io.spring.dependency-management' version '1.0.11.RELEASE'
+	id 'org.springframework.boot' version '2.5.8'
+	id "org.sonarqube" version "3.3"
 }
 
 apply plugin: 'java'
@@ -49,70 +49,70 @@ repositories {
 
 
 dependencies {
-	compile fileTree(dir: '/data/commonjar', include: '*2.1.jar')
+	implementation fileTree(dir: '/data/commonjar', include: '*2.1.jar')
 	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	//implementation 'org.springframework.boot:spring-boot-starter-data-rest'
 	//implementation 'org.springframework.boot:spring-boot-starter-data-solr'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
-	implementation 'org.apache.camel.springboot:camel-spring-boot-starter:3.2.0'
-	implementation('org.springframework.data:spring-data-solr:4.2.0.RELEASE')
+	implementation 'org.apache.camel.springboot:camel-spring-boot-starter:3.14.0'
+	implementation('org.springframework.data:spring-data-solr:4.3.15')
 			{exclude module: 'solr-solrj'; exclude module: 'solr-data-commons'; exclude module: 'spring-data-jpa'}
-	implementation 'org.apache.solr:solr-solrj:8.5.1'
-	implementation 'org.apache.camel:camel-solr:3.2.0'
-	implementation 'org.apache.camel:camel-bindy:3.2.0'
-	implementation 'org.apache.camel:camel-metrics:3.2.0'
-	implementation 'org.apache.camel:camel-csv:3.2.0'
-	implementation 'org.apache.camel:camel-mail:3.2.0'
-	implementation 'org.apache.camel:camel-ftp:3.2.0'
-	implementation 'org.apache.camel:camel-activemq:3.2.0'
-	//implementation 'org.apache.camel:camel-core-engine:3.2.0'
-	//implementation 'org.apache.camel:camel-core:3.2.0'
-	implementation('org.apache.camel.springboot:camel-aws-s3-starter:3.2.0')
-	implementation('org.apache.camel:camel-aws-s3:3.2.0')
-	implementation 'org.apache.activemq:activemq-camel:5.15.12'
-	implementation 'org.apache.activemq:activemq-pool:5.15.12'
-	implementation 'org.apache.activemq:activemq-broker:5.15.12'
-	implementation 'org.apache.activemq:activemq-client:5.15.12'
+	implementation 'org.apache.solr:solr-solrj:8.11.1'
+	implementation 'org.apache.camel:camel-solr:3.14.0'
+	implementation 'org.apache.camel:camel-bindy:3.14.0'
+	implementation 'org.apache.camel:camel-metrics:3.14.0'
+	implementation 'org.apache.camel:camel-csv:3.14.0'
+	implementation 'org.apache.camel:camel-mail:3.14.0'
+	implementation 'org.apache.camel:camel-ftp:3.14.0'
+	implementation 'org.apache.camel:camel-activemq:3.14.0'
+	//implementation 'org.apache.camel:camel-core-engine:3.14.0'
+	//implementation 'org.apache.camel:camel-core:3.14.0'
+	implementation('org.apache.camel.springboot:camel-aws-s3-starter:3.7.6')
+	implementation('org.apache.camel:camel-aws-s3:3.7.6')
+	implementation 'org.apache.activemq:activemq-camel:5.15.15'
+	implementation 'org.apache.activemq:activemq-pool:5.15.15'
+	implementation 'org.apache.activemq:activemq-broker:5.15.15'
+	implementation 'org.apache.activemq:activemq-client:5.15.15'
 	implementation 'commons-beanutils:commons-beanutils:1.9.4'
 	implementation 'org.apache.commons:commons-collections4:4.4'
-	implementation 'io.springfox:springfox-swagger-ui:2.9.2'
-	implementation 'io.springfox:springfox-swagger2:2.9.2'
+	implementation('io.springfox:springfox-swagger-ui:3.0.0')
+	implementation('io.springfox:springfox-swagger2:3.0.0')
 	implementation 'info.freelibrary:freelib-marc4j:2.6.12'
 	implementation 'net.sourceforge.javacsv:javacsv:2.0'
-	implementation 'commons-codec:commons-codec:1.14'
+	implementation 'commons-codec:commons-codec:1.15'
 	implementation 'org.codehaus.jettison:jettison:1.4.1'
-	implementation 'junit:junit:4.13'
+	implementation 'junit:junit:4.13.2'
 	//implementation 'org.springframework.plugin:spring-plugin-core:2.0.0.RELEASE'
-	implementation('com.google.guava:guava:23.0') { exclude module: 'solr-solrj' }
-	implementation 'org.projectlombok:lombok:1.18.12'
+	implementation('com.google.guava:guava:31.0.1-jre') {exclude module: "solr-solrj"}
+	implementation 'org.projectlombok:lombok:1.18.22'
 	implementation 'io.micrometer:micrometer-registry-prometheus'
 	implementation 'org.springframework.boot:spring-boot-starter-actuator'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
-	implementation('org.apache.commons:commons-text:1.8');
+	implementation('org.apache.commons:commons-text:1.9');
 	implementation 'org.springframework.cloud:spring-cloud-starter-sleuth'
-	implementation 'net.logstash.logback:logstash-logback-encoder:6.4'
+	implementation 'net.logstash.logback:logstash-logback-encoder:7.0.1'
 	implementation 'org.springframework.cloud:spring-cloud-starter-config'
 	implementation 'org.springframework.cloud:spring-cloud-starter-bus-amqp'
-	implementation 'org.json:json:20200518'
-	implementation 'com.google.code.gson:gson:2.8.6'
-	implementation group: 'org.apache.poi', name: 'poi-ooxml', version: '4.0.0'
-	annotationProcessor 'org.projectlombok:lombok:1.18.12'
-	testImplementation 'org.projectlombok:lombok:1.18.12'
-	testAnnotationProcessor 'org.projectlombok:lombok:1.18.12'
-	runtimeOnly 'mysql:mysql-connector-java'
+	implementation group: 'org.json', name: 'json', version: '20211205'
+	implementation group: 'com.google.code.gson', name: 'gson', version: '2.8.9'
+	implementation('org.apache.poi:poi-ooxml:5.1.0')
+	annotationProcessor 'org.projectlombok:lombok:1.18.22'
+	testImplementation 'org.projectlombok:lombok:1.18.22'
+	testAnnotationProcessor 'org.projectlombok:lombok:1.18.22'
+	implementation group: 'mysql', name: 'mysql-connector-java', version: '8.0.26'
 	annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
 	testImplementation('org.springframework.boot:spring-boot-starter-test')
 	testImplementation('org.springframework.restdocs:spring-restdocs-mockmvc')
-	compile group: 'javax.validation', name: 'validation-api', version: '2.0.0.Final'
-	testCompile group: 'org.powermock', name: 'powermock-api-mockito2', version: '2.0.7'
-	testCompile group: 'org.powermock', name: 'powermock-module-junit4', version: '2.0.7'
+	implementation('javax.validation:validation-api:2.0.1.Final')
+	testImplementation group: 'org.powermock', name: 'powermock-api-mockito2', version: '2.0.9'
+	testImplementation group: 'org.powermock', name: 'powermock-module-junit4', version: '2.0.9'
 
 	implementation 'org.springframework.cloud:spring-cloud-starter-config'
 	implementation 'org.springframework.cloud:spring-cloud-starter-bus-amqp'
-	implementation 'org.json:json:20200518'
-	implementation 'com.google.code.gson:gson:2.8.6'
-	implementation 'org.modelmapper:modelmapper:2.4.3'
+	// https://mvnrepository.com/artifact/org.modelmapper/modelmapper
+	implementation group: 'org.modelmapper', name: 'modelmapper', version: '2.4.5'
+
 
 }
 
@@ -150,18 +150,27 @@ test {
 }
 
 jacocoTestReport {
-	group = "Reporting"
+	dependsOn test // tests are required to run before generating the report
+}
+
+jacocoTestReport {
 	reports {
-		xml.enabled true
-		csv.enabled false
-		html.enabled = true
-		html.destination file("${buildDir}/jacocoHtml")
+		xml.required = true
+		csv.required = false
+		html.outputLocation = layout.buildDirectory.dir('jacocoHtml')
 	}
 }
 
+
+jacoco {
+	toolVersion = "0.8.7"
+	reportsDirectory = layout.buildDirectory.dir('customJacocoReportDir')
+}
+
+
 task scsbDocJavadocs(type: Javadoc) {
 	source = sourceSets.main.java
-	classpath = configurations.compile
+	classpath = configurations.implementation
 	options.addStringOption('Xdoclint:none', '-quiet')
 	String home = System.getProperty("user.home");
 	destinationDir = new File(home+"/scsb-javadocs/phase4-scsb-doc");
@@ -169,4 +178,9 @@ task scsbDocJavadocs(type: Javadoc) {
 
 bootJar {
 	layered()
+}
+
+jar {
+	enabled = false
+	archiveClassifier = '' //use empty string
 }

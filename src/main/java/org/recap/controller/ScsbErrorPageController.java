@@ -22,7 +22,7 @@ public class ScsbErrorPageController implements ErrorController {
         return "error";
     }
 
-    @Override
+
     public String getErrorPath() {
         return PATH;
     }
