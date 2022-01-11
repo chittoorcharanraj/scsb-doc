@@ -16,11 +16,11 @@ import org.recap.model.jpa.ItemEntity;
 import org.recap.model.search.SearchRecordsRequest;
 import org.recap.model.search.resolver.BibValueResolver;
 import org.recap.model.search.resolver.ItemValueResolver;
-import org.recap.model.search.resolver.impl.bib.RootValueResolver;
 import org.recap.model.search.resolver.impl.bib.BibIdValueResolver;
 import org.recap.model.search.resolver.impl.bib.DocTypeValueResolver;
 import org.recap.model.search.resolver.impl.bib.IdValueResolver;
 import org.recap.model.search.resolver.impl.bib.IsDeletedBibValueResolver;
+import org.recap.model.search.resolver.impl.bib.RootValueResolver;
 import org.recap.model.search.resolver.impl.item.IsDeletedItemValueResolver;
 import org.recap.model.search.resolver.impl.item.ItemBibIdValueResolver;
 import org.recap.model.search.resolver.impl.item.ItemIdValueResolver;
@@ -40,7 +40,14 @@ import org.springframework.stereotype.Repository;
 
 import javax.annotation.Resource;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 /**
  * Created by angelind on 26/10/16.

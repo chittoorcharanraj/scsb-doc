@@ -1,13 +1,12 @@
 package org.recap;
 
-import java.io.IOException;
-
-import com.fasterxml.jackson.core.JsonGenerator;
-
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.classic.spi.IThrowableProxy;
+import com.fasterxml.jackson.core.JsonGenerator;
 import net.logstash.logback.composite.JsonWritingUtils;
 import net.logstash.logback.composite.loggingevent.StackTraceJsonProvider;
+
+import java.io.IOException;
 
 /**
  * Created by rathin maheswaran on 9/7/2020.

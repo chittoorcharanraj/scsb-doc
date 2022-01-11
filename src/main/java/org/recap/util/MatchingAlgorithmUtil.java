@@ -17,10 +17,20 @@ import org.recap.controller.SolrIndexController;
 import org.recap.matchingalgorithm.MatchScoreReport;
 import org.recap.matchingalgorithm.MatchScoreUtil;
 import org.recap.matchingalgorithm.MatchingCounter;
-import org.recap.model.jpa.*;
+import org.recap.model.jpa.BibliographicEntity;
+import org.recap.model.jpa.BibliographicEntityForMatching;
+import org.recap.model.jpa.MatchingAlgorithmReportDataEntity;
+import org.recap.model.jpa.MatchingAlgorithmReportEntity;
+import org.recap.model.jpa.MatchingBibEntity;
+import org.recap.model.jpa.MatchingMatchPointsEntity;
 import org.recap.model.solr.BibItem;
 import org.recap.model.solr.SolrIndexRequest;
-import org.recap.repository.jpa.*;
+import org.recap.repository.jpa.BibliographicDetailsRepository;
+import org.recap.repository.jpa.BibliographicDetailsRepositoryForMatching;
+import org.recap.repository.jpa.MatchingAlgorithmReportDataDetailsRepository;
+import org.recap.repository.jpa.MatchingAlgorithmReportDetailRepository;
+import org.recap.repository.jpa.MatchingBibDetailsRepository;
+import org.recap.repository.jpa.MatchingMatchPointsDetailsRepository;
 import org.recap.service.accession.SolrIndexService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -55,10 +65,7 @@ import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
-import static org.recap.ScsbConstants.MATCHING_COUNTER_OPEN;
-import static org.recap.ScsbConstants.MATCHING_COUNTER_SHARED;
-import static org.recap.ScsbConstants.MATCHING_COUNTER_UPDATED_OPEN;
-import static org.recap.ScsbConstants.MATCHING_COUNTER_UPDATED_SHARED;
+import static org.recap.ScsbConstants.*;
 
 /**
  * Created by angelind on 4/11/16.

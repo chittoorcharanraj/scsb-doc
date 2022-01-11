@@ -6,7 +6,9 @@ import org.recap.ScsbCommonConstants;
 import org.recap.ScsbConstants;
 import org.recap.model.jpa.MatchingAlgorithmReportDataEntity;
 import org.recap.model.jpa.MatchingBibInfoDetail;
-import org.recap.repository.jpa.*;
+import org.recap.repository.jpa.MatchingAlgorithmReportDataDetailsRepository;
+import org.recap.repository.jpa.MatchingAlgorithmReportDetailRepository;
+import org.recap.repository.jpa.MatchingBibInfoDetailRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,12 +18,12 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StopWatch;
 
-import java.util.Arrays;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.HashMap;
 
 /**
  * Created by premkb on 28/1/17.
