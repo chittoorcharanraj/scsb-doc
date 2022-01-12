@@ -3,7 +3,6 @@ package org.recap.util;
 import org.apache.commons.beanutils.PropertyUtilsBean;
 import org.recap.ScsbCommonConstants;
 import org.recap.model.jpa.MatchingAlgorithmReportDataEntity;
-import org.recap.model.jpa.ReportDataEntity;
 import org.recap.model.matchingreports.TitleExceptionReport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

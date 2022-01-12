@@ -1,9 +1,8 @@
 package org.recap.model.jpa;
 
-import org.hibernate.annotations.DynamicUpdate;
-
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.AttributeOverride;
 import javax.persistence.CascadeType;

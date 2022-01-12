@@ -5,7 +5,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.aws.s3.S3Constants;
 import org.apache.camel.model.dataformat.BindyType;
 import org.recap.PropertyKeyConstants;
-import org.springframework.context.ApplicationContext;
 import org.recap.ScsbConstants;
 import org.recap.camel.processor.EmailService;
 import org.recap.model.csv.OngoingAccessionReportRecord;
@@ -13,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
 /**
