@@ -1,7 +1,7 @@
 package org.recap.model.jpa;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
+
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -10,8 +10,7 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "matching_score_translation_t")
-@Getter
-@Setter
+@Data
 public class MatchingScoreTranslationEntity {
     @Id
     @Column(

@@ -1,5 +1,6 @@
 package org.recap.service.transfer;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.solr.client.solrj.SolrServerException;
@@ -27,8 +28,6 @@ import org.recap.service.accession.AccessionDAO;
 import org.recap.service.accession.DummyDataService;
 import org.recap.service.accession.SolrIndexService;
 import org.recap.util.HelperUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
@@ -53,11 +52,11 @@ import java.util.UUID;
 /**
  * Created by sheiks on 19/07/17.
  */
+@Slf4j
 @Service
 @Scope(proxyMode = ScopedProxyMode.TARGET_CLASS)
 public class TransferService {
 
-    private static final Logger logger = LoggerFactory.getLogger(TransferService.class);
 
 
     @Autowired
@@ -141,7 +140,7 @@ public class TransferService {
 
                         transferValidationResponse.setMessage(ScsbConstants.Transfer.SUCCESSFULLY_RELINKED);
                     } catch (Exception e) {
-                        logger.error(ScsbCommonConstants.LOG_ERROR,e);
+                        log.error(ScsbCommonConstants.LOG_ERROR,e);
                         transferValidationResponse.setMessage(ScsbConstants.Transfer.RELINKED_FAILED);
                     }
                 }
@@ -367,7 +366,7 @@ public class TransferService {
 
                         transferValidationResponse.setMessage(ScsbConstants.Transfer.SUCCESSFULLY_RELINKED);
                     } catch (Exception e) {
-                        logger.error(ScsbCommonConstants.LOG_ERROR,e);
+                        log.error(ScsbCommonConstants.LOG_ERROR,e);
                         transferValidationResponse.setMessage(ScsbConstants.Transfer.RELINKED_FAILED);
                     }
 
@@ -420,10 +419,10 @@ public class TransferService {
                     for (Iterator<Integer> stringIterator = ids.iterator(); stringIterator.hasNext(); ) {
                         Integer id = stringIterator.next();
                         try {
-                            logger.info("deleting {} from solr for relink, {} - {}, ",docId,docId,id);
+                            log.info("deleting {} from solr for relink, {} - {}, ",docId,docId,id);
                             solrIndexService.deleteByDocId(docId, String.valueOf(id));
                         } catch (IOException | SolrServerException e) {
-                            logger.error(ScsbCommonConstants.LOG_ERROR,e);
+                            log.error(ScsbCommonConstants.LOG_ERROR,e);
                         }
                     }
                 }
@@ -442,7 +441,7 @@ public class TransferService {
                         try {
                             solrIndexService.indexByBibliographicId(id);
                         } catch (Exception e) {
-                            logger.error(ScsbCommonConstants.LOG_ERROR,e);
+                            log.error(ScsbCommonConstants.LOG_ERROR,e);
                         }
                     }
                 }

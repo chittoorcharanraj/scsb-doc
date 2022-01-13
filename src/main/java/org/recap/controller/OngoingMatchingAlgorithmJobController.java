@@ -1,5 +1,6 @@
 package org.recap.controller;
 
+import lombok.extern.slf4j.Slf4j;
 import org.recap.PropertyKeyConstants;
 import org.recap.ScsbCommonConstants;
 import org.recap.ScsbConstants;
@@ -8,7 +9,6 @@ import org.recap.model.solr.SolrIndexRequest;
 import org.recap.util.DateUtil;
 import org.recap.util.OngoingMatchingAlgorithmUtil;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
@@ -26,10 +26,11 @@ import java.util.Date;
 /**
  * Created by angelind on 16/3/17.
  */
+@Slf4j
 @Controller
 public class OngoingMatchingAlgorithmJobController {
 
-    private static final Logger logger = LoggerFactory.getLogger(OngoingMatchingAlgorithmJobController.class);
+
 
     @Autowired
     private OngoingMatchingAlgorithmUtil ongoingMatchingAlgorithmUtil;
@@ -44,7 +45,7 @@ public class OngoingMatchingAlgorithmJobController {
     private String batchSize;
 
     public Logger getLogger() {
-        return logger;
+        return log;
     }
 
     public OngoingMatchingAlgorithmUtil getOngoingMatchingAlgorithmUtil() {
@@ -77,7 +78,7 @@ public class OngoingMatchingAlgorithmJobController {
         String jobType = solrIndexRequest.getProcessType();
         String status = "";
         try {
-            logger.info("Process Type : {}", jobType);
+            log.info("Process Type : {}", jobType);
             if (jobType.equalsIgnoreCase(ScsbConstants.POPULATE_DATA_FOR_DATA_DUMP_JOB)) {
                 Date date = new SimpleDateFormat(ScsbConstants.ONGOING_MATCHING_DATE_FORMAT).parse(solrIndexRequest.getFromDate());
                 status = getMatchingBibInfoDetailService().populateMatchingBibInfo(getDateUtil().getFromDate(date), getDateUtil().getToDate(date));
@@ -87,7 +88,7 @@ public class OngoingMatchingAlgorithmJobController {
                 boolean includeMaQualifier = solrIndexRequest.isIncludeMaQualifier();
                 boolean indexBibs = solrIndexRequest.isIndexBibsForOngoingMa();
                 Integer rows = Integer.valueOf(getBatchSize());
-                logger.info("MA Process Type : {}, Match By : {}, Batch Size : {}, Include MA Qualifier : {}, Index Bibs : {}", maProcessType, matchBy, rows, includeMaQualifier, indexBibs);
+                log.info("MA Process Type : {}, Match By : {}, Batch Size : {}, Include MA Qualifier : {}, Index Bibs : {}", maProcessType, matchBy, rows, includeMaQualifier, indexBibs);
                 if (maProcessType.equalsIgnoreCase(ScsbConstants.ONGOING_MA_BOTH_GROUPING_CGD_PROCESS)) {
                     status = getOngoingMatchingAlgorithmUtil().fetchUpdatedRecordsAndStartCgdUpdateProcessBasedOnCriteria(solrIndexRequest, rows);
                     status = getOngoingMatchingAlgorithmUtil().fetchUpdatedRecordsAndStartGroupingProcessBasedOnCriteria(solrIndexRequest, rows);
@@ -98,7 +99,7 @@ public class OngoingMatchingAlgorithmJobController {
                 }
             }
         } catch (Exception e) {
-            logger.error("Exception : {0}", e);
+            log.error("Exception : {0}", e);
         }
         stopWatch.stop();
         getLogger().info("Total Time taken to complete Ongoing Matching Algorithm : {}", stopWatch.getTotalTimeSeconds());

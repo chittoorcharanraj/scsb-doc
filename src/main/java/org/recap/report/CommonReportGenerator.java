@@ -1,5 +1,6 @@
 package org.recap.report;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.camel.ProducerTemplate;
 import org.apache.commons.lang3.StringUtils;
 import org.recap.ScsbCommonConstants;
@@ -11,8 +12,6 @@ import org.recap.model.jpa.ReportEntity;
 import org.recap.util.AccessionSummaryRecordGenerator;
 import org.recap.util.SolrExceptionCSVRecordGenerator;
 import org.recap.util.SubmitCollectionReportGenerator;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StopWatch;
@@ -25,9 +24,10 @@ import java.util.List;
 import java.util.Objects;
 import java.util.function.Predicate;
 
+@Slf4j
 public class CommonReportGenerator {
 
-    private static final Logger logger = LoggerFactory.getLogger(CommonReportGenerator.class);
+
 
     @Autowired
     private ProducerTemplate producerTemplate;
@@ -75,7 +75,7 @@ public class CommonReportGenerator {
 
     public String generateReportForSolrExceptionCsvRecords(String fileName, String queueName, List<ReportEntity> reportEntityList) {
         List<SolrExceptionReportCSVRecord> solrExceptionReportCSVRecords = getSolrExceptionReportReCAPCSVRecords(reportEntityList);
-        logger.info("Total Num of CSVRecords Prepared : {}  ", solrExceptionReportCSVRecords.size());
+        log.info("Total Num of CSVRecords Prepared : {}  ", solrExceptionReportCSVRecords.size());
 
         if (!CollectionUtils.isEmpty(solrExceptionReportCSVRecords)) {
             producerTemplate.sendBodyAndHeader(queueName, solrExceptionReportCSVRecords, ScsbCommonConstants.REPORT_FILE_NAME, fileName);
@@ -98,7 +98,7 @@ public class CommonReportGenerator {
         }
 
         stopWatch.stop();
-        logger.info("Total time taken to prepare CSVRecords : {} ", stopWatch.getTotalTimeSeconds());
+        log.info("Total time taken to prepare CSVRecords : {} ", stopWatch.getTotalTimeSeconds());
         return solrExceptionReportCSVRecords;
     }
 }

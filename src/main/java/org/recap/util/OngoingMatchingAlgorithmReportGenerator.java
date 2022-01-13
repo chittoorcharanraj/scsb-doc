@@ -1,11 +1,11 @@
 package org.recap.util;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.beanutils.PropertyUtilsBean;
 import org.recap.ScsbCommonConstants;
 import org.recap.model.jpa.MatchingAlgorithmReportDataEntity;
 import org.recap.model.matchingreports.TitleExceptionReport;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
 
 import java.beans.IntrospectionException;
 import java.beans.PropertyDescriptor;
@@ -17,9 +17,9 @@ import java.util.function.Predicate;
 /**
  * Created by angelind on 16/6/17.
  */
+@Slf4j
 public class OngoingMatchingAlgorithmReportGenerator {
 
-    private static final Logger logger= LoggerFactory.getLogger(OngoingMatchingAlgorithmReportGenerator.class);
 
     /**
      * This method prepares TitleExceptionReport which is used to generate title exception report based on the given report entity
@@ -48,7 +48,7 @@ public class OngoingMatchingAlgorithmReportGenerator {
                     try {
                         setterMethod.invoke(titleExceptionReport, headerValue);
                     } catch (Exception e) {
-                        logger.error(ScsbCommonConstants.LOG_ERROR, e.getMessage());
+                        log.error(ScsbCommonConstants.LOG_ERROR, e.getMessage());
                     }
                 }
             }
@@ -67,7 +67,7 @@ public class OngoingMatchingAlgorithmReportGenerator {
         try {
             return propertyUtilsBean.getWriteMethod(new PropertyDescriptor(propertyName, TitleExceptionReport.class));
         } catch (IntrospectionException e) {
-            logger.error(ScsbCommonConstants.LOG_ERROR,e);
+            log.error(ScsbCommonConstants.LOG_ERROR,e);
         }
         return null;
     }

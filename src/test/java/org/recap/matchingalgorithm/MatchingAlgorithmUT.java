@@ -1,5 +1,6 @@
 package org.recap.matchingalgorithm;
 
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -12,8 +13,6 @@ import org.recap.matchingalgorithm.service.MatchingAlgorithmUpdateCGDService;
 import org.recap.repository.jpa.MatchingBibDetailsRepository;
 import org.recap.repository.jpa.MatchingMatchPointsDetailsRepository;
 import org.recap.util.MatchingAlgorithmUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.util.StopWatch;
 
 import java.text.Normalizer;
@@ -26,9 +25,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * Created by angelind on 27/10/16.
  */
+@Slf4j
 public class MatchingAlgorithmUT extends BaseTestCaseUT {
 
-    private static final Logger logger = LoggerFactory.getLogger(MatchingAlgorithmUT.class);
+
 
     @Mock
     MatchingMatchPointsDetailsRepository matchingMatchPointsDetailsRepository;
@@ -72,7 +72,7 @@ public class MatchingAlgorithmUT extends BaseTestCaseUT {
         long count = matchingAlgorithmHelperService.populateMatchingBibEntities();
 
         stopWatch.stop();
-        logger.info("Total Time taken : " + stopWatch.getTotalTimeSeconds());
+        log.info("Total Time taken : " + stopWatch.getTotalTimeSeconds());
         Mockito.when(matchingBibDetailsRepository.count()).thenReturn(Long.valueOf(1));
         long savedBibsCount = matchingBibDetailsRepository.count();
         assertTrue(savedBibsCount>0);
@@ -114,7 +114,7 @@ public class MatchingAlgorithmUT extends BaseTestCaseUT {
         matchingAlgorithmUpdateCGDService.updateCGDProcessForMonographs(batchSize);
         assertNotNull(batchSize);
         stopWatch.stop();
-        logger.info("Total Time taken to update CGD is : " + stopWatch.getTotalTimeSeconds());
+        log.info("Total Time taken to update CGD is : " + stopWatch.getTotalTimeSeconds());
     }
 
 }

@@ -1,5 +1,6 @@
 package org.recap.repository.solr.impl;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.solr.client.solrj.SolrQuery;
@@ -17,8 +18,6 @@ import org.recap.model.solr.Item;
 import org.recap.repository.solr.main.CustomDocumentRepository;
 import org.recap.util.CommonUtil;
 import org.recap.util.SolrQueryBuilder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.solr.core.SolrTemplate;
 import org.springframework.stereotype.Repository;
@@ -38,10 +37,10 @@ import java.util.Map;
 /**
  * Created by rajeshbabuk on 8/7/16.
  */
+@Slf4j
 @Repository
 public class BibSolrDocumentRepositoryImpl implements CustomDocumentRepository {
 
-    private static final Logger logger = LoggerFactory.getLogger(BibSolrDocumentRepositoryImpl.class);
 
     @Resource(name = "recapSolrTemplate")
     private SolrTemplate solrTemplate;
@@ -75,7 +74,7 @@ public class BibSolrDocumentRepositoryImpl implements CustomDocumentRepository {
             }
             response.put(ScsbCommonConstants.SEARCH_SUCCESS_RESPONSE, bibItems);
         } catch (IOException|SolrServerException e) {
-            logger.error(ScsbCommonConstants.LOG_ERROR,e);
+            log.error(ScsbCommonConstants.LOG_ERROR,e);
             response.put(ScsbCommonConstants.SEARCH_ERROR_RESPONSE, e.getMessage());
         }
         return response;
@@ -152,7 +151,7 @@ public class BibSolrDocumentRepositoryImpl implements CustomDocumentRepository {
             }
             bibItems.add(bibItem);
         } catch (IOException|SolrServerException e) {
-            logger.error(ScsbCommonConstants.LOG_ERROR,e);
+            log.error(ScsbCommonConstants.LOG_ERROR,e);
         }
         return bibItems;
     }
@@ -185,7 +184,7 @@ public class BibSolrDocumentRepositoryImpl implements CustomDocumentRepository {
                 addHoldingsToBibItem(isDeleted, bibItem, solrDocument, docType);
             }
         } catch (IOException|SolrServerException e) {
-            logger.error(ScsbCommonConstants.LOG_ERROR,e);
+            log.error(ScsbCommonConstants.LOG_ERROR,e);
         }
     }
 
@@ -298,7 +297,7 @@ public class BibSolrDocumentRepositoryImpl implements CustomDocumentRepository {
                 pageNumber = totalPagesCount - 1;
             }
         } catch (ParseException e) {
-            logger.error(e.getMessage());
+            log.error(e.getMessage());
         }
         return pageNumber;
     }

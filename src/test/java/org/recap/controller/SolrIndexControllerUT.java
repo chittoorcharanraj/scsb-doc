@@ -40,7 +40,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * Created by premkb on 2/8/16.
  */
 public class SolrIndexControllerUT extends BaseTestCaseUT {
-    private static final Logger logger = LoggerFactory.getLogger(SolrIndexControllerUT.class);
+
 
     @InjectMocks
     SolrIndexController solrIndexController;

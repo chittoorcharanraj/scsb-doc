@@ -34,8 +34,6 @@ import org.recap.repository.solr.main.BibSolrCrudRepository;
 import org.recap.repository.solr.temp.BibCrudRepositoryMultiCoreSupport;
 import org.recap.util.CommonUtil;
 import org.recap.util.DateUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.solr.core.SolrTemplate;
@@ -51,7 +49,7 @@ import java.util.*;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+
 
 /**
  * Created by premkb on 29/7/16.
@@ -63,7 +61,7 @@ import static org.junit.Assert.assertNull;
 @PowerMockIgnore({"com.sun.org.apache.xerces.*", "javax.xml.*", "org.xml.*"})
 public class BibItemIndexExecutorServiceUT extends BaseTestCaseUT4 {
 
-    private static final Logger logger = LoggerFactory.getLogger(BibItemIndexExecutorServiceUT.class);
+
 
     @InjectMocks
     BibItemIndexExecutorService bibItemIndexExecutorService;

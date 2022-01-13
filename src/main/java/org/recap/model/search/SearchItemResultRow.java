@@ -2,14 +2,13 @@ package org.recap.model.search;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
+
 
 /**
  * Created by rajesh on 18-Jul-16.
  */
-@Getter
-@Setter
+@Data
 @ApiModel(value="SearchItemResultRow", description="Model for Displaying Item Result")
 public class SearchItemResultRow extends AbstractSearchItemResultRow implements Comparable<SearchItemResultRow> {
     @ApiModelProperty(name= "itemId", value= "Item Id",position = 8)

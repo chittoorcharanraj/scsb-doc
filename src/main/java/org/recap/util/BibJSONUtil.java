@@ -1,7 +1,8 @@
 package org.recap.util;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.camel.ProducerTemplate;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.solr.common.SolrInputDocument;
@@ -20,8 +21,6 @@ import org.recap.model.solr.Holdings;
 import org.recap.model.solr.Item;
 import org.recap.repository.jpa.BibliographicDetailsRepository;
 import org.recap.repository.jpa.HoldingsDetailsRepository;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.data.solr.core.SolrTemplate;
 import org.springframework.util.CollectionUtils;
 
@@ -37,16 +36,16 @@ import java.util.Map;
 /**
  * Created by pvsubrah on 6/15/16.
  */
+@Data
+@EqualsAndHashCode(callSuper=false)
+@Slf4j
 public class BibJSONUtil extends MarcUtil {
 
-    private static final Logger logger = LoggerFactory.getLogger(BibJSONUtil.class);
 
-    @Getter
-    @Setter
+
     private List<String> nonHoldingInstitutions;
 
-    @Getter
-    @Setter
+
     private ProducerTemplate producerTemplate;
 
     /**
@@ -403,7 +402,7 @@ public class BibJSONUtil extends MarcUtil {
      * @param e
      */
     private void saveExceptionReportForBib(BibliographicEntity bibliographicEntity, Exception e) {
-        logger.error("Exception in Bib Id : {} " , bibliographicEntity != null ? bibliographicEntity.getId() : "BibliographicEntity is Null");
+        log.error("Exception in Bib Id : {} " , bibliographicEntity != null ? bibliographicEntity.getId() : "BibliographicEntity is Null");
         List<ReportDataEntity> reportDataEntities = new ArrayList<>();
 
         ReportEntity reportEntity = new ReportEntity();

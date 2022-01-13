@@ -1,7 +1,8 @@
 package org.recap.model.jpa;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+
 
 import javax.persistence.AttributeOverride;
 import javax.persistence.Column;
@@ -15,7 +16,7 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "customer_code_t", catalog = "")
 @AttributeOverride(name = "id", column = @Column(name = "CUSTOMER_CODE_ID"))
-@Getter
-@Setter
+@Data
+@EqualsAndHashCode(callSuper=false)
 public class CustomerCodeEntity extends CustomerCodeAbstractEntity {
 }

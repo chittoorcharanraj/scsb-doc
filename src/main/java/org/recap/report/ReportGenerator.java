@@ -1,5 +1,6 @@
 package org.recap.report;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.recap.PropertyKeyConstants;
 import org.recap.ScsbCommonConstants;
@@ -12,8 +13,6 @@ import org.recap.model.submitCollection.SubmitCollectionResultsRow;
 import org.recap.repository.jpa.ReportDetailRepository;
 import org.recap.util.ReportsServiceUtil;
 import org.recap.util.SubmitCollectionReportGenerator;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -27,11 +26,10 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
-
+@Slf4j
 @Component
 public class ReportGenerator {
 
-    private static final Logger logger = LoggerFactory.getLogger(ReportGenerator.class);
 
     @Autowired
     private ReportDetailRepository reportDetailRepository;
@@ -140,14 +138,14 @@ public class ReportGenerator {
             }
 
             stopWatch.stop();
-            logger.info("Total Time taken to fetch Report Entities From DB : {} " , stopWatch.getTotalTimeSeconds());
-            logger.info("Total Num of Report Entities Fetched From DB : {} " , reportEntityList.size());
+            log.info("Total Time taken to fetch Report Entities From DB : {} " , stopWatch.getTotalTimeSeconds());
+            log.info("Total Num of Report Entities Fetched From DB : {} " , reportEntityList.size());
 
             for (Iterator<ReportGeneratorInterface> iterator = getReportGenerators().iterator(); iterator.hasNext(); ) {
                 ReportGeneratorInterface reportGeneratorInterface = iterator.next();
                 if(reportGeneratorInterface.isInterested(reportType) && reportGeneratorInterface.isTransmitted(transmissionType)){
                     String generatedFileName = reportGeneratorInterface.generateReport(actualFileName, reportEntityList);
-                    logger.info("The Generated File Name is : {}" , generatedFileName);
+                    log.info("The Generated File Name is : {}" , generatedFileName);
                     return generatedFileName;
                 }
             }
@@ -312,7 +310,7 @@ public class ReportGenerator {
         try {
             return reportsServiceUtil.titleMatchCount(titleMatchedReport);
         } catch (Exception e){
-            logger.info(ScsbConstants.EXCEPTION_TITLE_MATCH_COUNT,e.getMessage());
+            log.info(ScsbConstants.EXCEPTION_TITLE_MATCH_COUNT,e.getMessage());
             return titleMatchedReport;
         }
     }
@@ -323,7 +321,7 @@ public class ReportGenerator {
             titleMatchedReportRes.setReportMessage(ScsbConstants.TITLE_MATCH_REPORT_MESSAGE + s3BucketName +ScsbConstants.TITLE_MATCH_REPORT_PATH + ScsbConstants.TITLE_MATCH_REPORT_MESSAGE_APPEND);
             return titleMatchedReportRes;
         } catch (Exception e){
-            logger.info(ScsbConstants.EXCEPTION_TITLE_MATCH_REPORT,e.getMessage());
+            log.info(ScsbConstants.EXCEPTION_TITLE_MATCH_REPORT,e.getMessage());
             return titleMatchedReport;
         }
     }
@@ -331,7 +329,7 @@ public class ReportGenerator {
         try {
             return reportsServiceUtil.titleMatchReportsExport(titleMatchedReport);
         } catch (Exception e){
-            logger.info(ScsbConstants.EXCEPTION_TITLE_MATCH_EXPORT,e.getMessage());
+            log.info(ScsbConstants.EXCEPTION_TITLE_MATCH_EXPORT,e.getMessage());
             return titleMatchedReport;
         }
     }
@@ -340,7 +338,7 @@ public class ReportGenerator {
         try {
             return reportsServiceUtil.titleMatchReportsExportS3(titleMatchedReport);
         } catch (Exception e){
-            logger.info(ScsbConstants.EXCEPTION_TITLE_MATCH_EXPORT,e.getMessage());
+            log.info(ScsbConstants.EXCEPTION_TITLE_MATCH_EXPORT,e.getMessage());
             return titleMatchedReport;
         }
     }

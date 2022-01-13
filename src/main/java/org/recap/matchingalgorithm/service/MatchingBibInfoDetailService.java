@@ -1,5 +1,6 @@
 package org.recap.matchingalgorithm.service;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.recap.PropertyKeyConstants;
 import org.recap.ScsbCommonConstants;
@@ -28,10 +29,10 @@ import java.util.Map;
 /**
  * Created by premkb on 28/1/17.
  */
+@Slf4j
 @Service
 public class MatchingBibInfoDetailService {
 
-    private static final Logger logger = LoggerFactory.getLogger(MatchingBibInfoDetailService.class);
 
     @Autowired
     private MatchingAlgorithmReportDetailRepository matchingAlgorithmReportDetailRepository;
@@ -77,19 +78,19 @@ public class MatchingBibInfoDetailService {
         headerNameList.add(ScsbCommonConstants.OWNING_INSTITUTION);
         headerNameList.add(ScsbCommonConstants.OWNING_INSTITUTION_BIB_ID);
         Integer matchingCount = getMatchingAlgorithmReportDetailRepository().getCountByTypeAndFileNameAndDateRange(typeList, ScsbCommonConstants.ONGOING_MATCHING_ALGORITHM, fromDate, toDate);
-        logger.info("matchingReports Count ------> {} ",matchingCount);
+        log.info("matchingReports Count ------> {} ",matchingCount);
         Integer pageCount = getPageCount(matchingCount,getBatchSize());
-        logger.info("Total pages ---> {}",pageCount);
+        log.info("Total pages ---> {}",pageCount);
         StopWatch stopWatchFull = new StopWatch();
         stopWatchFull.start();
         for(int pageNum=0; pageNum<pageCount; pageNum++) {
-            logger.info("Current page ---> {}", pageNum);
+            log.info("Current page ---> {}", pageNum);
             StopWatch stopWatch = new StopWatch();
             stopWatch.start();
             Page<Integer> recordNumbers = getMatchingAlgorithmReportDetailRepository().getRecordNumByTypeAndFileNameAndDateRange(PageRequest.of(pageNum, getBatchSize()), typeList,
                     ScsbCommonConstants.ONGOING_MATCHING_ALGORITHM, fromDate, toDate);
             List<Integer> recordNumberList = recordNumbers.getContent();
-            logger.info("recordNumberList size -----> {}", recordNumberList.size());
+            log.info("recordNumberList size -----> {}", recordNumberList.size());
             List<String> stringList = getStringList(recordNumberList);
             List<MatchingAlgorithmReportDataEntity> reportDataEntityList = getMatchingAlgorithmReportDataDetailsRepository().getRecordsForMatchingBibInfo(stringList,headerNameList);
             Map<String,List<MatchingAlgorithmReportDataEntity>> reportDataEntityMap = getRecordNumReportDataEntityMap(reportDataEntityList);
@@ -97,11 +98,11 @@ public class MatchingBibInfoDetailService {
             getMatchingBibInfoDetailRepository().saveAll(matchingBibInfoDetailList);
             getMatchingBibInfoDetailRepository().flush();
             stopWatch.stop();
-            logger.info("Time taken to save ---> {}", stopWatch.getTotalTimeSeconds());
-            logger.info("Page {} saved to db ", pageCount);
+            log.info("Time taken to save ---> {}", stopWatch.getTotalTimeSeconds());
+            log.info("Page {} saved to db ", pageCount);
         }
         stopWatchFull.stop();
-        logger.info("Loaded matching bib info in {} seconds", stopWatchFull.getTotalTimeSeconds());
+        log.info("Loaded matching bib info in {} seconds", stopWatchFull.getTotalTimeSeconds());
         return "Success";
     }
 
@@ -119,29 +120,29 @@ public class MatchingBibInfoDetailService {
         headerNameList.add(ScsbCommonConstants.OWNING_INSTITUTION);
         headerNameList.add(ScsbCommonConstants.OWNING_INSTITUTION_BIB_ID);
         Integer matchingCount = getMatchingAlgorithmReportDetailRepository().getCountByType(typeList);
-        logger.info("matchingCount------> {}", matchingCount);
+        log.info("matchingCount------> {}", matchingCount);
         Integer pageCount = getPageCount(matchingCount,getBatchSize());
-        logger.info("pageCount---> {} ", pageCount);
+        log.info("pageCount---> {} ", pageCount);
         StopWatch stopWatchFull = new StopWatch();
         stopWatchFull.start();
         for(int count=0;count<pageCount;count++){
-            logger.info("Current page---> {}", count);
+            log.info("Current page---> {}", count);
             StopWatch stopWatch = new StopWatch();
             stopWatch.start();
             Page<Integer> recordNumbers = getMatchingAlgorithmReportDetailRepository().getRecordNumByType(PageRequest.of(count, getBatchSize()),typeList);
             List<Integer> recordNumberList = recordNumbers.getContent();
-            logger.info("recordNumberList size-----> {}", recordNumberList.size());
+            log.info("recordNumberList size-----> {}", recordNumberList.size());
             List<MatchingAlgorithmReportDataEntity> reportDataEntityList = getMatchingAlgorithmReportDataDetailsRepository().getRecordsForMatchingBibInfo(getStringList(recordNumberList),headerNameList);
             Map<String, List<MatchingAlgorithmReportDataEntity>> reportDataEntityMap = getRecordNumReportDataEntityMap(reportDataEntityList);
             List<MatchingBibInfoDetail> matchingBibInfoDetailList = populateMatchingBibInfoDetail(reportDataEntityMap);
             getMatchingBibInfoDetailRepository().saveAll(matchingBibInfoDetailList);
             getMatchingBibInfoDetailRepository().flush();
             stopWatch.stop();
-            logger.info("Time taken to save--> {}", stopWatch.getTotalTimeSeconds());
-            logger.info("Page {} saved to db", count);
+            log.info("Time taken to save--> {}", stopWatch.getTotalTimeSeconds());
+            log.info("Page {} saved to db", count);
         }
         stopWatchFull.stop();
-        logger.info("Loaded matching bib info in {} seconds", stopWatchFull.getTotalTimeSeconds());
+        log.info("Loaded matching bib info in {} seconds", stopWatchFull.getTotalTimeSeconds());
         return "Success";
     }
 

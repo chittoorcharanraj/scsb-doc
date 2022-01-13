@@ -1,21 +1,21 @@
 package org.recap.camel.route;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.recap.ScsbCommonConstants;
 import org.recap.camel.processor.MatchingAlgorithmProcessor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
  * Created by angelind on 31/10/16.
  */
+@Slf4j
 @Component
 public class MatchingAlgorithmRouteBuilder {
 
-    private static final Logger logger = LoggerFactory.getLogger(MatchingAlgorithmRouteBuilder.class);
+
 
     /**
      * This method instantiates a new route builder to save matching reports in database.
@@ -71,7 +71,7 @@ public class MatchingAlgorithmRouteBuilder {
             });
 
         } catch (Exception e) {
-            logger.error(ScsbCommonConstants.LOG_ERROR,e);
+            log.error(ScsbCommonConstants.LOG_ERROR,e);
         }
     }
 }

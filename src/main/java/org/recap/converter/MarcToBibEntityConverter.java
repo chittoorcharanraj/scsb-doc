@@ -36,7 +36,7 @@ import java.util.Map;
 @Service
 public class MarcToBibEntityConverter implements XmlToBibEntityConverterInterface {
 
-    private static final Logger logger = LoggerFactory.getLogger(MarcToBibEntityConverter.class);
+
 
     @Autowired
     private MarcUtil marcUtil;

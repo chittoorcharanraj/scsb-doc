@@ -1,5 +1,6 @@
 package org.recap.controller;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.recap.PropertyKeyConstants;
 import org.recap.ScsbCommonConstants;
@@ -11,8 +12,6 @@ import org.recap.model.solr.SolrIndexRequest;
 import org.recap.report.ReportGenerator;
 import org.recap.repository.jpa.InstitutionDetailsRepository;
 import org.recap.repository.jpa.JobParamDetailRepository;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
@@ -33,11 +32,11 @@ import java.util.Map;
 /**
  * Created by angelind on 28/4/17.
  */
+@Slf4j
 @RestController
 @RequestMapping("/generateReportService")
 public class GenerateReportRestController {
 
-    private static final Logger logger = LoggerFactory.getLogger(GenerateReportRestController.class);
 
     @Autowired
     private ReportGenerator reportGenerator;
@@ -79,10 +78,10 @@ public class GenerateReportRestController {
             }
         }
         if(StringUtils.isNotBlank(generateReportFileName.toString())) {
-            logger.info("Created report fileNames : {}", generateReportFileName);
+            log.info("Created report fileNames : {}", generateReportFileName);
             status = "Report generated Successfully in S3";
         } else {
-            logger.info("No report files generated.");
+            log.info("No report files generated.");
             status = "There is no report to generate or Report Generation Failed";
         }
 

@@ -1,13 +1,12 @@
 package org.recap.executors;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.camel.ProducerTemplate;
 import org.apache.solr.client.solrj.impl.HttpSolrClient;
 import org.apache.solr.common.SolrInputDocument;
 import org.recap.model.jpa.BibliographicEntity;
 import org.recap.repository.jpa.BibliographicDetailsRepository;
 import org.recap.repository.jpa.HoldingsDetailsRepository;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.solr.core.SolrTemplate;
@@ -21,9 +20,10 @@ import java.util.concurrent.Callable;
 /**
  * Created by angelind on 30/1/17.
  */
+@Slf4j
 public class MatchingBibItemIndexCallable extends CommonCallable implements Callable {
 
-    private static final Logger logger = LoggerFactory.getLogger(MatchingBibItemIndexCallable.class);
+
 
     private final int pageNum;
     private final int docsPerPage;
@@ -78,7 +78,7 @@ public class MatchingBibItemIndexCallable extends CommonCallable implements Call
     public Object call() throws Exception {
         Page<BibliographicEntity> bibliographicEntities;
         bibliographicEntities = bibliographicDetailsRepository.getBibliographicEntitiesForChangedItems(PageRequest.of(pageNum, docsPerPage), operationType, from, to);
-        List<SolrInputDocument> solrInputDocumentsToIndex = setSolrInputDocuments(bibliographicEntities, solrTemplate, bibliographicDetailsRepository, holdingsDetailsRepository, producerTemplate, logger,nonHoldingInstitutionList);
+        List<SolrInputDocument> solrInputDocumentsToIndex = setSolrInputDocuments(bibliographicEntities, solrTemplate, bibliographicDetailsRepository, holdingsDetailsRepository, producerTemplate, log,nonHoldingInstitutionList);
         if (!CollectionUtils.isEmpty(solrInputDocumentsToIndex)) {
             SolrTemplate templateForSolr = new SolrTemplate(new HttpSolrClient.Builder(solrURL + File.separator).build());
             templateForSolr.saveDocuments(coreName, solrInputDocumentsToIndex);

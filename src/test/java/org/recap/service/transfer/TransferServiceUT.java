@@ -51,7 +51,7 @@ import static org.junit.Assert.assertNotNull;
  */
 
 public class TransferServiceUT extends BaseTestCaseUT4 {
-    private static final Logger logger = LoggerFactory.getLogger(TransferServiceUT.class);
+
 
     @InjectMocks
     TransferService mockTransferService;

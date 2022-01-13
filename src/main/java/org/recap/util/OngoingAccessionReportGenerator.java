@@ -1,5 +1,6 @@
 package org.recap.util;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.beanutils.PropertyUtilsBean;
 import org.apache.commons.lang3.StringUtils;
 import org.recap.ScsbCommonConstants;
@@ -8,8 +9,7 @@ import org.recap.model.csv.OngoingAccessionReportRecord;
 import org.recap.model.csv.SubmitCollectionReportRecord;
 import org.recap.model.jpa.ReportDataEntity;
 import org.recap.model.jpa.ReportEntity;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
 
 import java.beans.IntrospectionException;
 import java.beans.PropertyDescriptor;
@@ -20,9 +20,8 @@ import java.util.List;
 /**
  * Created by premkb on 07/02/17.
  */
+@Slf4j
 public class OngoingAccessionReportGenerator {
-
-    private static final Logger logger = LoggerFactory.getLogger(OngoingAccessionReportGenerator.class);
 
     /**
      * This method prepares ongoing accession report record.
@@ -44,7 +43,7 @@ public class OngoingAccessionReportGenerator {
                     try {
                         setterMethod.invoke(ongoingAccessionReportRecord, headerValue);
                     } catch (Exception e) {
-                        logger.error(ScsbConstants.EXCEPTION,e);
+                        log.error(ScsbConstants.EXCEPTION,e);
                     }
                 }
             }
@@ -63,7 +62,7 @@ public class OngoingAccessionReportGenerator {
         try {
             return propertyUtilsBean.getWriteMethod(new PropertyDescriptor(propertyName, OngoingAccessionReportRecord.class));
         } catch (IntrospectionException e) {
-            logger.error(ScsbCommonConstants.LOG_ERROR,e);
+            log.error(ScsbCommonConstants.LOG_ERROR,e);
         }
         return null;
     }
@@ -79,7 +78,7 @@ public class OngoingAccessionReportGenerator {
         try {
             return propertyUtilsBean.getReadMethod(new PropertyDescriptor(propertyName, SubmitCollectionReportRecord.class));
         } catch (IntrospectionException e) {
-            logger.error(ScsbCommonConstants.LOG_ERROR,e);
+            log.error(ScsbCommonConstants.LOG_ERROR,e);
         }
         return null;
     }

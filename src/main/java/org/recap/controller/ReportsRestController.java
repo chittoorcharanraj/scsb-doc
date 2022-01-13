@@ -1,13 +1,12 @@
 package org.recap.controller;
 
+import lombok.extern.slf4j.Slf4j;
 import org.recap.ScsbCommonConstants;
 import org.recap.model.reports.ReportDataRequest;
 import org.recap.model.reports.ReportsRequest;
 import org.recap.model.reports.ReportsResponse;
 import org.recap.report.ReportGenerator;
 import org.recap.util.ReportsServiceUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -18,11 +17,11 @@ import org.springframework.web.bind.annotation.RestController;
 /**
  * Created by rajeshbabuk on 13/1/17.
  */
+@Slf4j
 @RestController
 @RequestMapping("/reportsService")
 public class ReportsRestController {
 
-    private static final Logger logger = LoggerFactory.getLogger(ReportsRestController.class);
 
     @Autowired
     private ReportsServiceUtil reportsServiceUtil;
@@ -42,7 +41,7 @@ public class ReportsRestController {
         try {
             reportsResponse = reportsServiceUtil.populateAccessionDeaccessionItemCounts(reportsRequest);
         } catch (Exception e) {
-            logger.error(ScsbCommonConstants.LOG_ERROR,e);
+            log.error(ScsbCommonConstants.LOG_ERROR,e);
             reportsResponse.setMessage(e.getMessage());
         }
         return reportsResponse;
@@ -60,7 +59,7 @@ public class ReportsRestController {
         try {
             reportsResponse = reportsServiceUtil.populateCgdItemCounts(reportsRequest);
         } catch (Exception e) {
-            logger.error(ScsbCommonConstants.LOG_ERROR,e);
+            log.error(ScsbCommonConstants.LOG_ERROR,e);
             reportsResponse.setMessage(e.getMessage());
         }
         return reportsResponse;
@@ -78,7 +77,7 @@ public class ReportsRestController {
         try {
             reportsResponse = reportsServiceUtil.populateDeaccessionResults(reportsRequest);
         } catch (Exception e) {
-            logger.error(ScsbCommonConstants.LOG_ERROR,e);
+            log.error(ScsbCommonConstants.LOG_ERROR,e);
             reportsResponse.setMessage(e.getMessage());
         }
         return reportsResponse;
@@ -96,7 +95,7 @@ public class ReportsRestController {
         try {
             reportsResponse = reportsServiceUtil.populateIncompleteRecordsReport(reportsRequest);
         } catch (Exception e) {
-            logger.error(ScsbCommonConstants.LOG_ERROR,e);
+            log.error(ScsbCommonConstants.LOG_ERROR,e);
             reportsResponse.setMessage(e.getMessage());
         }
         return reportsResponse;

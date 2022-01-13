@@ -1,5 +1,6 @@
 package org.recap.service.accession;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.camel.ProducerTemplate;
 import org.apache.commons.collections4.ListUtils;
 import org.apache.solr.client.solrj.SolrClient;
@@ -11,7 +12,6 @@ import org.recap.repository.jpa.BibliographicDetailsRepository;
 import org.recap.repository.jpa.HoldingsDetailsRepository;
 import org.recap.util.BibJSONUtil;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.solr.core.SolrTemplate;
@@ -26,10 +26,11 @@ import java.util.List;
 /**
  * Created by rajeshbabuk on 10/11/16.
  */
+@Slf4j
 @Service
 public class SolrIndexService {
 
-    private static final Logger logger = LoggerFactory.getLogger(SolrIndexService.class);
+
 
     @Value("${" + PropertyKeyConstants.SOLR_PARENT_CORE + "}")
     private String solrCore;
@@ -62,7 +63,7 @@ public class SolrIndexService {
      * @return the logger
      */
     public Logger getLogger() {
-        return logger;
+        return log;
     }
 
     /**
@@ -151,7 +152,7 @@ public class SolrIndexService {
             for(BibliographicEntity bibliographicEntity:bibliographicEntityList){
                 if(owningInstBibIdList.contains(bibliographicEntity.getOwningInstitutionBibId()) && bibliographicEntity.getId() != null){
                     bibliographicIdList.add(bibliographicEntity.getId());
-                    logger.info("Updated Dummy record scsb bibid to index--->{}",bibliographicEntity.getId());
+                    log.info("Updated Dummy record scsb bibid to index--->{}",bibliographicEntity.getId());
                 }
             }
         }

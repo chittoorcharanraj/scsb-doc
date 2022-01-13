@@ -10,8 +10,6 @@ import org.recap.model.transfer.TransferRequest;
 import org.recap.model.transfer.TransferResponse;
 import org.recap.service.transfer.TransferService;
 import org.recap.util.HelperUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -28,7 +26,7 @@ import java.util.List;
 @RequestMapping("/transfer")
 public class TransferController {
 
-    private static final Logger logger = LoggerFactory.getLogger(TransferController.class);
+
 
     @Autowired
     private TransferService transferService;

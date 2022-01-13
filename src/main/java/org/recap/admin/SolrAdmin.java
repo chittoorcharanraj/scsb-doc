@@ -1,5 +1,6 @@
 package org.recap.admin;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.request.CoreAdminRequest;
@@ -7,8 +8,6 @@ import org.apache.solr.client.solrj.response.CoreAdminResponse;
 import org.apache.solr.common.params.CoreAdminParams;
 import org.recap.PropertyKeyConstants;
 import org.recap.ScsbCommonConstants;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -22,10 +21,11 @@ import java.util.List;
 /**
  * Created by pvsubrah on 6/12/16.
  */
+@Slf4j
 @Component
 public class SolrAdmin {
 
-    private static final Logger logger = LoggerFactory.getLogger(SolrAdmin.class);
+
 
     @Value("${" + PropertyKeyConstants.SOLR_CONFIGSETS_DIR + "}")
     private String configSetsDir;
@@ -67,15 +67,15 @@ public class SolrAdmin {
                 if (!isCoreExist(coreName)) {
                     coreAdminResponse = coreAdminRequestCreate.process(solrAdminClient);
                     if (coreAdminResponse.getStatus() == 0) {
-                        logger.info("Created Solr core with name: {}",coreName);
+                        log.info("Created Solr core with name: {}",coreName);
                     } else {
-                        logger.error("Error in creating Solr core with name: {}",coreName);
+                        log.error("Error in creating Solr core with name: {}",coreName);
                     }
                 } else {
-                    logger.info("Solr core with name {} already exists.",coreName);
+                    log.info("Solr core with name {} already exists.",coreName);
                 }
             } catch (SolrServerException | IOException e) {
-                logger.error(ScsbCommonConstants.LOG_ERROR,e);
+                log.error(ScsbCommonConstants.LOG_ERROR,e);
             }
         }
 
@@ -103,7 +103,7 @@ public class SolrAdmin {
             CoreAdminRequest.mergeIndexes(solrParentCore, indexDirs, tempCoreNamesObjectArray, solrAdminClient);
             solrClient.commit(solrParentCore);
         } catch (SolrServerException | IOException e) {
-            logger.error(ScsbCommonConstants.LOG_ERROR,e);
+            log.error(ScsbCommonConstants.LOG_ERROR,e);
         }
     }
 
@@ -117,7 +117,7 @@ public class SolrAdmin {
             try {
                 CoreAdminRequest.unloadCore(coreName, true, true, solrAdminClient);
             } catch (SolrServerException | IOException e) {
-                logger.error(ScsbCommonConstants.LOG_ERROR, e);
+                log.error(ScsbCommonConstants.LOG_ERROR, e);
             }
 
         }
@@ -210,7 +210,7 @@ public class SolrAdmin {
             CoreAdminResponse coresStatusResponse = coreAdminRequestCoreStatus.process(solrAdminClient);
             return coresStatusResponse.getStatus();
         } catch (SolrServerException | IOException e) {
-            logger.error(ScsbCommonConstants.LOG_ERROR,e);
+            log.error(ScsbCommonConstants.LOG_ERROR,e);
         }
         return null;
     }

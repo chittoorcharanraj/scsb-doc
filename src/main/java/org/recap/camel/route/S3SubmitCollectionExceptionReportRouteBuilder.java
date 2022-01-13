@@ -1,5 +1,6 @@
 package org.recap.camel.route;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.aws.s3.S3Constants;
@@ -8,8 +9,6 @@ import org.recap.PropertyKeyConstants;
 import org.recap.ScsbCommonConstants;
 import org.recap.ScsbConstants;
 import org.recap.model.csv.SubmitCollectionReportRecord;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -17,10 +16,9 @@ import org.springframework.stereotype.Component;
 /**
  * Created by hemalathas on 21/12/16.
  */
+@Slf4j
 @Component
 public class S3SubmitCollectionExceptionReportRouteBuilder {
-
-    private static final Logger logger = LoggerFactory.getLogger(S3SubmitCollectionExceptionReportRouteBuilder.class);
 
     /**
      * This method instantiates a new route builder to generate submit collection exception report to the S3.
@@ -44,7 +42,7 @@ public class S3SubmitCollectionExceptionReportRouteBuilder {
                 });
             }
         } catch (Exception e) {
-            logger.error(ScsbCommonConstants.LOG_ERROR, e);
+            log.error(ScsbCommonConstants.LOG_ERROR, e);
         }
     }
 
