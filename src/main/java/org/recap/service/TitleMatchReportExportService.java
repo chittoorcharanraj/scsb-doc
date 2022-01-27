@@ -18,8 +18,6 @@ import org.recap.model.reports.TitleMatchedReport;
 import org.recap.model.reports.TitleMatchedReports;
 import org.recap.util.CsvUtil;
 import org.recap.util.ReportsServiceUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -52,7 +50,7 @@ import java.util.zip.ZipOutputStream;
 @Service
 @Slf4j
 public class TitleMatchReportExportService {
-    private static final Logger logger = LoggerFactory.getLogger(TitleMatchReportExportService.class);
+
 
     @Value("${" + PropertyKeyConstants.AWS_ACCESS_KEY + "}")
     private String awsAccessKey;
@@ -123,15 +121,15 @@ public class TitleMatchReportExportService {
             zipFiles();
             uploadFilesinS3(institution_name);
             updateStatusCompleteInFile();
-            logger.info("Title Match Export process completed and file placed in s3 is :: {}",file.getAbsolutePath());
+            log.info("Title Match Export process completed and file placed in s3 is :: {}",file.getAbsolutePath());
         } catch (IOException e) {
-            logger.info("Exception occured while doing zip the files: {}", e.getMessage());
+            log.info("Exception occured while doing zip the files: {}", e.getMessage());
             updateStatusCompleteInFile();
         } catch (IllegalArgumentException ie) {
-            logger.info("Exception occured while preparing work book {}", ie.getMessage());
+            log.info("Exception occured while preparing work book {}", ie.getMessage());
             updateStatusCompleteInFile();
         } catch (Exception ne) {
-            logger.info("Exception occured while exporting records");
+            log.info("Exception occured while exporting records");
             updateStatusCompleteInFile();
         }
     }
@@ -180,7 +178,7 @@ public class TitleMatchReportExportService {
             Upload xfer = xfer_mgr.upload(s3BucketName, ScsbConstants.TITLE_MATCH_REPORT_PATH + institution_name + "/" + institution_name + ScsbConstants.TITLE_MATCH + getCurrentDate() + ".zip", filesInFolder.get(0));
             XferMgrProgress.waitForCompletion(xfer);
         } catch (AmazonServiceException e) {
-            logger.info("Exception occured while processing files to S3: {}" + e.getErrorMessage());
+            log.info("Exception occured while processing files to S3: {}" + e.getErrorMessage());
         }
     }
 
@@ -209,9 +207,9 @@ public class TitleMatchReportExportService {
             }
             zos.close();
         } catch (FileNotFoundException ex) {
-            logger.info("A file does not exist: " + ex);
+            log.info("A file does not exist: " + ex);
         } catch (IOException ex) {
-            logger.info("I/O error: " + ex);
+            log.info("I/O error: " + ex);
         }
     }
 
@@ -220,7 +218,7 @@ public class TitleMatchReportExportService {
             fileWriter.append(status);
             fileWriter.flush();
         } catch (IOException e) {
-            logger.error(ScsbConstants.EXCEPTION, e);
+            log.error(ScsbConstants.EXCEPTION, e);
         }
     }
 
@@ -230,7 +228,7 @@ public class TitleMatchReportExportService {
             fileWriter.append(ScsbConstants.COMPLETED);
             fileWriter.flush();
         } catch (IOException e) {
-            logger.error(ScsbConstants.EXCEPTION, e);
+            log.error(ScsbConstants.EXCEPTION, e);
         }
     }
 
@@ -255,8 +253,8 @@ public class TitleMatchReportExportService {
                 }
             }
         } catch (IOException e) {
-            logger.error(ScsbConstants.ERROR, e);
-            logger.error("Exception while creating or updating the file : " + e.getMessage());
+            log.error(ScsbConstants.ERROR, e);
+            log.error("Exception while creating or updating the file : " + e.getMessage());
         }
         return false;
     }

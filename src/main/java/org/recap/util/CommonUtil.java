@@ -1,5 +1,6 @@
 package org.recap.util;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServerException;
@@ -76,8 +77,6 @@ import org.recap.model.solr.Item;
 import org.recap.repository.jpa.CollectionGroupDetailsRepository;
 import org.recap.repository.jpa.InstitutionDetailsRepository;
 import org.recap.repository.jpa.ItemStatusDetailsRepository;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.solr.core.SolrTemplate;
@@ -92,11 +91,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-
+@Slf4j
 @Service
 public class CommonUtil {
 
-    private static final Logger logger = LoggerFactory.getLogger(CommonUtil.class);
 
     private List<BibValueResolver> bibValueResolvers;
     private List<HoldingsValueResolver> holdingsValueResolvers;
@@ -315,7 +313,7 @@ public class CommonUtil {
                     institutionEntityMap.put(institutionEntity.getInstitutionCode(), institutionEntity.getId());
                 }
             } catch (Exception e) {
-                logger.error(ScsbCommonConstants.LOG_ERROR,e);
+                log.error(ScsbCommonConstants.LOG_ERROR,e);
             }
         }
         return institutionEntityMap;
@@ -336,7 +334,7 @@ public class CommonUtil {
                     itemStatusMap.put(itemStatusEntity.getStatusCode(), itemStatusEntity.getId());
                 }
             } catch (Exception e) {
-                logger.error(ScsbCommonConstants.LOG_ERROR,e);
+                log.error(ScsbCommonConstants.LOG_ERROR,e);
             }
         }
         return itemStatusMap;
@@ -357,7 +355,7 @@ public class CommonUtil {
                     collectionGroupMap.put(collectionGroupEntity.getCollectionGroupCode(), collectionGroupEntity.getId());
                 }
             } catch (Exception e) {
-                logger.error(ScsbCommonConstants.LOG_ERROR,e);
+                log.error(ScsbCommonConstants.LOG_ERROR,e);
             }
         }
         return collectionGroupMap;
@@ -392,7 +390,7 @@ public class CommonUtil {
                 institutionCodes.add(institutionEntity.getInstitutionCode());
             }
         } catch (Exception e) {
-            logger.error(ScsbCommonConstants.LOG_ERROR,e);
+            log.error(ScsbCommonConstants.LOG_ERROR,e);
         }
         return institutionCodes;
     }

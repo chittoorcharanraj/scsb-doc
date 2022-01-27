@@ -1,6 +1,7 @@
 package org.recap.repository.solr.impl;
 
 import com.google.common.collect.Lists;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.solr.client.solrj.SolrQuery;
@@ -31,8 +32,6 @@ import org.recap.repository.jpa.BibliographicDetailsRepository;
 import org.recap.repository.solr.main.CustomDocumentRepository;
 import org.recap.util.CommonUtil;
 import org.recap.util.SolrQueryBuilder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.solr.core.SolrTemplate;
@@ -52,10 +51,9 @@ import java.util.Optional;
 /**
  * Created by angelind on 26/10/16.
  */
+@Slf4j
 @Repository
 public class DataDumpSolrDocumentRepositoryImpl implements CustomDocumentRepository {
-
-    private static final Logger logger = LoggerFactory.getLogger(DataDumpSolrDocumentRepositoryImpl.class);
 
     private String and = " AND ";
 
@@ -97,7 +95,7 @@ public class DataDumpSolrDocumentRepositoryImpl implements CustomDocumentReposit
             }
             response.put(ScsbCommonConstants.SEARCH_SUCCESS_RESPONSE, bibItems);
         } catch (IOException|SolrServerException e) {
-            logger.error(ScsbCommonConstants.LOG_ERROR,e);
+            log.error(ScsbCommonConstants.LOG_ERROR,e);
             response.put(ScsbCommonConstants.SEARCH_ERROR_RESPONSE, e.getMessage());
         }
         return response;
@@ -109,7 +107,7 @@ public class DataDumpSolrDocumentRepositoryImpl implements CustomDocumentReposit
         queryForParentAndChildCriteria.setStart(searchRecordsRequest.getPageNumber() * searchRecordsRequest.getPageSize());
         queryForParentAndChildCriteria.setRows(searchRecordsRequest.getPageSize());
         queryForParentAndChildCriteria.setSort(ScsbCommonConstants.TITLE_SORT, SolrQuery.ORDER.asc);
-        logger.debug("Search by bib query string : {}", queryForParentAndChildCriteria);
+        log.debug("Search by bib query string : {}", queryForParentAndChildCriteria);
         QueryResponse queryResponse = solrTemplate.getSolrClient().query(queryForParentAndChildCriteria);
         SolrDocumentList bibSolrDocumentList = queryResponse.getResults();
         if(CollectionUtils.isNotEmpty(bibSolrDocumentList)) {
@@ -220,7 +218,7 @@ public class DataDumpSolrDocumentRepositoryImpl implements CustomDocumentReposit
         queryForChildAndParentCriteria.setStart(searchRecordsRequest.getPageNumber() * searchRecordsRequest.getPageSize());
         queryForChildAndParentCriteria.setRows(searchRecordsRequest.getPageSize());
         queryForChildAndParentCriteria.setSort(ScsbCommonConstants.TITLE_SORT, SolrQuery.ORDER.asc);
-        logger.debug("Search by item query string : {}", queryForChildAndParentCriteria);
+        log.debug("Search by item query string : {}", queryForChildAndParentCriteria);
         QueryResponse queryResponse = solrTemplate.getSolrClient().query(queryForChildAndParentCriteria);
         SolrDocumentList itemSolrDocumentList = queryResponse.getResults();
         if(CollectionUtils.isNotEmpty(itemSolrDocumentList)) {
@@ -245,7 +243,7 @@ public class DataDumpSolrDocumentRepositoryImpl implements CustomDocumentReposit
      */
     public void populateItemInfo(List<BibItem> bibItems, SearchRecordsRequest searchRecordsRequest) {
         boolean nonFullTreeInst = isIncrementalNonFullTreeInstitution(searchRecordsRequest);
-        logger.debug("nonFullTreeInst---->{}",nonFullTreeInst);
+        log.debug("nonFullTreeInst---->{}",nonFullTreeInst);
         String queryStringForMatchParentReturnChild = solrQueryBuilder.getQueryStringForMatchParentReturnChild(searchRecordsRequest);
         String querForItemString = "_root_:" + getRootIds(bibItems) + and + ScsbCommonConstants.DOCTYPE + ":" + ScsbCommonConstants.ITEM + and
                 + queryStringForMatchParentReturnChild + and + ScsbCommonConstants.IS_DELETED_ITEM + ":" + searchRecordsRequest.isDeleted() + and + ScsbConstants.ITEM_CATALOGING_STATUS + ":"
@@ -253,7 +251,7 @@ public class DataDumpSolrDocumentRepositoryImpl implements CustomDocumentReposit
         if((nonFullTreeInst && !isPartialFullDump(searchRecordsRequest.getFieldValue())) && searchRecordsRequest.getFieldName().contains(ScsbConstants.BIBITEM_LASTUPDATED_DATE)){
             querForItemString = querForItemString + and + ScsbConstants.ITEM_LASTUPDATED_DATE + ":["+searchRecordsRequest.getFieldValue()+"]";
         }
-        logger.debug("query string for export--->{}",querForItemString);
+        log.debug("query string for export--->{}",querForItemString);
         SolrQuery solrQueryForItem = solrQueryBuilder.getSolrQueryForBibItem(querForItemString) ;
         try {
             SolrDocumentList solrDocuments = commonUtil.getSolrDocumentsByDocType(solrQueryForItem, solrTemplate);
@@ -268,7 +266,7 @@ public class DataDumpSolrDocumentRepositoryImpl implements CustomDocumentReposit
                 }
             }
         } catch (IOException|SolrServerException e) {
-            logger.error(ScsbCommonConstants.LOG_ERROR,e);
+            log.error(ScsbCommonConstants.LOG_ERROR,e);
         }
     }
 
@@ -323,7 +321,7 @@ public class DataDumpSolrDocumentRepositoryImpl implements CustomDocumentReposit
                 }
             }
         } catch (Exception e) {
-            logger.error(ScsbCommonConstants.LOG_ERROR,e);
+            log.error(ScsbCommonConstants.LOG_ERROR,e);
         }
     }
 
@@ -415,7 +413,7 @@ public class DataDumpSolrDocumentRepositoryImpl implements CustomDocumentReposit
 
     private boolean isIncrementalNonFullTreeInstitution(SearchRecordsRequest searchRecordsRequest){
         String requestingInstitution = searchRecordsRequest.getRequestingInstitution();
-        logger.debug("incrementalNonFullTreeInstitution--->{}",incrementalNonFullTreeInstitution);
+        log.debug("incrementalNonFullTreeInstitution--->{}",incrementalNonFullTreeInstitution);
         List<String> incrementalNonFullTreeInstitutionList = getInstitutionList(incrementalNonFullTreeInstitution);
         return incrementalNonFullTreeInstitutionList.contains(requestingInstitution);
     }

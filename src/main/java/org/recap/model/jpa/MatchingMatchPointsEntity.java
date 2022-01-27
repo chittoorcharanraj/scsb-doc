@@ -1,8 +1,8 @@
 package org.recap.model.jpa;
 
+import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
+
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -13,8 +13,7 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name = "MATCHING_MATCHPOINTS_T", catalog = "")
-@Getter
-@Setter
+@Data
 @EqualsAndHashCode(callSuper = false)
 public class MatchingMatchPointsEntity extends AbstractEntity<Integer> {
     @Column(name = "MATCH_CRITERIA")

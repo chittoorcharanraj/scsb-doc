@@ -1,5 +1,6 @@
 package org.recap.camel.route;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.aws.s3.S3Constants;
@@ -12,8 +13,6 @@ import org.recap.camel.processor.StopRouteProcessor;
 import org.recap.model.matchingreports.MatchingSerialAndMVMReports;
 import org.recap.model.matchingreports.MatchingSummaryReport;
 import org.recap.model.matchingreports.OngoingMatchingCGDReport;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
@@ -21,10 +20,10 @@ import org.springframework.stereotype.Component;
 /**
  * Created by angelind on 22/6/17.
  */
+@Slf4j
 @Component
 public class S3MatchingReportsRouteBuilder {
 
-    private static final Logger logger = LoggerFactory.getLogger(S3MatchingReportsRouteBuilder.class);
 
     /**
      * Instantiates a new s3 matching reports route builder.
@@ -52,7 +51,7 @@ public class S3MatchingReportsRouteBuilder {
                     }
                 });
             } catch (Exception e) {
-                logger.info(ScsbCommonConstants.LOG_ERROR, e);
+                log.info(ScsbCommonConstants.LOG_ERROR, e);
             }
 
             try {
@@ -72,7 +71,7 @@ public class S3MatchingReportsRouteBuilder {
                     }
                 });
             } catch (Exception e) {
-                logger.info(ScsbCommonConstants.LOG_ERROR, e);
+                log.info(ScsbCommonConstants.LOG_ERROR, e);
             }
 
             try {
@@ -94,7 +93,7 @@ public class S3MatchingReportsRouteBuilder {
                     }
                 });
             } catch (Exception e) {
-                logger.info(ScsbCommonConstants.LOG_ERROR, e);
+                log.info(ScsbCommonConstants.LOG_ERROR, e);
             }
 
             try {
@@ -114,7 +113,7 @@ public class S3MatchingReportsRouteBuilder {
                     }
                 });
             } catch (Exception e) {
-                logger.info(ScsbCommonConstants.LOG_ERROR, e);
+                log.info(ScsbCommonConstants.LOG_ERROR, e);
             }
 
         }

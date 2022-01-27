@@ -1,5 +1,6 @@
 package org.recap.camel.processor;
 
+import lombok.extern.slf4j.Slf4j;
 import org.recap.ScsbCommonConstants;
 import org.recap.ScsbConstants;
 import org.recap.executors.BibItemIndexExecutorService;
@@ -12,8 +13,6 @@ import org.recap.repository.jpa.MatchingBibDetailsRepository;
 import org.recap.repository.jpa.MatchingMatchPointsDetailsRepository;
 import org.recap.repository.jpa.ReportDetailRepository;
 import org.recap.util.MatchingAlgorithmUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,10 +23,10 @@ import java.util.Map;
 /**
  * Created by angelind on 27/10/16.
  */
+@Slf4j
 @Component
 public class MatchingAlgorithmProcessor {
 
-    private static final Logger logger = LoggerFactory.getLogger(MatchingAlgorithmProcessor.class);
 
     @Autowired
     private MatchingMatchPointsDetailsRepository matchingMatchPointsDetailsRepository;
@@ -66,13 +65,13 @@ public class MatchingAlgorithmProcessor {
         try {
             matchingBibDetailsRepository.saveAll(matchingBibEntities);
         } catch (Exception ex) {
-            logger.info("Exception : {0}",ex);
+            log.info("Exception : {0}",ex);
             for(MatchingBibEntity matchingBibEntity : matchingBibEntities) {
                 try {
                     matchingBibDetailsRepository.save(matchingBibEntity);
                 } catch (Exception e) {
-                    logger.info("Exception for single Entity : " , e);
-                    logger.info("ISBN : {}" , matchingBibEntity.getIsbn());
+                    log.info("Exception for single Entity : " , e);
+                    log.info("ISBN : {}" , matchingBibEntity.getIsbn());
                 }
             }
         }
@@ -108,7 +107,7 @@ public class MatchingAlgorithmProcessor {
         try {
             matchingBibDetailsRepository.updateStatusBasedOnBibs(status, matchingBibIds);
         } catch (Exception e) {
-            logger.info("Exception while updating matching Bib entity status : " , e);
+            log.info("Exception while updating matching Bib entity status : " , e);
         }
     }
 

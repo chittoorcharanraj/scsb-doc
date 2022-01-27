@@ -1,8 +1,8 @@
 package org.recap.model.jpa;
 
+import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
+
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -20,8 +20,7 @@ import java.util.Date;
  */
 @Entity
 @Table(name = "ims_location_t", catalog = "")
-@Getter
-@Setter
+@Data
 @EqualsAndHashCode(callSuper = false)
 public class ImsLocationEntity implements Serializable {
     @Id

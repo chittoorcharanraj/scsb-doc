@@ -1,9 +1,8 @@
 package org.recap.controller;
 
+import lombok.extern.slf4j.Slf4j;
 import org.recap.ScsbCommonConstants;
 import org.recap.util.UpdateCgdUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -13,11 +12,11 @@ import org.springframework.web.bind.annotation.RestController;
 /**
  * Created by rajeshbabuk on 3/1/17.
  */
+@Slf4j
 @RestController
 @RequestMapping("/updateCgdService")
 public class UpdateCgdRestController {
 
-    private static final Logger logger = LoggerFactory.getLogger(UpdateCgdRestController.class);
 
     @Autowired
     private UpdateCgdUtil updateCgdUtil;
@@ -38,7 +37,7 @@ public class UpdateCgdRestController {
         try {
             statusMessage = updateCgdUtil.updateCGDForItem(itemBarcode, owningInstitution, oldCollectionGroupDesignation, newCollectionGroupDesignation, cgdChangeNotes, userName);
         } catch (Exception e) {
-            logger.error(ScsbCommonConstants.LOG_ERROR,e);
+            log.error(ScsbCommonConstants.LOG_ERROR,e);
         }
         return statusMessage;
     }

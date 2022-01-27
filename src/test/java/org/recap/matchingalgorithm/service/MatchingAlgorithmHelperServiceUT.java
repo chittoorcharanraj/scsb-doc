@@ -57,7 +57,6 @@ import static org.mockito.ArgumentMatchers.any;
 public class MatchingAlgorithmHelperServiceUT extends BaseTestCaseUT {
 
 
-    private static final Logger logger = LoggerFactory.getLogger(MatchingAlgorithmHelperServiceUT.class);
 
     @InjectMocks
     MatchingAlgorithmHelperService matchingAlgorithmHelperService;

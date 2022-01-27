@@ -1,6 +1,7 @@
 package org.recap.matchingalgorithm.service;
 
 import com.google.common.collect.Lists;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.camel.ProducerTemplate;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -65,10 +66,10 @@ import static org.recap.ScsbConstants.MATCHING_ALGORITHM_GROUPING_INDEX;
 /**
  * Created by angelind on 11/7/16.
  */
+@Slf4j
 @Service
 public class MatchingAlgorithmHelperService {
 
-    private static final Logger logger = LoggerFactory.getLogger(MatchingAlgorithmHelperService.class);
 
     @Autowired
     private MatchingBibDetailsRepository matchingBibDetailsRepository;
@@ -114,7 +115,7 @@ public class MatchingAlgorithmHelperService {
      * @return the logger
      */
     public Logger getLogger() {
-        return logger;
+        return log;
     }
 
     /**
@@ -187,7 +188,7 @@ public class MatchingAlgorithmHelperService {
                 .stream()
                 .mapToLong(this::loadAndSaveMatchingMatchPointEntities)
                 .sum();
-        logger.info("Total count in MatchPoints : {} " , count);
+        log.info("Total count in MatchPoints : {} " , count);
         drainAllQueueMsgs("saveMatchingMatchPointsQ");
 
         return count;
@@ -199,7 +200,7 @@ public class MatchingAlgorithmHelperService {
             matchingMatchPointsEntities = getMatchingAlgorithmUtil().getMatchingMatchPointsEntity(matchPointFieldOclc);
             getMatchingAlgorithmUtil().saveMatchingMatchPointEntities(matchingMatchPointsEntities);
         } catch (Exception exception) {
-            logger.info("Exception in finding MatchPoints : {}",exception.getMessage());
+            log.info("Exception in finding MatchPoints : {}",exception.getMessage());
         }
         return matchingMatchPointsEntities.size();
     }
@@ -224,7 +225,7 @@ public class MatchingAlgorithmHelperService {
                 try {
                     Thread.sleep(10000);
                 } catch (InterruptedException e) {
-                   logger.error(ScsbConstants.ERROR,e);
+                   log.error(ScsbConstants.ERROR,e);
                 }
                 saveMatchingBibsQ = getActiveMqQueuesInfo().getActivemqQueuesInfo(queueName);
             }
@@ -340,7 +341,7 @@ public class MatchingAlgorithmHelperService {
                 try {
                     Thread.sleep(10000);
                 } catch (InterruptedException e) {
-                    logger.error(ScsbConstants.ERROR,e);
+                    log.error(ScsbConstants.ERROR,e);
                 }
                 saveMatchingBibsQ = getActiveMqQueuesInfo().getActivemqQueuesInfo("updateMatchingBibEntityQ");
             }
@@ -424,7 +425,7 @@ public class MatchingAlgorithmHelperService {
             size = executeCallables(size, executor, callables);
         }
         catch (Exception exception){
-            logger.info("Exception caught in saving Matching Bibs : {}",exception.getMessage());
+            log.info("Exception caught in saving Matching Bibs : {}",exception.getMessage());
         }
         return size;
     }
@@ -446,7 +447,7 @@ public class MatchingAlgorithmHelperService {
         try {
             futures = getFutures(executorService, callables);
         } catch (Exception e) {
-            logger.error(ScsbCommonConstants.LOG_ERROR,e);
+            log.error(ScsbCommonConstants.LOG_ERROR,e);
         }
 
         if(futures != null) {
@@ -455,10 +456,10 @@ public class MatchingAlgorithmHelperService {
                 try {
                     size += (Integer) future.get();
                 } catch (InterruptedException e) {
-                    logger.error(ScsbCommonConstants.LOG_ERROR,e);
+                    log.error(ScsbCommonConstants.LOG_ERROR,e);
                     Thread.currentThread().interrupt();
                 } catch (ExecutionException e) {
-                    logger.error(ScsbCommonConstants.LOG_ERROR,e);
+                    log.error(ScsbCommonConstants.LOG_ERROR,e);
                 }
             }
         }
@@ -475,7 +476,7 @@ public class MatchingAlgorithmHelperService {
                 throw new IllegalStateException(e);
             }
         }).collect(toList());
-        logger.info("No of Futures Collected : {}", collectedFutures.size());
+        log.info("No of Futures Collected : {}", collectedFutures.size());
         return collectedFutures;
     }
 
@@ -500,67 +501,67 @@ public class MatchingAlgorithmHelperService {
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
         int totalPagesCount = getTotalPagesCountForMonographs(batchSize, isPendingMatch);
-        logger.info("Starting to group Monograph bibs for {} where total page count is {}",isPendingMatch,totalPagesCount);
+        log.info("Starting to group Monograph bibs for {} where total page count is {}",isPendingMatch,totalPagesCount);
         for (int pageNum = 0; pageNum < totalPagesCount + 1; pageNum++) {
             long from = pageNum * Long.valueOf(batchSize);
-            logger.info("Quering report data query for Monograph where Total Page count : {} and current page number is : {} from is : {} and to is : {}",totalPagesCount, pageNum, from, batchSize);
+            log.info("Quering report data query for Monograph where Total Page count : {} and current page number is : {} from is : {} and to is : {}",totalPagesCount, pageNum, from, batchSize);
             StopWatch stopWatchForFetchingReport = new StopWatch();
             stopWatchForFetchingReport.start();
             Optional<List<MatchingAlgorithmReportDataEntity>> reportDataEntities = getMonographDataEntitiesFromDB(batchSize, isPendingMatch, from);
             stopWatchForFetchingReport.stop();
-            logger.info("Total time taken for fetching reports {}",stopWatchForFetchingReport.getTotalTimeSeconds());
+            log.info("Total time taken for fetching reports {}",stopWatchForFetchingReport.getTotalTimeSeconds());
             reportDataEntities.ifPresent(this::groupBibsAndAssignMatchScore);
         }
         stopWatch.stop();
-        logger.info("Completed to group Monograph bibs for {} ",isPendingMatch);
-        logger.info(ScsbConstants.TOTAL_TIME_TAKEN + " to group Monograph bibs : " + stopWatch.getTotalTimeSeconds());
+        log.info("Completed to group Monograph bibs for {} ",isPendingMatch);
+        log.info(ScsbConstants.TOTAL_TIME_TAKEN + " to group Monograph bibs : " + stopWatch.getTotalTimeSeconds());
     }
 
     public void groupBibsForMVMs(Integer batchSize) {
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
         int totalPagesCount = getTotalPagesCountForMVMs(batchSize);
-        logger.info("Starting to group MVM bibs where total page count is {}",totalPagesCount);
+        log.info("Starting to group MVM bibs where total page count is {}",totalPagesCount);
         for (int pageNum = 0; pageNum < totalPagesCount + 1; pageNum++) {
             long from = pageNum * Long.valueOf(batchSize);
-            logger.info("Quering report data query for MVMs where Total Page count : {} and current page number is : {} from is : {} and to is : {}",totalPagesCount, pageNum, from, batchSize);
+            log.info("Quering report data query for MVMs where Total Page count : {} and current page number is : {} from is : {} and to is : {}",totalPagesCount, pageNum, from, batchSize);
             Optional<List<MatchingAlgorithmReportDataEntity>> reportDataEntities = getMVMReportDataEntitiesFromDB(batchSize, from);
             reportDataEntities.ifPresent(this::groupBibsAndAssignMatchScore);
         }
         stopWatch.stop();
-        logger.info("Completed to group MVM bibs");
-        logger.info(ScsbConstants.TOTAL_TIME_TAKEN + " to group MVM bibs : " + stopWatch.getTotalTimeSeconds());
+        log.info("Completed to group MVM bibs");
+        log.info(ScsbConstants.TOTAL_TIME_TAKEN + " to group MVM bibs : " + stopWatch.getTotalTimeSeconds());
     }
 
     public void groupForSerialBibs(Integer batchSize) {
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
         int totalPagesCount = getTotalPagesCountForSerialBibs(batchSize);
-        logger.info("Starting to group Serial bibs where total page count is {}",totalPagesCount);
+        log.info("Starting to group Serial bibs where total page count is {}",totalPagesCount);
         for (int pageNum = 0; pageNum < totalPagesCount + 1; pageNum++) {
             long from = pageNum * Long.valueOf(batchSize);
-            logger.info("Quering report data query for Serials where Total Page count : {} and current page number is : {} from is : {} and to is : {}",totalPagesCount, pageNum, from, batchSize);
+            log.info("Quering report data query for Serials where Total Page count : {} and current page number is : {} from is : {} and to is : {}",totalPagesCount, pageNum, from, batchSize);
             Optional<List<MatchingAlgorithmReportDataEntity>> reportDataEntities = getSerialReportDataEntitiesFromDB(batchSize, from);
             reportDataEntities.ifPresent(this::groupBibsAndAssignMatchScore);
         }
         stopWatch.stop();
-        logger.info("Completed to group Serial bibs");
-        logger.info(ScsbConstants.TOTAL_TIME_TAKEN + " to group Serial bibs : " + stopWatch.getTotalTimeSeconds());
+        log.info("Completed to group Serial bibs");
+        log.info(ScsbConstants.TOTAL_TIME_TAKEN + " to group Serial bibs : " + stopWatch.getTotalTimeSeconds());
     }
 
     private int getTotalPagesCountForMVMs(Integer batchSize) {
         long countOfRecordNum = matchingAlgorithmReportDataDetailsRepository.getCountOfRecordNumForMatchingMVMs(ScsbCommonConstants.BIB_ID);
-        logger.info(ScsbConstants.TOTAL_RECORDS + "{}", countOfRecordNum);
+        log.info(ScsbConstants.TOTAL_RECORDS + "{}", countOfRecordNum);
         int totalPagesCount = (int) ((countOfRecordNum*2) / batchSize);
-        logger.info(ScsbConstants.TOTAL_PAGES + "{}" , totalPagesCount/2);
+        log.info(ScsbConstants.TOTAL_PAGES + "{}" , totalPagesCount/2);
         return totalPagesCount;
     }
 
     private int getTotalPagesCountForSerialBibs(Integer batchSize) {
         long countOfRecordNum = matchingAlgorithmReportDataDetailsRepository.getCountOfRecordNumForMatchingSerials(ScsbCommonConstants.BIB_ID);
-        logger.info(ScsbConstants.TOTAL_RECORDS + "{}", countOfRecordNum);
+        log.info(ScsbConstants.TOTAL_RECORDS + "{}", countOfRecordNum);
         int totalPagesCount = (int) ((countOfRecordNum*2) / batchSize);
-        logger.info(ScsbConstants.TOTAL_PAGES + "{}" , totalPagesCount/2);
+        log.info(ScsbConstants.TOTAL_PAGES + "{}" , totalPagesCount/2);
         return totalPagesCount;
     }
 
@@ -581,7 +582,7 @@ public class MatchingAlgorithmHelperService {
     }
 
     private void saveAndIndexGroupedBibs(Map<Integer, BibliographicEntity> bibIdAndBibEntityMap, Set<Integer> bibIdsToIndex) {
-        logger.info("Total BibIds grouped to index : {}", bibIdsToIndex.size());
+        log.info("Total BibIds grouped to index : {}", bibIdsToIndex.size());
         matchingAlgorithmUtil.saveGroupedBibsToDb(bibIdAndBibEntityMap.values());
         if(isIndexGrouping){
             producerTemplate.sendBody(MATCHING_ALGORITHM_GROUPING_INDEX, bibIdsToIndex);
@@ -621,11 +622,11 @@ public class MatchingAlgorithmHelperService {
     }
 
     private int getTotalPagesCountForMonographs(Integer batchSize, Boolean isPendingMatch) {
-        logger.info("Starting grouping process for Monographs");
+        log.info("Starting grouping process for Monographs");
         long countOfRecordNum = getCountsOfRecordNumForMonograph(isPendingMatch);
-        logger.info(ScsbConstants.TOTAL_RECORDS + "{}", countOfRecordNum);
+        log.info(ScsbConstants.TOTAL_RECORDS + "{}", countOfRecordNum);
         int totalPagesCount = (int) ((countOfRecordNum*2) / batchSize);
-        logger.info(ScsbConstants.TOTAL_PAGES + "{}", totalPagesCount/2);
+        log.info(ScsbConstants.TOTAL_PAGES + "{}", totalPagesCount/2);
         return totalPagesCount;
     }
 
@@ -633,10 +634,10 @@ public class MatchingAlgorithmHelperService {
         long countOfRecordNum = 0;
         if (isPendingMatch) {
             countOfRecordNum = matchingAlgorithmReportDataDetailsRepository.getCountOfRecordNumForMatchingPendingMonograph(ScsbCommonConstants.BIB_ID);
-            logger.info("Starting grouping process for Monographs which is in Pending Status which has a total count of :{}", countOfRecordNum);
+            log.info("Starting grouping process for Monographs which is in Pending Status which has a total count of :{}", countOfRecordNum);
         } else {
             countOfRecordNum = matchingAlgorithmReportDataDetailsRepository.getCountOfRecordNumForMatchingMonograph(ScsbCommonConstants.BIB_ID);
-            logger.info("Starting grouping process for Monographs which has pendingMatch as false which has a total count of : {}", countOfRecordNum);
+            log.info("Starting grouping process for Monographs which has pendingMatch as false which has a total count of : {}", countOfRecordNum);
         }
         return countOfRecordNum;
     }
@@ -651,12 +652,12 @@ public class MatchingAlgorithmHelperService {
         matchScoreReportList.forEach(matchScoreReport -> {
             List<BibliographicEntity> bibToupdate = matchScoreReport.getBibIds().stream().map(bibIdAndBibEntityMap::get).collect(toList());
             Optional<Map<Integer, BibliographicEntity>> bibliographicEntityMap = matchingAlgorithmUtil.groupBibsForInitialMatching(bibToupdate, matchScoreReport.getMatchScore());
-            bibliographicEntityMap.ifPresentOrElse(entry -> bibIdsToIndex.addAll(entry.keySet()), () -> logger.info("No bib ids found to group for indexing"));
+            bibliographicEntityMap.ifPresentOrElse(entry -> bibIdsToIndex.addAll(entry.keySet()), () -> log.info("No bib ids found to group for indexing"));
         });
         saveAndIndexGroupedBibs(bibIdAndBibEntityMap, bibIdsToIndex);
         clearAllCollection(reportDataEntityList, bibIdAndBibEntityMap, bibIdsToIndex);
         stopWatch.stop();
-        logger.info("Total time taken for grouping reports of size {} and bibs size {} is : {}",reportDataEntityList.size(),bibIdAndBibEntityMap.size(),stopWatch.getTotalTimeSeconds());
+        log.info("Total time taken for grouping reports of size {} and bibs size {} is : {}",reportDataEntityList.size(),bibIdAndBibEntityMap.size(),stopWatch.getTotalTimeSeconds());
     }
 
     public int removeMatchingIdsInDB() {
@@ -677,7 +678,7 @@ public class MatchingAlgorithmHelperService {
                 String collectedBibIds = bibIdsToIndex.stream().map(String::valueOf).collect(Collectors.joining(","));
                 solrIndexRequest.setBibIds(collectedBibIds);
                 Integer bibsIndexed = bibItemIndexExecutorService.partialIndex(solrIndexRequest);
-                logger.info("Completed indexing {} to remove Matching Identifiers for Bib Ids", bibsIndexed);
+                log.info("Completed indexing {} to remove Matching Identifiers for Bib Ids", bibsIndexed);
                 totalBibsIndexed = totalBibsIndexed + bibsIndexed;
             }
         } while (!bibIdsToIndex.isEmpty());
@@ -719,7 +720,7 @@ public class MatchingAlgorithmHelperService {
                     }
                 }
             } catch (Exception e) {
-                logger.error(ScsbCommonConstants.LOG_ERROR, e);
+                log.error(ScsbCommonConstants.LOG_ERROR, e);
             }
         }
     }

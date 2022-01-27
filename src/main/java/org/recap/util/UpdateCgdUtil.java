@@ -1,5 +1,6 @@
 package org.recap.util;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.camel.ProducerTemplate;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -20,8 +21,6 @@ import org.recap.repository.jpa.ItemDetailsRepository;
 import org.recap.repository.jpa.UserDetailsRepository;
 import org.recap.repository.solr.main.ItemCrudRepository;
 import org.recap.service.SCSBService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.solr.core.SolrTemplate;
@@ -36,10 +35,10 @@ import java.util.List;
 /**
  * Created by rajeshbabuk on 5/1/17.
  */
+@Slf4j
 @Service
 public class UpdateCgdUtil {
 
-    private static final Logger logger = LoggerFactory.getLogger(UpdateCgdUtil.class);
 
     @Value("${" + PropertyKeyConstants.SOLR_PARENT_CORE + "}")
     private String solrCore;
@@ -121,7 +120,7 @@ public class UpdateCgdUtil {
                 return ScsbConstants.FAILURE_UPDATE_CGD;
             }
         } catch (Exception e) {
-            logger.error(ScsbCommonConstants.LOG_ERROR,e);
+            log.error(ScsbCommonConstants.LOG_ERROR,e);
             return ScsbCommonConstants.FAILURE + "-" + e.getMessage();
         }
     }
@@ -157,7 +156,7 @@ public class UpdateCgdUtil {
                         solrTemplate.saveDocument(solrCore, bibSolrInputDocument);
                         solrTemplate.commit(solrCore);
                         stopWatchIndexDocument.stop();
-                        logger.info("Time taken to index the doc for updateCGDForItemInSolr--->{}sec",stopWatchIndexDocument.getTotalTimeSeconds());
+                        log.info("Time taken to index the doc for updateCGDForItemInSolr--->{}sec",stopWatchIndexDocument.getTotalTimeSeconds());
                     }
                 }
             }

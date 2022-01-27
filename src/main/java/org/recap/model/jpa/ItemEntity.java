@@ -1,7 +1,7 @@
 package org.recap.model.jpa;
 
-import lombok.Getter;
-import lombok.Setter;
+
+import lombok.Data;
 import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.AttributeOverride;
@@ -20,8 +20,7 @@ import java.util.List;
 /**
  * Created by pvsubrah on 6/11/16.
  */
-@Getter
-@Setter
+@Data
 @Entity
 @Table(name = "item_t", catalog = "")
 @AttributeOverride(name = "id", column = @Column(name = "ITEM_ID"))

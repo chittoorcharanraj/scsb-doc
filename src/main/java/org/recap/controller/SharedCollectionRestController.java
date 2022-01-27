@@ -1,13 +1,12 @@
 package org.recap.controller;
 
+import lombok.extern.slf4j.Slf4j;
 import org.recap.ScsbConstants;
 import org.recap.model.BibAvailabilityResponse;
 import org.recap.model.BibItemAvailabityStatusRequest;
 import org.recap.model.ItemAvailabilityResponse;
 import org.recap.model.ItemAvailabityStatusRequest;
 import org.recap.service.ItemAvailabilityService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -26,11 +25,12 @@ import java.util.List;
 /**
  * Created by chenchulakshmig on 6/10/16.
  */
+@Slf4j
 @RestController
 @RequestMapping("/sharedCollection")
 public class SharedCollectionRestController {
 
-    private static final Logger logger = LoggerFactory.getLogger(SharedCollectionRestController.class);
+
 
     @Autowired
     private ItemAvailabilityService itemAvailabilityService;
@@ -59,7 +59,7 @@ public class SharedCollectionRestController {
             itemAvailabilityResponses = getItemAvailabilityService().getItemStatusByBarcodeAndIsDeletedFalseList(itemAvailabityStatusRequest.getBarcodes());
         } catch (Exception exception) {
             responseEntity = new ResponseEntity(ScsbConstants.SCSB_PERSISTENCE_SERVICE_IS_UNAVAILABLE, getHttpHeaders(), HttpStatus.SERVICE_UNAVAILABLE);
-            logger.error(ScsbConstants.EXCEPTION, exception);
+            log.error(ScsbConstants.EXCEPTION, exception);
             return responseEntity;
         }
         responseEntity = new ResponseEntity(itemAvailabilityResponses, getHttpHeaders(), HttpStatus.OK);

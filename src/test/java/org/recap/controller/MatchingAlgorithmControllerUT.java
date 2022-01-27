@@ -1,5 +1,6 @@
 package org.recap.controller;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.camel.ProducerTemplate;
 import org.junit.Before;
 import org.junit.Test;
@@ -21,8 +22,6 @@ import org.recap.repository.jpa.*;
 import org.recap.service.ActiveMqQueuesInfo;
 import org.recap.util.CommonUtil;
 import org.recap.util.MatchingAlgorithmUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -49,9 +48,9 @@ import static org.recap.ScsbConstants.MATCHING_COUNTER_UPDATED_OPEN;
 /**
  * Created by hemalathas on 1/8/16.
  */
+@Slf4j
 public class MatchingAlgorithmControllerUT extends BaseTestCaseUT4 {
 
-    Logger logger = LoggerFactory.getLogger(MatchingAlgorithmControllerUT.class);
 
     @Mock
     MatchingAlgorithmController matchingAlgoController;
@@ -398,7 +397,7 @@ public class MatchingAlgorithmControllerUT extends BaseTestCaseUT4 {
         try {
             updatedDate = sdf.parse(matchingAlgoDateString);
         } catch (ParseException e) {
-            logger.error("Exception while parsing Date : " + e.getMessage());
+            log.error("Exception while parsing Date : " + e.getMessage());
         }
         Mockito.when(matchingAlgoController.getMatchingBibItemIndexExecutorService()).thenReturn(matchingBibItemIndexExecutorService);
         Mockito.when(matchingBibItemIndexExecutorService.indexingForMatchingAlgorithm(ScsbConstants.INITIAL_MATCHING_OPERATION_TYPE, updatedDate)).thenReturn(1);
@@ -416,7 +415,7 @@ public class MatchingAlgorithmControllerUT extends BaseTestCaseUT4 {
         try {
             updatedDate = sdf.parse(matchingAlgoDateString);
         } catch (ParseException e) {
-            logger.error("Exception while parsing Date : " + e.getMessage());
+            log.error("Exception while parsing Date : " + e.getMessage());
         }
         Mockito.when(matchingAlgoController.getMatchingBibItemIndexExecutorService()).thenReturn(matchingBibItemIndexExecutorService);
         Mockito.when(matchingBibItemIndexExecutorService.indexingForMatchingAlgorithm(ScsbConstants.INITIAL_MATCHING_OPERATION_TYPE, updatedDate)).thenThrow(NullPointerException.class);
@@ -434,7 +433,7 @@ public class MatchingAlgorithmControllerUT extends BaseTestCaseUT4 {
         try {
             updatedDate = sdf.parse(matchingAlgoDateString);
         } catch (ParseException e) {
-            logger.error("Exception while parsing Date : " + e.getMessage());
+            log.error("Exception while parsing Date : " + e.getMessage());
         }
         Mockito.when(matchingAlgoController.getMatchingBibItemIndexExecutorService()).thenReturn(matchingBibItemIndexExecutorService);
         Mockito.when(matchingBibItemIndexExecutorService.indexingForMatchingAlgorithm(ScsbConstants.INITIAL_MATCHING_OPERATION_TYPE, updatedDate)).thenThrow(NullPointerException.class);

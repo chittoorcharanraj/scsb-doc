@@ -1,5 +1,6 @@
 package org.recap.controller;
 
+import lombok.extern.slf4j.Slf4j;
 import org.codehaus.plexus.util.StringUtils;
 import org.recap.PropertyKeyConstants;
 import org.recap.ScsbCommonConstants;
@@ -9,8 +10,6 @@ import org.recap.model.solr.SolrIndexRequest;
 import org.recap.model.submitCollection.SubmitCollectionReport;
 import org.recap.report.ReportGenerator;
 import org.recap.util.DateUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -31,11 +30,12 @@ import java.util.Date;
 /**
  * Created by angelind on 11/11/16.
  */
+@Slf4j
 @RestController
 @RequestMapping("/reportGeneration")
 public class GenerateReportController {
 
-    private static final Logger logger = LoggerFactory.getLogger(GenerateReportController.class);
+
 
     @Autowired
     private ReportGenerator reportGenerator;
@@ -94,7 +94,7 @@ public class GenerateReportController {
             status = "The Generated Report File Name : " + generatedReportFileName;
         }
         stopWatch.stop();
-        logger.info("Total time taken to generate File : {}" , stopWatch.getTotalTimeSeconds());
+        log.info("Total time taken to generate File : {}" , stopWatch.getTotalTimeSeconds());
         return status;
     }
 

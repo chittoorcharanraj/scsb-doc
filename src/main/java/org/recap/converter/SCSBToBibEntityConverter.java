@@ -1,5 +1,6 @@
 package org.recap.converter;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.recap.ScsbCommonConstants;
@@ -20,8 +21,6 @@ import org.recap.repository.jpa.BibliographicDetailsRepository;
 import org.recap.util.CommonUtil;
 import org.recap.util.DBReportUtil;
 import org.recap.util.MarcUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -34,10 +33,10 @@ import java.util.Map;
 /**
  * Created by premkb on 15/12/16.
  */
+@Slf4j
 @Service
 public class SCSBToBibEntityConverter implements XmlToBibEntityConverterInterface {
 
-    private static final Logger logger = LoggerFactory.getLogger(SCSBToBibEntityConverter.class);
 
     @Autowired
     private DBReportUtil dbReportUtil;
@@ -92,7 +91,7 @@ public class SCSBToBibEntityConverter implements XmlToBibEntityConverterInterfac
                     if (holdings.getHolding()!=null) {
                         holdingList = holdings.getHolding();
                     } else {
-                        logger.error("holding is empty---{}",bibRecord.getBib().getOwningInstitutionBibId());
+                        log.error("holding is empty---{}",bibRecord.getBib().getOwningInstitutionBibId());
                     }
                     for(Holding holding:holdingList){
                         if (holding.getContent() != null) {
@@ -172,7 +171,7 @@ public class SCSBToBibEntityConverter implements XmlToBibEntityConverterInterfac
             map.put(ScsbCommonConstants.REASON_FOR_ITEM_FAILURE,reasonForFailureItem);
             map.put(ScsbConstants.INCOMPLETE_RESPONSE,incompleteResponse);
         } catch (Exception e) {
-            logger.error(ScsbCommonConstants.LOG_ERROR,e);
+            log.error(ScsbCommonConstants.LOG_ERROR,e);
             errorMessage.append(e.getMessage());
         }
 
