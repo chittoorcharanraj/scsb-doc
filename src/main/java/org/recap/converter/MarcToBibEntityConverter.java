@@ -26,9 +26,9 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.HashMap;
 
 /**
  * Created by chenchulakshmig on 17/10/16.
@@ -36,7 +36,7 @@ import java.util.HashMap;
 @Service
 public class MarcToBibEntityConverter implements XmlToBibEntityConverterInterface {
 
-    private static final Logger logger = LoggerFactory.getLogger(MarcToBibEntityConverter.class);
+
 
     @Autowired
     private MarcUtil marcUtil;

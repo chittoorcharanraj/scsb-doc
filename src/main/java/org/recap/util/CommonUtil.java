@@ -1,5 +1,6 @@
 package org.recap.util;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServerException;
@@ -18,10 +19,6 @@ import org.recap.model.search.resolver.BibValueResolver;
 import org.recap.model.search.resolver.HoldingsValueResolver;
 import org.recap.model.search.resolver.ItemValueResolver;
 import org.recap.model.search.resolver.impl.bib.AnomalyFlagValueResolver;
-import org.recap.model.search.resolver.impl.bib.MatchScoreValueResolver;
-import org.recap.model.search.resolver.impl.bib.MatchingIdentifierValueResolver;
-import org.recap.model.search.resolver.impl.bib.TitleSubFieldAValueResolver;
-import org.recap.model.search.resolver.impl.bib.TitleMatchValueResolver;
 import org.recap.model.search.resolver.impl.bib.AuthorDisplayValueResolver;
 import org.recap.model.search.resolver.impl.bib.AuthorSearchValueResolver;
 import org.recap.model.search.resolver.impl.bib.BibCreatedDateValueResolver;
@@ -32,6 +29,8 @@ import org.recap.model.search.resolver.impl.bib.ImprintValueResolver;
 import org.recap.model.search.resolver.impl.bib.IsDeletedBibValueResolver;
 import org.recap.model.search.resolver.impl.bib.LCCNValueResolver;
 import org.recap.model.search.resolver.impl.bib.LeaderMaterialTypeValueResolver;
+import org.recap.model.search.resolver.impl.bib.MatchScoreValueResolver;
+import org.recap.model.search.resolver.impl.bib.MatchingIdentifierValueResolver;
 import org.recap.model.search.resolver.impl.bib.MaterialTypeValueResolver;
 import org.recap.model.search.resolver.impl.bib.NotesValueResolver;
 import org.recap.model.search.resolver.impl.bib.OCLCValueResolver;
@@ -43,8 +42,10 @@ import org.recap.model.search.resolver.impl.bib.PublisherValueResolver;
 import org.recap.model.search.resolver.impl.bib.RootValueResolver;
 import org.recap.model.search.resolver.impl.bib.SubjectValueResolver;
 import org.recap.model.search.resolver.impl.bib.TitleDisplayValueResolver;
+import org.recap.model.search.resolver.impl.bib.TitleMatchValueResolver;
 import org.recap.model.search.resolver.impl.bib.TitleSearchValueResolver;
 import org.recap.model.search.resolver.impl.bib.TitleSortValueResolver;
+import org.recap.model.search.resolver.impl.bib.TitleSubFieldAValueResolver;
 import org.recap.model.search.resolver.impl.holdings.HoldingsIdValueResolver;
 import org.recap.model.search.resolver.impl.holdings.HoldingsRootValueResolver;
 import org.recap.model.search.resolver.impl.holdings.IsDeletedHoldingsValueResolver;
@@ -58,6 +59,7 @@ import org.recap.model.search.resolver.impl.item.CallNumberSearchValueResolver;
 import org.recap.model.search.resolver.impl.item.CollectionGroupDesignationValueResolver;
 import org.recap.model.search.resolver.impl.item.CustomerCodeValueResolver;
 import org.recap.model.search.resolver.impl.item.HoldingsIdsValueResolver;
+import org.recap.model.search.resolver.impl.item.ImsLocationValueResolver;
 import org.recap.model.search.resolver.impl.item.IsDeletedItemValueResolver;
 import org.recap.model.search.resolver.impl.item.ItemBibIdValueResolver;
 import org.recap.model.search.resolver.impl.item.ItemCreatedDateValueResolver;
@@ -70,14 +72,11 @@ import org.recap.model.search.resolver.impl.item.OwningInstitutionItemIdValueRes
 import org.recap.model.search.resolver.impl.item.UseRestrictionDisplayValueResolver;
 import org.recap.model.search.resolver.impl.item.UseRestrictionSearchValueResolver;
 import org.recap.model.search.resolver.impl.item.VolumePartYearValueResolver;
-import org.recap.model.search.resolver.impl.item.ImsLocationValueResolver;
 import org.recap.model.solr.BibItem;
 import org.recap.model.solr.Item;
 import org.recap.repository.jpa.CollectionGroupDetailsRepository;
 import org.recap.repository.jpa.InstitutionDetailsRepository;
 import org.recap.repository.jpa.ItemStatusDetailsRepository;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.solr.core.SolrTemplate;
@@ -92,11 +91,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-
+@Slf4j
 @Service
 public class CommonUtil {
 
-    private static final Logger logger = LoggerFactory.getLogger(CommonUtil.class);
 
     private List<BibValueResolver> bibValueResolvers;
     private List<HoldingsValueResolver> holdingsValueResolvers;
@@ -315,7 +313,7 @@ public class CommonUtil {
                     institutionEntityMap.put(institutionEntity.getInstitutionCode(), institutionEntity.getId());
                 }
             } catch (Exception e) {
-                logger.error(ScsbCommonConstants.LOG_ERROR,e);
+                log.error(ScsbCommonConstants.LOG_ERROR,e);
             }
         }
         return institutionEntityMap;
@@ -336,7 +334,7 @@ public class CommonUtil {
                     itemStatusMap.put(itemStatusEntity.getStatusCode(), itemStatusEntity.getId());
                 }
             } catch (Exception e) {
-                logger.error(ScsbCommonConstants.LOG_ERROR,e);
+                log.error(ScsbCommonConstants.LOG_ERROR,e);
             }
         }
         return itemStatusMap;
@@ -357,7 +355,7 @@ public class CommonUtil {
                     collectionGroupMap.put(collectionGroupEntity.getCollectionGroupCode(), collectionGroupEntity.getId());
                 }
             } catch (Exception e) {
-                logger.error(ScsbCommonConstants.LOG_ERROR,e);
+                log.error(ScsbCommonConstants.LOG_ERROR,e);
             }
         }
         return collectionGroupMap;
@@ -392,7 +390,7 @@ public class CommonUtil {
                 institutionCodes.add(institutionEntity.getInstitutionCode());
             }
         } catch (Exception e) {
-            logger.error(ScsbCommonConstants.LOG_ERROR,e);
+            log.error(ScsbCommonConstants.LOG_ERROR,e);
         }
         return institutionCodes;
     }

@@ -1,12 +1,11 @@
 package org.recap.util;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.beanutils.PropertyUtilsBean;
 import org.recap.ScsbCommonConstants;
 import org.recap.model.csv.SolrExceptionReportCSVRecord;
 import org.recap.model.jpa.ReportDataEntity;
 import org.recap.model.jpa.ReportEntity;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.beans.IntrospectionException;
 import java.beans.PropertyDescriptor;
@@ -17,9 +16,10 @@ import java.util.List;
 /**
  * Created by angelind on 22/8/16.
  */
+@Slf4j
 public class SolrExceptionCSVRecordGenerator {
 
-    private static final Logger logger= LoggerFactory.getLogger(SolrExceptionCSVRecordGenerator.class);
+
 
     /**
      * This method prepares SolrExceptionReportCSVRecord which is used to generate csv report based on the given report entity
@@ -41,7 +41,7 @@ public class SolrExceptionCSVRecordGenerator {
                 try {
                     setterMethod.invoke(solrExceptionReportCSVRecord, headerValue);
                 } catch (Exception e) {
-                    logger.error(ScsbCommonConstants.LOG_ERROR,e);
+                    log.error(ScsbCommonConstants.LOG_ERROR,e);
                 }
             }
         }
@@ -59,7 +59,7 @@ public class SolrExceptionCSVRecordGenerator {
         try {
             return propertyUtilsBean.getWriteMethod(new PropertyDescriptor(propertyName, SolrExceptionReportCSVRecord.class));
         } catch (IntrospectionException e) {
-            logger.error(ScsbCommonConstants.LOG_ERROR,e);
+            log.error(ScsbCommonConstants.LOG_ERROR,e);
         }
         return null;
     }
@@ -75,7 +75,7 @@ public class SolrExceptionCSVRecordGenerator {
         try {
             return propertyUtilsBean.getReadMethod(new PropertyDescriptor(propertyName, SolrExceptionReportCSVRecord.class));
         } catch (IntrospectionException e) {
-            logger.error(ScsbCommonConstants.LOG_ERROR,e);
+            log.error(ScsbCommonConstants.LOG_ERROR,e);
         }
         return null;
     }

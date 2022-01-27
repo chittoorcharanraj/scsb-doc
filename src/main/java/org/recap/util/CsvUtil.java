@@ -1,12 +1,11 @@
 package org.recap.util;
 
 import com.csvreader.CsvWriter;
+import lombok.extern.slf4j.Slf4j;
 import org.recap.ScsbCommonConstants;
 import org.recap.model.matchingreports.TitleExceptionReport;
 import org.recap.model.reports.TitleMatchedReport;
 import org.recap.model.reports.TitleMatchedReports;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -18,10 +17,9 @@ import java.util.List;
 /**
  * Created by angelind on 27/6/17.
  */
+@Slf4j
 @Component
 public class CsvUtil {
-
-    private static final Logger logger = LoggerFactory.getLogger(CsvUtil.class);
 
     @Autowired
     private ReportsServiceUtil reportsServiceUtil;
@@ -44,7 +42,7 @@ public class CsvUtil {
                 writeDataRowForTitleExceptionReport(exceptionReport, csvOutput);
             }
         } catch (Exception e) {
-            logger.error(ScsbCommonConstants.LOG_ERROR,e);
+            log.error(ScsbCommonConstants.LOG_ERROR,e);
         } finally {
             if(csvOutput != null) {
                 csvOutput.flush();
@@ -184,7 +182,7 @@ public class CsvUtil {
             }
 
         } catch (Exception e) {
-            logger.error(ScsbCommonConstants.LOG_ERROR,e);
+            log.error(ScsbCommonConstants.LOG_ERROR,e);
         } finally {
             if(csvOutput != null) {
                 csvOutput.flush();

@@ -1,14 +1,14 @@
 package org.recap.controller;
 
+import lombok.extern.slf4j.Slf4j;
 import org.recap.ScsbCommonConstants;
 import org.recap.model.jpa.ItemEntity;
 import org.recap.repository.jpa.ItemDetailsRepository;
 import org.recap.util.UpdateCgdUtil;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -17,12 +17,13 @@ import java.util.List;
 /**
  * Created by sudhishk on 17/1/17.
  */
+@Slf4j
 @RestController
 @RequestMapping("/updateItem")
 public class UpdateItemStatusController {
 
 
-    private static final Logger logger = LoggerFactory.getLogger(UpdateItemStatusController.class);
+
 
     @Autowired
     private UpdateCgdUtil updateCgdUtil;
@@ -36,7 +37,7 @@ public class UpdateItemStatusController {
      * @return the logger
      */
     public Logger getLogger() {
-        return logger;
+        return log;
     }
 
     /**
@@ -73,7 +74,7 @@ public class UpdateItemStatusController {
             statusMessage = "Solr Indexing Successful";
         } catch (Exception e) {
             statusMessage = "Solr Indexing Failed";
-            logger.error(ScsbCommonConstants.LOG_ERROR,e);
+            log.error(ScsbCommonConstants.LOG_ERROR,e);
         }
         return statusMessage;
     }

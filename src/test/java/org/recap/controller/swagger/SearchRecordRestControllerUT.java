@@ -40,7 +40,6 @@ import static org.junit.Assert.assertNull;
 @PrepareForTest(SearchRecordsUtil.class)
 public class SearchRecordRestControllerUT extends BaseTestCaseUT4 {
 
-    private static final Logger logger = LoggerFactory.getLogger(SearchRecordRestController.class);
 
     @InjectMocks
     SearchRecordRestController searchRecordRestController;

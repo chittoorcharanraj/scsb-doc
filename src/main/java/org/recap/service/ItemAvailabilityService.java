@@ -1,19 +1,22 @@
 package org.recap.service;
 
+import lombok.extern.slf4j.Slf4j;
 import org.recap.PropertyKeyConstants;
 import org.recap.ScsbCommonConstants;
 import org.recap.ScsbConstants;
 import org.recap.model.BibAvailabilityResponse;
 import org.recap.model.BibItemAvailabityStatusRequest;
 import org.recap.model.ItemAvailabilityResponse;
-import org.recap.model.jpa.*;
+import org.recap.model.jpa.BibliographicEntity;
+import org.recap.model.jpa.CollectionGroupEntity;
+import org.recap.model.jpa.InstitutionEntity;
+import org.recap.model.jpa.ItemEntity;
+import org.recap.model.jpa.ItemStatusEntity;
 import org.recap.repository.jpa.BibliographicDetailsRepository;
 import org.recap.repository.jpa.InstitutionDetailsRepository;
 import org.recap.repository.jpa.ItemDetailsRepository;
 import org.recap.repository.jpa.ItemStatusDetailsRepository;
 import org.recap.util.PropertyUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -26,10 +29,10 @@ import java.util.Map;
 /**
  * Created by premkb on 10/11/16.
  */
+@Slf4j
 @Service
 public class ItemAvailabilityService {
 
-    private static final Logger logger = LoggerFactory.getLogger(ItemAvailabilityService.class);
 
     @Autowired
     private ItemDetailsRepository itemDetailsRepository;
@@ -131,7 +134,7 @@ public class ItemAvailabilityService {
                 bibAvailabilityResponses.add(bibAvailabilityResponse);
             }
         } catch (Exception e) {
-            logger.error(ScsbConstants.EXCEPTION, e);
+            log.error(ScsbConstants.EXCEPTION, e);
         }
         return bibAvailabilityResponses;
     }

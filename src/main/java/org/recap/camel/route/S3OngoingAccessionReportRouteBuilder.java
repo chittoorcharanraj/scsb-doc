@@ -1,27 +1,25 @@
 package org.recap.camel.route;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.aws.s3.S3Constants;
 import org.apache.camel.model.dataformat.BindyType;
 import org.recap.PropertyKeyConstants;
-import org.springframework.context.ApplicationContext;
 import org.recap.ScsbConstants;
 import org.recap.camel.processor.EmailService;
 import org.recap.model.csv.OngoingAccessionReportRecord;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
 /**
  * Created by premkb on 07/02/17.
  */
+@Slf4j
 @Component
 public class S3OngoingAccessionReportRouteBuilder {
-
-    private static final Logger logger = LoggerFactory.getLogger(S3OngoingAccessionReportRouteBuilder.class);
 
     /**
      * This method instantiates a new route builder to generate ongoing accession report to the S3.
@@ -48,7 +46,7 @@ public class S3OngoingAccessionReportRouteBuilder {
                 });
             }
         } catch (Exception e) {
-            logger.error(ScsbConstants.ERROR, e);
+            log.error(ScsbConstants.ERROR, e);
         }
     }
 }

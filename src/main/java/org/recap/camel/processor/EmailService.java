@@ -1,5 +1,6 @@
 package org.recap.camel.processor;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.camel.Exchange;
 import org.apache.camel.ProducerTemplate;
 import org.apache.commons.io.FileUtils;
@@ -9,8 +10,6 @@ import org.recap.ScsbConstants;
 import org.recap.model.camel.EmailPayLoad;
 import org.recap.util.CommonUtil;
 import org.recap.util.PropertyUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
@@ -23,11 +22,12 @@ import java.util.Optional;
 /**
  * Created by angelind on 25/7/17.
  */
+@Slf4j
 @Service
 @Scope("prototype")
 public class EmailService {
 
-    private static final Logger logger = LoggerFactory.getLogger(EmailService.class);
+
 
     @Autowired
     private ProducerTemplate producerTemplate;
@@ -77,13 +77,13 @@ public class EmailService {
      * @param exchange the exchange
      */
     public void sendEmailForMatchingReports(Exchange exchange) {
-        logger.info("matching algorithm reports email started ");
+        log.info("matching algorithm reports email started ");
         String headerValue=Optional.ofNullable(exchange.getIn().getHeader(ScsbConstants.SUBJECT)).orElse("").equals(cgdReportEmailSubject)?cgdReportEmailSubject:ScsbConstants.MATCHING_REPORTS;
         producerTemplate.sendBodyAndHeader(ScsbConstants.EMAIL_Q, getEmailPayLoadForMatching(exchange), ScsbConstants.EMAIL_FOR, headerValue);
     }
 
     public void sendEmailForMatchingCGDReports(Exchange exchange) {
-        logger.info("matching algorithm reports email started ");
+        log.info("matching algorithm reports email started ");
         String headerValue=Optional.ofNullable(exchange.getIn().getHeader(ScsbConstants.SUBJECT)).orElse("").equals(cgdReportEmailSubject)?cgdReportEmailSubject:ScsbConstants.MATCHING_REPORTS;
         producerTemplate.sendBodyAndHeader(ScsbConstants.EMAIL_Q, getEmailPayLoadForMatchingCGDReports(exchange), ScsbConstants.EMAIL_FOR, headerValue);
     }
@@ -93,7 +93,7 @@ public class EmailService {
      * @param exchange the exchange
      */
     public void sendEmailForAccessionReports(Exchange exchange) {
-        logger.info("accession reports email started ");
+        log.info("accession reports email started ");
         producerTemplate.sendBodyAndHeader(ScsbConstants.EMAIL_Q, getEmailPayLoadForAccession(exchange), ScsbConstants.EMAIL_FOR, ScsbConstants.ACCESSION_REPORTS);
     }
 
@@ -113,7 +113,7 @@ public class EmailService {
         String subject = (String) exchange.getIn().getHeader(ScsbConstants.SUBJECT);
         Optional.ofNullable(subject).ifPresent(ins->emailPayLoad.setSubject(subject));
         emailPayLoad.setMessage(ScsbConstants.SUBJECT_MESSAGE_FOR_MATCHING_ALGORITHM + path);
-        logger.info("Matching Algorithm Reports email has been sent to : {} and cc : {} ",emailPayLoad.getTo(),emailPayLoad.getCc());
+        log.info("Matching Algorithm Reports email has been sent to : {} and cc : {} ",emailPayLoad.getTo(),emailPayLoad.getCc());
         return emailPayLoad;
     }
 
@@ -126,7 +126,7 @@ public class EmailService {
         String subject = (String) exchange.getIn().getHeader(ScsbConstants.SUBJECT);
         Optional.ofNullable(subject).ifPresent(ins->emailPayLoad.setSubject(subject));
         emailPayLoad.setMessage(ScsbConstants.SUBJECT_MESSAGE_FOR_MATCHING_ALGORITHM + path);
-        logger.info("Matching Algorithm Reports email has been sent to : {} and cc : {} ",emailPayLoad.getTo(),emailPayLoad.getCc());
+        log.info("Matching Algorithm Reports email has been sent to : {} and cc : {} ",emailPayLoad.getTo(),emailPayLoad.getCc());
         return emailPayLoad;
     }
 
@@ -146,7 +146,7 @@ public class EmailService {
         emailPayLoad.setTo(recapSupportEmailTo);
         getCcBasedOnInstitution(emailPayLoad);
         emailPayLoad.setMessage("The Report " + fileName + " is available at the s3 location " + absolutePath);
-        logger.info("Accession Reports email has been sent to : {} and cc : {} ",emailPayLoad.getTo(),emailPayLoad.getCc());
+        log.info("Accession Reports email has been sent to : {} and cc : {} ",emailPayLoad.getTo(),emailPayLoad.getCc());
         return emailPayLoad;
     }
 

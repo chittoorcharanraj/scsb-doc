@@ -1,6 +1,7 @@
 package org.recap.matchingalgorithm.service;
 
 import com.google.common.collect.Lists;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
 import org.apache.commons.collections.CollectionUtils;
@@ -21,9 +22,13 @@ import org.recap.model.matchingreports.TitleExceptionReport;
 import org.recap.model.search.SearchRecordsRequest;
 import org.recap.repository.jpa.InstitutionDetailsRepository;
 import org.recap.repository.jpa.MatchingAlgorithmReportDetailRepository;
-import org.recap.util.*;
+import org.recap.util.CommonUtil;
+import org.recap.util.CsvUtil;
+import org.recap.util.DateUtil;
+import org.recap.util.OngoingMatchingAlgorithmReportGenerator;
+import org.recap.util.PropertyUtil;
+import org.recap.util.SolrQueryBuilder;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -47,10 +52,11 @@ import static org.recap.ScsbConstants.MATCHING_COUNTER_SHARED;
 /**
  * Created by angelind on 21/6/17.
  */
+@Slf4j
 @Service
 public class OngoingMatchingReportsService {
 
-    private static final Logger logger= LoggerFactory.getLogger(OngoingMatchingReportsService.class);
+
 
     @Autowired
     private MatchingAlgorithmReportDetailRepository matchingAlgorithmReportDetailRepository;
@@ -95,7 +101,7 @@ public class OngoingMatchingReportsService {
     PropertyUtil propertyUtil;
 
     public static Logger getLogger() {
-        return logger;
+        return log;
     }
 
     public MatchingAlgorithmReportDetailRepository getMatchingAlgorithmReportDetailRepository() {

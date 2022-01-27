@@ -27,7 +27,6 @@ import static org.junit.jupiter.api.Assertions.assertNull;
  */
 public class ItemJSONUtilUT extends BaseTestCaseUT {
 
-    private static final Logger logger = LoggerFactory.getLogger(ItemJSONUtilUT.class);
 
     @InjectMocks
     ItemJSONUtil itemJSONUtil;

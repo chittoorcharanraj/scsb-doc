@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  */
 public class UpdateItemStatusControllerUT extends BaseTestCaseUT {
 
-    private static final Logger logger = LoggerFactory.getLogger(UpdateItemStatusControllerUT.class);
+
 
     @InjectMocks
     UpdateItemStatusController updateItemStatusController;

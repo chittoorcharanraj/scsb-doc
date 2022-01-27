@@ -1,13 +1,12 @@
 package org.recap.controller;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.recap.PropertyKeyConstants;
 import org.recap.ScsbCommonConstants;
 import org.recap.ScsbConstants;
 import org.recap.model.request.ReplaceRequest;
 import org.recap.spring.SwaggerAPIProvider;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -26,10 +25,11 @@ import java.util.TreeMap;
 /**
  * Created by rajeshbabuk on 16/11/17.
  */
+@Slf4j
 @Controller
 public class ResubmitRequestController {
 
-    private static final Logger logger = LoggerFactory.getLogger(ResubmitRequestController.class);
+
 
     @Value("${" + PropertyKeyConstants.SCSB_GATEWAY_URL + "}")
     private String scsbUrl;
@@ -45,7 +45,7 @@ public class ResubmitRequestController {
     public String resubmitRequests(@Valid @ModelAttribute("replaceRequest") ReplaceRequest replaceRequest) {
         String responseMessage = null;
         try {
-            logger.info(replaceRequest.toString());
+            log.info(replaceRequest.toString());
             RestTemplate restTemplate = new RestTemplate();
             HttpEntity<ReplaceRequest> request = new HttpEntity<>(replaceRequest, getHttpHeadersAuth());
             Map resultMap = restTemplate.postForObject(scsbUrl + ScsbConstants.ServicePath.REPLACE_REQUEST, request, Map.class);
@@ -66,10 +66,10 @@ public class ResubmitRequestController {
                 responseMessage = resultMap.toString();
             }
         } catch (Exception exception) {
-            logger.error(ScsbCommonConstants.LOG_ERROR, exception);
+            log.error(ScsbCommonConstants.LOG_ERROR, exception);
             responseMessage = ScsbCommonConstants.FAILURE + ":" + exception.getMessage();
         }
-        logger.info("Resubmit requests status : {}", responseMessage);
+        log.info("Resubmit requests status : {}", responseMessage);
         return responseMessage;
     }
 

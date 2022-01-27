@@ -1,5 +1,6 @@
 package org.recap.service.deaccession;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.solr.common.SolrInputDocument;
 import org.recap.PropertyKeyConstants;
@@ -11,8 +12,6 @@ import org.recap.repository.jpa.BibliographicDetailsRepository;
 import org.recap.repository.jpa.HoldingsDetailsRepository;
 import org.recap.repository.jpa.ItemDetailsRepository;
 import org.recap.util.BibJSONUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.solr.core.SolrTemplate;
@@ -26,10 +25,10 @@ import java.util.List;
 /**
  * Created by angelind on 10/11/16.
  */
+@Slf4j
 @Component
 public class DeAccessSolrDocumentService {
 
-    private static final Logger logger = LoggerFactory.getLogger(DeAccessSolrDocumentService.class);
 
     @Value("${" + PropertyKeyConstants.SOLR_PARENT_CORE + "}")
     private String solrCore;
@@ -108,7 +107,7 @@ public class DeAccessSolrDocumentService {
             }
             return "Bib documents updated successfully.";
         }catch(Exception ex){
-            logger.error(ScsbCommonConstants.LOG_ERROR,ex);
+            log.error(ScsbCommonConstants.LOG_ERROR,ex);
             return "Bib documents failed to update.";
         }
     }
@@ -122,7 +121,7 @@ public class DeAccessSolrDocumentService {
         getSolrTemplate().saveDocument(solrCore, bibSolrInputDocument);
         getSolrTemplate().commit(solrCore);
         stopWatchIndexDocument.stop();
-        logger.info("Time taken to index the doc for Bib Solr Document from Deaccession Service --->{}sec", stopWatchIndexDocument.getTotalTimeSeconds());
+        log.info("Time taken to index the doc for Bib Solr Document from Deaccession Service --->{}sec", stopWatchIndexDocument.getTotalTimeSeconds());
     }
 
     /**
@@ -143,7 +142,7 @@ public class DeAccessSolrDocumentService {
             }
             return "Holdings documents updated successfully.";
         }catch(Exception ex){
-            logger.error(ScsbCommonConstants.LOG_ERROR,ex);
+            log.error(ScsbCommonConstants.LOG_ERROR,ex);
             return "Holdings documents failed to update.";
         }
     }
@@ -166,7 +165,7 @@ public class DeAccessSolrDocumentService {
             }
             return "Item documents updated successfully.";
         }catch(Exception ex){
-            logger.error(ScsbCommonConstants.LOG_ERROR,ex);
+            log.error(ScsbCommonConstants.LOG_ERROR,ex);
             return "Item documents failed to update.";
         }
     }

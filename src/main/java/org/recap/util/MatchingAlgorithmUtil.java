@@ -1,6 +1,7 @@
 package org.recap.util;
 
 import com.google.common.collect.Lists;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.camel.ProducerTemplate;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -17,13 +18,21 @@ import org.recap.controller.SolrIndexController;
 import org.recap.matchingalgorithm.MatchScoreReport;
 import org.recap.matchingalgorithm.MatchScoreUtil;
 import org.recap.matchingalgorithm.MatchingCounter;
-import org.recap.model.jpa.*;
+import org.recap.model.jpa.BibliographicEntity;
+import org.recap.model.jpa.BibliographicEntityForMatching;
+import org.recap.model.jpa.MatchingAlgorithmReportDataEntity;
+import org.recap.model.jpa.MatchingAlgorithmReportEntity;
+import org.recap.model.jpa.MatchingBibEntity;
+import org.recap.model.jpa.MatchingMatchPointsEntity;
 import org.recap.model.solr.BibItem;
 import org.recap.model.solr.SolrIndexRequest;
-import org.recap.repository.jpa.*;
+import org.recap.repository.jpa.BibliographicDetailsRepository;
+import org.recap.repository.jpa.BibliographicDetailsRepositoryForMatching;
+import org.recap.repository.jpa.MatchingAlgorithmReportDataDetailsRepository;
+import org.recap.repository.jpa.MatchingAlgorithmReportDetailRepository;
+import org.recap.repository.jpa.MatchingBibDetailsRepository;
+import org.recap.repository.jpa.MatchingMatchPointsDetailsRepository;
 import org.recap.service.accession.SolrIndexService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.solr.core.SolrTemplate;
@@ -55,18 +64,15 @@ import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
-import static org.recap.ScsbConstants.MATCHING_COUNTER_OPEN;
-import static org.recap.ScsbConstants.MATCHING_COUNTER_SHARED;
-import static org.recap.ScsbConstants.MATCHING_COUNTER_UPDATED_OPEN;
-import static org.recap.ScsbConstants.MATCHING_COUNTER_UPDATED_SHARED;
+import static org.recap.ScsbConstants.*;
 
 /**
  * Created by angelind on 4/11/16.
  */
+@Slf4j
 @Component
 public class MatchingAlgorithmUtil {
 
-    private static final Logger logger = LoggerFactory.getLogger(MatchingAlgorithmUtil.class);
 
     @Autowired
     private ProducerTemplate producerTemplate;
@@ -140,12 +146,12 @@ public class MatchingAlgorithmUtil {
         stopWatch.start();
         List<Integer> singleMatchBibIdsBasedOnMatching = matchingBibDetailsRepository.getSingleMatchBibIdsBasedOnMatching(matching);
         stopWatch.stop();
-        logger.info("Time taken to fetch {} from db : {} ",matching,stopWatch.getTotalTimeSeconds());
-        logger.info("Total {}  : {} " ,matching ,singleMatchBibIdsBasedOnMatching.size());
+        log.info("Time taken to fetch {} from db : {} ",matching,stopWatch.getTotalTimeSeconds());
+        log.info("Total {}  : {} " ,matching ,singleMatchBibIdsBasedOnMatching.size());
 
         if(CollectionUtils.isNotEmpty(singleMatchBibIdsBasedOnMatching)) {
             List<List<Integer>> bibIdLists = Lists.partition(singleMatchBibIdsBasedOnMatching, batchSize);
-            logger.info("Total {} list : {} ",matching, bibIdLists.size());
+            log.info("Total {} list : {} ",matching, bibIdLists.size());
             for (Iterator<List<Integer>> iterator = bibIdLists.iterator(); iterator.hasNext(); ) {
                 List<Integer> bibIds = iterator.next();
                 List<MatchingBibEntity> matchingBibEntities = matchingBibDetailsRepository.getBibEntityBasedOnBibIds(bibIds);
@@ -255,7 +261,7 @@ public class MatchingAlgorithmUtil {
                 bibIds.add(bibId);
             }
         } catch (Exception e) {
-            logger.error(ScsbCommonConstants.LOG_ERROR,e);
+            log.error(ScsbCommonConstants.LOG_ERROR,e);
         }
         return bibIds;
     }
@@ -528,8 +534,8 @@ public class MatchingAlgorithmUtil {
         if (headerValueLength <= matchingHeaderValueLength){
             bibIdReportDataEntity.setHeaderValue(joinedHeaderValue);
         }else {
-            logger.debug("Header value : {} ",joinedHeaderValue);
-            logger.info("Maximum Header value crossed : {} for header name : {} and started truncating",joinedHeaderValue.length(),headerName);
+            log.debug("Header value : {} ",joinedHeaderValue);
+            log.info("Maximum Header value crossed : {} for header name : {} and started truncating",joinedHeaderValue.length(),headerName);
             String substring = StringUtils.substring(joinedHeaderValue, 0, matchingHeaderValueLength);
             bibIdReportDataEntity.setHeaderValue(StringUtils.substringBeforeLast(substring,","));
         }
@@ -674,7 +680,7 @@ public class MatchingAlgorithmUtil {
     public void getReportDataEntity(String headerName, String headerValues, List<MatchingAlgorithmReportDataEntity> reportDataEntities) {
         MatchingAlgorithmReportDataEntity criteriaReportDataEntity = new MatchingAlgorithmReportDataEntity();
         if (headerValues.length() > 10000) {
-            logger.info(" Length of the header name with size greater than 10000- {} - size - {}",headerName, headerValues.length());
+            log.info(" Length of the header name with size greater than 10000- {} - size - {}",headerName, headerValues.length());
             headerValues = headerValues.substring(0,9996)+"...";
         }
         criteriaReportDataEntity.setHeaderName(headerName);
@@ -787,7 +793,7 @@ public class MatchingAlgorithmUtil {
         stopWatch.start();
         QueryResponse queryResponse = solrTemplate.getSolrClient().query(solrQuery);
         stopWatch.stop();
-        logger.info("Total Time Taken to get {} duplicates from solr : {}  ",fieldName ,stopWatch.getTotalTimeSeconds());
+        log.info("Total Time Taken to get {} duplicates from solr : {}  ",fieldName ,stopWatch.getTotalTimeSeconds());
         List<FacetField> facetFields = queryResponse.getFacetFields();
         for (FacetField facetField : facetFields) {
             List<FacetField.Count> values = facetField.getValues();
@@ -900,7 +906,7 @@ public class MatchingAlgorithmUtil {
         List<MatchingAlgorithmReportDataEntity> reportDataEntities = new ArrayList<>();
         List<String> allInstitutionCodesExceptSupportInstitution = commonUtil.findAllInstitutionCodesExceptSupportInstitution();
         for (String institutionCode : allInstitutionCodesExceptSupportInstitution) {
-            logger.info("{} Final Counter Value:{} " ,institutionCode, MatchingCounter.getSpecificInstitutionCounterMap(institutionCode).get(MATCHING_COUNTER_SHARED));
+            log.info("{} Final Counter Value:{} " ,institutionCode, MatchingCounter.getSpecificInstitutionCounterMap(institutionCode).get(MATCHING_COUNTER_SHARED));
             getReportDataEntity(institutionCode+"SharedCount", String.valueOf(MatchingCounter.getSpecificInstitutionCounterMap(institutionCode).get(MATCHING_COUNTER_UPDATED_SHARED)), reportDataEntities);
             getReportDataEntity(institutionCode+"OpenCount", String.valueOf(MatchingCounter.getSpecificInstitutionCounterMap(institutionCode).get(MATCHING_COUNTER_UPDATED_OPEN)), reportDataEntities);
         }
@@ -923,7 +929,7 @@ public class MatchingAlgorithmUtil {
                 Map<String, Integer> specificInstitutionCounterMap = MatchingCounter.getSpecificInstitutionCounterMap(institution);
                 specificInstitutionCounterMap.put(MATCHING_COUNTER_SHARED, getCGDCountBasedOnInst(institution, ScsbConstants.SHARED));
                 specificInstitutionCounterMap.put(MATCHING_COUNTER_OPEN, getCGDCountBasedOnInst(institution, ScsbConstants.OPEN));
-                logger.info("{} Initial Counter Value: {}",institution,specificInstitutionCounterMap.get(MATCHING_COUNTER_SHARED));
+                log.info("{} Initial Counter Value: {}",institution,specificInstitutionCounterMap.get(MATCHING_COUNTER_SHARED));
                 MatchingCounter.setSpecificInstitutionCounterMap(institution, specificInstitutionCounterMap);
             }
         }
@@ -938,10 +944,10 @@ public class MatchingAlgorithmUtil {
     public Map<Integer, BibliographicEntity> getbibIdAndBibMap(Set<Integer> bibIdsList){
         StopWatch stopWatch=new StopWatch();
         stopWatch.start();
-        logger.info("Fetching Bibs for Matching");
+        log.info("Fetching Bibs for Matching");
         List<BibliographicEntity> bibliographicEntityList = bibliographicDetailsRepository.findByOwningInstitutionIdInAndIdIn(commonUtil.findAllInstitutionIdsExceptSupportInstitution(),bibIdsList.parallelStream().collect(toList()));
         stopWatch.stop();
-        logger.info("Totat time taken to fetch {} bibs is {}",bibliographicEntityList.size(),stopWatch.getTotalTimeSeconds());
+        log.info("Totat time taken to fetch {} bibs is {}",bibliographicEntityList.size(),stopWatch.getTotalTimeSeconds());
         Map<Integer, BibliographicEntity> bibliographicEntityMap = bibliographicEntityList.stream().collect(Collectors.toMap(BibliographicEntity::getId, Function.identity()));
         return bibliographicEntityMap;
     }
@@ -1213,7 +1219,7 @@ public class MatchingAlgorithmUtil {
                 })
                 .collect(toList());
         if(!bibliographicEntitiesToUpdate.isEmpty()){
-            logger.info("No of grouped bibs to save and index : {}",bibliographicEntitiesToUpdate.stream().count());
+            log.info("No of grouped bibs to save and index : {}",bibliographicEntitiesToUpdate.stream().count());
             bibliographicDetailsRepository.saveAll(bibliographicEntitiesToUpdate);
         }
         return Optional.ofNullable(bibliographicEntitiesToUpdate.stream().map(BibliographicEntity::getId).collect(toSet()));
@@ -1221,7 +1227,7 @@ public class MatchingAlgorithmUtil {
 
     @Transactional
     public void saveGroupedBibsToDb(Collection<BibliographicEntity> bibliographicEntities) {
-        logger.info("Saving grouped Bibliographic entities to DB . Total size of bibs : {}",bibliographicEntities.size());
+        log.info("Saving grouped Bibliographic entities to DB . Total size of bibs : {}",bibliographicEntities.size());
         bibliographicDetailsRepository.saveAll(bibliographicEntities);
         entityManager.flush();
         entityManager.clear();
@@ -1229,7 +1235,7 @@ public class MatchingAlgorithmUtil {
 
     @Transactional
     public void saveGroupedBibsToDbForOngoing(Collection<BibliographicEntityForMatching> bibliographicEntities) {
-        logger.debug("Saving grouped Bibliographic entities to DB . Total size of bibs : {}",bibliographicEntities.size());
+        log.debug("Saving grouped Bibliographic entities to DB . Total size of bibs : {}",bibliographicEntities.size());
         bibliographicDetailsRepositoryForMatching.saveAll(bibliographicEntities);
         entityManager.flush();
         entityManager.clear();
@@ -1253,7 +1259,7 @@ public class MatchingAlgorithmUtil {
     }
 
     public String indexBibs(List<Integer> bibIds) {
-        logger.info("Started Indexing - Total number of BibIds received to index : {}", bibIds.size());
+        log.info("Started Indexing - Total number of BibIds received to index : {}", bibIds.size());
         if (!bibIds.isEmpty() && bibIds.size() >= 1000) {
             List<List<Integer>> partitionBibIdsList = Lists.partition(bibIds, 50000);
             for (List<Integer> partitionBibIds : partitionBibIdsList) {
@@ -1265,19 +1271,19 @@ public class MatchingAlgorithmUtil {
                 String collectedBibIds = partitionBibIds.stream().map(String::valueOf).collect(Collectors.joining(","));
                 solrIndexRequest.setBibIds(collectedBibIds);
                 String bibsIndexed = bibItemIndexExecutorService.partialIndex(solrIndexRequest);
-                logger.info("Status of Index : {}", bibsIndexed);
+                log.info("Status of Index : {}", bibsIndexed);
             }
             return ScsbCommonConstants.SUCCESS;
         } else {
             String status = bibItemIndexExecutorService.indexByBibliographicId(bibIds);
-            logger.info("Status of Index : {}, Total number of records indexed : {}", status, bibIds.size());
+            log.info("Status of Index : {}, Total number of records indexed : {}", status, bibIds.size());
             return status;
         }
     }
 
     @Transactional
     public void resetMAQualifier(List<Integer> bibIds,boolean isCGDProcess) {
-        logger.info("Updating MAQualifier for Bibs in DB. Total size of bibs : {}", bibIds.size());
+        log.info("Updating MAQualifier for Bibs in DB. Total size of bibs : {}", bibIds.size());
         StopWatch stopWatchForMAQualifierUpdate=new StopWatch();
         stopWatchForMAQualifierUpdate.start();
         if (isCGDProcess) {
@@ -1288,20 +1294,20 @@ public class MatchingAlgorithmUtil {
         entityManager.flush();
         entityManager.clear();
         stopWatchForMAQualifierUpdate.stop();
-        logger.info("Total time taken for updating MAQualifier in DB {} for size {}", stopWatchForMAQualifierUpdate.getTotalTimeSeconds(), bibIds.size());
+        log.info("Total time taken for updating MAQualifier in DB {} for size {}", stopWatchForMAQualifierUpdate.getTotalTimeSeconds(), bibIds.size());
     }
 
     @Transactional
     public void updateAnamolyFlagForBibs(List<Integer> bibIds) {
-        logger.info("Updating Anamoly Flag for Bibs in DB. Total size of bibs : {}", bibIds.size());
+        log.info("Updating Anamoly Flag for Bibs in DB. Total size of bibs : {}", bibIds.size());
         StopWatch stopWatchForAnamolyFlagUpdate = new StopWatch();
         stopWatchForAnamolyFlagUpdate.start();
         int countFirst = bibliographicDetailsRepository.updateAnamolyFlagFirstForBibIds(bibIds);
-        logger.info("Total number of bibs updated with First Anamoly Flag Query: {}", countFirst);
+        log.info("Total number of bibs updated with First Anamoly Flag Query: {}", countFirst);
         int countSecond = bibliographicDetailsRepository.updateAnamolyFlagSecondForBibIds(bibIds);
-        logger.info("Total number of bibs updated with Second Anamoly Flag Query: {}", countSecond);
+        log.info("Total number of bibs updated with Second Anamoly Flag Query: {}", countSecond);
         stopWatchForAnamolyFlagUpdate.stop();
-        logger.info("Total time taken for updating Anamoly Flag in DB {} for size {}", stopWatchForAnamolyFlagUpdate.getTotalTimeSeconds(), bibIds.size());
+        log.info("Total time taken for updating Anamoly Flag in DB {} for size {}", stopWatchForAnamolyFlagUpdate.getTotalTimeSeconds(), bibIds.size());
     }
 
     public Map<String, Integer> getMatchPointsCombinationMap() {

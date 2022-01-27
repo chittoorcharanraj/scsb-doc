@@ -1,13 +1,26 @@
 package org.recap.service.transfer;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.recap.PropertyKeyConstants;
 import org.recap.ScsbCommonConstants;
 import org.recap.ScsbConstants;
-import org.recap.model.jpa.*;
-import org.recap.model.transfer.*;
+import org.recap.model.jpa.BibliographicEntity;
+import org.recap.model.jpa.HoldingsEntity;
+import org.recap.model.jpa.InstitutionEntity;
+import org.recap.model.jpa.ItemEntity;
+import org.recap.model.jpa.ReportDataEntity;
+import org.recap.model.transfer.Destination;
+import org.recap.model.transfer.HoldingTransferResponse;
+import org.recap.model.transfer.HoldingsTransferRequest;
+import org.recap.model.transfer.ItemDestination;
+import org.recap.model.transfer.ItemSource;
+import org.recap.model.transfer.ItemTransferRequest;
+import org.recap.model.transfer.ItemTransferResponse;
+import org.recap.model.transfer.Source;
+import org.recap.model.transfer.TransferRequest;
 import org.recap.repository.jpa.BibliographicDetailsRepository;
 import org.recap.repository.jpa.HoldingsDetailsRepository;
 import org.recap.repository.jpa.InstitutionDetailsRepository;
@@ -15,8 +28,6 @@ import org.recap.service.accession.AccessionDAO;
 import org.recap.service.accession.DummyDataService;
 import org.recap.service.accession.SolrIndexService;
 import org.recap.util.HelperUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
@@ -25,17 +36,27 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+import java.util.UUID;
 
 
 /**
  * Created by sheiks on 19/07/17.
  */
+@Slf4j
 @Service
 @Scope(proxyMode = ScopedProxyMode.TARGET_CLASS)
 public class TransferService {
 
-    private static final Logger logger = LoggerFactory.getLogger(TransferService.class);
 
 
     @Autowired
@@ -119,7 +140,7 @@ public class TransferService {
 
                         transferValidationResponse.setMessage(ScsbConstants.Transfer.SUCCESSFULLY_RELINKED);
                     } catch (Exception e) {
-                        logger.error(ScsbCommonConstants.LOG_ERROR,e);
+                        log.error(ScsbCommonConstants.LOG_ERROR,e);
                         transferValidationResponse.setMessage(ScsbConstants.Transfer.RELINKED_FAILED);
                     }
                 }
@@ -345,7 +366,7 @@ public class TransferService {
 
                         transferValidationResponse.setMessage(ScsbConstants.Transfer.SUCCESSFULLY_RELINKED);
                     } catch (Exception e) {
-                        logger.error(ScsbCommonConstants.LOG_ERROR,e);
+                        log.error(ScsbCommonConstants.LOG_ERROR,e);
                         transferValidationResponse.setMessage(ScsbConstants.Transfer.RELINKED_FAILED);
                     }
 
@@ -398,10 +419,10 @@ public class TransferService {
                     for (Iterator<Integer> stringIterator = ids.iterator(); stringIterator.hasNext(); ) {
                         Integer id = stringIterator.next();
                         try {
-                            logger.info("deleting {} from solr for relink, {} - {}, ",docId,docId,id);
+                            log.info("deleting {} from solr for relink, {} - {}, ",docId,docId,id);
                             solrIndexService.deleteByDocId(docId, String.valueOf(id));
                         } catch (IOException | SolrServerException e) {
-                            logger.error(ScsbCommonConstants.LOG_ERROR,e);
+                            log.error(ScsbCommonConstants.LOG_ERROR,e);
                         }
                     }
                 }
@@ -420,7 +441,7 @@ public class TransferService {
                         try {
                             solrIndexService.indexByBibliographicId(id);
                         } catch (Exception e) {
-                            logger.error(ScsbCommonConstants.LOG_ERROR,e);
+                            log.error(ScsbCommonConstants.LOG_ERROR,e);
                         }
                     }
                 }

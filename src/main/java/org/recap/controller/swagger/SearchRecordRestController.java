@@ -5,16 +5,14 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import lombok.extern.slf4j.Slf4j;
 import org.recap.ScsbCommonConstants;
-import org.recap.ScsbConstants;
 import org.recap.model.search.DataDumpSearchResult;
 import org.recap.model.search.SearchRecordsRequest;
 import org.recap.model.search.SearchRecordsResponse;
 import org.recap.model.search.SearchResultRow;
 import org.recap.util.PropertyUtil;
 import org.recap.util.SearchRecordsUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -33,12 +31,13 @@ import java.util.Map;
 /**
  * Created by sudhish on 13/10/16.
  */
+@Slf4j
 @RestController
 @RequestMapping("/searchService")
 @Api(value="search")
 public class SearchRecordRestController {
 
-    private static final Logger logger = LoggerFactory.getLogger(SearchRecordRestController.class);
+
 
     @Autowired
     private SearchRecordsUtil searchRecordsUtil=new SearchRecordsUtil();
@@ -82,7 +81,7 @@ public class SearchRecordRestController {
             searchRecordsResponse.setErrorMessage(searchRecordsRequest.getErrorMessage());
             searchRecordsResponse.setPageNumber(searchRecordsRequest.getPageNumber());
         } catch (Exception e) {
-            logger.info(ScsbCommonConstants.LOG_ERROR,e);
+            log.info(ScsbCommonConstants.LOG_ERROR,e);
             searchRecordsResponse.setErrorMessage(e.getMessage());
         }
         return searchRecordsResponse;
@@ -106,7 +105,7 @@ public class SearchRecordRestController {
             responseMap.put("totalRecordsCount", searchRecordsRequest.getTotalRecordsCount());
             responseMap.put("dataDumpSearchResults", dataDumpSearchResults);
         } catch (Exception e) {
-            logger.error(ScsbCommonConstants.LOG_ERROR,e);
+            log.error(ScsbCommonConstants.LOG_ERROR,e);
         }
         return responseMap;
     }
@@ -166,7 +165,7 @@ public class SearchRecordRestController {
             searchResultRows = searchRecordsUtil.searchRecords(searchRecordsRequest);
         } catch (Exception e) {
             searchResultRows = new ArrayList<>();
-            logger.error(ScsbCommonConstants.LOG_ERROR,e);
+            log.error(ScsbCommonConstants.LOG_ERROR,e);
         }
         return searchResultRows;
     }

@@ -1,8 +1,8 @@
 package org.recap.camel.activemq;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
-import org.apache.camel.component.activemq.ActiveMQComponent;
 import org.apache.camel.CamelContext;
+import org.apache.camel.component.activemq.ActiveMQComponent;
 import org.recap.PropertyKeyConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;

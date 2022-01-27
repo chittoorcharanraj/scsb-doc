@@ -1,18 +1,17 @@
 package org.recap.activemq;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.activemq.broker.jmx.DestinationViewMBean;
 import org.junit.jupiter.api.Test;
 import org.recap.camel.activemq.JmxHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.management.MBeanServerConnection;
 
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-
+@Slf4j
 public class JmxHelperUT {
-    private static final Logger logger = LoggerFactory.getLogger(JmxHelper.class);
+
 
     @Test
     public void testGetBeanForQueueName() {
@@ -22,7 +21,7 @@ public class JmxHelperUT {
         try {
             DestinationViewMBean = JmxHelper.getBeanForQueueName("test");
         } catch (Exception exception) {
-            logger.info("Exception" + exception);
+            log.info("Exception" + exception);
         }
         assertNull(DestinationViewMBean);
     }
@@ -34,7 +33,7 @@ public class JmxHelperUT {
         try {
             MBeanServerConnection = JmxHelper.getConnection();
         } catch (Exception e) {
-            logger.info("Exception" + e);
+            log.info("Exception" + e);
         }
         assertNull(MBeanServerConnection);
     }

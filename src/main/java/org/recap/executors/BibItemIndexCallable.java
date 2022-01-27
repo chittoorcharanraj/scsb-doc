@@ -1,5 +1,6 @@
 package org.recap.executors;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.camel.ProducerTemplate;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.solr.client.solrj.impl.HttpSolrClient;
@@ -9,13 +10,10 @@ import org.recap.model.jpa.BibliographicEntity;
 import org.recap.repository.jpa.BibliographicDetailsRepository;
 import org.recap.repository.jpa.HoldingsDetailsRepository;
 import org.recap.util.CommonUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.solr.core.SolrTemplate;
 import org.springframework.util.CollectionUtils;
-import org.springframework.util.StopWatch;
 
 import java.io.File;
 import java.util.Date;
@@ -26,9 +24,10 @@ import java.util.concurrent.Callable;
 /**
  * Created by chenchulakshmig on 21/6/16.
  */
+@Slf4j
 public class BibItemIndexCallable extends CommonCallable implements Callable {
 
-    private static final Logger logger = LoggerFactory.getLogger(BibItemIndexCallable.class);
+
 
     private final int pageNum;
     private final int docsPerPage;
@@ -113,7 +112,7 @@ public class BibItemIndexCallable extends CommonCallable implements Callable {
             }
         }
 
-        List<SolrInputDocument> solrInputDocumentsToIndex = setSolrInputDocuments(bibliographicEntities, solrTemplate, bibliographicDetailsRepository, holdingsDetailsRepository, producerTemplate, logger,nonHoldingInstitutionList);
+        List<SolrInputDocument> solrInputDocumentsToIndex = setSolrInputDocuments(bibliographicEntities, solrTemplate, bibliographicDetailsRepository, holdingsDetailsRepository, producerTemplate, log,nonHoldingInstitutionList);
         if (!CollectionUtils.isEmpty(solrInputDocumentsToIndex)) {
             SolrTemplate templateForSolr = new SolrTemplate(new HttpSolrClient.Builder(solrURL + File.separator).build());
             templateForSolr.saveDocuments(coreName, solrInputDocumentsToIndex);

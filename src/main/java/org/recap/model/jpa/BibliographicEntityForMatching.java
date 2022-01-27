@@ -1,17 +1,21 @@
 package org.recap.model.jpa;
 
+import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
+
 import org.hibernate.annotations.DynamicUpdate;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
 
 /**
  * Created by rajeshbabuk on 31/Oct/2021
  */
-@Getter
-@Setter
+@Data
 @EqualsAndHashCode(callSuper = false)
 @Entity
 @Table(name = "bibliographic_t", catalog = "")

@@ -1,13 +1,12 @@
 package org.recap.util;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.beanutils.PropertyUtilsBean;
 import org.recap.ScsbCommonConstants;
 import org.recap.ScsbConstants;
 import org.recap.model.csv.SubmitCollectionReportRecord;
 import org.recap.model.jpa.ReportDataEntity;
 import org.recap.model.jpa.ReportEntity;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.beans.IntrospectionException;
 import java.beans.PropertyDescriptor;
@@ -19,9 +18,8 @@ import java.util.List;
 /**
  * Created by hemalathas on 20/12/16.
  */
+@Slf4j
 public class SubmitCollectionReportGenerator {
-
-    private static final Logger logger = LoggerFactory.getLogger(SubmitCollectionReportGenerator.class);
 
     /**
      * This method prepares submit collection rejection report based on the given report entity.
@@ -47,7 +45,7 @@ public class SubmitCollectionReportGenerator {
                 try {
                     setterMethod.invoke(submitCollectionReportRecord, headerValue);
                 } catch (Exception e) {
-                    logger.error(ScsbCommonConstants.LOG_ERROR,e);
+                    log.error(ScsbCommonConstants.LOG_ERROR,e);
                 }
                 if(isReportRecordFullyUpdated(submitCollectionReportRecord) ) {
                     submitCollectionReportRecordList.add(submitCollectionReportRecord);
@@ -79,7 +77,7 @@ public class SubmitCollectionReportGenerator {
                 try {
                     setterMethod.invoke(submitCollectionReportRecord, headerValue);
                 } catch (Exception e) {
-                    logger.error(ScsbCommonConstants.LOG_ERROR,e);
+                    log.error(ScsbCommonConstants.LOG_ERROR,e);
                 }
                 if(isReportRecordFullyUpdatedAcession(submitCollectionReportRecord) ) {
                     submitCollectionReportRecordList.add(submitCollectionReportRecord);
@@ -135,7 +133,7 @@ public class SubmitCollectionReportGenerator {
         try {
             return propertyUtilsBean.getWriteMethod(new PropertyDescriptor(propertyName, SubmitCollectionReportRecord.class));
         } catch (IntrospectionException e) {
-            logger.error(ScsbCommonConstants.LOG_ERROR,e);
+            log.error(ScsbCommonConstants.LOG_ERROR,e);
         }
         return null;
     }
@@ -151,7 +149,7 @@ public class SubmitCollectionReportGenerator {
         try {
             return propertyUtilsBean.getReadMethod(new PropertyDescriptor(propertyName, SubmitCollectionReportRecord.class));
         } catch (IntrospectionException e) {
-            logger.error(ScsbCommonConstants.LOG_ERROR,e);
+            log.error(ScsbCommonConstants.LOG_ERROR,e);
         }
         return null;
     }

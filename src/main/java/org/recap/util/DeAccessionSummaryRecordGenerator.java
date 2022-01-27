@@ -1,12 +1,12 @@
 package org.recap.util;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.beanutils.PropertyUtilsBean;
 import org.recap.ScsbCommonConstants;
 import org.recap.model.csv.DeAccessionSummaryRecord;
 import org.recap.model.jpa.ReportDataEntity;
 import org.recap.model.jpa.ReportEntity;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
 
 import java.beans.IntrospectionException;
 import java.beans.PropertyDescriptor;
@@ -17,9 +17,8 @@ import java.util.List;
 /**
  * Created by chenchulakshmig on 13/10/16.
  */
+@Slf4j
 public class DeAccessionSummaryRecordGenerator {
-
-    private static final Logger logger = LoggerFactory.getLogger(DeAccessionSummaryRecordGenerator.class);
 
     /**
      * Prepare deaccession summary report record.
@@ -40,7 +39,7 @@ public class DeAccessionSummaryRecordGenerator {
                 try {
                     setterMethod.invoke(deAccessionSummaryRecord, headerValue);
                 } catch (Exception e) {
-                    logger.error(ScsbCommonConstants.LOG_ERROR,e);
+                    log.error(ScsbCommonConstants.LOG_ERROR,e);
                 }
             }
         }
@@ -58,7 +57,7 @@ public class DeAccessionSummaryRecordGenerator {
         try {
             return propertyUtilsBean.getWriteMethod(new PropertyDescriptor(propertyName, DeAccessionSummaryRecord.class));
         } catch (IntrospectionException e) {
-            logger.error(ScsbCommonConstants.LOG_ERROR,e);
+            log.error(ScsbCommonConstants.LOG_ERROR,e);
         }
         return null;
     }
@@ -74,7 +73,7 @@ public class DeAccessionSummaryRecordGenerator {
         try {
             return propertyUtilsBean.getReadMethod(new PropertyDescriptor(propertyName, DeAccessionSummaryRecord.class));
         } catch (IntrospectionException e) {
-            logger.error(ScsbCommonConstants.LOG_ERROR,e);
+            log.error(ScsbCommonConstants.LOG_ERROR,e);
         }
         return null;
     }

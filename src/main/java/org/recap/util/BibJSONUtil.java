@@ -1,7 +1,8 @@
 package org.recap.util;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.camel.ProducerTemplate;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.solr.common.SolrInputDocument;
@@ -11,8 +12,8 @@ import org.recap.ScsbCommonConstants;
 import org.recap.ScsbConstants;
 import org.recap.model.jpa.BibliographicEntity;
 import org.recap.model.jpa.HoldingsEntity;
-import org.recap.model.jpa.ItemEntity;
 import org.recap.model.jpa.InstitutionEntity;
+import org.recap.model.jpa.ItemEntity;
 import org.recap.model.jpa.ReportDataEntity;
 import org.recap.model.jpa.ReportEntity;
 import org.recap.model.solr.Bib;
@@ -20,33 +21,31 @@ import org.recap.model.solr.Holdings;
 import org.recap.model.solr.Item;
 import org.recap.repository.jpa.BibliographicDetailsRepository;
 import org.recap.repository.jpa.HoldingsDetailsRepository;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.data.solr.core.SolrTemplate;
 import org.springframework.util.CollectionUtils;
 
 import java.text.Normalizer;
-import java.util.Arrays;
 import java.util.ArrayList;
-import java.util.Date;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.HashMap;
 
 /**
  * Created by pvsubrah on 6/15/16.
  */
+@Data
+@EqualsAndHashCode(callSuper=false)
+@Slf4j
 public class BibJSONUtil extends MarcUtil {
 
-    private static final Logger logger = LoggerFactory.getLogger(BibJSONUtil.class);
 
-    @Getter
-    @Setter
+
     private List<String> nonHoldingInstitutions;
 
-    @Getter
-    @Setter
+
     private ProducerTemplate producerTemplate;
 
     /**
@@ -403,7 +402,7 @@ public class BibJSONUtil extends MarcUtil {
      * @param e
      */
     private void saveExceptionReportForBib(BibliographicEntity bibliographicEntity, Exception e) {
-        logger.error("Exception in Bib Id : {} " , bibliographicEntity != null ? bibliographicEntity.getId() : "BibliographicEntity is Null");
+        log.error("Exception in Bib Id : {} " , bibliographicEntity != null ? bibliographicEntity.getId() : "BibliographicEntity is Null");
         List<ReportDataEntity> reportDataEntities = new ArrayList<>();
 
         ReportEntity reportEntity = new ReportEntity();

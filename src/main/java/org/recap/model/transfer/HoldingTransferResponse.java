@@ -1,14 +1,14 @@
 package org.recap.model.transfer;
 
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
+
+;
 
 /**
  * Created by sheiks on 12/07/17.
  */
-@Getter
-@Setter
+@Data
 public class HoldingTransferResponse {
     private String message;
     private boolean success;

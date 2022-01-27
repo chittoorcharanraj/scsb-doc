@@ -1,5 +1,6 @@
 package org.recap.service.accession;
 
+import lombok.extern.slf4j.Slf4j;
 import org.recap.ScsbCommonConstants;
 import org.recap.ScsbConstants;
 import org.recap.model.jpa.BibliographicEntity;
@@ -12,8 +13,6 @@ import org.recap.repository.jpa.BibliographicDetailsRepository;
 import org.recap.repository.jpa.CollectionGroupDetailsRepository;
 import org.recap.repository.jpa.ItemStatusDetailsRepository;
 import org.recap.repository.jpa.OwningInstitutionIDSequenceRepository;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -34,10 +33,11 @@ import java.util.Map;
 /**
  * Created by premkb on 27/4/17.
  */
+@Slf4j
 @Service
 public class DummyDataService {
 
-    private static final Logger logger = LoggerFactory.getLogger(DummyDataService.class);
+
 
     private Map<String,Integer> collectionGroupMap;
 
@@ -99,7 +99,7 @@ public class DummyDataService {
             bibliographicEntity.setHoldingsEntities(Collections.singletonList(holdingsEntity));
             bibliographicEntity.setItemEntities(Collections.singletonList(itemEntity));
         } catch (Exception e) {
-            logger.error(ScsbCommonConstants.LOG_ERROR,e);
+            log.error(ScsbCommonConstants.LOG_ERROR,e);
         }
         return accessionDAO.saveBibRecord(bibliographicEntity);
     }
@@ -139,7 +139,7 @@ public class DummyDataService {
                     collectionGroupMap.put(collectionGroupEntity.getCollectionGroupCode(), collectionGroupEntity.getId());
                 }
             } catch (Exception e) {
-                logger.error(ScsbConstants.EXCEPTION,e);
+                log.error(ScsbConstants.EXCEPTION,e);
             }
         }
         return collectionGroupMap;
@@ -154,7 +154,7 @@ public class DummyDataService {
                     itemStatusMap.put(itemStatusEntity.getStatusCode(), itemStatusEntity.getId());
                 }
             } catch (Exception e) {
-                logger.error(ScsbConstants.EXCEPTION,e);
+                log.error(ScsbConstants.EXCEPTION,e);
             }
         }
         return itemStatusMap;
@@ -173,7 +173,7 @@ public class DummyDataService {
                 out.append("\n");
             }
         } catch (IOException e) {
-            logger.error(ScsbConstants.EXCEPTION,e);
+            log.error(ScsbConstants.EXCEPTION,e);
         }
         return out.toString();
     }
@@ -181,7 +181,7 @@ public class DummyDataService {
     private String getDummyOwningInstId(){
         OwningInstitutionIDSequence owningInstitutionIDSequence = new OwningInstitutionIDSequence();
         OwningInstitutionIDSequence savedOwningInstitutionIDSequence = owningInstitutionIDSequenceRepository.saveAndFlush(owningInstitutionIDSequence);
-        logger.info("seq id---->{}",savedOwningInstitutionIDSequence.getId());
+        log.info("seq id---->{}",savedOwningInstitutionIDSequence.getId());
         return "d"+savedOwningInstitutionIDSequence.getId();
     }
 }

@@ -1,6 +1,7 @@
 package org.recap.matchingalgorithm.service;
 
 import com.google.common.collect.Lists;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.camel.ProducerTemplate;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.solr.client.solrj.SolrServerException;
@@ -11,20 +12,37 @@ import org.recap.executors.MatchingAlgorithmMVMsCGDCallable;
 import org.recap.executors.MatchingAlgorithmMonographCGDCallable;
 import org.recap.executors.MatchingAlgorithmSerialsCGDCallable;
 import org.recap.matchingalgorithm.MatchingCounter;
-import org.recap.model.jpa.*;
-import org.recap.repository.jpa.*;
+import org.recap.model.jpa.BibliographicEntity;
+import org.recap.model.jpa.CollectionGroupEntity;
+import org.recap.model.jpa.InstitutionEntity;
+import org.recap.model.jpa.ItemEntity;
+import org.recap.model.jpa.MatchingAlgorithmReportDataEntity;
+import org.recap.repository.jpa.BibliographicDetailsRepository;
+import org.recap.repository.jpa.CollectionGroupDetailsRepository;
+import org.recap.repository.jpa.InstitutionDetailsRepository;
+import org.recap.repository.jpa.ItemChangeLogDetailsRepository;
+import org.recap.repository.jpa.ItemDetailsRepository;
+import org.recap.repository.jpa.MatchingAlgorithmReportDataDetailsRepository;
 import org.recap.service.ActiveMqQueuesInfo;
 import org.recap.util.CommonUtil;
 import org.recap.util.MatchingAlgorithmUtil;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-import java.util.*;
-import java.util.concurrent.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 
 import static org.recap.ScsbConstants.MATCHING_COUNTER_SHARED;
@@ -32,10 +50,10 @@ import static org.recap.ScsbConstants.MATCHING_COUNTER_SHARED;
 /**
  * Created by angelind on 11/1/17.
  */
+@Slf4j
 @Component
 public class MatchingAlgorithmUpdateCGDService {
 
-    private static final Logger logger = LoggerFactory.getLogger(MatchingAlgorithmUpdateCGDService.class);
 
     @Autowired
     private BibliographicDetailsRepository bibliographicDetailsRepository;
@@ -108,7 +126,7 @@ public class MatchingAlgorithmUpdateCGDService {
     }
 
     public static Logger getLogger() {
-        return logger;
+        return log;
     }
 
     public ActiveMqQueuesInfo getActiveMqQueuesInfo() {
@@ -137,7 +155,7 @@ public class MatchingAlgorithmUpdateCGDService {
         getMatchingAlgorithmUtil().saveCGDUpdatedSummaryReport(ScsbConstants.MATCHING_SUMMARY_MONOGRAPH);
         List<String> allInstitutionCodesExceptSupportInstitution = commonUtil.findAllInstitutionCodesExceptSupportInstitution();
         for (String institutionCode : allInstitutionCodesExceptSupportInstitution) {
-            logger.info("{} Final Counter Value:{} " ,institutionCode, MatchingCounter.getSpecificInstitutionCounterMap(institutionCode).get(MATCHING_COUNTER_SHARED));
+            log.info("{} Final Counter Value:{} " ,institutionCode, MatchingCounter.getSpecificInstitutionCounterMap(institutionCode).get(MATCHING_COUNTER_SHARED));
         }
 
         while (updateItemsQ != 0) {
@@ -166,9 +184,9 @@ public class MatchingAlgorithmUpdateCGDService {
         } else {
             countOfRecordNum = getMatchingAlgorithmReportDataDetailsRepository().getCountOfRecordNumForMatchingMonograph(ScsbCommonConstants.BIB_ID);
         }
-        logger.info(ScsbConstants.TOTAL_RECORDS + "{}", countOfRecordNum);
+        log.info(ScsbConstants.TOTAL_RECORDS + "{}", countOfRecordNum);
         int totalPagesCount = (int) (countOfRecordNum / batchSize);
-        logger.info(ScsbConstants.TOTAL_PAGES + "{}" , totalPagesCount);
+        log.info(ScsbConstants.TOTAL_PAGES + "{}" , totalPagesCount);
         for(int pageNum = 0; pageNum < totalPagesCount + 1; pageNum++) {
             Callable callable = new MatchingAlgorithmMonographCGDCallable(getMatchingAlgorithmReportDataDetailsRepository(), getBibliographicDetailsRepository(), pageNum, batchSize, getProducerTemplate(),
                     getCollectionGroupMap(), getInstitutionEntityMap(), getItemChangeLogDetailsRepository(), getCollectionGroupDetailsRepository(), getItemDetailsRepository(),isPendingMatch,getInstitutionDetailsRepository(),nonHoldingInstitutionList);
@@ -192,14 +210,14 @@ public class MatchingAlgorithmUpdateCGDService {
      * @throws SolrServerException the solr server exception
      */
     public void updateCGDProcessForSerials(Integer batchSize) throws IOException, SolrServerException, InterruptedException {
-        logger.info("Start CGD Process For Serials.");
+        log.info("Start CGD Process For Serials.");
         getMatchingAlgorithmUtil().populateMatchingCounter();
         ExecutorService executor = getExecutorService(50);
         List<Callable<Integer>> callables = new ArrayList<>();
         long countOfRecordNum = getMatchingAlgorithmReportDataDetailsRepository().getCountOfRecordNumForMatchingSerials(ScsbCommonConstants.BIB_ID);
-        logger.info(ScsbConstants.TOTAL_RECORDS + "{}", countOfRecordNum);
+        log.info(ScsbConstants.TOTAL_RECORDS + "{}", countOfRecordNum);
         int totalPagesCount = (int) (countOfRecordNum / batchSize);
-        logger.info(ScsbConstants.TOTAL_PAGES + "{}" , totalPagesCount);
+        log.info(ScsbConstants.TOTAL_PAGES + "{}" , totalPagesCount);
         for(int pageNum=0; pageNum < totalPagesCount + 1; pageNum++) {
             Callable callable = new MatchingAlgorithmSerialsCGDCallable(getMatchingAlgorithmReportDataDetailsRepository(), getBibliographicDetailsRepository(), pageNum, batchSize, getProducerTemplate(), getCollectionGroupMap(),
                     getInstitutionEntityMap(), getItemChangeLogDetailsRepository(), getCollectionGroupDetailsRepository(), getItemDetailsRepository(),institutionDetailsRepository,nonHoldingInstitutionList);
@@ -216,16 +234,16 @@ public class MatchingAlgorithmUpdateCGDService {
      * @throws SolrServerException the solr server exception
      */
     public void updateCGDProcessForMVMs(Integer batchSize) throws IOException, SolrServerException, InterruptedException {
-        logger.info("Start CGD Process For MVMs.");
+        log.info("Start CGD Process For MVMs.");
 
         getMatchingAlgorithmUtil().populateMatchingCounter();
 
         ExecutorService executor = getExecutorService(50);
         List<Callable<Integer>> callables = new ArrayList<>();
         long countOfRecordNum = getMatchingAlgorithmReportDataDetailsRepository().getCountOfRecordNumForMatchingMVMs(ScsbCommonConstants.BIB_ID);
-        logger.info(ScsbConstants.TOTAL_RECORDS + "{}", countOfRecordNum);
+        log.info(ScsbConstants.TOTAL_RECORDS + "{}", countOfRecordNum);
         int totalPagesCount = (int) (countOfRecordNum / batchSize);
-        logger.info(ScsbConstants.TOTAL_PAGES + "{}" , totalPagesCount);
+        log.info(ScsbConstants.TOTAL_PAGES + "{}" , totalPagesCount);
         for(int pageNum=0; pageNum < totalPagesCount + 1; pageNum++) {
             Callable callable = new MatchingAlgorithmMVMsCGDCallable(getMatchingAlgorithmReportDataDetailsRepository(), getBibliographicDetailsRepository(), pageNum, batchSize, getProducerTemplate(), getCollectionGroupMap(),
                     getInstitutionEntityMap(), getItemChangeLogDetailsRepository(), getCollectionGroupDetailsRepository(), getItemDetailsRepository(),institutionDetailsRepository,nonHoldingInstitutionList);
@@ -263,11 +281,11 @@ public class MatchingAlgorithmUpdateCGDService {
                 }
             }
         } catch (InterruptedException e) {
-            logger.error(ScsbCommonConstants.LOG_ERROR,e);
+            log.error(ScsbCommonConstants.LOG_ERROR,e);
             Thread.currentThread().interrupt();
         }
         catch (ExecutionException e) {
-            logger.error(ScsbCommonConstants.LOG_ERROR,e);
+            log.error(ScsbCommonConstants.LOG_ERROR,e);
         }
     }
 
@@ -286,9 +304,9 @@ public class MatchingAlgorithmUpdateCGDService {
                     throw new IllegalStateException(e);
                 }
             }).collect(Collectors.toList());
-            logger.info("No of Futures Collected : {}", collectedFutures.size());
+            log.info("No of Futures Collected : {}", collectedFutures.size());
         } catch (Exception e) {
-            logger.error(ScsbCommonConstants.LOG_ERROR,e);
+            log.error(ScsbCommonConstants.LOG_ERROR,e);
         }
         return collectedFutures;
     }
@@ -307,9 +325,9 @@ public class MatchingAlgorithmUpdateCGDService {
      */
     public void getItemsCountForSerialsMatching(Integer batchSize) {
         long countOfRecordNum = getMatchingAlgorithmReportDataDetailsRepository().getCountOfRecordNumForMatchingSerials(ScsbCommonConstants.BIB_ID);
-        logger.info(ScsbConstants.TOTAL_RECORDS + "{}", countOfRecordNum);
+        log.info(ScsbConstants.TOTAL_RECORDS + "{}", countOfRecordNum);
         int totalPagesCount = (int) (countOfRecordNum / batchSize);
-        logger.info(ScsbConstants.TOTAL_PAGES + "{}" , totalPagesCount);
+        log.info(ScsbConstants.TOTAL_PAGES + "{}" , totalPagesCount);
         for(int pageNum = 0; pageNum < totalPagesCount + 1; pageNum++) {
             long from = pageNum * Long.valueOf(batchSize);
             List<MatchingAlgorithmReportDataEntity> reportDataEntities =  getMatchingAlgorithmReportDataDetailsRepository().getReportDataEntityForMatchingSerials(ScsbCommonConstants.BIB_ID, from, batchSize);
@@ -326,7 +344,7 @@ public class MatchingAlgorithmUpdateCGDService {
             List<String> bibIdList = Arrays.asList(reportDataEntity.getHeaderValue().split(","));
             bibIds.addAll(bibIdList.stream().map(Integer::parseInt).collect(Collectors.toList()));
         }
-        logger.info("Bibs count in Page {} : {} " ,pageNum,bibIds.size());
+        log.info("Bibs count in Page {} : {} " ,pageNum,bibIds.size());
         List<BibliographicEntity> bibliographicEntities = getBibliographicDetailsRepository().findByIdIn(bibIds);
         for(BibliographicEntity bibliographicEntity : bibliographicEntities) {
             for(ItemEntity itemEntity : bibliographicEntity.getItemEntities()) {
@@ -376,7 +394,7 @@ public class MatchingAlgorithmUpdateCGDService {
         getMatchingAlgorithmUtil().saveCGDUpdatedSummaryReport(reportName);
         List<String> allInstitutionCodesExceptSupportInstitution = commonUtil.findAllInstitutionCodesExceptSupportInstitution();
         for (String institutionCode : allInstitutionCodesExceptSupportInstitution) {
-            logger.info("{} Final Counter Value:{} " ,institutionCode, MatchingCounter.getSpecificInstitutionCounterMap(institutionCode).get(MATCHING_COUNTER_SHARED));
+            log.info("{} Final Counter Value:{} " ,institutionCode, MatchingCounter.getSpecificInstitutionCounterMap(institutionCode).get(MATCHING_COUNTER_SHARED));
         }
         getUpdatedItemsQ();
         executor.shutdown();

@@ -2,8 +2,8 @@ package org.recap.util;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.ArrayUtils;
-import org.apache.commons.text.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.text.StringEscapeUtils;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.recap.ScsbCommonConstants;
 import org.recap.ScsbConstants;
@@ -13,9 +13,9 @@ import org.springframework.stereotype.Component;
 
 import java.text.CharacterIterator;
 import java.text.StringCharacterIterator;
-import java.util.Collections;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 

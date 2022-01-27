@@ -1,16 +1,13 @@
 package org.recap.camel.route;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.camel.CamelContext;
-import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.commons.io.FileUtils;
 import org.recap.PropertyKeyConstants;
 import org.recap.ScsbCommonConstants;
 import org.recap.ScsbConstants;
 import org.recap.model.camel.EmailPayLoad;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -25,10 +22,11 @@ import java.nio.charset.StandardCharsets;
 /**
  * Created by rajeshbabuk on 19/1/17.
  */
+@Slf4j
 @Component
 public class EmailRouteBuilder {
 
-    private static final Logger logger = LoggerFactory.getLogger(EmailRouteBuilder.class);
+
 
     private String emailBodyForCgdUpdate;
     private String emailBodyForBatchJob;
@@ -139,7 +137,7 @@ public class EmailRouteBuilder {
                             out.append("\n");
                         }
                     } catch (IOException e) {
-                        logger.error(ScsbCommonConstants.LOG_ERROR, e);
+                        log.error(ScsbCommonConstants.LOG_ERROR, e);
                     }
                     return out;
                 }
@@ -150,13 +148,13 @@ public class EmailRouteBuilder {
                         try {
                             emailPassword = FileUtils.readFileToString(file, StandardCharsets.UTF_8).trim();
                         } catch (IOException e) {
-                            logger.error(ScsbCommonConstants.LOG_ERROR,e);
+                            log.error(ScsbCommonConstants.LOG_ERROR,e);
                         }
                     }
                 }
             });
         } catch (Exception e) {
-            logger.error(ScsbCommonConstants.LOG_ERROR,e);
+            log.error(ScsbCommonConstants.LOG_ERROR,e);
         }
     }
 
