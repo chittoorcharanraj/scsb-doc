@@ -77,9 +77,6 @@ dependencies {
 	implementation 'org.apache.activemq:activemq-client:5.15.15'
 	implementation 'commons-beanutils:commons-beanutils:1.9.4'
 	implementation 'org.apache.commons:commons-collections4:4.4'
-	implementation('io.springfox:springfox-swagger-ui:3.0.0')
-	implementation('io.springfox:springfox-swagger2:3.0.0')
-//	implementation group: 'io.springfox', name: 'springfox-boot-starter', version: '3.0.0'
 	implementation 'info.freelibrary:freelib-marc4j:2.6.12'
 	implementation 'net.sourceforge.javacsv:javacsv:2.0'
 	implementation 'commons-codec:commons-codec:1.15'
@@ -112,8 +109,9 @@ dependencies {
 
 	implementation 'org.springframework.cloud:spring-cloud-starter-config'
 	implementation 'org.springframework.cloud:spring-cloud-starter-bus-amqp'
-	// https://mvnrepository.com/artifact/org.modelmapper/modelmapper
 	implementation group: 'org.modelmapper', name: 'modelmapper', version: '2.4.5'
+	implementation('io.springfox:springfox-swagger-ui:2.9.2')
+    implementation('io.springfox:springfox-boot-starter:3.0.0')
 
 
 }
