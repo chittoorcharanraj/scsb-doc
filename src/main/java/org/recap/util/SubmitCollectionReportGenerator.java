@@ -138,19 +138,4 @@ public class SubmitCollectionReportGenerator {
         return null;
     }
 
-    /**
-     * This method is used to get the getter method for the given one of the instance variable name in SubmitCollectionReportRecord class.
-     *
-     * @param propertyName the property name
-     * @return the getter method
-     */
-    public Method getGetterMethod(String propertyName) {
-        PropertyUtilsBean propertyUtilsBean = new PropertyUtilsBean();
-        try {
-            return propertyUtilsBean.getReadMethod(new PropertyDescriptor(propertyName, SubmitCollectionReportRecord.class));
-        } catch (IntrospectionException e) {
-            log.error(ScsbCommonConstants.LOG_ERROR,e);
-        }
-        return null;
-    }
 }
