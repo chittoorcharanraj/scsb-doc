@@ -21,16 +21,18 @@ public class BibItemRecordSetupCallable implements Callable {
     HoldingsDetailsRepository holdingsDetailsRepository;
     ProducerTemplate producerTemplate;
     private List<String> nonHoldingInstitutionList;
+    private List<String> ocolcInstitutionList;
 
 
     public BibItemRecordSetupCallable(BibliographicEntity bibliographicEntity, SolrTemplate solrTemplate, BibliographicDetailsRepository bibliographicDetailsRepository,
-                                      HoldingsDetailsRepository holdingsDetailsRepository, ProducerTemplate producerTemplate,List<String> nonHoldingInstitutionList) {
+                                      HoldingsDetailsRepository holdingsDetailsRepository, ProducerTemplate producerTemplate,List<String> nonHoldingInstitutionList, List<String> ocolcInstitutionList) {
         this.bibliographicEntity = bibliographicEntity;
         this.solrTemplate = solrTemplate;
         this.bibliographicDetailsRepository = bibliographicDetailsRepository;
         this.holdingsDetailsRepository = holdingsDetailsRepository;
         this.producerTemplate = producerTemplate;
         this.nonHoldingInstitutionList = nonHoldingInstitutionList;
+        this.ocolcInstitutionList = ocolcInstitutionList;
     }
 
     @Override
@@ -38,6 +40,7 @@ public class BibItemRecordSetupCallable implements Callable {
         BibJSONUtil bibJSONUtil = new BibJSONUtil();
         bibJSONUtil.setProducerTemplate(producerTemplate);
         bibJSONUtil.setNonHoldingInstitutions(nonHoldingInstitutionList);
+        bibJSONUtil.setOcolcInstitutions(ocolcInstitutionList);
         return bibJSONUtil.generateBibAndItemsForIndex(bibliographicEntity, solrTemplate, bibliographicDetailsRepository, holdingsDetailsRepository);
     }
 }

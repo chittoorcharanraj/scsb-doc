@@ -121,6 +121,9 @@ public class OngoingMatchingAlgorithmUtil {
     @Value("${" + PropertyKeyConstants.NONHOLDINGID_INSTITUTION + "}")
     private List<String> nonHoldingInstitutionList;
 
+    @Value("${" + PropertyKeyConstants.OCOLC_INSTITUTION + "}")
+    private List<String> ocolcInstitutionList;
+
     private Map collectionGroupMap;
     private Map institutionMap;
 
@@ -858,7 +861,7 @@ public class OngoingMatchingAlgorithmUtil {
         List<String> materialTypeList = (List<String>) parameterMap.get(ScsbConstants.MATERIAL_TYPE);
         List<Integer> bibIdList = (List<Integer>) parameterMap.get(ScsbCommonConstants.BIB_ID);
         MatchingAlgorithmCGDProcessor matchingAlgorithmCGDProcessor = new MatchingAlgorithmCGDProcessor(bibliographicDetailsRepository, producerTemplate,
-                getCollectionGroupMap(), getInstitutionEntityMap(), itemChangeLogDetailsRepository, ScsbConstants.ONGOING_MATCHING_OPERATION_TYPE, collectionGroupDetailsRepository, itemDetailsRepository, institutionDetailsRepository,nonHoldingInstitutionList);
+                getCollectionGroupMap(), getInstitutionEntityMap(), itemChangeLogDetailsRepository, ScsbConstants.ONGOING_MATCHING_OPERATION_TYPE, collectionGroupDetailsRepository, itemDetailsRepository, institutionDetailsRepository,nonHoldingInstitutionList,  ocolcInstitutionList);
         if(materialTypes.size() == 1) {
             reportEntity.setType(matchType);
             Map<Integer, ItemEntity> itemEntityMap = new HashMap<>();
