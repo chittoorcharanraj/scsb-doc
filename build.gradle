@@ -69,7 +69,7 @@ dependencies {
 	implementation 'org.apache.camel:camel-activemq:3.14.0'
 	//implementation 'org.apache.camel:camel-core-engine:3.14.0'
 	//implementation 'org.apache.camel:camel-core:3.14.0'
-	implementation('org.apache.camel.springboot:camel-aws-s3-starter:3.2.0')
+	implementation('org.apache.camel.springboot:camel-aws-s3-starter:3.8.0')
 	implementation('org.apache.camel:camel-aws-s3:3.7.6')
 	implementation 'org.apache.activemq:activemq-camel:5.15.15'
 	implementation 'org.apache.activemq:activemq-pool:5.15.15'
