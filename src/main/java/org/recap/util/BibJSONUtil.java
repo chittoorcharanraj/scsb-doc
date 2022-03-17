@@ -41,10 +41,9 @@ import java.util.Map;
 @Slf4j
 public class BibJSONUtil extends MarcUtil {
 
-
-
     private List<String> nonHoldingInstitutions;
 
+    private List<String> ocolcInstitutions;
 
     private ProducerTemplate producerTemplate;
 
@@ -125,7 +124,7 @@ public class BibJSONUtil extends MarcUtil {
      */
     private List<String> getOCLCNumbers(Record record, String institutionCode) {
         List<String> oclcNumbers = new ArrayList<>();
-        if (StringUtils.isNotBlank(institutionCode) && nonHoldingInstitutions.contains(institutionCode)) {
+        if (StringUtils.isNotBlank(institutionCode) && ocolcInstitutions.contains(institutionCode)) {
             String oclcTag = getControlFieldValue(record, "003");
             if (StringUtils.isNotBlank(oclcTag) && ScsbConstants.OCOLC.equalsIgnoreCase(oclcTag)) {
                 oclcTag = getControlFieldValue(record, "001");

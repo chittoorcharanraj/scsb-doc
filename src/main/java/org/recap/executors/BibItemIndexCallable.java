@@ -42,6 +42,7 @@ public class BibItemIndexCallable extends CommonCallable implements Callable {
     private String partialIndexType;
     private Map<String, Object> partialIndexMap;
     private List<String> nonHoldingInstitutionList;
+    private List<String> ocolcInstitutionList;
     private CommonUtil commonUtil;
     private Integer cgdId;
 
@@ -62,7 +63,9 @@ public class BibItemIndexCallable extends CommonCallable implements Callable {
      * @param partialIndexMap                the partial index map
      */
     public BibItemIndexCallable(String solrURL, String coreName, int pageNum, int docsPerPage, BibliographicDetailsRepository bibliographicDetailsRepository, HoldingsDetailsRepository holdingsDetailsRepository, Integer owningInstitutionId,
-                                Date fromDate, ProducerTemplate producerTemplate, SolrTemplate solrTemplate, String partialIndexType, Map<String, Object> partialIndexMap,List<String> nonHoldingInstitutionList, CommonUtil commonUtil,Integer cgdId) {
+
+                                Date fromDate, ProducerTemplate producerTemplate, SolrTemplate solrTemplate, String partialIndexType, Map<String, Object> partialIndexMap,List<String> nonHoldingInstitutionList, CommonUtil commonUtil, List<String> ocolcInstitutionList, Integer cgdId) {
+
         this.coreName = coreName;
         this.solrURL = solrURL;
         this.pageNum = pageNum;
@@ -76,6 +79,7 @@ public class BibItemIndexCallable extends CommonCallable implements Callable {
         this.partialIndexType = partialIndexType;
         this.partialIndexMap = partialIndexMap;
         this.nonHoldingInstitutionList = nonHoldingInstitutionList;
+        this.ocolcInstitutionList = ocolcInstitutionList;
         this.commonUtil = commonUtil;
         this.cgdId=cgdId;
     }
@@ -116,7 +120,7 @@ public class BibItemIndexCallable extends CommonCallable implements Callable {
             }
         }
 
-        List<SolrInputDocument> solrInputDocumentsToIndex = setSolrInputDocuments(bibliographicEntities, solrTemplate, bibliographicDetailsRepository, holdingsDetailsRepository, producerTemplate, log,nonHoldingInstitutionList);
+        List<SolrInputDocument> solrInputDocumentsToIndex = setSolrInputDocuments(bibliographicEntities, solrTemplate, bibliographicDetailsRepository, holdingsDetailsRepository, producerTemplate, log,nonHoldingInstitutionList,ocolcInstitutionList);
         if (!CollectionUtils.isEmpty(solrInputDocumentsToIndex)) {
             SolrTemplate templateForSolr = new SolrTemplate(new HttpSolrClient.Builder(solrURL + File.separator).build());
             templateForSolr.saveDocuments(coreName, solrInputDocumentsToIndex);

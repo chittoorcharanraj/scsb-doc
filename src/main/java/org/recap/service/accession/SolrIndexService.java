@@ -56,6 +56,9 @@ public class SolrIndexService {
     @Value("${" + PropertyKeyConstants.NONHOLDINGID_INSTITUTION + "}")
     private List<String> nonHoldingInstitutionList;
 
+    @Value("${" + PropertyKeyConstants.OCOLC_INSTITUTION + "}")
+    private List<String> ocolcInstitutionList;
+
 
     /**
      * Gets logger.
@@ -127,6 +130,7 @@ public class SolrIndexService {
         BibJSONUtil bibJSONUtil = getBibJSONUtil();
         bibJSONUtil.setProducerTemplate(producerTemplate);
         bibJSONUtil.setNonHoldingInstitutions(nonHoldingInstitutionList);
+        bibJSONUtil.setOcolcInstitutions(ocolcInstitutionList);
         SolrInputDocument solrInputDocument = bibJSONUtil.generateBibAndItemsForIndex(bibliographicEntity, getSolrTemplate(), getBibliographicDetailsRepository(), getHoldingsDetailsRepository());
         if (solrInputDocument !=null) {
             getSolrTemplate().saveDocument(solrCore, solrInputDocument);

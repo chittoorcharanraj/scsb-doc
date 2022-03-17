@@ -40,6 +40,7 @@ public class MatchingAlgorithmMonographCGDCallable extends  CommonCallable imple
     private ItemDetailsRepository itemDetailsRepository;
     private boolean isPendingMatch;
     private List<String> nonHoldingInstitutionList;
+    private List<String> ocolcInstitutionList;
 
     /**
      * This method instantiates a new matching algorithm cgd callable.
@@ -59,7 +60,7 @@ public class MatchingAlgorithmMonographCGDCallable extends  CommonCallable imple
     public MatchingAlgorithmMonographCGDCallable(MatchingAlgorithmReportDataDetailsRepository matchingAlgorithmReportDataDetailsRepository, BibliographicDetailsRepository bibliographicDetailsRepository,
                                                  int pageNum, Integer batchSize, ProducerTemplate producerTemplate, Map collectionGroupMap, Map institutionMap,
                                                  ItemChangeLogDetailsRepository itemChangeLogDetailsRepository, CollectionGroupDetailsRepository collectionGroupDetailsRepository,
-                                                 ItemDetailsRepository itemDetailsRepository, boolean isPendingMatch, InstitutionDetailsRepository institutionDetailsRepository,List<String> nonHoldingInstitutionList) {
+                                                 ItemDetailsRepository itemDetailsRepository, boolean isPendingMatch, InstitutionDetailsRepository institutionDetailsRepository,List<String> nonHoldingInstitutionList, List<String> ocolcInstitutionList) {
         this.matchingAlgorithmReportDataDetailsRepository = matchingAlgorithmReportDataDetailsRepository;
         this.bibliographicDetailsRepository = bibliographicDetailsRepository;
         this.pageNum = pageNum;
@@ -73,6 +74,8 @@ public class MatchingAlgorithmMonographCGDCallable extends  CommonCallable imple
         this.isPendingMatch = isPendingMatch;
         this.institutionDetailsRepository = institutionDetailsRepository;
         this.nonHoldingInstitutionList = nonHoldingInstitutionList;
+        this.ocolcInstitutionList = ocolcInstitutionList;
+
     }
 
     /**
@@ -98,7 +101,7 @@ public class MatchingAlgorithmMonographCGDCallable extends  CommonCallable imple
             List<Integer> bibIdList = getBibIdListFromString(reportDataEntity);
             Set<String> materialTypeSet = new HashSet<>();
             MatchingAlgorithmCGDProcessor matchingAlgorithmCGDProcessor = new MatchingAlgorithmCGDProcessor(bibliographicDetailsRepository, producerTemplate, collectionGroupMap,
-                    institutionMap, itemChangeLogDetailsRepository, ScsbConstants.INITIAL_MATCHING_OPERATION_TYPE, collectionGroupDetailsRepository, itemDetailsRepository,institutionDetailsRepository,nonHoldingInstitutionList);
+                    institutionMap, itemChangeLogDetailsRepository, ScsbConstants.INITIAL_MATCHING_OPERATION_TYPE, collectionGroupDetailsRepository, itemDetailsRepository,institutionDetailsRepository,nonHoldingInstitutionList,ocolcInstitutionList);
             boolean isMonograph = matchingAlgorithmCGDProcessor.checkForMonographAndPopulateValues(materialTypeSet, itemEntityMap, bibIdList,ScsbConstants.INITIAL_MATCHING_OPERATION_TYPE);
             if(isMonograph) {
                 matchingAlgorithmCGDProcessor.updateCGDProcess(itemEntityMap);

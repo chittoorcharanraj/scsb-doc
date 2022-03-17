@@ -35,10 +35,11 @@ public class MatchingAlgorithmMVMsCGDCallable extends  CommonCallable implements
     private ItemDetailsRepository itemDetailsRepository;
     private InstitutionDetailsRepository institutionDetailsRepository;
     private List<String> nonHoldingInstitutionList;
+    private List<String> ocolcInstitutionList;
 
     public MatchingAlgorithmMVMsCGDCallable(MatchingAlgorithmReportDataDetailsRepository matchingAlgorithmReportDataDetailsRepository, BibliographicDetailsRepository bibliographicDetailsRepository, int pageNum, Integer batchSize,
                                             ProducerTemplate producerTemplate, Map collectionGroupMap, Map institutionMap, ItemChangeLogDetailsRepository itemChangeLogDetailsRepository,
-                                            CollectionGroupDetailsRepository collectionGroupDetailsRepository, ItemDetailsRepository itemDetailsRepository, InstitutionDetailsRepository institutionDetailsRepository,List<String> nonHoldingInstitutionList) {
+                                            CollectionGroupDetailsRepository collectionGroupDetailsRepository, ItemDetailsRepository itemDetailsRepository, InstitutionDetailsRepository institutionDetailsRepository,List<String> nonHoldingInstitutionList, List<String> ocolcInstitutionList) {
         this.matchingAlgorithmReportDataDetailsRepository = matchingAlgorithmReportDataDetailsRepository;
         this.bibliographicDetailsRepository = bibliographicDetailsRepository;
         this.pageNum = pageNum;
@@ -51,6 +52,8 @@ public class MatchingAlgorithmMVMsCGDCallable extends  CommonCallable implements
         this.itemDetailsRepository = itemDetailsRepository;
         this.institutionDetailsRepository =institutionDetailsRepository;
         this.nonHoldingInstitutionList=nonHoldingInstitutionList;
+        this.ocolcInstitutionList = ocolcInstitutionList;
+
     }
 
     @Override
@@ -61,7 +64,7 @@ public class MatchingAlgorithmMVMsCGDCallable extends  CommonCallable implements
             Map<Integer, ItemEntity> itemEntityMap = new HashMap<>();
             List<Integer> bibIdList = getBibIdListFromString(reportDataEntity);
             MatchingAlgorithmCGDProcessor matchingAlgorithmCGDProcessor = new MatchingAlgorithmCGDProcessor(bibliographicDetailsRepository, producerTemplate, collectionGroupMap,
-                    institutionMap, itemChangeLogDetailsRepository, ScsbConstants.INITIAL_MATCHING_OPERATION_TYPE, collectionGroupDetailsRepository, itemDetailsRepository, institutionDetailsRepository,nonHoldingInstitutionList);
+                    institutionMap, itemChangeLogDetailsRepository, ScsbConstants.INITIAL_MATCHING_OPERATION_TYPE, collectionGroupDetailsRepository, itemDetailsRepository, institutionDetailsRepository,nonHoldingInstitutionList,ocolcInstitutionList);
             matchingAlgorithmCGDProcessor.populateItemEntityMap(itemEntityMap, bibIdList);
             matchingAlgorithmCGDProcessor.updateItemsCGD(itemEntityMap);
         }

@@ -44,6 +44,7 @@ public class MatchingAlgorithmCGDProcessor {
     private ItemDetailsRepository itemDetailsRepository;
     private InstitutionDetailsRepository institutionDetailsRepository;
     private List<String> nonHoldingInstitutionList;
+    private List<String> ocolcInstitutionList;
 
     /**
      * This method instantiates a new matching algorithm cgd processor.
@@ -60,7 +61,7 @@ public class MatchingAlgorithmCGDProcessor {
      */
     public MatchingAlgorithmCGDProcessor(BibliographicDetailsRepository bibliographicDetailsRepository, ProducerTemplate producerTemplate, Map collectionGroupMap, Map institutionMap,
                                          ItemChangeLogDetailsRepository itemChangeLogDetailsRepository, String matchingType, CollectionGroupDetailsRepository collectionGroupDetailsRepository,
-                                         ItemDetailsRepository itemDetailsRepository, InstitutionDetailsRepository institutionDetailsRepository,List<String> nonHoldingInstitutionList) {
+                                         ItemDetailsRepository itemDetailsRepository, InstitutionDetailsRepository institutionDetailsRepository,List<String> nonHoldingInstitutionList, List<String> ocolcInstitutionList) {
         this.bibliographicDetailsRepository = bibliographicDetailsRepository;
         this.producerTemplate = producerTemplate;
         this.collectionGroupMap = collectionGroupMap;
@@ -71,6 +72,7 @@ public class MatchingAlgorithmCGDProcessor {
         this.itemDetailsRepository = itemDetailsRepository;
         this.institutionDetailsRepository=institutionDetailsRepository;
         this.nonHoldingInstitutionList=nonHoldingInstitutionList;
+        this.ocolcInstitutionList = ocolcInstitutionList;
     }
 
     private static boolean checkIfItemsAreCommitted(Map.Entry<Integer, ItemEntity> entry) {

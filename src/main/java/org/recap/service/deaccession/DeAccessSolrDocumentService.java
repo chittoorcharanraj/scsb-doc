@@ -36,6 +36,9 @@ public class DeAccessSolrDocumentService {
     @Value("${" + PropertyKeyConstants.NONHOLDINGID_INSTITUTION + "}")
     private List<String> nonHoldingInstitutionList;
 
+    @Value("${" + PropertyKeyConstants.OCOLC_INSTITUTION + "}")
+    private List<String> ocolcInstitutionList;
+
     @Autowired
     private BibliographicDetailsRepository bibliographicDetailsRepository;
 
@@ -115,6 +118,7 @@ public class DeAccessSolrDocumentService {
     private void updateBibSolrDocument(BibliographicEntity bibEntity) {
         BibJSONUtil bibJSONUtil = getBibJSONUtil();
         bibJSONUtil.setNonHoldingInstitutions(nonHoldingInstitutionList);
+        bibJSONUtil.setOcolcInstitutions(ocolcInstitutionList);
         SolrInputDocument bibSolrInputDocument = bibJSONUtil.generateBibAndItemsForIndex(bibEntity, getSolrTemplate(), getBibliographicDetailsRepository(), getHoldingDetailRepository());
         StopWatch stopWatchIndexDocument = new StopWatch();
         stopWatchIndexDocument.start();
