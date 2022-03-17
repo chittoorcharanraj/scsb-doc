@@ -59,6 +59,9 @@ public class OngoingMatchingAlgorithmQueryUtil {
         } else if (matchBy.equalsIgnoreCase(ScsbConstants.BIB_ID_RANGE)) {
             log.info("From Bib Id : {}, To Bib Id : {}", solrIndexRequest.getFromBibId(), solrIndexRequest.getToBibId());
             query = solrQueryBuilder.getQueryForOngoingMatchingBasedOnBibIdRangeForGroupingOrCgdUpdateProcess(solrIndexRequest.getFromBibId(), solrIndexRequest.getToBibId(), includeMaQualifier, isCgdProcess);
+        } else if(matchBy.equalsIgnoreCase(ScsbConstants.CGD_TYPE)){
+            log.info("INSTITUTION : {}, CGD : {}", solrIndexRequest.getOwningInstitutionCode(), solrIndexRequest.getCgd());
+            query = solrQueryBuilder.getQueryForOngoingMatchingBasedOnInstitutionAndCGD(solrIndexRequest.getOwningInstitutionCode(), solrIndexRequest.getCgd(), includeMaQualifier, isCgdProcess);
         }
         return query;
     }

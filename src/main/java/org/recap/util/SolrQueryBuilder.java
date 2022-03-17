@@ -1056,6 +1056,23 @@ public class SolrQueryBuilder {
         return query.toString();
     }
 
+    public String getQueryForOngoingMatchingBasedOnInstitutionAndCGD(String institution, String cgd, boolean includeMaQualifier, boolean isCgdProcess) {
+        StringBuilder query = new StringBuilder();
+        if (includeMaQualifier) {
+            List<Integer> maQualifiers = isCgdProcess ? Arrays.asList(ScsbCommonConstants.MA_QUALIFIER_2, ScsbCommonConstants.MA_QUALIFIER_3) : Arrays.asList(ScsbCommonConstants.MA_QUALIFIER_1, ScsbCommonConstants.MA_QUALIFIER_3);
+            query.append(prepareQueryForMaQualifier(maQualifiers)).append(and);
+        }
+        query.append(ScsbCommonConstants.BIB_OWNING_INSTITUTION).append(":").append(institution)
+                .append(and).append(ScsbCommonConstants.IS_DELETED_BIB).append(":").append(ScsbConstants.FALSE)
+                .append(and).append(ScsbConstants.BIB_CATALOGING_STATUS).append(":").append(ScsbCommonConstants.COMPLETE_STATUS);
+        if(isCgdProcess){
+                query.append(and).append(getCoreParentFilterQueryForCgdProcess());
+        } else {
+            query.append(and).append(getCoreParentFilterQueryForGroupingProcessCGD(cgd));
+        }
+        return query.toString();
+    }
+
     private String getCoreParentFilterQueryForCgdProcess() {
         StringBuilder query = new StringBuilder();
         query.append(coreParentFilterQuery).append(ScsbCommonConstants.COLLECTION_GROUP_DESIGNATION).append(":").append(ScsbCommonConstants.SHARED_CGD)
@@ -1067,6 +1084,14 @@ public class SolrQueryBuilder {
     private String getCoreParentFilterQueryForGroupingProcess() {
         StringBuilder query = new StringBuilder();
         query.append(coreParentFilterQuery).append(ScsbCommonConstants.IS_DELETED_ITEM).append(":").append(ScsbConstants.FALSE)
+                .append(and).append(coreParentFilterQuery).append(ScsbConstants.ITEM_CATALOGING_STATUS).append(":").append(ScsbCommonConstants.COMPLETE_STATUS);
+        return query.toString();
+    }
+
+    private String getCoreParentFilterQueryForGroupingProcessCGD(String cgd) {
+        StringBuilder query = new StringBuilder();
+        query.append(coreParentFilterQuery).append(ScsbCommonConstants.COLLECTION_GROUP_DESIGNATION).append(":").append(cgd)
+                .append(ScsbCommonConstants.IS_DELETED_ITEM).append(":").append(ScsbConstants.FALSE)
                 .append(and).append(coreParentFilterQuery).append(ScsbConstants.ITEM_CATALOGING_STATUS).append(":").append(ScsbCommonConstants.COMPLETE_STATUS);
         return query.toString();
     }

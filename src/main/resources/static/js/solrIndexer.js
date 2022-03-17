@@ -14,6 +14,11 @@ jQuery(document).ready(function ($) {
         partialIndex();
     });
 
+     $("#partialIndex-formTest").submit(function (event) {
+            event.preventDefault();
+            partialIndexTest();
+        });
+
     $("#reports-form").submit(function (event) {
         event.preventDefault();
         generateReport();
@@ -132,7 +137,23 @@ function partialIndex() {
     }, 2000);
     updatePartialIndexStatus();
 }
+function partialIndexTest(){
 
+    var $form = $("#partialIndex-formTest");
+    $("#submit").attr('disabled', 'disabled');
+    $.ajax({
+        url: $form.attr('action'),
+        type: 'post',
+        data: $form.serialize(),
+        success: function (response) {
+            $("#submit").removeAttr('disabled');
+            document.getElementById("partialIndexingStatusTest").value = response;
+        }
+    });
+    setTimeout(function(){
+    }, 2000);
+    updatePartialIndexStatusTest();
+}
 
 function updateFullIndexStatus() {
     var request = $.ajax({
@@ -153,6 +174,17 @@ function updatePartialIndexStatus() {
     });
     request.done(function (msg) {
         document.getElementById("partialIndexingStatus").value = msg;
+    });
+}
+
+function updatePartialIndexStatusTest() {
+    var request = $.ajax({
+        url: "solrIndexer/report",
+        type: "GET",
+        contentType: "application/json"
+    });
+    request.done(function (msg) {
+        document.getElementById("partialIndexingStatusTest").value = msg;
     });
 }
 
@@ -312,6 +344,14 @@ function showRequest() {
 function populateInstitutionForFullIndex() {
        getInstitutions('institutionCode');
 }
+function populateInstitutionForFullIndexCgd() {
+       getInstitutions('institutionCodeCgd');
+       getCgds('cgd');
+}
+function populateInstitutionForFullIndexCgdo() {
+       getInstitutions('institutionCodeCgdo');
+       getCgds('cgdo');
+}
 function populateInstitutionForReports() {
        getInstitutions('reportInstitutionName');
 }
@@ -329,17 +369,33 @@ function getInstitutions(selectId) {
              });
         });
 }
+function getCgds(selectId) {
+       $('#'+selectId).empty();
+       var request = $.ajax({
+            url: "/solrIndexer/cgds",
+            type: "GET",
+            contentType: "application/json"
+        });
+        request.done(function (response) {
+             $('#'+selectId).append('<option value="">ALL</option>');
+             $.each(response , function(index, val) {
+               $('#'+selectId).append('<option value="' + val + '">' + val+ '</option>');
+             });
+        });
+}
 function showOngoingMatchFromDate(){
     if ($("#ongoingMatchFromDate").is(":checked")) {
         $("#OngoingMatchFromDateView").show();
         $("#OngoingMatchBibIdRangeView").hide();
         $("#OngoingMatchBibIdListView").hide();
         $("#OngoingMatchDateRangeView").hide();
+        $("#OngoingMatchCgdAndInstitution").hide();
 
         $('#ongoingMatchSubmit').hide();
         $('#ongoingMatchBibIdList').prop('checked', false);
         $('#ongoingMatchBibIdRange').prop('checked', false);
         $('#ongoingMatchDateRange').prop('checked', false);
+        $('#ongoingMatchCGD').prop('checked', false);
     } else {
         $('#ongoingMatchSubmit').show();
         $("#OngoingMatchFromDateView").hide();
@@ -351,11 +407,13 @@ function showOngoingMatchBibIdRange(){
         $("#OngoingMatchBibIdListView").hide();
         $("#OngoingMatchDateRangeView").hide();
         $("#OngoingMatchBibIdRangeView").show();
+        $("#OngoingMatchCgdAndInstitution").hide();
 
         $('#ongoingMatchSubmit').hide();
         $('#ongoingMatchFromDate').prop('checked', false);
         $('#ongoingMatchBibIdList').prop('checked', false);
         $('#ongoingMatchDateRange').prop('checked', false);
+        $('#ongoingMatchCGD').prop('checked', false);
     } else {
         $('#ongoingMatchSubmit').show();
         $("#OngoingMatchBibIdRangeView").hide();
@@ -367,11 +425,13 @@ function showOngoingMatchBibIdList(){
         $("#OngoingMatchFromDateView").hide();
         $("#OngoingMatchBibIdRangeView").hide();
         $("#OngoingMatchDateRangeView").hide();
+        $("#OngoingMatchCgdAndInstitution").hide();
 
         $('#ongoingMatchSubmit').hide();
         $('#ongoingMatchFromDate').prop('checked', false);
         $('#ongoingMatchBibIdRange').prop('checked', false);
         $('#ongoingMatchDateRange').prop('checked', false);
+        $('#ongoingMatchCGD').prop('checked', false);
     } else {
         $('#ongoingMatchSubmit').show();
         $("#OngoingMatchBibIdListView").hide();
@@ -383,14 +443,39 @@ function showOngoingMatchBibIdDateRange(){
         $("#OngoingMatchBibIdListView").hide();
         $("#OngoingMatchFromDateView").hide();
         $("#OngoingMatchBibIdRangeView").hide();
+        $("#OngoingMatchCgdAndInstitution").hide();
 
         $('#ongoingMatchSubmit').hide();
         $('#ongoingMatchFromDate').prop('checked', false);
         $('#ongoingMatchBibIdList').prop('checked', false);
         $('#ongoingMatchBibIdRange').prop('checked', false);
+        $('#ongoingMatchCGD').prop('checked', false);
+
     } else {
         $('#ongoingMatchSubmit').show();
         $("#OngoingMatchDateRangeView").hide();
+    }
+}
+
+function showOngoingMatchCGD(){
+    if ($("#ongoingMatchCGD").is(":checked")) {
+        populateInstitutionForFullIndexCgdo();
+        $("#OngoingMatchDateRangeView").hide();
+        $("#OngoingMatchBibIdListView").hide();
+        $("#OngoingMatchFromDateView").hide();
+        $("#OngoingMatchBibIdRangeView").hide();
+        $("#OngoingMatchCgdAndInstitution").show();
+
+
+        $('#ongoingMatchSubmit').hide();
+        $('#ongoingMatchFromDate').prop('checked', false);
+        $('#ongoingMatchBibIdList').prop('checked', false);
+        $('#ongoingMatchBibIdRange').prop('checked', false);
+        $('#ongoingMatchDateRange').prop('checked', false);
+
+    } else {
+        $('#ongoingMatchSubmit').show();
+        $("#OngoingMatchCgdAndInstitution").hide();
     }
 }
 
