@@ -64,7 +64,7 @@ public class BibItemIndexCallable extends CommonCallable implements Callable {
      */
     public BibItemIndexCallable(String solrURL, String coreName, int pageNum, int docsPerPage, BibliographicDetailsRepository bibliographicDetailsRepository, HoldingsDetailsRepository holdingsDetailsRepository, Integer owningInstitutionId,
 
-                                Date fromDate, ProducerTemplate producerTemplate, SolrTemplate solrTemplate, String partialIndexType, Map<String, Object> partialIndexMap,List<String> nonHoldingInstitutionList, CommonUtil commonUtil, List<String> ocolcInstitutionList, Integer cgdId) {
+                                Date fromDate, ProducerTemplate producerTemplate, SolrTemplate solrTemplate, String partialIndexType, Map<String, Object> partialIndexMap,List<String> nonHoldingInstitutionList,  List<String> ocolcInstitutionList, CommonUtil commonUtil, Integer cgdId) {
 
         this.coreName = coreName;
         this.solrURL = solrURL;

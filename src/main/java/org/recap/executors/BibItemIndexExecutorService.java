@@ -53,7 +53,7 @@ public class BibItemIndexExecutorService extends IndexExecutorService {
     @Override
     public Callable getCallable(String coreName, int pageNum, int docsPerPage, Integer owningInstitutionId, Date fromDate, String partialIndexType, Map<String, Object> partialIndexMap,Integer cgdId) {
         return new BibItemIndexCallable(solrServerProtocol + solrUrl, coreName, pageNum, docsPerPage, bibliographicDetailsRepository, holdingsDetailsRepository,
-                owningInstitutionId, fromDate, producerTemplate, solrTemplate, partialIndexType, partialIndexMap, nonHoldingInstitutionList, commonUtil, ocolcInstitutionList ,cgdId);
+                owningInstitutionId, fromDate, producerTemplate, solrTemplate, partialIndexType, partialIndexMap, nonHoldingInstitutionList, ocolcInstitutionList, commonUtil, cgdId);
     }
 
     /**
