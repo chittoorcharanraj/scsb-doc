@@ -46,6 +46,9 @@ public class UpdateCgdUtil {
     @Value("${" + PropertyKeyConstants.NONHOLDINGID_INSTITUTION + "}")
     private List<String> nonHoldingInstitutionList;
 
+    @Value("${" + PropertyKeyConstants.OCOLC_INSTITUTION + "}")
+    private List<String> ocolcInstitutionList;
+
     @Autowired
     private BibliographicDetailsRepository bibliographicDetailsRepository;
 
@@ -146,6 +149,7 @@ public class UpdateCgdUtil {
     public void updateCGDForItemInSolr(List<ItemEntity> itemEntities) {
         BibJSONUtil bibJSONUtil = new BibJSONUtil();
         bibJSONUtil.setNonHoldingInstitutions(nonHoldingInstitutionList);
+        bibJSONUtil.setOcolcInstitutions(ocolcInstitutionList);
         if (CollectionUtils.isNotEmpty(itemEntities)) {
             for (ItemEntity itemEntity : itemEntities) {
                 if (itemEntity != null && CollectionUtils.isNotEmpty(itemEntity.getBibliographicEntities())) {

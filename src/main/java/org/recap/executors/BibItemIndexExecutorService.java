@@ -38,6 +38,9 @@ public class BibItemIndexExecutorService extends IndexExecutorService {
     @Value("${" + PropertyKeyConstants.NONHOLDINGID_INSTITUTION + "}")
     private List<String> nonHoldingInstitutionList;
 
+    @Value("${" + PropertyKeyConstants.OCOLC_INSTITUTION + "}")
+    private List<String> ocolcInstitutionList;
+
     /**
      * Gets the callable class for the thread to process.
      * @param coreName
@@ -50,7 +53,7 @@ public class BibItemIndexExecutorService extends IndexExecutorService {
     @Override
     public Callable getCallable(String coreName, int pageNum, int docsPerPage, Integer owningInstitutionId, Date fromDate, String partialIndexType, Map<String, Object> partialIndexMap) {
         return new BibItemIndexCallable(solrServerProtocol + solrUrl, coreName, pageNum, docsPerPage, bibliographicDetailsRepository, holdingsDetailsRepository,
-                owningInstitutionId, fromDate, producerTemplate, solrTemplate, partialIndexType, partialIndexMap, nonHoldingInstitutionList, commonUtil);
+                owningInstitutionId, fromDate, producerTemplate, solrTemplate, partialIndexType, partialIndexMap, nonHoldingInstitutionList, ocolcInstitutionList, commonUtil);
     }
 
     /**

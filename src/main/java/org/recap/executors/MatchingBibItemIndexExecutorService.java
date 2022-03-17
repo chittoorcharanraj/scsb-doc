@@ -31,6 +31,9 @@ public class MatchingBibItemIndexExecutorService extends MatchingIndexExecutorSe
     @Value("${" + PropertyKeyConstants.NONHOLDINGID_INSTITUTION + "}")
     private List<String> nonHoldingInstitutionList;
 
+    @Value("${" + PropertyKeyConstants.OCOLC_INSTITUTION + "}")
+    private List<String> ocolcInstitutionList;
+
     /**
      * Gets the callable class for the thread to process.
      * @param coreName      the core name
@@ -41,7 +44,7 @@ public class MatchingBibItemIndexExecutorService extends MatchingIndexExecutorSe
      */
     @Override
     public Callable getCallable(String coreName, int pageNum, int docsPerPage, String operationType, Date from, Date to) {
-        return new MatchingBibItemIndexCallable(coreName, pageNum, docsPerPage, bibliographicDetailsRepository, holdingsDetailsRepository, producerTemplate, solrTemplate, operationType, from, to,nonHoldingInstitutionList, solrServerProtocol + solrUrl);
+        return new MatchingBibItemIndexCallable(coreName, pageNum, docsPerPage, bibliographicDetailsRepository, holdingsDetailsRepository, producerTemplate, solrTemplate, operationType, from, to,nonHoldingInstitutionList, ocolcInstitutionList,solrServerProtocol + solrUrl);
     }
 
     /**
