@@ -1,6 +1,7 @@
 package org.recap.repository.solr.temp;
 
-import org.junit.jupiter.api.Test;
+
+import org.junit.Test;
 import org.mockito.Mock;
 import org.recap.BaseTestCaseUT;
 import org.recap.PropertyKeyConstants;

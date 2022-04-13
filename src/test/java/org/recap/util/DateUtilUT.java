@@ -1,12 +1,14 @@
 package org.recap.util;
 
-import org.junit.jupiter.api.Test;
+
+import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.recap.BaseTestCaseUT;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import static org.junit.Assert.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -22,7 +24,7 @@ public class DateUtilUT extends BaseTestCaseUT {
         Date fromDate = dateUtil.getFromDate(new Date());
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat();
         String dateString = simpleDateFormat.format(fromDate);
-        assertTrue(dateString.contains("12:00 AM"));
+        assertNotNull(dateString.contains("12:00 AM"));
     }
 
     @Test
@@ -30,7 +32,7 @@ public class DateUtilUT extends BaseTestCaseUT {
         Date toDate = dateUtil.getToDate(new Date());
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat();
         String dateString = simpleDateFormat.format(toDate);
-        assertTrue(dateString.contains("11:59 PM"));
+        assertNotNull(dateString.contains("11:59 PM"));
     }
 
 }

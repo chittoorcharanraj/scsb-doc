@@ -1,12 +1,9 @@
 package org.recap.executors;
 
-import org.apache.solr.client.solrj.SolrClient;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
+
+
+import org.junit.Test;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.recap.BaseTestCaseUT;
 import org.recap.repository.solr.temp.BibCrudRepositoryMultiCoreSupport;
 import org.springframework.test.util.ReflectionTestUtils;

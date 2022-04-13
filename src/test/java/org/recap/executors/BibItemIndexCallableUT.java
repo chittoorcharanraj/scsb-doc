@@ -1,7 +1,7 @@
 package org.recap.executors;
 
 import org.apache.camel.ProducerTemplate;
-import org.junit.jupiter.api.Test;
+import org.junit.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -45,7 +45,7 @@ public class BibItemIndexCallableUT extends BaseTestCaseUT {
     CommonUtil commonUtil;
 
     @InjectMocks
-    BibItemIndexCallable mockBibItemIndexCallable = new BibItemIndexCallable("","",1,1,bibliographicDetailsRepository,holdingsDetailsRepository,1,new Date(),producerTemplate,solrTemplate, null, null,new ArrayList<String>(Arrays.asList("NYPL")), commonUtil);
+    BibItemIndexCallable mockBibItemIndexCallable = new BibItemIndexCallable("","",1,1,bibliographicDetailsRepository,holdingsDetailsRepository,1,new Date(),producerTemplate,solrTemplate, null, null,new ArrayList<String>(Arrays.asList("NYPL")), new ArrayList<String>(Arrays.asList("NYPL")), commonUtil,1);
 
 
 

@@ -6,7 +6,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.recap.BaseTestCaseUT4;
+import org.recap.BaseTestCaseUT;
 import org.recap.ScsbCommonConstants;
 import org.recap.matchingalgorithm.service.MatchingBibInfoDetailService;
 import org.recap.model.solr.SolrIndexRequest;
@@ -22,7 +22,7 @@ import static org.junit.Assert.assertNotNull;
 /**
  * Created by rajeshbabuk on 20/4/17.
  */
-public class OngoingMatchingAlgorithmJobRestControllerUT extends BaseTestCaseUT4 {
+public class OngoingMatchingAlgorithmJobRestControllerUT extends BaseTestCaseUT {
 
     @InjectMocks
     OngoingMatchingAlgorithmJobRestController ongoingMatchingAlgorithmJobRestController;

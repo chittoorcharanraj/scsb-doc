@@ -6,7 +6,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.recap.BaseTestCaseUT4;
+import org.recap.BaseTestCaseUT;
 import org.recap.PropertyKeyConstants;
 import org.recap.ScsbCommonConstants;
 import org.recap.model.search.DataDumpSearchResult;
@@ -34,7 +34,7 @@ import static org.junit.Assert.assertNotNull;
 /**
  * Created by hemalathas on 24/2/17.
  */
-public class SearchRecordsUtilUT extends BaseTestCaseUT4 {
+public class SearchRecordsUtilUT extends BaseTestCaseUT {
 
     @InjectMocks
     SearchRecordsUtil searchRecordsUtil;

@@ -4,7 +4,6 @@ import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.recap.BaseTestCaseUT;
-import org.recap.BaseTestCaseUT4;
 import org.recap.PropertyKeyConstants;
 import org.recap.model.queueinfo.QueueSizeInfoJson;
 import org.springframework.beans.factory.annotation.Value;
@@ -12,7 +11,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 
 import static org.junit.Assert.assertEquals;
 
-public class ActiveMqQueuesInfoUT extends BaseTestCaseUT4 {
+public class ActiveMqQueuesInfoUT extends BaseTestCaseUT {
 
     @InjectMocks
     ActiveMqQueuesInfo activeMqQueuesInfo;

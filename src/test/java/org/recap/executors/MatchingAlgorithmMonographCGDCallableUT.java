@@ -7,7 +7,6 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.recap.BaseTestCaseUT;
-import org.recap.BaseTestCaseUT4;
 import org.recap.ScsbCommonConstants;
 import org.recap.matchingalgorithm.MatchingAlgorithmCGDProcessor;
 import org.recap.model.jpa.*;
@@ -26,7 +25,7 @@ import static org.junit.Assert.assertNotNull;
 /**
  * Created by hemalathas on 5/7/17.
  */
-public class MatchingAlgorithmMonographCGDCallableUT extends BaseTestCaseUT4 {
+public class MatchingAlgorithmMonographCGDCallableUT extends BaseTestCaseUT {
 
     @Mock
     private MatchingAlgorithmReportDataDetailsRepository reportDataDetailsRepository;
@@ -50,6 +49,7 @@ public class MatchingAlgorithmMonographCGDCallableUT extends BaseTestCaseUT4 {
     int pageNum = 1;
     Integer batchSize = 10;
     List<String> nonHoldingInstitutionList=new ArrayList<>();
+    List<String> ocolcInstitutionList=new ArrayList<>();
 
     @Before
     public void setUp() throws Exception {
@@ -65,7 +65,7 @@ public class MatchingAlgorithmMonographCGDCallableUT extends BaseTestCaseUT4 {
         Map collectionGroupMap = new HashMap();
         Map institutionMap = new HashMap();
         MatchingAlgorithmMonographCGDCallable matchingAlgorithmMonographCGDCallable = new MatchingAlgorithmMonographCGDCallable(reportDataDetailsRepository,bibliographicDetailsRepository,pageNum,batchSize,producerTemplate,
-                                                                                        collectionGroupMap,institutionMap,itemChangeLogDetailsRepository,collectionGroupDetailsRepository,itemDetailsRepository,true, institutionDetailsRepository,nonHoldingInstitutionList);
+                                                                                        collectionGroupMap,institutionMap,itemChangeLogDetailsRepository,collectionGroupDetailsRepository,itemDetailsRepository,true, institutionDetailsRepository,nonHoldingInstitutionList,ocolcInstitutionList);
         Object object = matchingAlgorithmMonographCGDCallable.call();
         assertNotNull(object);
     }
@@ -77,7 +77,7 @@ public class MatchingAlgorithmMonographCGDCallableUT extends BaseTestCaseUT4 {
         institutionMap.put("NYPL",3);
         Mockito.when(bibliographicDetailsRepository.findByIdIn(Mockito.any())).thenReturn(Arrays.asList(saveBibSingleHoldingsSingleItem()));
         MatchingAlgorithmMonographCGDCallable matchingAlgorithmMonographCGDCallable = new MatchingAlgorithmMonographCGDCallable(reportDataDetailsRepository,bibliographicDetailsRepository,pageNum,batchSize,producerTemplate,
-                collectionGroupMap,institutionMap,itemChangeLogDetailsRepository,collectionGroupDetailsRepository,itemDetailsRepository,true, institutionDetailsRepository,nonHoldingInstitutionList);
+                collectionGroupMap,institutionMap,itemChangeLogDetailsRepository,collectionGroupDetailsRepository,itemDetailsRepository,true, institutionDetailsRepository,nonHoldingInstitutionList,ocolcInstitutionList);
         Object object = matchingAlgorithmMonographCGDCallable.call();
         assertNotNull(object);
     }
@@ -90,7 +90,7 @@ public class MatchingAlgorithmMonographCGDCallableUT extends BaseTestCaseUT4 {
         institutionMap.put("NYPL",3);
         Mockito.when(bibliographicDetailsRepository.findByIdIn(Mockito.any())).thenReturn(Arrays.asList(saveBibSingleHoldingsSingleItem()));
         MatchingAlgorithmMonographCGDCallable matchingAlgorithmMonographCGDCallable = new MatchingAlgorithmMonographCGDCallable(reportDataDetailsRepository,bibliographicDetailsRepository,pageNum,batchSize,producerTemplate,
-                collectionGroupMap,institutionMap,itemChangeLogDetailsRepository,collectionGroupDetailsRepository,itemDetailsRepository,true, institutionDetailsRepository,nonHoldingInstitutionList);
+                collectionGroupMap,institutionMap,itemChangeLogDetailsRepository,collectionGroupDetailsRepository,itemDetailsRepository,true, institutionDetailsRepository,nonHoldingInstitutionList,ocolcInstitutionList);
         Object object = matchingAlgorithmMonographCGDCallable.call();
         assertNotNull(object);
     }
@@ -101,7 +101,7 @@ public class MatchingAlgorithmMonographCGDCallableUT extends BaseTestCaseUT4 {
         Map institutionMap = new HashMap();
 
         MatchingAlgorithmMonographCGDCallable matchingAlgorithmMonographCGDCallable = new MatchingAlgorithmMonographCGDCallable(reportDataDetailsRepository,bibliographicDetailsRepository,pageNum,batchSize,producerTemplate,
-                collectionGroupMap,institutionMap,itemChangeLogDetailsRepository,collectionGroupDetailsRepository,itemDetailsRepository,false, institutionDetailsRepository,nonHoldingInstitutionList);
+                collectionGroupMap,institutionMap,itemChangeLogDetailsRepository,collectionGroupDetailsRepository,itemDetailsRepository,false, institutionDetailsRepository,nonHoldingInstitutionList,ocolcInstitutionList);
         Object object = matchingAlgorithmMonographCGDCallable.call();
         assertNotNull(object);
     }

@@ -1,12 +1,16 @@
 /*
+
 package org.recap.matchingalgorithm;
 
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.response.FacetField;
 import org.apache.solr.client.solrj.response.QueryResponse;
-import org.junit.Ignore;
+
+import org.hibernate.validator.constraints.ru.INN;
 import org.junit.Test;
+import org.mockito.InjectMocks;
 import org.recap.BaseTestCase;
+import org.recap.BaseTestCaseUT;
 import org.recap.ScsbCommonConstants;
 import org.springframework.data.solr.core.SolrTemplate;
 import org.springframework.util.StopWatch;
@@ -18,13 +22,18 @@ import java.util.List;
 
 import static org.junit.Assert.assertNotNull;
 
+
 */
 /**
  * Created by angelind on 18/10/16.
  *//*
 
-@Ignore
-public class MatchingSolrQueryAT extends BaseTestCase {
+
+
+public class MatchingSolrQueryAT extends BaseTestCaseUT {
+
+
+
 
     @Resource
     private SolrTemplate solrTemplate;
@@ -57,4 +66,5 @@ public class MatchingSolrQueryAT extends BaseTestCase {
     }
 
 }
+
 */

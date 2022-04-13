@@ -57,7 +57,7 @@ import static org.junit.Assert.assertTrue;
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({SolrTemplate.class,SolrClient.class})
 @PowerMockRunnerDelegate(SpringJUnit4ClassRunner.class)
-public class ExecutorAT extends BaseTestCaseUT4 {
+public class ExecutorAT extends BaseTestCaseUT {
 
     @InjectMocks
     BibItemIndexExecutorService bibItemIndexExecutorService;
@@ -204,7 +204,7 @@ public class ExecutorAT extends BaseTestCaseUT4 {
         solrIndexRequest.setDateFrom("27-10-2016 01:00:00");
         SimpleDateFormat dateFormatter = new SimpleDateFormat(ScsbCommonConstants.INCREMENTAL_DATE_FORMAT);
         Date from = DateUtils.addDays(new Date(), -1);
-        solrIndexRequest.setDateFrom(dateFormatter.format(from));
+//        solrIndexRequest.setDateFrom(dateFormatter.format(from));
         long dbCount = bibliographicDetailsRepository.countByLastUpdatedDateAfter(from);
         bibSolrCrudRepository.deleteAll();
         itemCrudRepository.deleteAll();

@@ -42,7 +42,7 @@ import static org.junit.Assert.assertNotNull;
 /**
  * Created by hemalathas on 27/7/17.
  */
-public class TransferControllerUT extends BaseTestCaseUT4 {
+public class TransferControllerUT extends BaseTestCaseUT {
 
     @InjectMocks
     private TransferController transferController;

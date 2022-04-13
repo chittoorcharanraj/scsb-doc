@@ -2,6 +2,7 @@ package org.recap;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.modelmapper.internal.util.Assert;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -11,7 +12,7 @@ public class BaseTestCaseUT4 {
 
     @Test
     public void loadContexts() {
-        System.out.println();
+        Assert.isTrue(true);
     }
 
 }

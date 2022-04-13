@@ -2,7 +2,7 @@ package org.recap.camel.processor;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
-import org.junit.jupiter.api.Test;
+import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;

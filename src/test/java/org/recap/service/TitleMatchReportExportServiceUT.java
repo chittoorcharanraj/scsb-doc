@@ -2,20 +2,16 @@ package org.recap.service;
 
 import com.amazonaws.services.s3.AmazonS3;
 import org.apache.commons.io.FileUtils;
-import org.apache.poi.ss.formula.functions.T;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.junit.Ignore;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.recap.BaseTestCaseUT;
-import org.recap.ScsbConstants;
-import org.recap.model.jpa.ReportEntity;
 import org.recap.model.reports.TitleMatchedReport;
 import org.recap.model.reports.TitleMatchedReports;
 import org.recap.report.ReportGenerator;
@@ -25,13 +21,9 @@ import org.springframework.test.util.ReflectionTestUtils;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
-import java.io.IOException;
-import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.apache.tomcat.util.http.FastHttpDateFormat.getCurrentDate;
-import static org.junit.Assert.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 
 public class TitleMatchReportExportServiceUT extends BaseTestCaseUT {

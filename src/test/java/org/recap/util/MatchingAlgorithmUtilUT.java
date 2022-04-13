@@ -1,6 +1,6 @@
 package org.recap.util;
 
-import io.swagger.models.auth.In;
+
 import org.apache.camel.ProducerTemplate;
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrQuery;
@@ -20,6 +20,7 @@ import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.modules.junit4.PowerMockRunnerDelegate;
+import org.recap.BaseTestCaseUT;
 import org.recap.BaseTestCaseUT4;
 import org.recap.ScsbCommonConstants;
 import org.recap.ScsbConstants;
@@ -44,9 +45,8 @@ import java.util.Optional;
 import java.util.Set;
 
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyList;
+
 
 /**
  * Created by Anitha on 10/10/20.
@@ -55,7 +55,7 @@ import static org.mockito.ArgumentMatchers.anyList;
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({SolrTemplate.class,SolrClient.class})
 @PowerMockRunnerDelegate(SpringJUnit4ClassRunner.class)
-public class MatchingAlgorithmUtilUT extends BaseTestCaseUT4 {
+public class MatchingAlgorithmUtilUT extends BaseTestCaseUT {
 
     @InjectMocks
     MatchingAlgorithmUtil mockMatchingAlgorithmUtil;

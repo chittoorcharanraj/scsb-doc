@@ -3,6 +3,7 @@ package org.recap.controller;
 import org.junit.Assert;
 import org.junit.jupiter.api.BeforeEach;
 import org.recap.BaseTestCase;
+import org.recap.BaseTestCaseUT;
 import org.recap.ScsbCommonConstants;
 import org.recap.spring.SwaggerAPIProvider;
 import org.springframework.beans.factory.annotation.Autowired;

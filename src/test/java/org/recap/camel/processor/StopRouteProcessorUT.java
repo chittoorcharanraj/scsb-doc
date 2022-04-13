@@ -13,7 +13,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 
 import static org.junit.Assert.assertTrue;
 
-public class StopRouteProcessorUT extends BaseTestCaseUT4 {
+public class StopRouteProcessorUT extends BaseTestCaseUT {
 
     @InjectMocks
     StopRouteProcessor stopRouteProcessor;

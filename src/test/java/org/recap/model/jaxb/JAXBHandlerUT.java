@@ -1,6 +1,7 @@
 package org.recap.model.jaxb;
 
-import org.junit.jupiter.api.Test;
+
+import org.junit.Test;
 import org.mockito.Mock;
 import org.recap.BaseTestCaseUT;
 

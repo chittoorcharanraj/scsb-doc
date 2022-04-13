@@ -16,6 +16,7 @@ import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.modules.junit4.PowerMockRunnerDelegate;
+import org.recap.BaseTestCase;
 import org.recap.BaseTestCaseUT;
 import org.recap.BaseTestCaseUT4;
 import org.recap.PropertyKeyConstants;
@@ -40,7 +41,7 @@ import static org.junit.Assert.assertNull;
 @PrepareForTest({SolrTemplate.class, SolrClient.class})
 @PowerMockRunnerDelegate(SpringJUnit4ClassRunner.class)
 @PowerMockIgnore({"com.sun.org.apache.xerces.*", "javax.xml.*", "org.xml.*"})
-public class SolrAdminAT extends BaseTestCaseUT4 {
+public class SolrAdminAT extends BaseTestCaseUT {
 
     @InjectMocks
     SolrAdmin solrAdmin;

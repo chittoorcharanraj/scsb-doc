@@ -33,7 +33,6 @@ apply plugin: 'jacoco'
 //added to accept systemproperties while executing gradlew test cmd
 test {
 	systemProperties = System.properties
-	useJUnitPlatform()
 }
 
 jar {

@@ -41,7 +41,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({SolrTemplate.class, SolrClient.class})
-public class SaveMatchingBibsCallableUT extends BaseTestCaseUT4 {
+public class SaveMatchingBibsCallableUT extends BaseTestCaseUT {
 
     @Mock
     MatchingMatchPointsDetailsRepository matchingMatchPointsDetailsRepository;

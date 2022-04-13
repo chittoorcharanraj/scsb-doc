@@ -50,7 +50,7 @@ import static org.junit.Assert.assertNotNull;
  * Created by Anithav on 30/06/20.
  */
 
-public class TransferServiceUT extends BaseTestCaseUT4 {
+public class TransferServiceUT extends BaseTestCaseUT {
 
 
     @InjectMocks

@@ -1,8 +1,9 @@
 package org.recap.model.deaccession;
 
-import org.junit.jupiter.api.Test;
+
+import org.junit.Test;
 import org.recap.BaseTestCaseUT;
-import org.recap.model.deaccession.DeAccessionSolrRequest;
+
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 

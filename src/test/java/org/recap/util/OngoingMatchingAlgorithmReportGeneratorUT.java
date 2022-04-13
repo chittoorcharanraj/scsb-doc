@@ -1,10 +1,10 @@
 package org.recap.util;
 
-import org.junit.jupiter.api.Test;
+
+import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.recap.BaseTestCaseUT;
 import org.recap.model.jpa.MatchingAlgorithmReportDataEntity;
-import org.recap.model.jpa.ReportDataEntity;
 import org.recap.model.matchingreports.TitleExceptionReport;
 
 import java.util.ArrayList;

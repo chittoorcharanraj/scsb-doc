@@ -1,12 +1,14 @@
 package org.recap.model.jpa;
 
-import org.junit.jupiter.api.Test;
+
+import org.junit.Test;
+import org.recap.BaseTestCaseUT;
 
 import java.util.Date;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class BibliographicEntityUT {
+public class BibliographicEntityUT extends BaseTestCaseUT {
 
     @Test
     public void bibliographicEntity()throws Exception{

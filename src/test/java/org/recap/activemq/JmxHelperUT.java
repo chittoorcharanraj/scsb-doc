@@ -2,7 +2,8 @@ package org.recap.activemq;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.activemq.broker.jmx.DestinationViewMBean;
-import org.junit.jupiter.api.Test;
+import org.junit.Test;
+import org.recap.BaseTestCaseUT;
 import org.recap.camel.activemq.JmxHelper;
 
 import javax.management.MBeanServerConnection;
@@ -10,7 +11,7 @@ import javax.management.MBeanServerConnection;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
 @Slf4j
-public class JmxHelperUT {
+public class JmxHelperUT extends BaseTestCaseUT {
 
 
     @Test

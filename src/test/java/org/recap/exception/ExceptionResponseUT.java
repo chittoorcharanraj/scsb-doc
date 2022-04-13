@@ -1,12 +1,11 @@
 package org.recap.exception;
 
-import org.junit.jupiter.api.Test;
+
+import org.junit.Test;
 import org.recap.BaseTestCaseUT;
 
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+
 
 import static org.junit.Assert.assertNotNull;
 

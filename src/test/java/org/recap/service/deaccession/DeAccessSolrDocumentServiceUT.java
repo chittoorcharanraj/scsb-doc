@@ -39,7 +39,7 @@ import static org.junit.Assert.assertNotNull;
 /**
  * Created by angelind on 10/11/16.
  */
-public class DeAccessSolrDocumentServiceUT extends BaseTestCaseUT4 {
+public class DeAccessSolrDocumentServiceUT extends BaseTestCaseUT {
 
     @Mock
     DeAccessSolrDocumentService deAccessSolrDocumentService;

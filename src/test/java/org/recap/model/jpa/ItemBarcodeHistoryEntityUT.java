@@ -2,7 +2,6 @@ package org.recap.model.jpa;
 
 import org.junit.jupiter.api.Test;
 import org.recap.BaseTestCaseUT;
-
 import java.sql.Timestamp;
 import java.util.Date;
 

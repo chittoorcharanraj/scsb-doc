@@ -1,8 +1,8 @@
 package org.recap.controller;
 
 import org.apache.solr.client.solrj.SolrServerException;
+import org.junit.Test;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -21,8 +21,6 @@ import org.recap.repository.solr.main.HoldingsSolrCrudRepository;
 import org.recap.repository.solr.main.ItemCrudRepository;
 import org.recap.service.accession.SolrIndexService;
 import org.recap.util.CommonUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 

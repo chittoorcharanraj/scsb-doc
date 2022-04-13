@@ -6,7 +6,7 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.recap.BaseTestCaseUT4;
+import org.recap.BaseTestCaseUT;
 import org.recap.model.reports.TitleMatchedReport;
 import org.recap.util.CsvUtil;
 import org.recap.util.ReportsServiceUtil;
@@ -20,7 +20,7 @@ import static org.junit.Assert.assertNotNull;
 /**
  * @author dinakar on 30/11/21
  */
-public class TitleMatchReportExportServiceExceptionUT extends BaseTestCaseUT4 {
+public class TitleMatchReportExportServiceExceptionUT extends BaseTestCaseUT {
 
     @Mock
     TitleMatchReportExportService titleMatchReportExportService;

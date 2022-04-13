@@ -1,7 +1,7 @@
 package org.recap.model.camel;
 
-import org.junit.Ignore;
-import org.junit.jupiter.api.Test;
+
+import org.junit.Test;
 import org.recap.BaseTestCaseUT;
 
 import java.sql.Timestamp;

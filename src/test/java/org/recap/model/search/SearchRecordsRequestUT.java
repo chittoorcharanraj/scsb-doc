@@ -1,6 +1,9 @@
 package org.recap.model.search;
 
-import org.junit.jupiter.api.Test;
+
+
+import org.junit.Test;
+import org.recap.BaseTestCaseUT;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * Created by premkb on 2/8/16.
  */
-public class SearchRecordsRequestUT {
+public class SearchRecordsRequestUT extends BaseTestCaseUT {
 
     @Test
     public void testSearchRecordsRequest()throws Exception{

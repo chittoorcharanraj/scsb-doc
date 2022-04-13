@@ -1,8 +1,8 @@
 package org.recap.executors;
 
 import org.apache.camel.ProducerTemplate;
+import org.junit.Test;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
