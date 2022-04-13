@@ -325,7 +325,7 @@ public interface BibliographicDetailsRepository extends BaseRepository<Bibliogra
     @Transactional
     int updateAnamolyFlagSecondForBibIds(@Param("bibliographicIds") List<Integer> bibIds);
 
-    @Query(value = "select * from bibliographic_t where BIBLIOGRAPHIC_ID in ( select BIBLIOGRAPHIC_ID from bibliographic_item_t where item_id in ( select item_id from item_t where OWNING_INST_ID =?1 and COLLECTION_GROUP_ID =?1 ) ) and OWNING_INST_ID =?2", nativeQuery = true)
+    @Query(value = "select * from bibliographic_t where BIBLIOGRAPHIC_ID in ( select BIBLIOGRAPHIC_ID from bibliographic_item_t where item_id in ( select item_id from item_t where OWNING_INST_ID =?1 and COLLECTION_GROUP_ID =?2 ) ) and OWNING_INST_ID =?1", nativeQuery = true)
     Page<BibliographicEntity> findByOwningInstitutionIdAndCGD(Pageable pageable, Integer owningInstitutionId, Integer cgdId);
 
 }

@@ -299,19 +299,31 @@ function showBibIdList(){
     $("#BibIdListView").show();
     $("#BibIdRangeView").hide();
     $("#DateRangeView").hide();
+    $("#CGDView").hide();
 }
 
 function showBibIdRange(){
     $("#BibIdListView").hide();
     $("#BibIdRangeView").show();
     $("#DateRangeView").hide();
+    $("#CGDView").hide();
 }
 
 function showBibIdDateRange(){
     $("#BibIdListView").hide();
     $("#BibIdRangeView").hide();
     $("#DateRangeView").show();
+    $("#CGDView").hide();
 }
+
+function showCGD(){
+    populateInstitutionForFullIndexCgd();
+    $("#BibIdListView").hide();
+    $("#BibIdRangeView").hide();
+    $("#DateRangeView").hide();
+    $("#CGDView").show();
+}
+
 
 function showRequest() {
     if ($('#RequestStatus').is(':checked')){
@@ -346,7 +358,7 @@ function populateInstitutionForFullIndex() {
 }
 function populateInstitutionForFullIndexCgd() {
        getInstitutions('institutionCodeCgd');
-       getCgds('cgd');
+       getCgds('cgd_id');
 }
 function populateInstitutionForFullIndexCgdo() {
        getInstitutions('institutionCodeCgdo');
