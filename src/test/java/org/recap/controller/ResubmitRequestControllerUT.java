@@ -1,6 +1,7 @@
 package org.recap.controller;
 
-import org.junit.jupiter.api.Test;
+
+import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.recap.BaseTestCaseUT;
 import org.recap.PropertyKeyConstants;

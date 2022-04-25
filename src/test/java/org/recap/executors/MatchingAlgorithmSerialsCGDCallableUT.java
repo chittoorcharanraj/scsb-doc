@@ -6,6 +6,7 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.recap.BaseTestCaseUT;
 import org.recap.BaseTestCaseUT4;
 import org.recap.ScsbCommonConstants;
 import org.recap.matchingalgorithm.MatchingAlgorithmCGDProcessor;
@@ -30,7 +31,7 @@ import static org.junit.Assert.assertNotNull;
  * Created by hemalathas on 5/7/17.
  */
 
-public class MatchingAlgorithmSerialsCGDCallableUT extends BaseTestCaseUT4 {
+public class MatchingAlgorithmSerialsCGDCallableUT extends BaseTestCaseUT {
 
     @Mock
     private MatchingAlgorithmReportDataDetailsRepository reportDataDetailsRepository;
@@ -82,7 +83,7 @@ public class MatchingAlgorithmSerialsCGDCallableUT extends BaseTestCaseUT4 {
     public void testMatchingAlgorithmSerialsCGDCallable() throws Exception {
         Map institutionMap = new HashMap();
         MatchingAlgorithmSerialsCGDCallable matchingAlgorithmSerialsCGDCallable = new MatchingAlgorithmSerialsCGDCallable(reportDataDetailsRepository,mockedBibliographicDetailsRepository,pageNum,batchSize,producerTemplate,
-                collectionGroupMap,institutionMap,itemChangeLogDetailsRepository,collectionGroupDetailsRepository,itemDetailsRepository,institutionDetailsRepository,Arrays.asList("NYPL"));
+                collectionGroupMap,institutionMap,itemChangeLogDetailsRepository,collectionGroupDetailsRepository,itemDetailsRepository,institutionDetailsRepository,Arrays.asList("NYPL"),Arrays.asList("NYPL"));
         Object object = matchingAlgorithmSerialsCGDCallable.call();
         assertEquals(1,collectionGroupId);
         BibliographicEntity afterUpdate = mockedBibliographicDetailsRepository.findById(bibliographicEntity.getId()).orElse(null);

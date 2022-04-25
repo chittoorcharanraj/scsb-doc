@@ -1,12 +1,14 @@
 package org.recap.model.matchingreports;
 
-import org.junit.jupiter.api.Test;
 
-import java.sql.Timestamp;
+
+import org.junit.Test;
+import org.recap.BaseTestCaseUT;
+
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class OngoingMatchingCGDReportUT extends Exception{
+public class OngoingMatchingCGDReportUT extends BaseTestCaseUT {
 
     @Test
     public  void OngoingMatchingCGDReport() throws  Exception{

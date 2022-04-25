@@ -7,7 +7,6 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.recap.BaseTestCaseUT;
-import org.recap.BaseTestCaseUT4;
 import org.recap.ScsbCommonConstants;
 import org.recap.matchingalgorithm.MatchingAlgorithmCGDProcessor;
 import org.recap.matchingalgorithm.MatchingCounter;
@@ -30,7 +29,7 @@ import static org.junit.Assert.assertNotNull;
 /**
  * Created by hemalathas on 5/7/17.
  */
-public class MatchingAlgorithmMVMsCGDCallableUT extends BaseTestCaseUT4 {
+public class MatchingAlgorithmMVMsCGDCallableUT extends BaseTestCaseUT {
 
     @Mock
     private MatchingAlgorithmReportDataDetailsRepository reportDataDetailsRepository;
@@ -91,7 +90,7 @@ public class MatchingAlgorithmMVMsCGDCallableUT extends BaseTestCaseUT4 {
     public void testMatchingAlgorithmMVMsCGDCallable() throws Exception {
         Map institutionMap = new HashMap();
         MatchingAlgorithmMVMsCGDCallable matchingAlgorithmMVMsCGDCallable = new MatchingAlgorithmMVMsCGDCallable(reportDataDetailsRepository, mockedBibliographicDetailsRepository,pageNum,batchSize,producerTemplate,
-                collectionGroupMap,institutionMap,itemChangeLogDetailsRepository,collectionGroupDetailsRepository,itemDetailsRepository,institutionDetailsRepository,Arrays.asList("NYPL"));
+                collectionGroupMap,institutionMap,itemChangeLogDetailsRepository,collectionGroupDetailsRepository,itemDetailsRepository,institutionDetailsRepository,Arrays.asList("NYPL"),Arrays.asList("NYPL"));
         Object object = matchingAlgorithmMVMsCGDCallable.call();
         assertEquals(1,collectionGroupId);
         BibliographicEntity afterUpdate = mockedBibliographicDetailsRepository.findById(bibliographicEntity.getId()).orElse(null);

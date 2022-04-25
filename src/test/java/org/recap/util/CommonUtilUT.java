@@ -44,7 +44,7 @@ import static org.junit.Assert.assertNotNull;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({SolrTemplate.class,SolrClient.class})
-public class CommonUtilUT extends BaseTestCaseUT4 {
+public class CommonUtilUT extends BaseTestCaseUT {
 
     @InjectMocks
     CommonUtil commonUtil;

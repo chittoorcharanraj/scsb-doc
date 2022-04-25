@@ -1,6 +1,7 @@
 package org.recap.model.search;
 
-import org.junit.jupiter.api.Test;
+import org.junit.Test;
+import org.recap.BaseTestCaseUT;
 import org.recap.ScsbCommonConstants;
 import org.recap.model.solr.BibItem;
 import org.recap.model.solr.Item;
@@ -15,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 /**
  * Created by premkb on 2/8/16.
  */
-public class SearchResultRowUT {
+public class SearchResultRowUT extends BaseTestCaseUT {
 
     @Test
     public void testSearchResultRow()throws Exception{

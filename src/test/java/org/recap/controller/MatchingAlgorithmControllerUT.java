@@ -7,6 +7,7 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.recap.BaseTestCaseUT;
 import org.recap.BaseTestCaseUT4;
 import org.recap.ScsbCommonConstants;
 import org.recap.ScsbConstants;
@@ -49,7 +50,7 @@ import static org.recap.ScsbConstants.MATCHING_COUNTER_UPDATED_OPEN;
  * Created by hemalathas on 1/8/16.
  */
 @Slf4j
-public class MatchingAlgorithmControllerUT extends BaseTestCaseUT4 {
+public class MatchingAlgorithmControllerUT extends BaseTestCaseUT {
 
 
     @Mock

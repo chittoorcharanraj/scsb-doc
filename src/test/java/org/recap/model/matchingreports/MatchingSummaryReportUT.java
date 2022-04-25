@@ -1,6 +1,7 @@
 package org.recap.model.matchingreports;
 
-import org.junit.jupiter.api.Test;
+
+import org.junit.Test;
 import org.recap.BaseTestCaseUT;
 
 import static org.junit.jupiter.api.Assertions.assertNotEquals;

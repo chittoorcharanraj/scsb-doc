@@ -4,6 +4,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
+import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
 import org.apache.camel.ProducerTemplate;
@@ -80,6 +81,31 @@ public class EmailServiceUT extends BaseTestCaseUT {
             }
 
             @Override
+            public Object getProperty(ExchangePropertyKey key) {
+                return null;
+            }
+
+            @Override
+            public <T> T getProperty(ExchangePropertyKey key, Class<T> type) {
+                return null;
+            }
+
+            @Override
+            public <T> T getProperty(ExchangePropertyKey key, Object defaultValue, Class<T> type) {
+                return null;
+            }
+
+            @Override
+            public void setProperty(ExchangePropertyKey key, Object value) {
+
+            }
+
+            @Override
+            public Object removeProperty(ExchangePropertyKey key) {
+                return null;
+            }
+
+            @Override
             public Object getProperty(String name) {
                 return null;
             }
@@ -125,6 +151,11 @@ public class EmailServiceUT extends BaseTestCaseUT {
             }
 
             @Override
+            public Map<String, Object> getAllProperties() {
+                return null;
+            }
+
+            @Override
             public boolean hasProperties() {
                 return false;
             }
@@ -133,13 +164,28 @@ public class EmailServiceUT extends BaseTestCaseUT {
             public Message getIn() {
                 return new Message() {
                     @Override
+                    public void reset() {
+
+                    }
+
+                    @Override
                     public String getMessageId() {
                         return null;
                     }
 
                     @Override
+                    public long getMessageTimestamp() {
+                        return 0;
+                    }
+
+                    @Override
                     public void setMessageId(String messageId) {
 
+                    }
+
+                    @Override
+                    public boolean hasMessageId() {
+                        return false;
                     }
 
                     @Override

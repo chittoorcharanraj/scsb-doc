@@ -1,9 +1,11 @@
 package org.recap.model.search;
 
-import org.junit.jupiter.api.Test;
+
+import org.junit.Test;
 import org.marc4j.marc.DataField;
 import org.marc4j.marc.Record;
 import org.marc4j.marc.Subfield;
+import org.recap.BaseTestCaseUT;
 import org.recap.util.BibJSONUtil;
 import org.springframework.util.CollectionUtils;
 
@@ -20,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * Created by premkb on 2/8/16.
  */
-public class BibDataFieldUT {
+public class BibDataFieldUT extends BaseTestCaseUT {
 
     private String bibContent = "<collection xmlns=\"http://www.loc.gov/MARC21/slim\">\n"+
             "                <record>\n"+

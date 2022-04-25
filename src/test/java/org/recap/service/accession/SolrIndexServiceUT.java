@@ -31,6 +31,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -72,13 +73,13 @@ public class SolrIndexServiceUT extends BaseTestCaseUT4 {
         List<String> owningInstBibIdList=new ArrayList<>();
         owningInstBibIdList.add("1");
         List<BibliographicEntity> bibliographicEntityList=new ArrayList<>();
-        bibliographicEntityList.add(getBibliographicEntity());
+      ///  bibliographicEntityList.add(getBibliographicEntity());
         Mockito.when(bibliographicDetailsRepository.findByOwningInstitutionBibIdInAndOwningInstitutionId(Mockito.anyList(),Mockito.anyInt())).thenReturn(bibliographicEntityList);
         SolrTemplate mocksolrTemplate1 = PowerMockito.mock(SolrTemplate.class);
         SolrInputDocument solrInputDocument=new SolrInputDocument();
         Mockito.when(mocksolrTemplate1.convertBeanToSolrInputDocument(Mockito.any())).thenReturn(solrInputDocument);
         ReflectionTestUtils.setField(solrIndexService,"solrTemplate",mocksolrTemplate1);
-        Mockito.when(bibliographicDetailsRepository.findById(Mockito.anyInt())).thenReturn(Optional.ofNullable(getBibliographicEntity()));
+//        Mockito.when(bibliographicDetailsRepository.findById(Mockito.anyInt())).thenReturn(Optional.ofNullable(getBibliographicEntity()));
         solrIndexService.getLogger();
         solrIndexService.indexByOwnInstBibId(owningInstBibIdList,1);
         assertNotNull(owningInstBibIdList);
@@ -154,7 +155,7 @@ public class SolrIndexServiceUT extends BaseTestCaseUT4 {
     }
 
     private File getBibContentFile() throws URISyntaxException {
-        URL resource = getClass().getResource("PUL-BibContent.xml");
+        URL resource = this.getClass().getResource("PUL-BibContent.xml");
         return new File(resource.toURI());
     }
 

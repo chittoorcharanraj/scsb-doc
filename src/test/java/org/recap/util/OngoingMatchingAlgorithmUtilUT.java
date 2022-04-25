@@ -20,6 +20,7 @@ import org.mockito.Spy;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
+import org.recap.BaseTestCaseUT;
 import org.recap.BaseTestCaseUT4;
 import org.recap.ScsbCommonConstants;
 import org.recap.ScsbConstants;
@@ -51,7 +52,7 @@ import static org.mockito.ArgumentMatchers.*;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({SolrTemplate.class,SolrClient.class})
-public class OngoingMatchingAlgorithmUtilUT extends BaseTestCaseUT4 {
+public class OngoingMatchingAlgorithmUtilUT extends BaseTestCaseUT {
 
 
     @InjectMocks
@@ -1344,7 +1345,7 @@ public class OngoingMatchingAlgorithmUtilUT extends BaseTestCaseUT4 {
     public void getFromDateFromRequest() throws Exception {
         String pattern = "yyyy-MM-dd";
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
-        String date = simpleDateFormat.format(new Date());
+//        String date = simpleDateFormat.format(new Date());
         SolrIndexRequest solrIndexRequest = new SolrIndexRequest();
         solrIndexRequest.setBibIds("Test");
         solrIndexRequest.setMatchBy("BibIdList");

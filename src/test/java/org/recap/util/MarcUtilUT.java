@@ -43,7 +43,7 @@ import static org.junit.Assert.assertTrue;
  * Created by pvsubrah on 6/15/16.
  */
 
-public class MarcUtilUT extends BaseTestCaseUT4 {
+public class MarcUtilUT extends BaseTestCaseUT {
 
     @InjectMocks
     MarcUtil marcUtil;

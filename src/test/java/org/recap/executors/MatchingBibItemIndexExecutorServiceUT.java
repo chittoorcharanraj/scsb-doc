@@ -21,7 +21,6 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.modules.junit4.PowerMockRunnerDelegate;
 import org.recap.BaseTestCaseUT;
-import org.recap.BaseTestCaseUT4;
 import org.recap.PropertyKeyConstants;
 import org.recap.ScsbConstants;
 import org.recap.model.jpa.BibliographicEntity;
@@ -59,7 +58,7 @@ import static org.junit.Assert.assertTrue;
 @PrepareForTest(SolrTemplate.class)
 @PowerMockRunnerDelegate(SpringJUnit4ClassRunner.class)
 @PowerMockIgnore({"com.sun.org.apache.xerces.*", "javax.xml.*", "org.xml.*"})
-public class MatchingBibItemIndexExecutorServiceUT extends BaseTestCaseUT4 {
+public class MatchingBibItemIndexExecutorServiceUT extends BaseTestCaseUT {
 
     @InjectMocks
     MatchingBibItemIndexExecutorService matchingBibItemIndexExecutorService;

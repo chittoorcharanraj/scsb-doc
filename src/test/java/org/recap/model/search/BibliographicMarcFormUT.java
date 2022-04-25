@@ -1,7 +1,9 @@
 package org.recap.model.search;
 
-import org.junit.jupiter.api.Test;
+
+import org.junit.Test;
 import org.marc4j.marc.Record;
+import org.recap.BaseTestCaseUT;
 import org.recap.util.BibJSONUtil;
 
 import java.util.List;
@@ -13,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
  * Created by premkb on 2/8/16.
  */
 
-public class BibliographicMarcFormUT {
+public class BibliographicMarcFormUT extends BaseTestCaseUT {
 
     private String bibContent = "<collection xmlns=\"http://www.loc.gov/MARC21/slim\">\n"+
             "                <record>\n"+

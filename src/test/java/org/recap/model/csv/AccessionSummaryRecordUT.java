@@ -1,10 +1,13 @@
 package org.recap.model.csv;
 
-import org.junit.jupiter.api.Test;
+
+
+import org.junit.Test;
+import org.recap.BaseTestCaseUT;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class AccessionSummaryRecordUT extends  Exception
+public class AccessionSummaryRecordUT extends BaseTestCaseUT
 {
 @Test
 public  void AccessionSummaryRecord()

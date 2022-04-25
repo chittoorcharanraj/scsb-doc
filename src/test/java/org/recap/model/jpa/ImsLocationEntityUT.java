@@ -1,10 +1,10 @@
 package org.recap.model.jpa;
 
-import org.junit.jupiter.api.Test;
-import org.recap.BaseTestCaseUT;
 
+import org.junit.Test;
+import org.recap.BaseTestCaseUT;
 import java.sql.Timestamp;
-import java.util.Date;
+
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 

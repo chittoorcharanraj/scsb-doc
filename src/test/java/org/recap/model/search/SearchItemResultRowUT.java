@@ -1,6 +1,8 @@
 package org.recap.model.search;
 
-import org.junit.jupiter.api.Test;
+
+import org.junit.Test;
+import org.recap.BaseTestCaseUT;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -12,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 /**
  * Created by premkb on 2/8/16.
  */
-public class SearchItemResultRowUT {
+public class SearchItemResultRowUT extends BaseTestCaseUT {
 
     @Test
     public void testSearchItemResultRow(){

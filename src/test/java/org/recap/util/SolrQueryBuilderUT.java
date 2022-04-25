@@ -1,8 +1,7 @@
 package org.recap.util;
 
-import com.amazonaws.transform.SimpleTypeJsonUnmarshallers;
+
 import org.apache.solr.client.solrj.SolrQuery;
-import org.apache.xmlbeans.impl.xb.xsdschema.Public;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;

@@ -1,7 +1,10 @@
 package org.recap.matchingalgorithm;
 
-import org.junit.jupiter.api.Test;
+
+import org.junit.Test;
 import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.recap.BaseTestCaseUT;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.*;
@@ -11,9 +14,9 @@ import static org.recap.ScsbConstants.MATCHING_COUNTER_SHARED;
 import static org.recap.ScsbConstants.MATCHING_COUNTER_UPDATED_OPEN;
 import static org.recap.ScsbConstants.MATCHING_COUNTER_UPDATED_SHARED;
 
-public class MatchingCounterUT {
+public class MatchingCounterUT extends BaseTestCaseUT {
 
-    @InjectMocks
+    @Mock
     MatchingCounter matchingCounter;
 
     @Test
