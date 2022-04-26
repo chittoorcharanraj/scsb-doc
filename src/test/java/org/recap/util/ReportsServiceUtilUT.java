@@ -109,7 +109,7 @@ public class ReportsServiceUtilUT extends BaseTestCaseUT {
 
     @Before
     public void setup()throws Exception{
-        MockitoAnnotations.initMocks(this);
+        MockitoAnnotations.openMocks(this);
         Mockito.when(dateUtil.getFromDateAccession(any())).thenCallRealMethod();
         Mockito.when(dateUtil.getToDateAccession(any())).thenCallRealMethod();
     }

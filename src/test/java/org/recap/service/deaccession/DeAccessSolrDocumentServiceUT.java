@@ -71,7 +71,7 @@ public class DeAccessSolrDocumentServiceUT extends BaseTestCaseUT {
 
     @Before
     public void setUp() {
-        MockitoAnnotations.initMocks(this);
+        MockitoAnnotations.openMocks(this);
     }
 
     public DeAccessSolrDocumentService getDeAccessSolrDocumentService() {

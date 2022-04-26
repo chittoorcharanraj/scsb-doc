@@ -102,7 +102,7 @@ public class OngoingMatchingReportsServiceUT extends BaseTestCaseUT4{
 
     @Before
     public void setUp() throws Exception {
-        MockitoAnnotations.initMocks(this);
+        MockitoAnnotations.openMocks(this);
         Map<String,Integer> cgdCounterMap=new HashMap<>();
         cgdCounterMap.put(MATCHING_COUNTER_SHARED,1);
         cgdCounterMap.put(MATCHING_COUNTER_OPEN,1);

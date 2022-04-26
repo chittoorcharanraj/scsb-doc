@@ -67,7 +67,7 @@ public class MatchingAlgorithmSerialsCGDCallableUT extends BaseTestCaseUT {
 
     @Before
     public void setUp() throws Exception {
-        MockitoAnnotations.initMocks(this);
+        MockitoAnnotations.openMocks(this);
         from = pageNum * Long.valueOf(batchSize);
         ReflectionTestUtils.setField(matchingCounter,"scsbInstitutions",scsbInstitutions);
         MatchingCounter.reset();

@@ -33,7 +33,7 @@ public class TitleMatchReportExportServiceExceptionUT extends BaseTestCaseUT {
 
     @Before
     public void setUp() {
-        MockitoAnnotations.initMocks(this);
+        MockitoAnnotations.openMocks(this);
     }
 
     public CsvUtil getCsvUtil() {

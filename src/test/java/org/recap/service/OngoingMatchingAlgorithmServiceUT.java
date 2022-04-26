@@ -74,6 +74,7 @@ public class OngoingMatchingAlgorithmServiceUT extends BaseTestCaseUT {
         ItemEntity itemEntity1 = getItemEntity(1, "ItemId1", "PA", "12345", "PUL");
         ItemEntity itemEntity2 = getItemEntity(2, "ItemId2", "CU", "67890", "CUL");
         ItemEntity itemEntity3 = getItemEntity(3, "ItemId3", "NA", "54321", "NYPL");
+        ItemEntity itemEntity4 = getItemEntity(4, "ItemId3", "FL", "34567", "HL");
         when(itemChangeLogDetailsRepository.findByUpdatedDateAndOperationType(any(), anyString())).thenReturn(itemChangeLogEntityList);
         when(itemDetailsRepository.findById(anyInt())).thenReturn(Optional.of(itemEntity1),Optional.of(itemEntity2),Optional.of(itemEntity3));
         when(camelContext.getRouteController()).thenReturn(mockedRouteController);
@@ -86,9 +87,9 @@ public class OngoingMatchingAlgorithmServiceUT extends BaseTestCaseUT {
     @DisplayName("Test cgd round trip report for Ongoing Matching Algorithm")
     public void testCGDRoundTripReport(){
         String result = ongoingMatchingAlgorithmService.generateCGDRoundTripReport();
-//        Assertions.assertEquals("CGD Round-Trip report generated successfully",result);
+        Assertions.assertEquals("CGD Round-Trip report generated successfully",result);
         verify(itemChangeLogDetailsRepository,times(1)).findByUpdatedDateAndOperationType(any(), anyString());
-//        verify(itemDetailsRepository,times(3)).findById(anyInt());
+        verify(itemDetailsRepository,times(3)).findById(anyInt());
         verify(producerTemplate,times(3)).sendBodyAndHeaders(anyString(), any(),Mockito.anyMap());
     }
 
@@ -106,7 +107,7 @@ public class OngoingMatchingAlgorithmServiceUT extends BaseTestCaseUT {
     @Ignore
     @DisplayName("Test NoSuchElementException in CGD Round Trip")
     public void testNoSuchElementFoundException(){
-//        when(itemDetailsRepository.findById(anyInt())).thenThrow(new NoSuchElementException());
+        when(itemDetailsRepository.findById(anyInt())).thenThrow(new NoSuchElementException());
         CGDRoundTripReportException cgdRoundTripReportException = Assertions.assertThrows(CGDRoundTripReportException.class, () -> ongoingMatchingAlgorithmService.generateCGDRoundTripReport());
         Assertions.assertEquals(ScsbConstants.CGD_ROUND_TRIP_EXCEPTION_MESSAGE,cgdRoundTripReportException.getMessage());
     }
@@ -124,7 +125,7 @@ public class OngoingMatchingAlgorithmServiceUT extends BaseTestCaseUT {
     @Ignore
     @DisplayName("Test CamelExecutionException in CGD Round Trip")
    public void testForCamelExecutionException(){
-//        doThrow(CamelExecutionException.class).when(producerTemplate).sendBodyAndHeaders(anyString(), any(),Mockito.anyMap());
+        doThrow(CamelExecutionException.class).when(producerTemplate).sendBodyAndHeaders(anyString(), any(),Mockito.anyMap());
         CGDRoundTripReportException cgdRoundTripReportException = Assertions.assertThrows(CGDRoundTripReportException.class, () -> ongoingMatchingAlgorithmService.generateCGDRoundTripReport());
         Assertions.assertEquals("Exception occurred in camel executing while trying to generate CGD Round Trip report",cgdRoundTripReportException.getMessage());
     }

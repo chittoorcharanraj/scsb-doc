@@ -61,7 +61,7 @@ public class SolrAdminAT extends BaseTestCaseUT {
 
     @Before
     public void setUp() throws Exception {
-        MockitoAnnotations.initMocks(this);
+        MockitoAnnotations.openMocks(this);
         ReflectionTestUtils.setField(solrAdmin,"solrHome",solrHome);
         ReflectionTestUtils.setField(solrAdmin,"solrParentCore","recap");
 

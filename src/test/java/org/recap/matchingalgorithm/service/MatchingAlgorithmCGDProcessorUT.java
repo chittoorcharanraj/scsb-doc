@@ -2,7 +2,7 @@ package org.recap.matchingalgorithm.service;
 
 import org.apache.camel.ProducerTemplate;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -56,7 +56,7 @@ public class MatchingAlgorithmCGDProcessorUT extends BaseTestCaseUT {
 
     @BeforeEach
     public void setup() throws Exception {
-        MockitoAnnotations.initMocks(this);
+        MockitoAnnotations.openMocks(this);
         Map<String, Integer> cgdCounterMap = new HashMap<>();
         cgdCounterMap.put(MATCHING_COUNTER_SHARED, 1);
         cgdCounterMap.put(MATCHING_COUNTER_OPEN, 1);

@@ -84,7 +84,7 @@ public class SolrIndexControllerUT extends BaseTestCaseUT {
 
     @BeforeEach
     public void setUp()throws Exception {
-        MockitoAnnotations.initMocks(this);
+        MockitoAnnotations.openMocks(this);
     }
 
     @Test

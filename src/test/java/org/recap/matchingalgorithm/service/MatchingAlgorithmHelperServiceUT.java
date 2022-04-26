@@ -1,8 +1,9 @@
 package org.recap.matchingalgorithm.service;
 
 import org.apache.camel.ProducerTemplate;
+import org.junit.Before;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -116,7 +117,7 @@ public class MatchingAlgorithmHelperServiceUT extends BaseTestCaseUT {
 
     @BeforeEach
     public void setup() throws Exception {
-        MockitoAnnotations.initMocks(this);
+        MockitoAnnotations.openMocks(this);
         ReflectionTestUtils.setField(matchingAlgorithmHelperService,"isIndexGrouping",true);
     }
 
@@ -161,6 +162,7 @@ public class MatchingAlgorithmHelperServiceUT extends BaseTestCaseUT {
         Mockito.when(matchingAlgorithmReportDataEntity.getHeaderValue()).thenReturn("1");
         Mockito.when(matchingAlgorithmReportDataDetailsRepository.getCountOfRecordNumForMatchingMVMs(ScsbCommonConstants.BIB_ID)).thenReturn(1l);
         Mockito.when(matchingAlgorithmReportDataDetailsRepository.getReportDataEntityForMatchingMVMs(Arrays.asList(ScsbCommonConstants.BIB_ID, ScsbConstants.MATCH_SCORE),0,1)).thenReturn(reportDataEntities);
+        ReflectionTestUtils.setField(matchingAlgorithmHelperService,"isIndexGrouping",Boolean.TRUE);
         matchingAlgorithmHelperService.groupBibsForMVMs(1);
     }
 
@@ -175,6 +177,7 @@ public class MatchingAlgorithmHelperServiceUT extends BaseTestCaseUT {
         Mockito.when(matchingAlgorithmReportDataEntity.getHeaderValue()).thenReturn("1");
         Mockito.when(matchingAlgorithmReportDataDetailsRepository.getCountOfRecordNumForMatchingSerials(ScsbCommonConstants.BIB_ID)).thenReturn(1l);
         Mockito.when(matchingAlgorithmReportDataDetailsRepository.getReportDataEntityForMatchingSerials(Arrays.asList(ScsbCommonConstants.BIB_ID, ScsbConstants.MATCH_SCORE),0,1)).thenReturn(reportDataEntities);
+        ReflectionTestUtils.setField(matchingAlgorithmHelperService,"isIndexGrouping",Boolean.TRUE);
         matchingAlgorithmHelperService.groupForSerialBibs(1);
     }
 

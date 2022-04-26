@@ -89,7 +89,7 @@ public class TransferServiceUT extends BaseTestCaseUT {
 
     @Before
     public void setUp(){
-        MockitoAnnotations.initMocks(this);
+        MockitoAnnotations.openMocks(this);
         ReflectionTestUtils.setField(mockTransferService, "nonHoldingIdInstitutionForTransferApi", nonHoldingIdInstitutionForTransferApi);
         ReflectionTestUtils.setField(helperUtil,"producerTemplate",producerTemplate);
     }

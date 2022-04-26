@@ -41,7 +41,7 @@ public class OngoingMatchingAlgorithmJobRestControllerUT extends BaseTestCaseUT 
 
     @Before
     public void setUp() throws Exception {
-        MockitoAnnotations.initMocks(this);
+        MockitoAnnotations.openMocks(this);
         ReflectionTestUtils.setField(ongoingMatchingAlgorithmJobRestController,"batchSize","1000");
         Mockito.when(dateUtil.getFromDate(Mockito.any())).thenCallRealMethod();
         Mockito.when(dateUtil.getToDate(Mockito.any())).thenCallRealMethod();

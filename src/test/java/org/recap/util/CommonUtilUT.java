@@ -63,7 +63,7 @@ public class CommonUtilUT extends BaseTestCaseUT {
 
     @Before
     public  void setup(){
-        MockitoAnnotations.initMocks(this);
+        MockitoAnnotations.openMocks(this);
     }
 
 

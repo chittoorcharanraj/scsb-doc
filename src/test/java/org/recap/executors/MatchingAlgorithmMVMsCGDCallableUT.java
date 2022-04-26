@@ -65,7 +65,7 @@ public class MatchingAlgorithmMVMsCGDCallableUT extends BaseTestCaseUT {
 
     @Before
     public void setUp() throws Exception {
-        MockitoAnnotations.initMocks(this);
+        MockitoAnnotations.openMocks(this);
         from = pageNum * Long.valueOf(batchSize);
        // MatchingCounter.reset();
         List<String> scsbInstitutions=Arrays.asList("HTC");
