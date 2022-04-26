@@ -1,6 +1,6 @@
 package org.recap.util;
 
-import org.junit.jupiter.api.Test;
+import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.recap.BaseTestCaseUT;
 import org.recap.ScsbCommonConstants;

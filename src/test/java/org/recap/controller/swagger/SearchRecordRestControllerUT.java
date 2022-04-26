@@ -38,7 +38,7 @@ import static org.junit.Assert.assertNull;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(SearchRecordsUtil.class)
-public class SearchRecordRestControllerUT extends BaseTestCaseUT {
+public class SearchRecordRestControllerUT extends BaseTestCaseUT4 {
 
 
     @InjectMocks

@@ -52,7 +52,7 @@ public class MatchingAlgorithmUT extends BaseTestCaseUT {
 
     @BeforeEach
     public void setUp() {
-        MockitoAnnotations.initMocks(this);
+        MockitoAnnotations.openMocks(this);
     }
 
     @Test

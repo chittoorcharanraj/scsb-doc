@@ -98,7 +98,7 @@ public class ExecutorAT extends BaseTestCaseUT {
 
     @Before
     public void setup()throws Exception{
-        MockitoAnnotations.initMocks(this);
+        MockitoAnnotations.openMocks(this);
         ReflectionTestUtils.setField(bibItemIndexExecutorService,"solrServerProtocol",solrServerProtocol);
         ReflectionTestUtils.setField(bibItemIndexExecutorService,"solrUrl",solrUrl);
     }

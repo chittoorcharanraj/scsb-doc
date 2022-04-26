@@ -53,7 +53,7 @@ public class MatchingAlgorithmMonographCGDCallableUT extends BaseTestCaseUT {
 
     @Before
     public void setUp() throws Exception {
-        MockitoAnnotations.initMocks(this);
+        MockitoAnnotations.openMocks(this);
         from = pageNum * Long.valueOf(batchSize);
         nonHoldingInstitutionList.add("NYPL");
         Mockito.when(reportDataDetailsRepository.getReportDataEntityForPendingMatchingMonographs(ScsbCommonConstants.BIB_ID, from, batchSize)).thenReturn(getReportDataEntity());

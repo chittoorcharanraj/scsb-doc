@@ -58,7 +58,7 @@ public class MatchingBibItemIndexCallableUT extends BaseTestCaseUT {
 
     @BeforeEach
     public void setUp() throws Exception {
-        MockitoAnnotations.initMocks(this);
+        MockitoAnnotations.openMocks(this);
         bibliographicEntity = saveBibSingleHoldingsSingleItem();
     }
 

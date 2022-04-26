@@ -2,8 +2,6 @@ package org.recap.model.jpa;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-;
-
 import javax.persistence.AttributeOverride;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;

@@ -60,7 +60,7 @@ public class SearchRecordsUtilUT extends BaseTestCaseUT {
 
     @Before
     public void setup() throws Exception {
-        MockitoAnnotations.initMocks(this);
+        MockitoAnnotations.openMocks(this);
         ReflectionTestUtils.setField(commonUtil,"institutionDetailsRepository",institutionDetailsRepository);
     }
 

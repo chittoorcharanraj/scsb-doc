@@ -251,6 +251,15 @@ public class BibResolverUT extends BaseTestCaseUT {
     }
 
     @Test
+    public void tesMAQualifierValueResolver() throws Exception {
+        MAQualifierValueResolver maQualifierValueResolver = new MAQualifierValueResolver();
+        maQualifierValueResolver.setValue(bibItem(),1);
+        maQualifierValueResolver.isInterested("MAQualifier");
+        assertNotNull(maQualifierValueResolver.getClass());
+    }
+
+
+    @Test
     public void testTitleSubFieldAValueResolver() throws Exception {
         TitleSubFieldAValueResolver titleSubFieldAValueResolver = new TitleSubFieldAValueResolver();
         titleSubFieldAValueResolver.setValue(bibItem(),"test");

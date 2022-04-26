@@ -64,7 +64,7 @@ public class SolrIndexServiceUT extends BaseTestCaseUT4 {
 
     @Before
     public  void setup(){
-        MockitoAnnotations.initMocks(this);
+        MockitoAnnotations.openMocks(this);
         ReflectionTestUtils.setField(solrIndexService,"submitCollectionOwnInstBibIdListPartitionSize",1000);
     }
 
@@ -155,8 +155,8 @@ public class SolrIndexServiceUT extends BaseTestCaseUT4 {
     }
 
     private File getBibContentFile() throws URISyntaxException {
-        URL resource = this.getClass().getResource("PUL-BibContent.xml");
-        return new File(resource.toURI());
+        URL resource = this.getClass().getClassLoader().getResource("PUL-BibContent.xml");
+        return new File(resource.getFile());
     }
 
     private File getHoldingsContentFile() throws URISyntaxException {

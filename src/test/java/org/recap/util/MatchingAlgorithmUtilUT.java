@@ -116,7 +116,7 @@ public class MatchingAlgorithmUtilUT extends BaseTestCaseUT {
 
     @Before
     public void setup() throws Exception {
-        MockitoAnnotations.initMocks(this);
+        MockitoAnnotations.openMocks(this);
         ReflectionTestUtils.setField(mockMatchingAlgorithmUtil,"matchingHeaderValueLength",8000);
         ReflectionTestUtils.setField(commonUtil,"institutionDetailsRepository",institutionDetailsRepository);
     }
