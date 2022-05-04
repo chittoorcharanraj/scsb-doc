@@ -156,8 +156,7 @@ public class TitleMatchReportExportServiceUT extends BaseTestCaseUT {
     @Test
     public void writeStatusToFile() throws Exception {
         String status = "False";
-        String filename = "/home/manimaran.r/Recap-project/Phase4-SCSB-Doc/testPUL_Title_Match_20210929_192451.xlsx";
-        File file = new File(filename);
+        File file = new File("testPUL_Title_Match_20210929_192451.xlsx");
         ReflectionTestUtils.invokeMethod(titleMatchReportExportService, "writeStatusToFile", file, status);
 
     }
