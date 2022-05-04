@@ -13,7 +13,7 @@ SCSB-DOC is a microservice application that is mainly used for indexing data to 
 
 1. Cloud Config Server
 
-Dspring.cloud.config.uri=http://phase4-scsb-config-server:<Port>
+Dspring.cloud.config.uri=http://scsb-config-server:<Port>
 
 
 ## Build
@@ -26,10 +26,10 @@ Download the Project , navigate inside project folder and build the project usin
 
 Naviagte Inside project folder where Dockerfile is present and Execute the below command
 
-**sudo docker build -t phase4-scsb-doc .**
+**sudo docker build -t scsb-doc .**
 
 ## Docker Run
 
 User the below command to Run the Docker
 
-**sudo docker run --name phase4-scsb-doc   -v <volume> --label collect_logs_with_filebeat="true" --label decode_log_event_to_json_object="true"  -p <Ports> -e "ENV= -XX:+HeapDumpOnOutOfMemoryError  -XX:HeapDumpPath=/recap-vol/scsb-doc/heapdump/   -Dorg.apache.activemq.SERIALIZABLE_PACKAGES="*"   -Dspring.cloud.config.uri=http://phase4-scsb-config-server:<Port> "  --network=scsb -d phase4-scsb-doc**
+**sudo docker run --name scsb-doc   -v <volume> --label collect_logs_with_filebeat="true" --label decode_log_event_to_json_object="true"  -p <Ports> -e "ENV= -XX:+HeapDumpOnOutOfMemoryError  -XX:HeapDumpPath=/recap-vol/scsb-doc/heapdump/   -Dorg.apache.activemq.SERIALIZABLE_PACKAGES="*"   -Dspring.cloud.config.uri=http://scsb-config-server:<Port> "  --network=scsb -d scsb-doc**

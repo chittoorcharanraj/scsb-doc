@@ -36,7 +36,7 @@ test {
 }
 
 jar {
-	archiveBaseName = 'phase4-scsb-doc'
+	archiveBaseName = 'scsb-doc'
 	archiveVersion = '0.0.1-SNAPSHOT'
 }
 sourceCompatibility = JavaVersion.VERSION_17
@@ -172,7 +172,7 @@ task scsbDocJavadocs(type: Javadoc) {
 	classpath = configurations.implementation
 	options.addStringOption('Xdoclint:none', '-quiet')
 	String home = System.getProperty("user.home");
-	destinationDir = new File(home+"/scsb-javadocs/phase4-scsb-doc");
+	destinationDir = new File(home+"/scsb-javadocs/scsb-doc");
 }
 
 
