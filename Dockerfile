@@ -4,7 +4,7 @@ ARG JAR_FILE=build/libs/*.jar
 COPY ${JAR_FILE} scsb-doc.jar
 RUN java -Djarmode=layertools -jar scsb-doc.jar extract
 
-FROM phase4-phase4-scsb-base
+FROM scsb-base
 
 WORKDIR application
 COPY --from=builder application/dependencies/ ./
