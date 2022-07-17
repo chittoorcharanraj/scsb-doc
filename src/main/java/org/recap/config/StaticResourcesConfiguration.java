@@ -1,8 +1,5 @@
 package org.recap.config;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.web.ResourceProperties;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.Resource;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
@@ -13,8 +10,10 @@ import java.io.IOException;
 import java.util.Arrays;
 
 @Configuration
-@EnableConfigurationProperties({ResourceProperties.class})
 public class StaticResourcesConfiguration extends WebMvcConfigurerAdapter {
+
+    private static final String[] CLASSPATH_RESOURCE_LOCATIONS = {"classpath:/META-INF/resources/",
+            "classpath:/resources/", "classpath:/static/", "classpath:/public/"};
 
     static final String[] STATIC_RESOURCES = new String[]{
             "/**/*.css",
@@ -32,15 +31,12 @@ public class StaticResourcesConfiguration extends WebMvcConfigurerAdapter {
             "/**/*.woff2"
     };
 
-    @Autowired
-    private ResourceProperties resourceProperties = new ResourceProperties();
-
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         //Add all static files
         Integer cachePeriod = 30;
         registry.addResourceHandler(STATIC_RESOURCES)
-                .addResourceLocations(resourceProperties.getStaticLocations())
+                .addResourceLocations(CLASSPATH_RESOURCE_LOCATIONS)
                 .setCachePeriod(cachePeriod);
 
         //Create mapping to index.html for Angular HTML5 mode.
@@ -58,8 +54,9 @@ public class StaticResourcesConfiguration extends WebMvcConfigurerAdapter {
     }
 
     private String[] getIndexLocations() {
-        return Arrays.stream(resourceProperties.getStaticLocations())
+        return Arrays.stream(CLASSPATH_RESOURCE_LOCATIONS)
                 .map((location) -> location + "index.html")
                 .toArray(String[]::new);
     }
+
 }
