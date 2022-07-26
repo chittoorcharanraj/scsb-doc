@@ -70,10 +70,10 @@ dependencies {
 	//implementation 'org.apache.camel:camel-core:3.14.0'
 	implementation('org.apache.camel.springboot:camel-aws-s3-starter:3.8.0')
 	implementation('org.apache.camel:camel-aws-s3:3.7.6')
-	implementation 'org.apache.activemq:activemq-camel:5.15.15'
-	implementation 'org.apache.activemq:activemq-pool:5.15.15'
-	implementation 'org.apache.activemq:activemq-broker:5.15.15'
-	implementation 'org.apache.activemq:activemq-client:5.15.15'
+	implementation 'org.apache.activemq:activemq-camel:5.16.5'
+	implementation 'org.apache.activemq:activemq-pool:5.17.1'
+	implementation 'org.apache.activemq:activemq-broker:5.17.1'
+	implementation 'org.apache.activemq:activemq-client:5.17.1'
 	implementation 'commons-beanutils:commons-beanutils:1.9.4'
 	implementation 'org.apache.commons:commons-collections4:4.4'
 	implementation 'info.freelibrary:freelib-marc4j:2.6.12'
