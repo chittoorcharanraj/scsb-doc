@@ -52,24 +52,20 @@ dependencies {
 	implementation fileTree(dir: '/data/commonjar', include: '*2.2.jar')
 	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-	//implementation 'org.springframework.boot:spring-boot-starter-data-rest'
-	//implementation 'org.springframework.boot:spring-boot-starter-data-solr'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
-	implementation 'org.apache.camel.springboot:camel-spring-boot-starter:3.14.0'
+	implementation 'org.apache.camel.springboot:camel-spring-boot-starter:3.18.0'
 	implementation('org.springframework.data:spring-data-solr:4.3.15')
 			{exclude module: 'solr-solrj'; exclude module: 'solr-data-commons'; exclude module: 'spring-data-jpa'}
 	implementation 'org.apache.solr:solr-solrj:8.11.1'
-	implementation 'org.apache.camel:camel-solr:3.14.0'
-	implementation 'org.apache.camel:camel-bindy:3.14.0'
-	implementation 'org.apache.camel:camel-metrics:3.14.0'
-	implementation 'org.apache.camel:camel-csv:3.14.0'
-	implementation 'org.apache.camel:camel-mail:3.14.0'
-	implementation 'org.apache.camel:camel-ftp:3.14.0'
-	implementation 'org.apache.camel:camel-activemq:3.14.0'
-	//implementation 'org.apache.camel:camel-core-engine:3.14.0'
-	//implementation 'org.apache.camel:camel-core:3.14.0'
+	implementation 'org.apache.camel:camel-solr:3.18.0'
+	implementation 'org.apache.camel:camel-bindy:3.18.0'
+	implementation 'org.apache.camel:camel-metrics:3.18.0'
+	implementation 'org.apache.camel:camel-csv:3.18.0'
+	implementation 'org.apache.camel:camel-mail:3.18.0'
+	implementation 'org.apache.camel:camel-ftp:3.18.0'
+	implementation 'org.apache.camel:camel-activemq:3.18.0'
 	implementation('org.apache.camel.springboot:camel-aws-s3-starter:3.8.0')
-	implementation('org.apache.camel:camel-aws-s3:3.7.6')
+	implementation('org.apache.camel:camel-aws-s3:3.8.0')
 	implementation 'org.apache.activemq:activemq-camel:5.16.5'
 	implementation 'org.apache.activemq:activemq-pool:5.17.1'
 	implementation 'org.apache.activemq:activemq-broker:5.17.1'
