@@ -61,6 +61,7 @@ import java.util.TimeZone;
 import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.joining;
+import static java.util.stream.Collectors.toCollection;
 
 
 /**
@@ -244,7 +245,7 @@ public class OngoingMatchingAlgorithmUtil {
 
     private void indexForOngoingMatching(boolean isIndexBibsForOngoingMa, List<Integer> bibIdListToIndex) {
         if (CollectionUtils.isNotEmpty(bibIdListToIndex) && isIndexBibsForOngoingMa) {
-            List<Integer> bibIdListToIndexUnique = bibIdListToIndex.stream().distinct().collect(Collectors.toList());
+            List<Integer> bibIdListToIndexUnique = bibIdListToIndex.stream().distinct().collect(Collectors.toCollection(ArrayList::new));
             matchingAlgorithmUtil.indexBibs(bibIdListToIndexUnique);
         }
     }
@@ -276,7 +277,7 @@ public class OngoingMatchingAlgorithmUtil {
             if (!isCGDProcess) {
                 bibIdList.addAll(matchedBibIds);
                 if (CollectionUtils.isNotEmpty(bibIdList)) {
-                    List<Integer> bibIdListUnique = bibIdList.stream().distinct().collect(Collectors.toList());
+                    List<Integer> bibIdListUnique = bibIdList.stream().distinct().collect(toCollection(ArrayList::new));
                     matchingAlgorithmUtil.updateAnamolyFlagForBibs(bibIdListUnique);
                 }
             }
@@ -794,7 +795,7 @@ public class OngoingMatchingAlgorithmUtil {
         return ids;
     }
 
-    private void calculateAndSetMatchScores(Map<String, HashMap<Integer, BibItem>> multiMatchedBibItemMap) {
+    private static void calculateAndSetMatchScores(Map<String, HashMap<Integer, BibItem>> multiMatchedBibItemMap) {
         if (!multiMatchedBibItemMap.isEmpty()) {
             Map<Integer, BibItem> distinctBibItemMap = new HashMap<>();
             for (Map.Entry<String, HashMap<Integer, BibItem>> entryMultiMatchedBibItemMap : multiMatchedBibItemMap.entrySet()) {

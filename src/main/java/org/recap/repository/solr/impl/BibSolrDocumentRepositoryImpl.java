@@ -80,7 +80,7 @@ public class BibSolrDocumentRepositoryImpl implements CustomDocumentRepository {
         return response;
     }
 
-    private boolean isEmptyField(SearchRecordsRequest searchRecordsRequest) {
+    private static boolean isEmptyField(SearchRecordsRequest searchRecordsRequest) {
         return StringUtils.isBlank(searchRecordsRequest.getFieldName()) && StringUtils.isNotBlank(searchRecordsRequest.getFieldValue());
     }
 
@@ -199,7 +199,7 @@ public class BibSolrDocumentRepositoryImpl implements CustomDocumentRepository {
         }
     }
 
-    private boolean isItemField(SearchRecordsRequest searchRecordsRequest) {
+    private static boolean isItemField(SearchRecordsRequest searchRecordsRequest) {
         return StringUtils.isNotBlank(searchRecordsRequest.getFieldName())
                 && (searchRecordsRequest.getFieldName().equalsIgnoreCase(ScsbCommonConstants.BARCODE)
                 || searchRecordsRequest.getFieldName().equalsIgnoreCase(ScsbCommonConstants.CALL_NUMBER)

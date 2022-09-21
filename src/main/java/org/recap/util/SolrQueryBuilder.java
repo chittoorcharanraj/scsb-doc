@@ -217,7 +217,7 @@ public class SolrQueryBuilder {
      * @param values
      * @return
      */
-    private String buildQueryForMatchChildReturnParent(String fieldName, List<String> values) {
+    private static String buildQueryForMatchChildReturnParent(String fieldName, List<String> values) {
         List<String> modifiedValues = new ArrayList<>();
         if (CollectionUtils.isNotEmpty(values)) {
             for (String value : values) {

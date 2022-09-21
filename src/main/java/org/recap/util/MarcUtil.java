@@ -178,7 +178,7 @@ public class MarcUtil {
         return resolveValue(marcRecord, field, ind1, ind2, subField);
     }
 
-    private List<String> resolveValue(Record marcRecord, String field, String ind1, String ind2, String subField) {
+    private static List<String> resolveValue(Record marcRecord, String field, String ind1, String ind2, String subField) {
         List<String> values = new ArrayList<>();
         String indicator1 = StringUtils.isNotBlank(ind1) ? String.valueOf(ind1.charAt(0)) : " ";
         String indicator2 = StringUtils.isNotBlank(ind2) ? String.valueOf(ind2.charAt(0)) : " ";
@@ -204,7 +204,7 @@ public class MarcUtil {
         return values;
     }
 
-    private List<String> resolveValueForRecordType(RecordType marcRecord, String field, String ind1, String ind2, String subField) {
+    private static List<String> resolveValueForRecordType(RecordType marcRecord, String field, String ind1, String ind2, String subField) {
         List<String> values = new ArrayList<>();
         String indicator1 = StringUtils.isNotBlank(ind1) ? String.valueOf(ind1.charAt(0)) : " ";
         String indicator2 = StringUtils.isNotBlank(ind2) ? String.valueOf(ind2.charAt(0)) : " ";
@@ -228,7 +228,7 @@ public class MarcUtil {
         return values;
     }
 
-    private boolean doIndicatorsMatch(String indicator1, String indicator2, DataField dataField) {
+    private static boolean doIndicatorsMatch(String indicator1, String indicator2, DataField dataField) {
         boolean result = true;
         if (StringUtils.isNotBlank(indicator1)) {
             result = dataField.getIndicator1() == indicator1.charAt(0);
@@ -239,7 +239,7 @@ public class MarcUtil {
         return result;
     }
 
-    private boolean doIndicatorsMatchForDataFieldType(String indicator1, String indicator2, DataFieldType dataField) {
+    private static boolean doIndicatorsMatchForDataFieldType(String indicator1, String indicator2, DataFieldType dataField) {
         boolean result = true;
         if (StringUtils.isNotBlank(indicator1)) {
             result = dataField.getInd1().equals(String.valueOf(indicator1.charAt(0)));
@@ -323,7 +323,7 @@ public class MarcUtil {
         return null;
     }
 
-    private String getDataFieldValue(DataField dataField, char subField) {
+    private static String getDataFieldValue(DataField dataField, char subField) {
         Subfield subfield = dataField.getSubfield(subField);
         if (subfield != null) {
             return subfield.getData();

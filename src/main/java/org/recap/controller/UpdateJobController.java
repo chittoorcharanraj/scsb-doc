@@ -56,7 +56,8 @@ public class UpdateJobController {
     @GetMapping(value = "/getAllJobs")
     public List<JobDto> getAllJobs() {
         List<JobEntity> jobEntities = jobDetailsRepository.findAll();
-        return jobEntities.isEmpty() ? new ArrayList<>() : jobEntities.stream().map(jobEntity -> (JobDto) commonUtil.convertToDto(jobEntity, JobDto.class)).collect(Collectors.toList());
+        return jobEntities.isEmpty() ? new ArrayList<>() : jobEntities.stream().map(jobEntity -> (JobDto) commonUtil.convertToDto(jobEntity, JobDto.class)).collect(Collectors.toCollection(ArrayList::new)
+        );
     }
 
     /**
@@ -78,7 +79,7 @@ public class UpdateJobController {
         JobParamEntity jobParamEntity = jobParamDetailRepository.findByJobName(jobName);
         if (jobParamEntity != null) {
             JobParamDto jobParamDto = (JobParamDto) commonUtil.convertToDto(jobParamEntity, JobParamDto.class);
-            List<JobParamDataDto> jobParamDataDtos = !jobParamEntity.getJobParamDataEntities().isEmpty() ? jobParamEntity.getJobParamDataEntities().stream().map(jobParamDataEntity -> (JobParamDataDto) commonUtil.convertToDto(jobParamDataEntity, JobParamDataDto.class)).collect(Collectors.toList()) : new ArrayList<>();
+            List<JobParamDataDto> jobParamDataDtos = !jobParamEntity.getJobParamDataEntities().isEmpty() ? jobParamEntity.getJobParamDataEntities().stream().map(jobParamDataEntity -> (JobParamDataDto) commonUtil.convertToDto(jobParamDataEntity, JobParamDataDto.class)).collect(Collectors.toCollection(ArrayList::new)) : new ArrayList<>();
             jobParamDto.setJobParamDataDtos(jobParamDataDtos);
             return jobParamDto;
         }

@@ -474,7 +474,7 @@ public class MatchingAlgorithmUtil {
         return titleToMatch.replaceAll("\\s", "");
     }
 
-    private String getTitleToMatch(String titleToMatch, int count, String tempTitle) {
+    private static String getTitleToMatch(String titleToMatch, int count, String tempTitle) {
         if (count == 0) {
             titleToMatch = tempTitle;
         } else {
@@ -936,7 +936,7 @@ public class MatchingAlgorithmUtil {
     }
 
     public Map<Integer, BibliographicEntity> getBibIdAndBibEntityMap(Set<String> bibIdsList){
-        List<BibliographicEntity> bibliographicEntityList = bibliographicDetailsRepository.findByIdIn(bibIdsList.stream().map(s -> Integer.valueOf(s)).collect(toList()));
+        List<BibliographicEntity> bibliographicEntityList = bibliographicDetailsRepository.findByIdIn(bibIdsList.stream().map(s -> Integer.valueOf(s)).collect(Collectors.toCollection(ArrayList::new)));
         Map<Integer, BibliographicEntity> bibliographicEntityMap = bibliographicEntityList.stream().collect(Collectors.toMap(BibliographicEntity::getId, Function.identity()));
         return bibliographicEntityMap;
     }
@@ -945,7 +945,7 @@ public class MatchingAlgorithmUtil {
         StopWatch stopWatch=new StopWatch();
         stopWatch.start();
         log.info("Fetching Bibs for Matching");
-        List<BibliographicEntity> bibliographicEntityList = bibliographicDetailsRepository.findByOwningInstitutionIdInAndIdIn(commonUtil.findAllInstitutionIdsExceptSupportInstitution(),bibIdsList.parallelStream().collect(toList()));
+        List<BibliographicEntity> bibliographicEntityList = bibliographicDetailsRepository.findByOwningInstitutionIdInAndIdIn(commonUtil.findAllInstitutionIdsExceptSupportInstitution(),bibIdsList.parallelStream().collect(Collectors.toCollection(ArrayList::new)));
         stopWatch.stop();
         log.info("Totat time taken to fetch {} bibs is {}",bibliographicEntityList.size(),stopWatch.getTotalTimeSeconds());
         Map<Integer, BibliographicEntity> bibliographicEntityMap = bibliographicEntityList.stream().collect(Collectors.toMap(BibliographicEntity::getId, Function.identity()));
@@ -1016,7 +1016,7 @@ public class MatchingAlgorithmUtil {
 
     private List<BibliographicEntityForMatching> combineGroupedBibs(Set<String> matchingIdentities, List<BibliographicEntityForMatching> bibliographicEntityList, Map<Integer, BibItem> bibItemMap) {
         List<Integer> allInstitutionIdsExceptSupportInstitution = commonUtil.findAllInstitutionIdsExceptSupportInstitution();
-        List<String> matchingIdentifiers = matchingIdentities.stream().collect(toList());
+        List<String> matchingIdentifiers = matchingIdentities.stream().collect(Collectors.toCollection(ArrayList::new));
         List<BibliographicEntityForMatching> existingGroupedBibs = bibliographicDetailsRepositoryForMatching.findByOwningInstitutionIdInAndMatchingIdentityIn(allInstitutionIdsExceptSupportInstitution, matchingIdentifiers);
         List<BibliographicEntityForMatching> updatedCollectedBibs = bibliographicEntityList.stream()
                 .filter(bibliographicEntity -> null != bibItemMap.get(bibliographicEntity.getBibliographicId()) && !(bibliographicEntity.getMatchScore() == bibItemMap.get(bibliographicEntity.getBibliographicId()).getMatchScore()))
@@ -1026,7 +1026,7 @@ public class MatchingAlgorithmUtil {
                     bibliographicEntity.setMatchScore(MatchScoreUtil.convertBinaryToDecimal(updatedMatchScore));
                     return bibliographicEntity;
                 })
-                .collect(toList());
+                .collect(Collectors.toCollection(ArrayList::new));
         String matchingIdentifier = matchingIdentifiers.stream().findFirst().get();
         return Stream.of(existingGroupedBibs,updatedCollectedBibs)
                 .flatMap(bibliographicEntities -> bibliographicEntities.stream())
@@ -1041,7 +1041,7 @@ public class MatchingAlgorithmUtil {
 
     private List<BibliographicEntity> combineGroupedBibsForInitialMatching(Set<String> matchingIdentities, List<BibliographicEntity> bibliographicEntityList,Integer matchScore) {
         List<Integer> allInstitutionIdsExceptSupportInstitution = commonUtil.findAllInstitutionIdsExceptSupportInstitution();
-        List<String> matchingIdentifiers = matchingIdentities.stream().collect(toList());
+        List<String> matchingIdentifiers = matchingIdentities.stream().collect(Collectors.toCollection(ArrayList::new));
         List<BibliographicEntity> existingGroupedBibs = bibliographicDetailsRepository.findByOwningInstitutionIdInAndMatchingIdentityIn(allInstitutionIdsExceptSupportInstitution, matchingIdentifiers);
         List<BibliographicEntity> updatedCollectedBibs = bibliographicEntityList.stream()
                 .filter(bibliographicEntity -> !(bibliographicEntity.getMatchScore() == matchScore))
@@ -1051,7 +1051,7 @@ public class MatchingAlgorithmUtil {
                     bibliographicEntity.setMatchScore(MatchScoreUtil.convertBinaryToDecimal(updatedMatchScore));
                     return bibliographicEntity;
                 })
-                .collect(toList());
+                .collect(Collectors.toCollection(ArrayList::new));
         String matchingIdentifier = matchingIdentifiers.stream().findFirst().get();
         return Stream.of(existingGroupedBibs,updatedCollectedBibs)
                 .flatMap(bibliographicEntities -> bibliographicEntities.stream())
@@ -1060,17 +1060,17 @@ public class MatchingAlgorithmUtil {
                 //    bibliographicEntity.setAnamolyFlag(true);
                     return bibliographicEntity;
                 })
-                .collect(Collectors.toList());
+                .collect(Collectors.toCollection(ArrayList::new));
 
     }
 
 
-    private Map<Boolean, List<BibliographicEntity>> partitionBibsByMatchingIdentityForInitialMatching(List<BibliographicEntity> bibliographicEntityList) {
+    private static Map<Boolean, List<BibliographicEntity>> partitionBibsByMatchingIdentityForInitialMatching(List<BibliographicEntity> bibliographicEntityList) {
         return bibliographicEntityList.stream()
                 .collect(Collectors.partitioningBy(bibliographicEntity -> StringUtils.isEmpty(bibliographicEntity.getMatchingIdentity())));
     }
 
-    private Map<Boolean, List<BibliographicEntityForMatching>> partitionBibsByMatchingIdentity(List<BibliographicEntityForMatching> bibliographicEntityList) {
+    private static Map<Boolean, List<BibliographicEntityForMatching>> partitionBibsByMatchingIdentity(List<BibliographicEntityForMatching> bibliographicEntityList) {
         return bibliographicEntityList.stream()
                 .collect(Collectors.partitioningBy(bibliographicEntity -> StringUtils.isEmpty(bibliographicEntity.getMatchingIdentity())));
     }
@@ -1086,8 +1086,8 @@ public class MatchingAlgorithmUtil {
         Set<Integer> matchScores = bibliographicEntities.stream().map(bibliographicEntity -> bibliographicEntity.getMatchScore()).collect(toSet());
      //   boolean isAnamolyFlagUpdateNeeded=(!(matchScores.size()==1 && matchScores.contains(matchScore)))?true:false;
        // if (isAnamolyFlagUpdateNeeded){
-            List<Integer> bibIdsFromPartitionedByMatchingIdentity = bibliographicEntities.stream().map(bibliographicEntity -> bibliographicEntity.getId()).collect(toList());
-            List<Integer> bibIdsExisting = bibliographicEntityListWithExistingMatchingIdentifier.stream().map(bibliographicEntity -> bibliographicEntity.getId()).collect(toList());
+            List<Integer> bibIdsFromPartitionedByMatchingIdentity = bibliographicEntities.stream().map(bibliographicEntity -> bibliographicEntity.getId()).collect(Collectors.toCollection(ArrayList::new));
+            List<Integer> bibIdsExisting = bibliographicEntityListWithExistingMatchingIdentifier.stream().map(bibliographicEntity -> bibliographicEntity.getId()).collect(Collectors.toCollection(ArrayList::new));
            // List<Integer> bibIdsToUpdateAnamolyFlag = Stream.of(bibIdsFromPartitionedByMatchingIdentity, bibIdsExisting).flatMap(bibIds -> bibIds.stream()).collect(toList());
         //    bibliographicDetailsRepository.updateAnamolyFlag(bibIdsToUpdateAnamolyFlag);
        // }
@@ -1101,7 +1101,7 @@ public class MatchingAlgorithmUtil {
                     bibliographicEntity.setMatchScore(MatchScoreUtil.convertBinaryToDecimal(updatedMatchScore));
                     return bibliographicEntity;
                 })
-                .collect(toList());
+                .collect(Collectors.toCollection(ArrayList::new));
         stopWatch.stop();
         return modifiedBibs;
     }
@@ -1136,17 +1136,17 @@ public class MatchingAlgorithmUtil {
                     bibliographicEntity.setMatchScore(MatchScoreUtil.convertBinaryToDecimal(updatedMatchScore));
                     return bibliographicEntity;
                 })
-                .collect(toList());
+                .collect(Collectors.toCollection(ArrayList::new));
         //     bibliographicEntity.setAnamolyFlag(true);
         List<BibliographicEntityForMatching> finalBibList = Stream.of(bibliographicEntityListWithExistingMatchingIdentifier, modifiedBibs)
                 .flatMap(bibliographicEntityList -> bibliographicEntityList.stream())
-                .collect(toList());
+                .collect(Collectors.toCollection(ArrayList::new));
 
         stopWatch.stop();
         return finalBibList;
     }
 
-    private List<BibliographicEntity> initialMatchingroupBibsForNewEntries(Integer matchScore, String matchingIdentity, Map<Boolean, List<BibliographicEntity>> partionedByMatchingIdentity) {
+    private static List<BibliographicEntity> initialMatchingroupBibsForNewEntries(Integer matchScore, String matchingIdentity, Map<Boolean, List<BibliographicEntity>> partionedByMatchingIdentity) {
      /*   boolean isAnamolyFlag=false;
         if(CollectionUtils.isNotEmpty(partionedByMatchingIdentity.get(false))){
             isAnamolyFlag=true;
@@ -1163,9 +1163,9 @@ public class MatchingAlgorithmUtil {
                     bibliographicEntity.setMatchingIdentity(matchingIdentity);
                     return bibliographicEntity;
                 })
-                .collect(toList());
+                .collect(Collectors.toCollection(ArrayList::new));
     }
-    private List<BibliographicEntityForMatching> groupCGDForNewEntries(Map<Integer, BibItem> bibItemMap, String matchingIdentity, Map<Boolean, List<BibliographicEntityForMatching>> partionedByMatchingIdentity) {
+    private static List<BibliographicEntityForMatching> groupCGDForNewEntries(Map<Integer, BibItem> bibItemMap, String matchingIdentity, Map<Boolean, List<BibliographicEntityForMatching>> partionedByMatchingIdentity) {
       /*  boolean isAnamolyFlag=false;
         if(CollectionUtils.isNotEmpty(partionedByMatchingIdentity.get(false))){
             isAnamolyFlag=true;
@@ -1188,10 +1188,10 @@ public class MatchingAlgorithmUtil {
                     bibliographicEntity.setMatchingIdentity(matchingIdentity);
                     return bibliographicEntity;
                 })
-                .collect(toList());
+                .collect(Collectors.toCollection(ArrayList::new));
     }
 
-    private String getMatchingIdentityValue(List<BibliographicEntityForMatching> bibliographicEntityList) {
+    private static String getMatchingIdentityValue(List<BibliographicEntityForMatching> bibliographicEntityList) {
         Optional<BibliographicEntityForMatching> existingIdentifier = bibliographicEntityList.stream()
                 .filter(bibliographicEntity -> StringUtils.isNotEmpty(bibliographicEntity.getMatchingIdentity()))
                 .findFirst();
@@ -1199,7 +1199,7 @@ public class MatchingAlgorithmUtil {
         return matchingIdentity;
     }
 
-    private String getMatchingIdentityValueForInitialMatching(List<BibliographicEntity> bibliographicEntityList) {
+    private static String getMatchingIdentityValueForInitialMatching(List<BibliographicEntity> bibliographicEntityList) {
         Optional<BibliographicEntity> existingIdentifier = bibliographicEntityList.stream()
                 .filter(bibliographicEntity -> StringUtils.isNotEmpty(bibliographicEntity.getMatchingIdentity()))
                 .findFirst();
@@ -1217,7 +1217,7 @@ public class MatchingAlgorithmUtil {
                     bibliographicEntity.setMatchingIdentity(matchingIdentity);
                     return bibliographicEntity;
                 })
-                .collect(toList());
+                .collect(Collectors.toCollection(ArrayList::new));
         if(!bibliographicEntitiesToUpdate.isEmpty()){
             log.info("No of grouped bibs to save and index : {}",bibliographicEntitiesToUpdate.stream().count());
             bibliographicDetailsRepository.saveAll(bibliographicEntitiesToUpdate);

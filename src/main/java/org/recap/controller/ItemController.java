@@ -56,7 +56,7 @@ public class ItemController {
         return itemEntityList;
     }
 
-    private List<String> splitStringAndGetList(String itemBarcodes){
+    private static List<String> splitStringAndGetList(String itemBarcodes){
         String itemBarcodesString = itemBarcodes.replaceAll("\\[","").replaceAll("\\]","");
         String[] splittedString = itemBarcodesString.split(",");
         List<String> stringList = new ArrayList<>();

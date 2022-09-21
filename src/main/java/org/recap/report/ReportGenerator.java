@@ -259,11 +259,11 @@ public class ReportGenerator {
         return reportDetailRepository.findByIdIn(reportRecordNumberList);
     }
 
-    private String getFileNameLike(String fileName) {
+    private static String getFileNameLike(String fileName) {
         return fileName+"%";
     }
 
-    private SubmitCollectionReport mapSCResults(List<ReportEntity> reportEntityList, SubmitCollectionReport submitCollectionReprot){
+    private static SubmitCollectionReport mapSCResults(List<ReportEntity> reportEntityList, SubmitCollectionReport submitCollectionReprot){
         List<SubmitCollectionReportRecord> submitCollectionReportRecordList = new ArrayList<>();
         List<SubmitCollectionResultsRow> submitCollectionResultsRowsList = new ArrayList<>();
         SubmitCollectionReportGenerator submitCollectionReportGenerator = new SubmitCollectionReportGenerator();
@@ -284,7 +284,7 @@ public class ReportGenerator {
         return submitCollectionReprot;
     }
 
-    private SubmitCollectionReport mapAccessionResults(List<ReportEntity> reportEntityList, SubmitCollectionReport submitCollectionReprot){
+    private static SubmitCollectionReport mapAccessionResults(List<ReportEntity> reportEntityList, SubmitCollectionReport submitCollectionReprot){
         List<SubmitCollectionReportRecord> submitCollectionReportRecordList = new ArrayList<>();
         List<SubmitCollectionResultsRow> submitCollectionResultsRowsList = new ArrayList<>();
         SubmitCollectionReportGenerator submitCollectionReportGenerator = new SubmitCollectionReportGenerator();

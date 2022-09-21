@@ -53,7 +53,7 @@ public class AccessionReconcilationRestController {
      * @param barcodesAndCustomerCodes
      * @return
      */
-    private Map<String, String> getDifference(QueryResponse queryResponse, Map<String, String> barcodesAndCustomerCodes) {
+    private static Map<String, String> getDifference(QueryResponse queryResponse, Map<String, String> barcodesAndCustomerCodes) {
         for (Object barcode : queryResponse.getFieldStatsInfo().get(ScsbCommonConstants.BARCODE).getDistinctValues()) {
             barcodesAndCustomerCodes.entrySet().removeIf(p -> p.getKey().contains(barcode.toString()));
         }
@@ -66,7 +66,7 @@ public class AccessionReconcilationRestController {
      * @param rows
      * @return
      */
-    private SolrQuery getSolrQuery(String barcode,int rows) {
+    private static SolrQuery getSolrQuery(String barcode,int rows) {
         SolrQuery solrQuery = new SolrQuery();
         solrQuery.setQuery(ScsbConstants.DOC_TYPE_ITEM);
         solrQuery.setRows(rows);

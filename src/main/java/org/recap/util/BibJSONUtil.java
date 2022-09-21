@@ -163,7 +163,7 @@ public class BibJSONUtil extends MarcUtil {
         }
     }
 
-    private String getNormalizedOCLCNumber(String oclcNumber) {
+    private static String getNormalizedOCLCNumber(String oclcNumber) {
         String modifiedOclc = oclcNumber.replaceAll(ScsbConstants.NUMBER_PATTERN, "");
         modifiedOclc = StringUtils.stripStart(modifiedOclc, "0");
         return modifiedOclc;
@@ -246,15 +246,15 @@ public class BibJSONUtil extends MarcUtil {
         return null;
     }
 
-    private SolrInputDocument generateItemSolrInputDocument(Item item, SolrTemplate solrTemplate) {
+    private static SolrInputDocument generateItemSolrInputDocument(Item item, SolrTemplate solrTemplate) {
         return solrTemplate.convertBeanToSolrInputDocument(item);
     }
 
-    private SolrInputDocument generateHoldingsSolrInputDocument(Holdings holdings, SolrTemplate solrTemplate) {
+    private static SolrInputDocument generateHoldingsSolrInputDocument(Holdings holdings, SolrTemplate solrTemplate) {
         return solrTemplate.convertBeanToSolrInputDocument(holdings);
     }
 
-    private SolrInputDocument generateBibSolrInputDocument(Bib bib, SolrTemplate solrTemplate) {
+    private static SolrInputDocument generateBibSolrInputDocument(Bib bib, SolrTemplate solrTemplate) {
         return solrTemplate.convertBeanToSolrInputDocument(bib);
     }
 
@@ -686,7 +686,7 @@ public class BibJSONUtil extends MarcUtil {
         return titleToMatch.replaceAll("\\s", "").toLowerCase();
     }
 
-    private String getTitleToMatch(String titleToMatch, int count, String tempTitle) {
+    private static  String getTitleToMatch(String titleToMatch, int count, String tempTitle) {
         if (count == 0) {
             titleToMatch = tempTitle;
         } else {

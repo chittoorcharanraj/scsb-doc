@@ -306,7 +306,7 @@ public class MatchingAlgorithmUpdateCGDService {
                 } catch (ExecutionException e) {
                     throw new IllegalStateException(e);
                 }
-            }).collect(Collectors.toList());
+            }).collect(Collectors.toCollection(ArrayList::new));
             log.info("No of Futures Collected : {}", collectedFutures.size());
         } catch (Exception e) {
             log.error(ScsbCommonConstants.LOG_ERROR,e);
@@ -345,7 +345,7 @@ public class MatchingAlgorithmUpdateCGDService {
         List<Integer> bibIds = new ArrayList<>();
         for(MatchingAlgorithmReportDataEntity reportDataEntity : dataEntityList) {
             List<String> bibIdList = Arrays.asList(reportDataEntity.getHeaderValue().split(","));
-            bibIds.addAll(bibIdList.stream().map(Integer::parseInt).collect(Collectors.toList()));
+            bibIds.addAll(bibIdList.stream().map(Integer::parseInt).collect(Collectors.toCollection(ArrayList::new)));
         }
         log.info("Bibs count in Page {} : {} " ,pageNum,bibIds.size());
         List<BibliographicEntity> bibliographicEntities = getBibliographicDetailsRepository().findByIdIn(bibIds);

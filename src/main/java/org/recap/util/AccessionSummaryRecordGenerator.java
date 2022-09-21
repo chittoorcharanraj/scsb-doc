@@ -70,20 +70,20 @@ public class AccessionSummaryRecordGenerator {
         return accessionSummaryRecordList;
     }
 
-    private void addToDocFailureReasonCountMap(Integer bibFailureCount, Map<String, Integer> failureReasonCountMap, ReportDataEntity reportDataEntity, String failureBibReason) {
+    private static void addToDocFailureReasonCountMap(Integer bibFailureCount, Map<String, Integer> failureReasonCountMap, ReportDataEntity reportDataEntity, String failureBibReason) {
         if (reportDataEntity.getHeaderName().equalsIgnoreCase(failureBibReason) && !StringUtils.isEmpty(reportDataEntity.getHeaderValue())) {
             failureReasonCountMap.merge(reportDataEntity.getHeaderValue(), bibFailureCount, Integer::sum);
         }
     }
 
-    private void removeFromBibFailureReasonCountMap(Map<String, Integer> bibFailureReasonCountMap, AccessionSummaryRecord accessionSummaryRecord) {
+    private static void removeFromBibFailureReasonCountMap(Map<String, Integer> bibFailureReasonCountMap, AccessionSummaryRecord accessionSummaryRecord) {
         Map.Entry<String, Integer> bibEntry = bibFailureReasonCountMap.entrySet().iterator().next();
         accessionSummaryRecord.setReasonForFailureBib(bibEntry.getKey());
         accessionSummaryRecord.setFailedBibCount(bibEntry.getValue().toString());
         bibFailureReasonCountMap.remove(bibEntry.getKey());
     }
 
-    private void removeFromItemFailureReasonCountMap(Map<String, Integer> itemFailureReasonCountMap, AccessionSummaryRecord accessionSummaryRecord) {
+    private static void removeFromItemFailureReasonCountMap(Map<String, Integer> itemFailureReasonCountMap, AccessionSummaryRecord accessionSummaryRecord) {
         Map.Entry<String, Integer> itemEntry = itemFailureReasonCountMap.entrySet().iterator().next();
         accessionSummaryRecord.setReasonForFailureItem(itemEntry.getKey());
         accessionSummaryRecord.setFailedItemCount(itemEntry.getValue().toString());

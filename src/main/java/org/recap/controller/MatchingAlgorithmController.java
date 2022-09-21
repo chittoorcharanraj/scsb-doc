@@ -299,7 +299,7 @@ public class MatchingAlgorithmController {
         matchingAlgorithmHelperService.groupBibsForMonograph(Integer.valueOf(getMatchingAlgoBatchSize()), false);
         stopWatch.stop();
         long totalTimeMillis = stopWatch.getTotalTimeMillis();
-        return "Total time taken : "+totalTimeMillis;
+        return "Total  time taken : "+totalTimeMillis;
     }
 
     @ResponseBody
@@ -310,7 +310,7 @@ public class MatchingAlgorithmController {
         matchingAlgorithmHelperService.groupBibsForMVMs(Integer.valueOf(getMatchingAlgoBatchSize()));
         stopWatch.stop();
         long totalTimeMillis = stopWatch.getTotalTimeMillis();
-        return "Total time taken : "+totalTimeMillis;
+        return "Total time  taken : "+totalTimeMillis;
     }
 
     @ResponseBody
@@ -321,7 +321,7 @@ public class MatchingAlgorithmController {
          matchingAlgorithmHelperService.groupForSerialBibs(Integer.valueOf(getMatchingAlgoBatchSize()));
         stopWatch.stop();
         long totalTimeMillis = stopWatch.getTotalTimeMillis();
-        return "Total time taken : "+totalTimeMillis;
+        return " Total time taken : "+totalTimeMillis;
     }
 
     /**

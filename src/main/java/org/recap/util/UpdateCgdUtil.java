@@ -212,7 +212,7 @@ public class UpdateCgdUtil {
      * @param cgdChangeLog
      * @param itemEntityList
      */
-    private void setCGDChangeLogToItemEntity(String cgdChangeLog,List<ItemEntity> itemEntityList){
+    private static void setCGDChangeLogToItemEntity(String cgdChangeLog,List<ItemEntity> itemEntityList){
         for(ItemEntity itemEntity:itemEntityList){
             itemEntity.setCgdChangeLog(cgdChangeLog);
         }

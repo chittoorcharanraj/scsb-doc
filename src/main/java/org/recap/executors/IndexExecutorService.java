@@ -194,7 +194,7 @@ public abstract class IndexExecutorService {
                         } catch (Exception e) {
                             throw new IllegalStateException(e);
                         }
-                    }).collect(Collectors.toList());
+                    }).collect(Collectors.toCollection(ArrayList::new));
                     log.info("No of Futures Collected : {}",collectedFutures.size());
 
                     int numOfBibsProcessed = 0;
@@ -305,7 +305,7 @@ public abstract class IndexExecutorService {
                         } catch (Exception e) {
                             throw new IllegalStateException(e);
                         }
-                    }).collect(Collectors.toList());
+                    }).collect(Collectors.toCollection(ArrayList::new));
                     log.info("No of Futures Collected : {}",collectedFutures.size());
 
                     int numOfBibsProcessed = 0;
@@ -404,7 +404,7 @@ public abstract class IndexExecutorService {
      * @param coreNames
      * @param solrUrl
      */
-    private void deleteTempIndexes(List<String> coreNames, String solrUrl) {
+    private static void deleteTempIndexes(List<String> coreNames, String solrUrl) {
         SolrTemplate solrTemplate = new SolrTemplate(new HttpSolrClient.Builder(solrUrl + File.separator).build());
         solrTemplate.setSolrConverter(new MappingSolrConverter(new SimpleSolrMappingContext()) {});
         for (Iterator<String> iterator = coreNames.iterator(); iterator.hasNext(); ) {
@@ -434,7 +434,7 @@ public abstract class IndexExecutorService {
      * @param numThreads
      * @param coreNames
      */
-    private void setupCoreNames(Integer numThreads, List<String> coreNames) {
+    private static void setupCoreNames(Integer numThreads, List<String> coreNames) {
         for (int i = 0; i < numThreads; i++) {
             coreNames.add("temp" + i);
         }

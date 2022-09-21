@@ -159,7 +159,7 @@ public class MatchingBibInfoDetailService {
         return remainder == 0 ? quotient : quotient + 1;
     }
 
-    private List<String> getStringList(List<Integer> integerList){
+    private static List<String> getStringList(List<Integer> integerList){
         List<String> stringList = new ArrayList<>();
         for(Integer integer : integerList){
             stringList.add(String.valueOf(integer));
@@ -167,7 +167,7 @@ public class MatchingBibInfoDetailService {
         return stringList;
     }
 
-    private  Map<String,List<MatchingAlgorithmReportDataEntity>> getRecordNumReportDataEntityMap(List<MatchingAlgorithmReportDataEntity> reportDataEntityList){
+    private static Map<String,List<MatchingAlgorithmReportDataEntity>> getRecordNumReportDataEntityMap(List<MatchingAlgorithmReportDataEntity> reportDataEntityList){
         Map<String,List<MatchingAlgorithmReportDataEntity>> reportDataEntityMap = new HashMap<>();
         for(MatchingAlgorithmReportDataEntity reportDataEntity:reportDataEntityList){
             if(reportDataEntityMap.containsKey(reportDataEntity.getRecordNum())){
@@ -181,7 +181,7 @@ public class MatchingBibInfoDetailService {
         return reportDataEntityMap;
     }
 
-    private List<MatchingBibInfoDetail> populateMatchingBibInfoDetail(Map<String, List<MatchingAlgorithmReportDataEntity>> reportDataEntityMap){
+    private static List<MatchingBibInfoDetail> populateMatchingBibInfoDetail(Map<String, List<MatchingAlgorithmReportDataEntity>> reportDataEntityMap){
         List<MatchingBibInfoDetail> matchingBibInfoDetailList = new ArrayList<>();
         for(Map.Entry<String,List<MatchingAlgorithmReportDataEntity>> entry:reportDataEntityMap.entrySet()){
             Map<String, String[]> dataArrayMap = populateDataArrays(entry.getValue());
@@ -245,7 +245,7 @@ public class MatchingBibInfoDetailService {
         return matchingBibInfoDetailList;
     }
 
-    private Map<String, String[]> populateDataArrays(List<MatchingAlgorithmReportDataEntity> reportDataEntities) {
+    private static Map<String, String[]> populateDataArrays(List<MatchingAlgorithmReportDataEntity> reportDataEntities) {
         Map<String, String[]> dataArrayMap = new HashMap<>();
         for(MatchingAlgorithmReportDataEntity reportDataEntity : reportDataEntities) {
             if (ScsbCommonConstants.BIB_ID.equals(reportDataEntity.getHeaderName())) {
