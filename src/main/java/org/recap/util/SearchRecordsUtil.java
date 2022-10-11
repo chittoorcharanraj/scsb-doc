@@ -93,7 +93,7 @@ public final class SearchRecordsUtil {
             Map<String, String> propertyMap = propertyUtil.getPropertyByKeyForAllInstitutions(PropertyKeyConstants.ILS.ILS_ENABLE_CIRCULATION_FREEZE);
             searchRecordsRequest.getOwningInstitutions().removeAll(propertyMap.entrySet().stream()
                     .filter(e -> Boolean.parseBoolean(e.getValue()))
-                    .map(Map.Entry::getKey).collect(Collectors.toList()));
+                    .map(Map.Entry::getKey).collect(Collectors.toCollection(ArrayList::new)));
         }
     }
 
@@ -240,7 +240,7 @@ public final class SearchRecordsUtil {
      * @param holdingsIdList
      * @return
      */
-    private String getMatchedOwningInstitutionHoldingsId(List<Holdings> holdingsList, List<Integer> holdingsIdList) {
+    private static String getMatchedOwningInstitutionHoldingsId(List<Holdings> holdingsList, List<Integer> holdingsIdList) {
         String owningInstitutionHoldingsId = "";
         if (CollectionUtils.isNotEmpty(holdingsList)) {
             for (Holdings holdings : holdingsList) {
@@ -260,7 +260,7 @@ public final class SearchRecordsUtil {
      * @param bibItems the bibItems
      * @return the DataDumpSearchResult list
      */
-    public List<DataDumpSearchResult> buildResultsForDataDump(List<BibItem> bibItems) {
+    public static List<DataDumpSearchResult> buildResultsForDataDump(List<BibItem> bibItems) {
         List<DataDumpSearchResult> dataDumpSearchResults = new ArrayList<>();
         if (!CollectionUtils.isEmpty(bibItems)) {
             for (BibItem bibItem : bibItems) {
@@ -287,7 +287,7 @@ public final class SearchRecordsUtil {
      * @param searchRecordsRequest
      * @return
      */
-    private boolean isEmptySearch(SearchRecordsRequest searchRecordsRequest) {
+    private static boolean isEmptySearch(SearchRecordsRequest searchRecordsRequest) {
         boolean emptySearch = false;
         if (searchRecordsRequest.getMaterialTypes().isEmpty() && searchRecordsRequest.getAvailability().isEmpty() &&
                 searchRecordsRequest.getCollectionGroupDesignations().isEmpty() && ((searchRecordsRequest.getOwningInstitutions().size() == 0) ? true : false) && searchRecordsRequest.getUseRestrictions().isEmpty() && searchRecordsRequest.getImsDepositoryCodes().isEmpty()) {

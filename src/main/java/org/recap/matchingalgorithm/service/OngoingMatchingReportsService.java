@@ -175,7 +175,7 @@ public class OngoingMatchingReportsService {
     }
 
 
-    private int getTitleExceptionReport(List<MatchingAlgorithmReportEntity> reportEntities, List<TitleExceptionReport> titleExceptionReports, int maxTitleCount) {
+    private static int getTitleExceptionReport(List<MatchingAlgorithmReportEntity> reportEntities, List<TitleExceptionReport> titleExceptionReports, int maxTitleCount) {
         if(CollectionUtils.isNotEmpty(reportEntities)) {
             for(MatchingAlgorithmReportEntity reportEntity : reportEntities) {
                 List<MatchingAlgorithmReportDataEntity> reportDataEntities = new ArrayList<>();

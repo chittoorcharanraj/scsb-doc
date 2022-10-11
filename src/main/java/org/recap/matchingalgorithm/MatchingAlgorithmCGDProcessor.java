@@ -123,7 +123,7 @@ public class MatchingAlgorithmCGDProcessor {
         }
     }
 
-    private Optional<Map.Entry<Integer, ItemEntity>> findCommittedItemsIfAny(Map<Integer, ItemEntity> itemEntityMap) {
+    private static Optional<Map.Entry<Integer, ItemEntity>> findCommittedItemsIfAny(Map<Integer, ItemEntity> itemEntityMap) {
         return itemEntityMap
                 .entrySet()
                 .stream()
@@ -131,7 +131,7 @@ public class MatchingAlgorithmCGDProcessor {
                 .findAny();
     }
 
-    private Optional<ItemEntity> getItemToBeSharedBasedOnInitialMatchingDate (List<ItemEntity> itemEntities) {
+    private static Optional<ItemEntity> getItemToBeSharedBasedOnInitialMatchingDate (List<ItemEntity> itemEntities) {
         return itemEntities.stream().filter(itemEntity -> itemEntity.getInitialMatchingDate() != null).findFirst();
     }
 
@@ -172,13 +172,13 @@ public class MatchingAlgorithmCGDProcessor {
     private List<ItemChangeLogEntity> prepareItemChangeLogForUpdatedItems(List<ItemEntity> updatedItemsAsOpen) {
         return updatedItemsAsOpen.stream()
                 .map(itemEntity -> getItemChangeLogEntity(1, itemEntity))
-                .collect(Collectors.toList());
+                .collect(Collectors.toCollection(ArrayList::new));
     }
 
     private List<ItemEntity> updateItemsAsOpenFromItemEntityMap(Map<Integer, ItemEntity> itemEntityMap, Integer collectionGroupId, CollectionGroupEntity finalCollectionGroupEntity) {
         return itemEntityMap.values().stream()
                 .map(itemEntity -> updateItemsAsOpen(collectionGroupId, finalCollectionGroupEntity, itemEntity))
-                .collect(Collectors.toList());
+                .collect(Collectors.toCollection(ArrayList::new));
     }
 
     private ItemEntity updateItemsAsOpen(Integer collectionGroupId, CollectionGroupEntity collectionGroupEntity, ItemEntity itemEntity) {
@@ -307,7 +307,7 @@ public class MatchingAlgorithmCGDProcessor {
      * @param itemEntityMap
      * @param itemEntity
      */
-    private void populateValues(Map<Integer, ItemEntity> itemEntityMap, ItemEntity itemEntity) {
+    private  static void populateValues(Map<Integer, ItemEntity> itemEntityMap, ItemEntity itemEntity) {
         itemEntityMap.put(itemEntity.getId(), itemEntity);
     }
 
@@ -368,7 +368,7 @@ public class MatchingAlgorithmCGDProcessor {
         }
     }
 
-    private Integer getCounterForGivenInst(String institution) {
+    private static Integer getCounterForGivenInst(String institution) {
         return MatchingCounter.getSpecificInstitutionCounterMap(institution).get(ScsbConstants.MATCHING_COUNTER_SHARED);
     }
 }

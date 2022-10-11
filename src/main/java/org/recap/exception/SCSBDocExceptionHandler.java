@@ -16,7 +16,7 @@ import java.util.Date;
 public class SCSBDocExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(CGDRoundTripReportException.class)
-    public final ResponseEntity<Object> handleCGDRoundTripExceptions(CGDRoundTripReportException exception, WebRequest request){
+    public static final ResponseEntity<Object> handleCGDRoundTripExceptions(CGDRoundTripReportException exception, WebRequest request){
         ExceptionResponse exceptionResponse = new ExceptionResponse(exception.getMessage(), request.getDescription(false),new Date(),exception.getCause());
         return new ResponseEntity<>(exceptionResponse,HttpStatus.INTERNAL_SERVER_ERROR);
     }

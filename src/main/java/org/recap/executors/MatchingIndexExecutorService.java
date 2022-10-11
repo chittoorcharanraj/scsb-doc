@@ -118,7 +118,7 @@ public abstract class MatchingIndexExecutorService {
                         } catch (Exception e) {
                             throw new IllegalStateException(e);
                         }
-                    }).collect(Collectors.toList());
+                    }).collect(Collectors.toCollection(ArrayList::new));
                     log.info("No of Futures Collected : {}", collectedFutures.size());
 
                     int numOfBibsProcessed = 0;

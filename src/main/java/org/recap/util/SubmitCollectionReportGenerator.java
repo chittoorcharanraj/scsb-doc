@@ -86,7 +86,7 @@ public class SubmitCollectionReportGenerator {
         }
         return submitCollectionReportRecordList;
     }
-    private boolean isReportRecordFullyUpdated(SubmitCollectionReportRecord submitCollectionReportRecord){
+    private static boolean isReportRecordFullyUpdated(SubmitCollectionReportRecord submitCollectionReportRecord){
         boolean newReportObject;
         if (null == submitCollectionReportRecord) {
             return false;
@@ -97,7 +97,7 @@ public class SubmitCollectionReportGenerator {
         newReportObject &= (null != submitCollectionReportRecord.getMessage());
         return newReportObject;
     }
-    private boolean isReportRecordFullyUpdatedAcession(SubmitCollectionReportRecord submitCollectionReportRecord){
+    private static  boolean isReportRecordFullyUpdatedAcession(SubmitCollectionReportRecord submitCollectionReportRecord){
         boolean newReportObject;
         if (null == submitCollectionReportRecord) {
             return false;
@@ -107,7 +107,7 @@ public class SubmitCollectionReportGenerator {
         newReportObject &= (null != submitCollectionReportRecord.getMessage());
         return newReportObject;
     }
-    private String getReportType(String type) {
+    private static String getReportType(String type) {
         switch (type) {
             case ScsbCommonConstants.SUBMIT_COLLECTION_SUCCESS_REPORT:
                 return ScsbCommonConstants.SUCCESS;

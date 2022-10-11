@@ -383,7 +383,7 @@ public class TransferService {
         return holdingTransferResponses;
     }
 
-    private void addRecordToMap(String key, Integer value, Map<String, Set<Integer>> recordToDelete) {
+    private static void addRecordToMap(String key, Integer value, Map<String, Set<Integer>> recordToDelete) {
         if (null != value) {
             Set<Integer> ids = recordToDelete.computeIfAbsent(key, k -> null);
             if(null == ids) {
@@ -449,7 +449,7 @@ public class TransferService {
         }
     }
 
-    private void processOrphanRecords(BibliographicEntity sourceBib) {
+    private static void processOrphanRecords(BibliographicEntity sourceBib) {
         List<HoldingsEntity> holdingsEntities = sourceBib.getHoldingsEntities();
         if(CollectionUtils.isEmpty(holdingsEntities)) {
             sourceBib.setDeleted(true);
@@ -464,7 +464,7 @@ public class TransferService {
         }
     }
 
-    private boolean allItemDeleted(HoldingsEntity holdingsEntity) {
+    private static boolean allItemDeleted(HoldingsEntity holdingsEntity) {
         List<ItemEntity> itemEntities = holdingsEntity.getItemEntities();
         boolean allItemDeleted = true;
         if(CollectionUtils.isNotEmpty(itemEntities)){
@@ -475,7 +475,7 @@ public class TransferService {
         return allItemDeleted;
     }
 
-    private void unlinkRecords(BibliographicEntity sourceBib, HoldingsEntity sourceHoldings) {
+    private static void unlinkRecords(BibliographicEntity sourceBib, HoldingsEntity sourceHoldings) {
         sourceHoldings.getBibliographicEntities().remove(sourceBib);
         sourceBib.getHoldingsEntities().remove(sourceHoldings);
         List<ItemEntity> itemEntities = sourceHoldings.getItemEntities();
@@ -487,7 +487,7 @@ public class TransferService {
         sourceBib.getItemEntities().removeAll(itemEntities);
     }
 
-    private void unlinkRecordsForItemTransfer(BibliographicEntity sourceBib, HoldingsEntity sourceHoldings, ItemEntity sourceItem, Date updatedDate) {
+    private static void unlinkRecordsForItemTransfer(BibliographicEntity sourceBib, HoldingsEntity sourceHoldings, ItemEntity sourceItem, Date updatedDate) {
         sourceItem.getBibliographicEntities().remove(sourceBib);
         sourceItem.getHoldingsEntities().remove(sourceHoldings);
         sourceBib.getItemEntities().remove(sourceItem);
@@ -499,7 +499,7 @@ public class TransferService {
         sourceHoldings.setLastUpdatedBy(ScsbConstants.Transfer.TRANSFER_REQUEST);
     }
 
-    private void linkRecords(BibliographicEntity destBib, HoldingsEntity sourceHoldings, Date updatedDate) {
+    private static void linkRecords(BibliographicEntity destBib, HoldingsEntity sourceHoldings, Date updatedDate) {
         sourceHoldings.getBibliographicEntities().add(destBib);
         sourceHoldings.setLastUpdatedDate(updatedDate);
         sourceHoldings.setLastUpdatedBy(ScsbConstants.Transfer.TRANSFER_REQUEST);
@@ -520,7 +520,7 @@ public class TransferService {
         destBib.setLastUpdatedBy(ScsbConstants.Transfer.TRANSFER_REQUEST);
     }
 
-    private void linkRecordsForItemTransfer(BibliographicEntity destBib, HoldingsEntity destHoldings, ItemEntity sourceItem, Date updatedDate) {
+    private static void linkRecordsForItemTransfer(BibliographicEntity destBib, HoldingsEntity destHoldings, ItemEntity sourceItem, Date updatedDate) {
         sourceItem.getHoldingsEntities().add(destHoldings);
         sourceItem.getBibliographicEntities().add(destBib);
 
@@ -649,7 +649,7 @@ public class TransferService {
         }
     }
 
-    private HoldingsEntity matchHoldingIdWithHoldings(String owningInstitutionHoldingsId, BibliographicEntity bibliographicEntity) {
+    private static HoldingsEntity matchHoldingIdWithHoldings(String owningInstitutionHoldingsId, BibliographicEntity bibliographicEntity) {
         List<HoldingsEntity> holdingsEntities = bibliographicEntity.getHoldingsEntities();
         if(CollectionUtils.isNotEmpty(holdingsEntities)) {
             for (Iterator<HoldingsEntity> iterator = holdingsEntities.iterator(); iterator.hasNext(); ) {
@@ -681,7 +681,7 @@ public class TransferService {
         return reportDataEntityList;
     }
 
-    private void addToReportDataEntityList(String transferType, List<ReportDataEntity> reportDataEntityList, String transferType2) {
+    private static void addToReportDataEntityList(String transferType, List<ReportDataEntity> reportDataEntityList, String transferType2) {
         ReportDataEntity reportDataEntityTransferType = new ReportDataEntity();
         reportDataEntityTransferType.setHeaderName(transferType2);
         reportDataEntityTransferType.setHeaderValue(transferType);

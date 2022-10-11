@@ -51,7 +51,7 @@ public class S3SubmitCollectionReportGenerator implements ReportGeneratorInterfa
         }
     }
 
-    private SubmitCollectionReportRecord getSubmitCollectionReportRecord(ReportEntity reportEntity) {
+    private static SubmitCollectionReportRecord getSubmitCollectionReportRecord(ReportEntity reportEntity) {
         SubmitCollectionReportRecord submitCollectionReportRecord = new SubmitCollectionReportRecord();
         for(ReportDataEntity reportDataEntity :reportEntity.getReportDataEntities()){
             if (ScsbCommonConstants.ITEM_BARCODE.equalsIgnoreCase(reportDataEntity.getHeaderName())){

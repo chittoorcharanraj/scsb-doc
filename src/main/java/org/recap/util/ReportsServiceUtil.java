@@ -324,7 +324,7 @@ public class ReportsServiceUtil {
         return bibDetailsMap;
     }
 
-    private String getFormattedDates(Date gotDate) {
+    private static String getFormattedDates(Date gotDate) {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(ScsbCommonConstants.SIMPLE_DATE_FORMAT_REPORTS);
         return simpleDateFormat.format(gotDate);
 
@@ -388,7 +388,7 @@ public class ReportsServiceUtil {
      * @param reportsInstitutionFormList
      * @return
      */
-    private ReportsInstitutionForm getReportInstitutionFormByInstitution(String owningInstitution, List<ReportsInstitutionForm> reportsInstitutionFormList) {
+    private static ReportsInstitutionForm getReportInstitutionFormByInstitution(String owningInstitution, List<ReportsInstitutionForm> reportsInstitutionFormList) {
         if (!reportsInstitutionFormList.isEmpty()) {
             for (ReportsInstitutionForm reportsOwningInstitutionForm : reportsInstitutionFormList) {
                 if (StringUtils.isNotBlank(owningInstitution) && owningInstitution.equalsIgnoreCase(reportsOwningInstitutionForm.getInstitution())) {
@@ -410,14 +410,14 @@ public class ReportsServiceUtil {
         return formattedFromDate + " TO " + formattedToDate;
     }
 
-    private SimpleDateFormat getSimpleDateFormatForReports() {
+    private static SimpleDateFormat getSimpleDateFormatForReports() {
         return new SimpleDateFormat(ScsbCommonConstants.SIMPLE_DATE_FORMAT_REPORTS);
     }
-    private String convertDateToString(Date date){
+    private static String convertDateToString(Date date){
         SimpleDateFormat dateFormat = getSimpleDateFormatForReports();
         return dateFormat.format(date);
     }
-    private String getFormattedDateString(Date inputDate) throws ParseException {
+    private static String getFormattedDateString(Date inputDate) throws ParseException {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(ScsbCommonConstants.DATE_FORMAT_YYYYMMDDHHMM);
         String utcStr;
         String dateString = simpleDateFormat.format(inputDate);
@@ -530,7 +530,7 @@ public class ReportsServiceUtil {
         setDataForBibItems(bibSolrDocumentPreviewList, bibItems);
     }
 
-    private SolrQuery setSortBy(TitleMatchedReport titleMatchedReport, SolrQuery query) {
+    private static SolrQuery setSortBy(TitleMatchedReport titleMatchedReport, SolrQuery query) {
         if (titleMatchedReport.getTitleMatch().equalsIgnoreCase(ScsbConstants.TITLE_MATCHED))
             query.setSort(ScsbConstants.MATCHING_IDENTIFIER, SolrQuery.ORDER.desc);
         else
@@ -544,7 +544,7 @@ public class ReportsServiceUtil {
         return solrQueryBuilder.buildQueryForTitleMatchReportPreviewAndExport(matchingIdentifierAppendResult).toString();
     }
 
-    private StringBuilder prepareMatchingIdentifierList(List<BibItem> bibItems) {
+    private static StringBuilder prepareMatchingIdentifierList(List<BibItem> bibItems) {
         StringBuilder matchingIdentifierAppendResult = new StringBuilder();
         for (BibItem bibItem:
              bibItems) {
@@ -553,7 +553,7 @@ public class ReportsServiceUtil {
         return matchingIdentifierAppendResult;
     }
 
-    private TitleMatchedReport setBibItems(TitleMatchedReport titleMatchedReport, List<BibItem> bibItems, Map<Integer, String> msMap) {
+    private static TitleMatchedReport setBibItems(TitleMatchedReport titleMatchedReport, List<BibItem> bibItems, Map<Integer, String> msMap) {
         List<TitleMatchedReports> titleMatchedReportsList = new ArrayList<>();
         for (BibItem bibItem : bibItems) {
             titleMatchedReportsList.addAll(prepareTitleReport(bibItem,null,msMap,false));
@@ -562,7 +562,7 @@ public class ReportsServiceUtil {
         return titleMatchedReport;
     }
 
-    private List<TitleMatchedReports> setDataToTitleMatchReports(BibItem bibItem, Map<Integer, String> msMap) {
+    private static List<TitleMatchedReports> setDataToTitleMatchReports(BibItem bibItem, Map<Integer, String> msMap) {
 
         List<TitleMatchedReports> titleMatchedReportsList = new ArrayList<>();
         for (Item item : bibItem.getItems()) {
@@ -571,7 +571,7 @@ public class ReportsServiceUtil {
         return titleMatchedReportsList;
     }
 
-    private List<TitleMatchedReports> prepareTitleReport(BibItem bibItem, Item item, Map<Integer, String> msMap, Boolean isReportExport) {
+    private static List<TitleMatchedReports> prepareTitleReport(BibItem bibItem, Item item, Map<Integer, String> msMap, Boolean isReportExport) {
         List<TitleMatchedReports> titleMatchedReportsList = new ArrayList<>();
         TitleMatchedReports titleMatchedReports = new TitleMatchedReports();
         titleMatchedReports.setBibId(bibItem.getOwningInstitutionBibId());
@@ -629,7 +629,7 @@ public class ReportsServiceUtil {
         titleMatchedReportsList.add(titleMatchedReports);
         return titleMatchedReportsList;
     }
-    private Map<Integer, String> prepareMSMap(List<MatchingScoreTranslationEntity> msList) {
+    private static Map<Integer, String> prepareMSMap(List<MatchingScoreTranslationEntity> msList) {
         Map<Integer,String> msListTemp = new HashMap<>();
         msList.stream().forEach(a->{
             msListTemp.put(a.getDecMaScore(), a.getStringMaScore());
@@ -637,7 +637,7 @@ public class ReportsServiceUtil {
         return msListTemp;
     }
 
-    private List<ItemDetails> setItemDetails(BibItem bibItem) {
+    private static List<ItemDetails> setItemDetails(BibItem bibItem) {
         List<ItemDetails> itemDetailsList = new ArrayList<>();
         for(Item item : bibItem.getItems()){
             ItemDetails itemDetails = new ItemDetails();
@@ -649,7 +649,7 @@ public class ReportsServiceUtil {
         return itemDetailsList;
     }
 
-    private String setCGD(BibItem bibItem) {
+    private static String setCGD(BibItem bibItem) {
         return (bibItem.getItems().size() == 1) ? bibItem.getItems().get(0).getCollectionGroupDesignation() : "";
     }
 

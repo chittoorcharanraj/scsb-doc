@@ -123,7 +123,7 @@ public class DBReportUtil {
         return getReportDataEntities(holdingsEntity, reportDataEntities);
     }
 
-    private List<ReportDataEntity> getReportDataEntities(HoldingsEntity holdingsEntity, List<ReportDataEntity> reportDataEntities) {
+    private static List<ReportDataEntity> getReportDataEntities(HoldingsEntity holdingsEntity, List<ReportDataEntity> reportDataEntities) {
         if (holdingsEntity != null && StringUtils.isNotBlank(holdingsEntity.getOwningInstitutionHoldingsId())) {
             ReportDataEntity owningInstitutionHoldingsIdReportDataEntity = new ReportDataEntity();
             owningInstitutionHoldingsIdReportDataEntity.setHeaderName(ScsbCommonConstants.OWNING_INSTITUTION_HOLDINGS_ID);

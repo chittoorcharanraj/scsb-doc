@@ -35,10 +35,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
@@ -146,20 +143,20 @@ public class TitleMatchReportExportService {
         }
     }
 
-    private String createFileName(String owningInst, int fileCount, Integer fileNumber) throws ParseException {
+    private static String createFileName(String owningInst, int fileCount, Integer fileNumber) throws ParseException {
         String formattedDate = getCurrentDate();
         String fileName = getFileName(owningInst, fileNumber, formattedDate, fileCount);
         return fileName;
     }
 
-    private String getCurrentDate() {
+    private static String getCurrentDate() {
         DateTimeFormatter dateFormatForReport = DateTimeFormatter.ofPattern(ScsbConstants.DATE_FORMAT_FOR_FILE_NAME);
         LocalDateTime now = LocalDateTime.now();
         String formattedDate = dateFormatForReport.format(now);
         return formattedDate;
     }
 
-    private String getFileName(String owningInst, Integer fileNumber, String formattedDate, int fileCount) {
+    private static String getFileName(String owningInst, Integer fileNumber, String formattedDate, int fileCount) {
         String fileName = (fileCount == 1) ? owningInst + "_Title_Match_" + formattedDate + ".csv" :
                 owningInst + "_Title_Match_" + formattedDate + "_" + fileNumber + ".csv";
         return fileName;
@@ -170,7 +167,8 @@ public class TitleMatchReportExportService {
                 .filter(Files::isRegularFile)
                 .filter(p -> p.getFileName().toString().endsWith(".zip"))
                 .map(Path::toFile)
-                .collect(Collectors.toList());
+                .collect(Collectors.toCollection(ArrayList::new)
+                );
         TransferManager xfer_mgr = TransferManagerBuilder.standard()
                 .withS3Client(s3Client)
                 .build();
@@ -186,7 +184,7 @@ public class TitleMatchReportExportService {
         List<File> filePaths = Files.walk(Paths.get(titleReportDir))
                 .filter(Files::isRegularFile)
                 .map(Path::toFile)
-                .collect(Collectors.toList());
+                .collect(Collectors.toCollection(ArrayList::new));
         try {
             Optional<File> firstFile = filePaths.stream().filter(file -> file.getName().contains("csv")).findFirst();
             String zipFileName = null;
@@ -259,7 +257,7 @@ public class TitleMatchReportExportService {
         return false;
     }
 
-    private void writeTitleMatchReport(TitleMatchedReports titleMatchedReports, Row row) {
+    private static void writeTitleMatchReport(TitleMatchedReports titleMatchedReports, Row row) {
         Cell cell = row.createCell(0);
         cell.setCellValue(titleMatchedReports.getOwningInstitution());
 

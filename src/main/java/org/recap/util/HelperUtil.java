@@ -50,7 +50,7 @@ public class HelperUtil {
     }
 
 
-    private ReportEntity getReportEntity(String owningInstitution, String fileName, String reportType){
+    private static ReportEntity getReportEntity(String owningInstitution, String fileName, String reportType){
         ReportEntity reportEntity = new ReportEntity();
         reportEntity.setFileName(fileName);
         reportEntity.setType(reportType);

@@ -174,7 +174,7 @@ public class DataDumpSolrDocumentRepositoryImpl implements CustomDocumentReposit
         return updatedBibItemMap;
     }
 
-    private void compareAndSetOnlyOrphanBibs(Map<Integer, BibItem> bibItemMap,List<BibItem> bibItemListForOrphanBib){
+    private static void compareAndSetOnlyOrphanBibs(Map<Integer, BibItem> bibItemMap,List<BibItem> bibItemListForOrphanBib){
         for(BibItem bibItem:bibItemListForOrphanBib){
             if(!bibItemMap.containsKey(bibItem.getBibId())){
                 bibItemMap.put(bibItem.getBibId(),bibItem);
@@ -182,7 +182,7 @@ public class DataDumpSolrDocumentRepositoryImpl implements CustomDocumentReposit
         }
     }
 
-    private boolean isChangedToPrivateCGD(ItemEntity fetchedItemEntity){
+    private static boolean isChangedToPrivateCGD(ItemEntity fetchedItemEntity){
         if(fetchedItemEntity.getCgdChangeLog()!=null){
             return fetchedItemEntity.getCgdChangeLog().equals(ScsbConstants.CGD_CHANGE_LOG_SHARED_TO_PRIVATE)
                     || fetchedItemEntity.getCgdChangeLog().equals(ScsbConstants.CGD_CHANGE_LOG_OPEN_TO_PRIVATE);
@@ -276,11 +276,11 @@ public class DataDumpSolrDocumentRepositoryImpl implements CustomDocumentReposit
      * @param fieldValue
      * @return
      */
-    private boolean isPartialFullDump(String fieldValue) {
+    private static boolean isPartialFullDump(String fieldValue) {
         return !StringUtils.isNotBlank(fieldValue) || !fieldValue.contains(ScsbConstants.INCREMENTAL_DUMP_TO_NOW);
     }
 
-    private BibItem findBibItem(List<BibItem> bibItems, String root) {
+    private static BibItem findBibItem(List<BibItem> bibItems, String root) {
         for (Iterator<BibItem> iterator = bibItems.iterator(); iterator.hasNext(); ) {
             BibItem bibItem = iterator.next();
             if(bibItem.getRoot() != null && bibItem.getRoot().equals(root)){
@@ -401,7 +401,7 @@ public class DataDumpSolrDocumentRepositoryImpl implements CustomDocumentReposit
         return itemValueResolvers;
     }
 
-    private List<String> getInstitutionList(String institutionString){
+    private static List<String> getInstitutionList(String institutionString){
         return Arrays.asList(institutionString.split("\\s*,\\s*"));
     }
 

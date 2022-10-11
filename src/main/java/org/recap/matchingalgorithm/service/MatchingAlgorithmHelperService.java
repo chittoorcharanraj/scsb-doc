@@ -475,7 +475,7 @@ public class MatchingAlgorithmHelperService {
             } catch (Exception e) {
                 throw new IllegalStateException(e);
             }
-        }).collect(toList());
+        }).collect(Collectors.toCollection(ArrayList::new));
         log.info("No of Futures Collected : {}", collectedFutures.size());
         return collectedFutures;
     }
@@ -575,7 +575,7 @@ public class MatchingAlgorithmHelperService {
         return Optional.ofNullable(CollectionUtils.isNotEmpty(reportDataEntityForMatchingSerials)?reportDataEntityForMatchingSerials:null);
     }
 
-    private void clearAllCollection(List<MatchingAlgorithmReportDataEntity> dataEntities, Map<Integer, BibliographicEntity> bibIdAndBibEntityMap, Set<Integer> bibIdsToIndex) {
+    private static void clearAllCollection(List<MatchingAlgorithmReportDataEntity> dataEntities, Map<Integer, BibliographicEntity> bibIdAndBibEntityMap, Set<Integer> bibIdsToIndex) {
         bibIdsToIndex.clear();
         bibIdAndBibEntityMap.clear();
         dataEntities.clear();
@@ -650,7 +650,7 @@ public class MatchingAlgorithmHelperService {
         Map<Integer, BibliographicEntity> bibIdAndBibEntityMap = getBibIdAndBibliographicEntityMap(matchScoreReportList);//10k-40k
         Set<Integer> bibIdsToIndex = new HashSet<>();
         matchScoreReportList.forEach(matchScoreReport -> {
-            List<BibliographicEntity> bibToupdate = matchScoreReport.getBibIds().stream().map(bibIdAndBibEntityMap::get).collect(toList());
+            List<BibliographicEntity> bibToupdate = matchScoreReport.getBibIds().stream().map(bibIdAndBibEntityMap::get).collect(Collectors.toCollection(ArrayList::new));
             Optional<Map<Integer, BibliographicEntity>> bibliographicEntityMap = matchingAlgorithmUtil.groupBibsForInitialMatching(bibToupdate, matchScoreReport.getMatchScore());
             bibliographicEntityMap.ifPresentOrElse(entry -> bibIdsToIndex.addAll(entry.keySet()), () -> log.info("No bib ids found to group for indexing"));
         });
