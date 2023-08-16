@@ -5,9 +5,9 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.recap.BaseTestCaseUT;
 
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
-import javax.xml.bind.Unmarshaller;
+import jakarta.xml.bind.JAXBException;
+import jakarta.xml.bind.Marshaller;
+import jakarta.xml.bind.Unmarshaller;
 import java.util.HashMap;
 import java.util.Map;
 

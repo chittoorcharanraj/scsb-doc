@@ -1,6 +1,7 @@
 package org.recap.repository.solr.main;
 
 import org.recap.model.solr.Bib;
+import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.data.solr.repository.SolrCrudRepository;
 
@@ -8,8 +9,8 @@ import java.util.List;
 
 /**
  * Created by pvsubrah on 6/11/16.
- */
-public interface BibSolrCrudRepository extends SolrCrudRepository<Bib, String> {
+*/
+public interface BibSolrCrudRepository extends SolrCrudRepository<Bib, String>, CrudRepository<Bib, String> {
 
     /**
      * Finds Bib based on the given bib id.

@@ -39,11 +39,11 @@ SearchRecordsRequest implements Serializable {
     @ApiModelProperty(name= "useRestrictions", value= "Book Use Restrictions",position = 7)
     private List<String> useRestrictions = null;
 
-    @ApiModelProperty(name= "searchResultRows", value= "Search Response",position = 8)
-    private List<SearchResultRow> searchResultRows = new ArrayList<>();
-
-    @ApiModelProperty(name= "totalPageCount", value= "Total Page Count",position = 9)
+    @ApiModelProperty(name= "totalPageCount", value= "Total Page Count",position = 8)
     private Integer totalPageCount = 0;
+
+    @ApiModelProperty(name= "searchResultRows", value= "Search Response",position = 9)
+    private List<SearchResultRow> searchResultRows = new ArrayList<>();
 
     @ApiModelProperty(name= "totalBibRecordsCount", value= "Total Bibliograph Records Count",position = 10)
     private String totalBibRecordsCount = "0";

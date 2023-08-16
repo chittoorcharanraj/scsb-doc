@@ -3,32 +3,32 @@ package org.recap.config;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.Resource;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.resource.PathResourceResolver;
 
 import java.io.IOException;
 import java.util.Arrays;
 
 @Configuration
-public class StaticResourcesConfiguration extends WebMvcConfigurerAdapter {
+public class StaticResourcesConfiguration implements WebMvcConfigurer {
 
     private static final String[] CLASSPATH_RESOURCE_LOCATIONS = {"classpath:/META-INF/resources/",
             "classpath:/resources/", "classpath:/static/", "classpath:/public/"};
 
     static final String[] STATIC_RESOURCES = new String[]{
-            "/**/*.css",
-            "/**/*.html",
-            "/**/*.js",
-            "/**/*.json",
-            "/**/*.bmp",
-            "/**/*.jpeg",
-            "/**/*.jpg",
-            "/**/*.png",
-            "/**/*.ttf",
-            "/**/*.eot",
-            "/**/*.svg",
-            "/**/*.woff",
-            "/**/*.woff2"
+            "/*/*.css",
+            "/*/*.html",
+            "/*/*.js",
+            "/*/*.json",
+            "/*/*.bmp",
+            "/*/*.jpeg",
+            "/*/*.jpg",
+            "/*/*.png",
+            "/*/*.ttf",
+            "/*/*.eot",
+            "/*/*.svg",
+            "/*/*.woff",
+            "/*/*.woff2"
     };
 
     @Override
@@ -41,7 +41,7 @@ public class StaticResourcesConfiguration extends WebMvcConfigurerAdapter {
 
         //Create mapping to index.html for Angular HTML5 mode.
         String[] indexLocations = getIndexLocations();
-        registry.addResourceHandler("/**")
+        registry.addResourceHandler("/*")
                 .addResourceLocations(indexLocations)
                 .setCachePeriod(cachePeriod)
                 .resourceChain(true)

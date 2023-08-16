@@ -219,7 +219,7 @@ public interface ReportDetailRepository extends BaseRepository<ReportEntity> {
      * @param typeList the type list
      * @return the count by type
      */
-    @Query(value = "SELECT COUNT(id) FROM ReportEntity WHERE TYPE IN (?1)")
+    @Query(value = "SELECT COUNT(id) FROM ReportEntity WHERE type IN (?1)")
     Integer getCountByType(List<String> typeList);
 
     /**
@@ -241,7 +241,7 @@ public interface ReportDetailRepository extends BaseRepository<ReportEntity> {
      * @param typeList the type list
      * @return the record num by type
      */
-    @Query(value = "SELECT id FROM ReportEntity WHERE TYPE IN (?1)")
+    @Query(value = "SELECT id FROM ReportEntity WHERE type IN (?1)")
     Page<Integer> getRecordNumByType(Pageable pageable,List<String> typeList);
 
     /**

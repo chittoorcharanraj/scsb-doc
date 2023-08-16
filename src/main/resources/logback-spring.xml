@@ -44,7 +44,7 @@
 				<stackHash>
 					<fieldName>exception-hash</fieldName>
 				</stackHash>
-				<provider class="org.recap.CustomStackTraceJsonProvider">
+			<!--	<provider class="org.recap.CustomStackTraceJsonProvider">
 					<fieldName>stack_trace</fieldName>
 					<throwableConverter
 						class="net.logstash.logback.stacktrace.ShortenedThrowableConverter">
@@ -55,7 +55,7 @@
 						<exclude>sun\.reflect\..*\.invoke.*</exclude>
 					</throwableConverter>
 				</provider>
-			</providers>
+-->			</providers>
 		</encoder>
 	</appender>
 	
