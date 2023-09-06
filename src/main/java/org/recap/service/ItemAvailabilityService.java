@@ -56,7 +56,7 @@ public class ItemAvailabilityService {
      * @return the item status by barcode and is deleted false
      */
     public String getItemStatusByBarcodeAndIsDeletedFalse(String barcode) {
-        return itemDetailsRepository.getItemStatusByBarcodeAndIsDeletedFalse(barcode,0);
+        return itemDetailsRepository.getItemStatusByBarcodeAndIsDeletedFalse(barcode,Boolean.FALSE);
     }
 
     /**
@@ -72,7 +72,7 @@ public class ItemAvailabilityService {
         }
         Map<String, String> barcodeStatusMap = new HashMap<>();
         List<ItemAvailabilityResponse> itemAvailabilityResponses = new ArrayList<>();
-        List<ItemEntity> itemEntityList = itemDetailsRepository.getItemStatusByBarcodeAndIsDeletedFalseList(barcodes,0);
+        List<ItemEntity> itemEntityList = itemDetailsRepository.getItemStatusByBarcodeAndIsDeletedFalseList(barcodes,Boolean.FALSE);
         Map<String, String> propertyMap = propertyUtil.getPropertyByKeyForAllInstitutions(PropertyKeyConstants.ILS.ILS_ENABLE_CIRCULATION_FREEZE);
         ItemStatusEntity itemNotAvailableStatusEntity = itemStatusDetailsRepository.findByStatusCode(ScsbCommonConstants.NOT_AVAILABLE);
         for (ItemEntity itemEntity : itemEntityList) {

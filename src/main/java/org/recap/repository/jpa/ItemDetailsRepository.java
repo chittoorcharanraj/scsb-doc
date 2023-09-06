@@ -126,7 +126,7 @@ public interface ItemDetailsRepository extends BaseRepository<ItemEntity> {
      * @return the item status by barcode and is deleted false
      */
     @Query(value = "select itemStatus.statusCode from ItemEntity item, ItemStatusEntity itemStatus where item.itemAvailabilityStatusId = itemStatus.id and item.barcode = :barcode and item.isDeleted = :deleted")
-    String getItemStatusByBarcodeAndIsDeletedFalse(@Param("barcode") String barcode, @Param("deleted") Integer deleted);
+    String getItemStatusByBarcodeAndIsDeletedFalse(@Param("barcode") String barcode, @Param("deleted") Boolean deleted);
 
     /**
      * Gets a list of item entities with item availability status which contains available and not available and isDeleted field which is false by using a list of barcode.
@@ -135,7 +135,7 @@ public interface ItemDetailsRepository extends BaseRepository<ItemEntity> {
      * @return the item status by barcode and is deleted false list
      */
     @Query(value = "select item from ItemEntity item where item.itemAvailabilityStatusId in (1,2) and item.barcode in (:barcode) and item.isDeleted = :deleted")
-    List<ItemEntity> getItemStatusByBarcodeAndIsDeletedFalseList(@Param("barcode") List<String> barcodeList, Integer deleted);
+    List<ItemEntity> getItemStatusByBarcodeAndIsDeletedFalseList(@Param("barcode") List<String> barcodeList, Boolean deleted);
 
     /**
      * Finds item entity  based on the last updated date and last update date time.
