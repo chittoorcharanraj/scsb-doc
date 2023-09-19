@@ -104,6 +104,7 @@ dependencies {
 	testImplementation('org.springframework.boot:spring-boot-starter-test')
 	testImplementation('org.springframework.restdocs:spring-restdocs-mockmvc')
 	implementation('javax.validation:validation-api:2.0.1.Final')
+	implementation 'jakarta.mail:jakarta.mail-api:2.1.2'
 
 	testImplementation group: 'org.mockito', name: 'mockito-core', version: '5.5.0'
 	testImplementation group: 'org.powermock', name: 'powermock-api-mockito2', version: '2.0.9'
