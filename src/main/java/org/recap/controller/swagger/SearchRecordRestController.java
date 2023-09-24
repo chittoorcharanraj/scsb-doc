@@ -1,10 +1,6 @@
 package org.recap.controller.swagger;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
+
 import lombok.extern.slf4j.Slf4j;
 import org.recap.ScsbCommonConstants;
 import org.recap.model.search.DataDumpSearchResult;
@@ -15,7 +11,6 @@ import org.recap.util.PropertyUtil;
 import org.recap.util.SearchRecordsUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -34,7 +29,6 @@ import java.util.Map;
 @Slf4j
 @RestController
 @RequestMapping("/searchService")
-@Api(value="search")
 public class SearchRecordRestController {
 
 
@@ -60,11 +54,10 @@ public class SearchRecordRestController {
      * @param searchRecordsRequest the search records request
      * @return the SearchRecordsResponse.
      */
-    @PostMapping(value="/search")
-    @ApiOperation(value = "search",notes = "Search Books in Storage Location - Using Method Post, Request data is String", nickname = "search")
-    @ApiResponses(value = {@ApiResponse(code = 200, message = "Successful Search")})
+
+    @GetMapping("/search")
     @ResponseBody
-    public SearchRecordsResponse searchRecordsServiceGetParam(@ApiParam(value = "Paramerters for Searching Records" , required = true, name="requestJson") @RequestBody SearchRecordsRequest searchRecordsRequest) {
+    public SearchRecordsResponse searchRecordsServiceGetParam(@RequestBody SearchRecordsRequest searchRecordsRequest) {
 
         SearchRecordsResponse searchRecordsResponse = new SearchRecordsResponse();
         if(ScsbCommonConstants.CUSTOMER_CODE.equalsIgnoreCase(searchRecordsRequest.getFieldName())){
@@ -93,10 +86,9 @@ public class SearchRecordRestController {
      * @param searchRecordsRequest the search records request
      * @return the responseMap.
      */
-    @PostMapping(value="/searchRecords")
-    @ApiOperation(value = "searchRecords",notes = "Search Books in Storage Location - Using Method Post, Request data is String", nickname = "searchRecords", consumes="application/json")
-    @ApiResponses(value = {@ApiResponse(code = 200, message = "Successful Search")})
-    public Map searchRecords(@ApiParam(value = "Paramerters for Searching Records" , required = true, name="requestJson") @RequestBody SearchRecordsRequest searchRecordsRequest) {
+    @GetMapping("/searchRecords")
+    public Map searchRecords(
+            @RequestBody SearchRecordsRequest searchRecordsRequest) {
         List<DataDumpSearchResult> dataDumpSearchResults = null;
         Map responseMap = new HashMap();
         try {
@@ -124,18 +116,17 @@ public class SearchRecordRestController {
      * @param pageSize                    the page size
      * @return the SearchResultRow list.
      */
-    @GetMapping(value="/searchByParam")
-    @ApiOperation(value = "searchParam",notes = "Search Books in Storage Location - Using Method GET, Request data as parameter", nickname = "search")
-    @ApiResponses(value = {@ApiResponse(code = 200, message = "Successful Search")})
+
+    @GetMapping("/searchByParam")
     public List<SearchResultRow> searchRecordsServiceGet(
             @RequestParam(name="fieldValue", required = false)  String fieldValue,
-            @ApiParam(name="fieldName",required = false,allowableValues = "Author_search,Title_search,TitleStartsWith,Publisher,PublicationPlace,PublicationDate,Subject,ISBN,ISSN,OCLCNumber,Notes,CallNumber_search,Barcode") @RequestParam(name="fieldName", value = "fieldName" , required = false)  String fieldName,
-            @ApiParam(name="owningInstitutions", value= "${swagger.values.owningInstitutions}")@RequestParam(name="owningInstitutions",required = false ) String owningInstitutions,
-            @ApiParam(name="collectionGroupDesignations", value = "${swagger.values.cgds}") @RequestParam(name="collectionGroupDesignations", value = "collectionGroupDesignations" , required = false)  String collectionGroupDesignations,
-            @ApiParam(name="availability", value = "Availability: Available, NotAvailable") @RequestParam(name="availability", value = "availability" , required = false)  String availability,
-            @ApiParam(name="materialTypes", value = "MaterialTypes: Monograph, Serial, Other") @RequestParam(name="materialTypes", value = "materialTypes" , required = false)  String materialTypes,
-            @ApiParam(name="useRestrictions", value = "Use Restrictions: NoRestrictions, InLibraryUse, SupervisedUse") @RequestParam(name="useRestrictions", value = "useRestrictions" , required = false)  String useRestrictions,
-            @ApiParam(name="pageSize", value = "Page Size in Numbers - 10, 20 30...") @RequestParam(name="pageSize", required = false) Integer pageSize
+            @RequestParam(name="fieldName", value = "fieldName" , required = false)  String fieldName,
+            @RequestParam(name="owningInstitutions",required = false ) String owningInstitutions,
+            @RequestParam(name="collectionGroupDesignations", value = "collectionGroupDesignations" , required = false)  String collectionGroupDesignations,
+            @RequestParam(name="availability", value = "availability" , required = false)  String availability,
+            @RequestParam(name="materialTypes", value = "materialTypes" , required = false)  String materialTypes,
+            @RequestParam(name="useRestrictions", value = "useRestrictions" , required = false)  String useRestrictions,
+            @RequestParam(name="pageSize", required = false) Integer pageSize
     ) {
 
         SearchRecordsRequest searchRecordsRequest = new SearchRecordsRequest(propertyUtil.getAllInstitutions());
