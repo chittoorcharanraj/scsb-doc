@@ -11,6 +11,7 @@ import org.recap.util.PropertyUtil;
 import org.recap.util.SearchRecordsUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -55,7 +56,7 @@ public class SearchRecordRestController {
      * @return the SearchRecordsResponse.
      */
 
-    @GetMapping("/search")
+    @PostMapping("/search")
     @ResponseBody
     public SearchRecordsResponse searchRecordsServiceGetParam(@RequestBody SearchRecordsRequest searchRecordsRequest) {
 
@@ -86,7 +87,7 @@ public class SearchRecordRestController {
      * @param searchRecordsRequest the search records request
      * @return the responseMap.
      */
-    @GetMapping("/searchRecords")
+    @PostMapping("/searchRecords")
     public Map searchRecords(
             @RequestBody SearchRecordsRequest searchRecordsRequest) {
         List<DataDumpSearchResult> dataDumpSearchResults = null;
