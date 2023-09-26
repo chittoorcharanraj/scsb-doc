@@ -214,7 +214,7 @@ public interface BibliographicDetailsRepository extends BaseRepository<Bibliogra
      */
     @Query(value = "SELECT distinct BIB FROM BibliographicEntity as BIB WHERE BIB.id IN " +
             "(SELECT DISTINCT BIB1.id FROM BibliographicEntity as BIB1 INNER JOIN BIB1.itemEntities AS ITEMS " +
-            "WHERE ITEMS.id IN (SELECT recordId FROM ItemChangeLogEntity where operationType=?1 and updated_date between ?2 and ?3))")
+            "WHERE ITEMS.id IN (SELECT recordId FROM ItemChangeLogEntity where operationType=?1 and updatedDate between ?2 and ?3))")
     Page<BibliographicEntity> getBibliographicEntitiesForChangedItems(Pageable pageable, String operationType, Date from, Date to);
 
     /**
@@ -227,7 +227,7 @@ public interface BibliographicDetailsRepository extends BaseRepository<Bibliogra
      */
     @Query(value = "SELECT count(distinct BIB) FROM BibliographicEntity as BIB WHERE BIB.id IN " +
             "(SELECT DISTINCT BIB1.id FROM BibliographicEntity as BIB1 INNER JOIN BIB1.itemEntities AS ITEMS " +
-            "WHERE ITEMS.id IN (SELECT recordId FROM ItemChangeLogEntity where operationType=?1 and updated_date between ?2 and ?3))")
+            "WHERE ITEMS.id IN (SELECT recordId FROM ItemChangeLogEntity where operationType=?1 and updatedDate between ?2 and ?3))")
     Long getCountOfBibliographicEntitiesForChangedItems(String operationType, Date from, Date to);
 
     /**

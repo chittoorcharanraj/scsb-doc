@@ -1,7 +1,7 @@
 buildscript {
 	ext {
-		springBootVersion = '2.7.8'
-		set('springCloudVersion', "2021.0.5")
+		springBootVersion = '3.1.2'
+		set('springCloudVersion', "2022.0.4")
 	}
 	repositories {
 		mavenCentral()
@@ -20,9 +20,9 @@ buildscript {
 }
 
 plugins {
-	id 'io.spring.dependency-management' version '1.0.11.RELEASE'
-	id 'org.springframework.boot' version '2.7.8'
-	id "org.sonarqube" version "3.4.0.2513"
+	id 'io.spring.dependency-management' version '1.1.2'
+	id 'org.springframework.boot' version '3.1.2'
+	id "org.sonarqube" version "4.3.1.3277"
 }
 
 apply plugin: 'java'
@@ -52,27 +52,28 @@ repositories {
 
 
 dependencies {
-	implementation fileTree(dir: '/data/commonjar', include: '*2.4.jar')
+	implementation fileTree(dir: '/data/commonjar', include: '*2.6.jar')
 	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
-	implementation 'org.apache.camel.springboot:camel-spring-boot-starter:3.20.2'
+	implementation 'org.apache.camel.springboot:camel-spring-boot-starter:4.0.0'
 	implementation('org.springframework.data:spring-data-solr:4.3.15')
 			{exclude module: 'solr-solrj'; exclude module: 'solr-data-commons'; exclude module: 'spring-data-jpa'}
-	implementation 'org.apache.solr:solr-solrj:8.11.1'
-	implementation 'org.apache.camel:camel-solr:3.20.2'
-	implementation 'org.apache.camel:camel-bindy:3.20.2'
-	implementation 'org.apache.camel:camel-metrics:3.20.2'
-	implementation 'org.apache.camel:camel-csv:3.20.2'
-	implementation 'org.apache.camel:camel-mail:3.20.2'
-	implementation 'org.apache.camel:camel-ftp:3.20.2'
-	implementation 'org.apache.camel:camel-activemq:3.20.2'
+	implementation 'org.apache.solr:solr-solrj:8.11.2'
+	implementation 'org.apache.camel:camel-solr:4.0.0-M2'
+	implementation 'org.apache.camel:camel-bindy:4.0.0'
+	implementation 'org.apache.camel:camel-metrics:4.0.0'
+	implementation 'org.apache.camel:camel-csv:4.0.0'
+	implementation 'org.apache.camel:camel-mail:4.0.0'
+	implementation 'org.apache.camel:camel-ftp:4.0.0'
+	implementation 'org.apache.camel:camel-activemq:4.0.0'
 	implementation('org.apache.camel.springboot:camel-aws-s3-starter:3.8.0')
 	implementation('org.apache.camel:camel-aws-s3:3.8.0')
 	implementation 'org.apache.activemq:activemq-camel:5.16.6'
-	implementation 'org.apache.activemq:activemq-pool:5.17.4'
-	implementation 'org.apache.activemq:activemq-broker:5.17.4'
-	implementation 'org.apache.activemq:activemq-client:5.17.4'
+	implementation 'org.apache.activemq:activemq-pool:5.18.2'
+	implementation 'org.apache.activemq:activemq-broker:5.18.2'
+	implementation 'org.apache.activemq:activemq-client-jakarta:5.18.2' exclude module:"activemq-client"
+	//implementation 'org.apache.activemq:activemq-client:5.18.2'
 	implementation 'commons-beanutils:commons-beanutils:1.9.4'
 	implementation 'org.apache.commons:commons-collections4:4.4'
 	implementation 'info.freelibrary:freelib-marc4j:2.6.12'
@@ -82,36 +83,43 @@ dependencies {
 	implementation 'junit:junit:4.13.2'
 	//implementation 'org.springframework.plugin:spring-plugin-core:2.0.0.RELEASE'
 	implementation('com.google.guava:guava:31.1-jre') {exclude module: "solr-solrj"}
-	implementation 'org.projectlombok:lombok:1.18.26'
+	implementation 'org.projectlombok:lombok:1.18.28'
 	implementation 'io.micrometer:micrometer-registry-prometheus'
 	implementation 'org.springframework.boot:spring-boot-starter-actuator'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation('org.apache.commons:commons-text:1.10.0');
-	implementation 'org.springframework.cloud:spring-cloud-starter-sleuth'
-	implementation 'net.logstash.logback:logstash-logback-encoder:7.3'
+	implementation 'net.logstash.logback:logstash-logback-encoder:7.4'
 	implementation 'org.springframework.cloud:spring-cloud-starter-config'
 	implementation 'org.springframework.cloud:spring-cloud-starter-bus-amqp'
-	implementation group: 'org.json', name: 'json', version: '20230227'
+	implementation group: 'org.json', name: 'json', version: '20230618'
 	implementation group: 'com.google.code.gson', name: 'gson', version: '2.10.1'
 	implementation('org.apache.poi:poi-ooxml:5.2.3')
-	annotationProcessor 'org.projectlombok:lombok:1.18.26'
-	testImplementation 'org.projectlombok:lombok:1.18.26'
-	testAnnotationProcessor 'org.projectlombok:lombok:1.18.26'
-	implementation group: 'mysql', name: 'mysql-connector-java', version: '8.0.32'
+	implementation group: 'org.apache.camel', name: 'camel-jms', version: '4.0.0'
+	implementation 'io.zipkin.brave:brave:5.2.0'
+	annotationProcessor 'org.projectlombok:lombok:1.18.28'
+	testImplementation 'org.projectlombok:lombok:1.18.28'
+	testAnnotationProcessor 'org.projectlombok:lombok:1.18.28'
+	implementation group: 'mysql', name: 'mysql-connector-java', version: '8.0.33'
 	annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
 	testImplementation('org.springframework.boot:spring-boot-starter-test')
 	testImplementation('org.springframework.restdocs:spring-restdocs-mockmvc')
 	implementation('javax.validation:validation-api:2.0.1.Final')
-	
-	testImplementation group: 'org.mockito', name: 'mockito-core', version: '3.12.4'
+	implementation 'jakarta.mail:jakarta.mail-api:2.1.2'
+	//implementation 'javax.mail:javax.mail-api:1.6.2'
+	implementation 'com.sun.mail:smtp:2.0.1'
+	implementation 'com.sun.mail:jakarta.mail:2.0.1'
+
+
+	testImplementation group: 'org.mockito', name: 'mockito-core', version: '5.5.0'
 	testImplementation group: 'org.powermock', name: 'powermock-api-mockito2', version: '2.0.9'
 	testImplementation group: 'org.powermock', name: 'powermock-module-junit4', version: '2.0.9'
 
 	implementation 'org.springframework.cloud:spring-cloud-starter-config'
 	implementation 'org.springframework.cloud:spring-cloud-starter-bus-amqp'
 	implementation group: 'org.modelmapper', name: 'modelmapper', version: '3.1.1'
+	implementation 'javax.servlet:javax.servlet-api:4.0.1'
 
-	implementation('io.springfox:springfox-boot-starter:3.0.0')
+	implementation 'org.springdoc:springdoc-openapi-ui:1.7.0'
 
 
 }
@@ -163,7 +171,7 @@ jacocoTestReport {
 
 
 jacoco {
-	toolVersion = "0.8.8"
+	toolVersion = "0.8.10"
 	reportsDirectory = layout.buildDirectory.dir('customJacocoReportDir')
 }
 
@@ -176,6 +184,9 @@ task scsbDocJavadocs(type: Javadoc) {
 	destinationDir = new File(home+"/scsb-javadocs/scsb-doc");
 }
 
+tasks.named('bootJar') {
+	duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+}
 
 jar {
 	enabled = false
