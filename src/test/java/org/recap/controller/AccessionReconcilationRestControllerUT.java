@@ -27,7 +27,6 @@ import java.util.Map;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-@RunWith(PowerMockRunner.class)
 @PrepareForTest({SolrTemplate.class, SolrClient.class})
 public class AccessionReconcilationRestControllerUT extends BaseTestCaseUT {
 

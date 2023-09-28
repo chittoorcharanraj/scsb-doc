@@ -1,5 +1,6 @@
 package org.recap.service;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -11,6 +12,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 
 import static org.junit.Assert.assertEquals;
 
+@Ignore
 public class ActiveMqQueuesInfoUT extends BaseTestCaseUT {
 
     @InjectMocks

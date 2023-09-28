@@ -11,15 +11,13 @@ import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrDocumentList;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
-import org.powermock.modules.junit4.PowerMockRunnerDelegate;
 import org.recap.*;
 import org.recap.matchingalgorithm.MatchingCounter;
 import org.recap.model.jpa.InstitutionEntity;
@@ -32,7 +30,6 @@ import org.recap.util.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.solr.core.SolrTemplate;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.io.File;
@@ -48,9 +45,8 @@ import static org.recap.ScsbConstants.MATCHING_COUNTER_UPDATED_OPEN;
  * Created by Anitha on 10/10/20.
  */
 
-@RunWith(PowerMockRunner.class)
+
 @PrepareForTest({SolrTemplate.class, SolrClient.class})
-@PowerMockRunnerDelegate(SpringJUnit4ClassRunner.class)
 public class OngoingMatchingReportsServiceUT extends BaseTestCaseUT4{
 
     @InjectMocks

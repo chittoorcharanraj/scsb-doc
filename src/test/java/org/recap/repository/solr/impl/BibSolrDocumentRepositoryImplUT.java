@@ -41,9 +41,6 @@ import static org.junit.Assert.assertNotNull;
  */
 
 
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({SolrTemplate.class, SolrClient.class})
-@PowerMockRunnerDelegate(SpringJUnit4ClassRunner.class)
 public class BibSolrDocumentRepositoryImplUT extends BaseTestCaseUT {
 
     @InjectMocks

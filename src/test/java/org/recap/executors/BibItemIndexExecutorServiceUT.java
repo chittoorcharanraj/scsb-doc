@@ -56,9 +56,8 @@ import static org.junit.Assert.assertNotNull;
  * Created by premkb on 29/7/16.
  */
 
-@RunWith(PowerMockRunner.class)
+
 @PrepareForTest(SolrTemplate.class)
-@PowerMockRunnerDelegate(SpringJUnit4ClassRunner.class)
 @PowerMockIgnore({"com.sun.org.apache.xerces.*", "javax.xml.*", "org.xml.*"})
 public class BibItemIndexExecutorServiceUT extends BaseTestCaseUT {
 

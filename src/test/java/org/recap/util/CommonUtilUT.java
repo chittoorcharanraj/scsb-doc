@@ -42,7 +42,6 @@ import static org.junit.Assert.assertNotNull;
  * Created by AnithaV on 01/10/20.
  */
 
-@RunWith(PowerMockRunner.class)
 @PrepareForTest({SolrTemplate.class,SolrClient.class})
 public class CommonUtilUT extends BaseTestCaseUT {
 

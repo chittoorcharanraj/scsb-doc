@@ -7,18 +7,14 @@ import org.apache.solr.client.solrj.response.CoreAdminResponse;
 import org.apache.solr.common.util.NamedList;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.modules.junit4.PowerMockRunnerDelegate;
-import org.recap.BaseTestCase;
 import org.recap.BaseTestCaseUT;
-import org.recap.BaseTestCaseUT4;
 import org.recap.PropertyKeyConstants;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.solr.core.SolrTemplate;
@@ -37,7 +33,6 @@ import static org.junit.Assert.assertNull;
  * Created by pvsubrah on 6/12/16.
  */
 
-@RunWith(PowerMockRunner.class)
 @PrepareForTest({SolrTemplate.class, SolrClient.class})
 @PowerMockRunnerDelegate(SpringJUnit4ClassRunner.class)
 @PowerMockIgnore({"com.sun.org.apache.xerces.*", "javax.xml.*", "org.xml.*"})
