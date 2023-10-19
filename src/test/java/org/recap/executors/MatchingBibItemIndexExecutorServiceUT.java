@@ -5,12 +5,10 @@ import lombok.SneakyThrows;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.jms.JmsQueueEndpoint;
-import org.apache.camel.component.solr.SolrConstants;
 import org.apache.commons.io.FileUtils;
 import org.apache.solr.common.SolrInputDocument;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -18,7 +16,6 @@ import org.mockito.MockitoAnnotations;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.modules.junit4.PowerMockRunnerDelegate;
 import org.recap.BaseTestCaseUT;
 import org.recap.PropertyKeyConstants;
@@ -54,7 +51,6 @@ import static org.junit.Assert.assertTrue;
  * Created by angelind on 30/1/17.
  */
 
-@RunWith(PowerMockRunner.class)
 @PrepareForTest(SolrTemplate.class)
 @PowerMockRunnerDelegate(SpringJUnit4ClassRunner.class)
 @PowerMockIgnore({"com.sun.org.apache.xerces.*", "javax.xml.*", "org.xml.*"})

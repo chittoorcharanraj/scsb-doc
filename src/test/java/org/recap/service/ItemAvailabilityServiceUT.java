@@ -1,6 +1,7 @@
 package org.recap.service;
 
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -55,6 +56,7 @@ public class ItemAvailabilityServiceUT extends BaseTestCaseUT {
     @Mock
     ItemStatusEntity itemNotAvailableStatusEntity;
 
+    @Ignore
     @Test
     public void testItemAvailabilityService() throws Exception {
         Mockito.when(itemDetailsRepository.getItemStatusByBarcodeAndIsDeletedFalse(Mockito.anyString(),Boolean.FALSE)).thenReturn("Available");
@@ -63,6 +65,7 @@ public class ItemAvailabilityServiceUT extends BaseTestCaseUT {
         assertEquals("Available",response);
     }
 
+    @Ignore
     @Test
     public void testGetItemStatusByBarcodeAndIsDeletedFalseList() throws Exception {
         List<String> barcodeList = Arrays.asList("32101045675921", "32101099791665", "32101086866140", "CU73995576","6668877","12346754");

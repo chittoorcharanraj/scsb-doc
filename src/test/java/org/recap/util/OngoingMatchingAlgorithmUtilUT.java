@@ -8,20 +8,12 @@ import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrDocumentList;
 import org.apache.solr.common.util.NamedList;
-import org.bouncycastle.asn1.bc.PbkdMacIntegrityCheck;
-import org.bouncycastle.jcajce.provider.asymmetric.ec.KeyFactorySpi;
-import org.junit.Ignore;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.Spy;
 import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
 import org.recap.BaseTestCaseUT;
-import org.recap.BaseTestCaseUT4;
 import org.recap.ScsbCommonConstants;
 import org.recap.ScsbConstants;
 import org.recap.matchingalgorithm.MatchScoreUtil;
@@ -36,11 +28,7 @@ import org.recap.repository.jpa.*;
 import org.springframework.data.solr.core.SolrTemplate;
 import org.springframework.test.util.ReflectionTestUtils;
 
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -50,8 +38,6 @@ import static org.mockito.ArgumentMatchers.*;
  * Created by angelind on 6/2/17.
  */
 
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({SolrTemplate.class,SolrClient.class})
 public class OngoingMatchingAlgorithmUtilUT extends BaseTestCaseUT {
 
 
@@ -125,7 +111,7 @@ public class OngoingMatchingAlgorithmUtilUT extends BaseTestCaseUT {
 
 
     @Test
-    public void processCGDAndReportsForUnMatchingTitles() throws Exception {
+    public void processCGDAndReportsForUnMatchingTitles()  {
         Map<String, String> titleMap = new HashMap<>();
         Set<String> unMatchingTitleHeaderSet = new HashSet<>();
         unMatchingTitleHeaderSet.add("1");

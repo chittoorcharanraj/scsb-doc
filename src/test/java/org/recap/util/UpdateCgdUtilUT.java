@@ -40,8 +40,7 @@ import static org.junit.Assert.assertTrue;
  * Created by rajeshbabuk on 5/1/17.
  */
 
-@RunWith(PowerMockRunner.class)
-@PrepareForTest(SolrTemplate.class)
+
 @PowerMockIgnore({"com.sun.org.apache.xerces.*", "javax.xml.*", "org.xml.*"})
 public class UpdateCgdUtilUT extends BaseTestCaseUT {
 
@@ -95,7 +94,7 @@ public class UpdateCgdUtilUT extends BaseTestCaseUT {
 
     @Test
     public void updateCGDForItemException() throws Exception {
-        Mockito.when(collectionGroupDetailsRepository.findByCollectionGroupCode(Mockito.anyString())).thenReturn(getCollectionGroupEntity());
+//        Mockito.when(collectionGroupDetailsRepository.findByCollectionGroupCode(Mockito.anyString())).thenReturn(getCollectionGroupEntity());
         Mockito.when(itemDetailsRepository.updateCollectionGroupIdByItemBarcode(Mockito.anyInt(),Mockito.anyString(),Mockito.anyString(),Mockito.any())).thenReturn(1);
         Mockito.when(itemDetailsRepository.findByBarcode(Mockito.anyString())).thenThrow(NullPointerException.class);
         SolrTemplate mocksolrTemplate1 = PowerMockito.mock(SolrTemplate.class);

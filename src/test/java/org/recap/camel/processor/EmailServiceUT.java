@@ -2,6 +2,7 @@ package org.recap.camel.processor;
 
 import org.apache.camel.*;
 import org.apache.camel.spi.UnitOfWork;
+import org.apache.camel.trait.message.MessageTrait;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -58,10 +59,7 @@ public class EmailServiceUT extends BaseTestCaseUT {
 
     private Exchange getExchange(String names) {
         Exchange exchange=new Exchange() {
-            @Override
-            public <T extends Exchange> T adapt(Class<T> type) {
-                return null;
-            }
+
 
             @Override
             public ExchangePattern getPattern() {
@@ -100,11 +98,6 @@ public class EmailServiceUT extends BaseTestCaseUT {
 
             @Override
             public Object getProperty(String name) {
-                return null;
-            }
-
-            @Override
-            public Object getProperty(String name, Object defaultValue) {
                 return null;
             }
 
@@ -295,6 +288,21 @@ public class EmailServiceUT extends BaseTestCaseUT {
                     public void copyFromWithNewBody(Message message, Object newBody) {
 
                     }
+
+                    @Override
+                    public boolean hasTrait(MessageTrait trait) {
+                        return false;
+                    }
+
+                    @Override
+                    public Object getPayloadForTrait(MessageTrait trait) {
+                        return null;
+                    }
+
+                    @Override
+                    public void setPayloadForTrait(MessageTrait trait, Object object) {
+
+                    }
                 };
             }
 
@@ -441,6 +449,11 @@ public class EmailServiceUT extends BaseTestCaseUT {
             @Override
             public long getCreated() {
                 return 0;
+            }
+
+            @Override
+            public ExchangeExtension getExchangeExtension() {
+                return null;
             }
         };
         return exchange;

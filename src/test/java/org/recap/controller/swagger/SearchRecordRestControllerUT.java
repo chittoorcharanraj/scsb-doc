@@ -5,10 +5,9 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
-import org.recap.BaseTestCaseUT;
 import org.recap.BaseTestCaseUT4;
 import org.recap.PropertyKeyConstants;
 import org.recap.ScsbCommonConstants;
@@ -18,8 +17,6 @@ import org.recap.model.search.SearchRecordsResponse;
 import org.recap.model.search.SearchResultRow;
 import org.recap.util.PropertyUtil;
 import org.recap.util.SearchRecordsUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.test.util.ReflectionTestUtils;
 
@@ -36,7 +33,6 @@ import static org.junit.Assert.assertNull;
  * Created by premkb on 19/8/16.
  */
 
-@RunWith(PowerMockRunner.class)
 @PrepareForTest(SearchRecordsUtil.class)
 public class SearchRecordRestControllerUT extends BaseTestCaseUT4 {
 

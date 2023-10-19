@@ -54,7 +54,6 @@ import static org.junit.Assert.assertTrue;
  * Created by pvsubrah on 6/14/16.
  */
 
-@RunWith(PowerMockRunner.class)
 @PrepareForTest({SolrTemplate.class,SolrClient.class})
 @PowerMockRunnerDelegate(SpringJUnit4ClassRunner.class)
 public class ExecutorAT extends BaseTestCaseUT {

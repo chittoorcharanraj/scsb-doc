@@ -2,11 +2,15 @@ package org.recap.util;
 
 
 import org.apache.solr.client.solrj.SolrQuery;
+import org.junit.Before;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.recap.BaseTestCaseUT;
 import org.recap.ScsbCommonConstants;
 import org.recap.ScsbConstants;
@@ -29,6 +33,11 @@ public class SolrQueryBuilderUT extends BaseTestCaseUT {
 
     @InjectMocks
     SolrQueryBuilder solrQueryBuilder;
+
+    @Before
+    public void setUp() {
+        MockitoAnnotations.initMocks(this);
+    }
 
     @Mock
     SearchRecordsRequest searchRecordsRequest;

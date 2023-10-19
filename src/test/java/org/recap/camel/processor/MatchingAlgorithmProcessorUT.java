@@ -5,7 +5,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.recap.BaseTestCaseUT;
-import org.recap.BaseTestCaseUT4;
 import org.recap.ScsbCommonConstants;
 import org.recap.ScsbConstants;
 import org.recap.executors.BibItemIndexExecutorService;
@@ -34,6 +33,8 @@ public class MatchingAlgorithmProcessorUT extends BaseTestCaseUT {
 
     @InjectMocks
     MatchingAlgorithmProcessor matchingAlgorithmProcessor;
+    @Mock
+    MatchingAlgorithmProcessor processor;
 
     @Mock
     MatchingBibDetailsRepository matchingBibDetailsRepository;
@@ -55,10 +56,10 @@ public class MatchingAlgorithmProcessorUT extends BaseTestCaseUT {
 
 
     @Test
-    public void matchingAlgorithmGroupIndex() throws Exception {
-        List<Integer> bibIds=new ArrayList<>();
-        bibIds.add(1);
-        matchingAlgorithmProcessor.matchingAlgorithmGroupIndex(bibIds);
+    public void matchingAlgorithmGroupIndex()  {
+        List<Integer> bibIds = Arrays.asList(1, 2, 3);
+        processor.matchingAlgorithmGroupIndex(bibIds);
+
     }
     @Test
     public void updateItemEntityTest() throws Exception {

@@ -11,17 +11,12 @@ import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrDocumentList;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
-import org.powermock.modules.junit4.PowerMockRunnerDelegate;
 import org.recap.BaseTestCaseUT;
-import org.recap.BaseTestCaseUT4;
 import org.recap.ScsbCommonConstants;
 import org.recap.ScsbConstants;
 import org.recap.controller.SolrIndexController;
@@ -30,7 +25,6 @@ import org.recap.model.jpa.*;
 import org.recap.model.solr.BibItem;
 import org.recap.repository.jpa.*;
 import org.springframework.data.solr.core.SolrTemplate;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import jakarta.persistence.EntityManager;
@@ -52,9 +46,6 @@ import static org.mockito.ArgumentMatchers.any;
  * Created by Anitha on 10/10/20.
  */
 
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({SolrTemplate.class,SolrClient.class})
-@PowerMockRunnerDelegate(SpringJUnit4ClassRunner.class)
 public class MatchingAlgorithmUtilUT extends BaseTestCaseUT {
 
     @InjectMocks
@@ -341,7 +332,7 @@ public class MatchingAlgorithmUtilUT extends BaseTestCaseUT {
             PowerMockito.when(mocksolrTemplate1.getSolrClient()).thenReturn(solrClient);
             Mockito.when(solrClient.query(any(SolrQuery.class))).thenReturn(queryResponse);
             Mockito.when(queryResponse.getResults()).thenReturn(solrDocumentList);
-            Mockito.when(solrQueryBuilder.solrQueryForOngoingMatching(re, Arrays.asList("129393"))).thenReturn("test");
+//            Mockito.when(solrQueryBuilder.solrQueryForOngoingMatching(re, Arrays.asList("129393"))).thenReturn("test");
             Mockito.when(matchingBibDetailsRepository.findByMatchingAndBibIdIn(Mockito.anyString(), Mockito.anyList())).thenReturn(bibEntities);
             List<Integer> bibIds = Arrays.asList(4, 5, 6);
             Set<Integer> bibIdSet = new HashSet<>();
