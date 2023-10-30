@@ -65,11 +65,10 @@ public class ItemAvailabilityServiceUT extends BaseTestCaseUT {
         assertEquals("Available",response);
     }
 
-    @Ignore
     @Test
     public void testGetItemStatusByBarcodeAndIsDeletedFalseList() throws Exception {
         List<String> barcodeList = Arrays.asList("32101045675921", "32101099791665", "32101086866140", "CU73995576","6668877","12346754");
-        Mockito.when(itemDetailsRepository.getItemStatusByBarcodeAndIsDeletedFalseList(Mockito.anyList(), Boolean.FALSE)).thenReturn(saveBibSingleHoldingsSingleItem().getItemEntities());
+        Mockito.when(itemDetailsRepository.getItemStatusByBarcodeAndIsDeletedFalseList(barcodeList, Boolean.FALSE)).thenReturn(saveBibSingleHoldingsSingleItem().getItemEntities());
         List<ItemAvailabilityResponse> itemAvailabilityResponses = itemAvailabilityService.getItemStatusByBarcodeAndIsDeletedFalseList(barcodeList);
         assertNotNull(itemAvailabilityResponses);
     }

@@ -157,4 +157,25 @@ public class SolrIndexServiceUT extends BaseTestCaseUT4 {
         URL resource = getClass().getResource("PUL-HoldingsContent.xml");
         return new File(resource.toURI());
     }
+
+    @Test
+    public void getProducerTemplateTest(){
+        solrIndexService.getProducerTemplate();
+    }
+    @Test
+    public void getBibliographicDetailsRepositoryTest(){
+        solrIndexService.getBibliographicDetailsRepository();
+    }
+    @Test
+    public void getHoldingsDetailsRepositoryTest(){
+        solrIndexService.getHoldingsDetailsRepository();
+    }
+    @Test
+    public void getBibJSONUtil(){
+        solrIndexService.getBibJSONUtil();
+    }
+    @Test
+    public void indexByBibliographicIdTest(){
+        solrIndexService.indexByBibliographicId(1);
+    }
 }

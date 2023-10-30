@@ -15,10 +15,7 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import org.recap.BaseTestCaseUT;
 import org.recap.PropertyKeyConstants;
 import org.recap.ScsbCommonConstants;
-import org.recap.model.jpa.BibliographicEntity;
-import org.recap.model.jpa.CollectionGroupEntity;
-import org.recap.model.jpa.HoldingsEntity;
-import org.recap.model.jpa.ItemEntity;
+import org.recap.model.jpa.*;
 import org.recap.repository.jpa.*;
 import org.recap.service.SCSBService;
 import org.springframework.beans.factory.annotation.Value;
@@ -28,13 +25,12 @@ import org.springframework.test.util.ReflectionTestUtils;
 import java.io.File;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * Created by rajeshbabuk on 5/1/17.
@@ -87,6 +83,12 @@ public class UpdateCgdUtilUT extends BaseTestCaseUT {
         Mockito.when(userDetailsRepository.getUserRoles(Mockito.anyString())).thenReturn(Arrays.asList("pul_user"));
         Mockito.when(userDetailsRepository.findInstitutionCodeByUserName(Mockito.anyString())).thenReturn(ScsbCommonConstants.PRINCETON);
         Mockito.when(mocksolrTemplate1.convertBeanToSolrInputDocument(Mockito.any())).thenReturn(solrInputDocument);
+        Iterator<ItemEntity> iterator = mock(Iterator.class);
+        List<ItemEntity> entityList = mock(List.class);
+        ItemEntity entity = mock(ItemEntity.class);
+        when(entityList.iterator()).thenReturn(iterator);
+        when(iterator.hasNext()).thenReturn(true, false);
+        when(iterator.next()).thenReturn(entity);
         ReflectionTestUtils.setField(updateCgdUtil,"solrTemplate",mocksolrTemplate1);
         String response=  updateCgdUtil.updateCGDForItem("123456", ScsbCommonConstants.PRINCETON, ScsbCommonConstants.SHARED_CGD, ScsbCommonConstants.PRIVATE, "Notes for updating CGD", "pul_user");
         assertEquals(ScsbCommonConstants.SUCCESS,response);
