@@ -192,3 +192,8 @@ jar {
 	enabled = false
 	archiveClassifier = '' //use empty string
 }
+
+sonarqube {
+	properties {
+		property 'sonar.exclusions', "**/org/springframework/data/solr/core/convert/MappingSolrConverter.java";
+	} }
