@@ -19,7 +19,7 @@ public class BaseTestCaseUT {
 
     @Test
     public void loadContexts() {
-        Assert.isTrue(true);
+        Assert.isTrue(true, "test");
     }
 
 }
