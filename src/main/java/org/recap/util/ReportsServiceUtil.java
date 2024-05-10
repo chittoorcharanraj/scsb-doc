@@ -351,10 +351,6 @@ public class ReportsServiceUtil {
                     reportsInstitutionForm.setAccessionSharedCount(numFound);
                 } else if (collectionGroupDesignation.equalsIgnoreCase(ScsbCommonConstants.REPORTS_PRIVATE)) {
                     reportsInstitutionForm.setAccessionPrivateCount(numFound);
-                } else if (collectionGroupDesignation.equalsIgnoreCase(ScsbCommonConstants.REPORTS_COMMITTED)) {
-                    reportsInstitutionForm.setAccessionCommittedCount(numFound);
-                } else if (collectionGroupDesignation.equalsIgnoreCase(ScsbCommonConstants.REPORTS_UNCOMMITTABLE)) {
-                    reportsInstitutionForm.setAccessionUncommittableCount(numFound);
                 }
             }
             reportsResponse.getReportsInstitutionFormList().add(reportsInstitutionForm);
@@ -381,10 +377,6 @@ public class ReportsServiceUtil {
                     reportsInstitutionForm.setDeaccessionSharedCount(numFound);
                 } else if (collectionGroupDesignation.equalsIgnoreCase(ScsbCommonConstants.REPORTS_PRIVATE)) {
                     reportsInstitutionForm.setDeaccessionPrivateCount(numFound);
-                } else if (collectionGroupDesignation.equalsIgnoreCase(ScsbCommonConstants.REPORTS_COMMITTED)) {
-                    reportsInstitutionForm.setDeaccessionCommittedCount(numFound);
-                } else if (collectionGroupDesignation.equalsIgnoreCase(ScsbCommonConstants.REPORTS_UNCOMMITTABLE)) {
-                    reportsInstitutionForm.setDeaccessionUncommittableCount(numFound);
                 }
             }
         }
