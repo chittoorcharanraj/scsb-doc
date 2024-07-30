@@ -1,6 +1,7 @@
 package org.recap.camel.processor;
 
 import org.apache.camel.*;
+import org.apache.camel.clock.Clock;
 import org.apache.camel.spi.UnitOfWork;
 import org.apache.camel.trait.message.MessageTrait;
 import org.junit.Test;
@@ -143,6 +144,41 @@ public class EmailServiceUT extends BaseTestCaseUT {
 
             @Override
             public boolean hasProperties() {
+                return false;
+            }
+
+            @Override
+            public Object getVariable(String name) {
+                return null;
+            }
+
+            @Override
+            public <T> T getVariable(String name, Class<T> type) {
+                return null;
+            }
+
+            @Override
+            public <T> T getVariable(String name, Object defaultValue, Class<T> type) {
+                return null;
+            }
+
+            @Override
+            public void setVariable(String name, Object value) {
+
+            }
+
+            @Override
+            public Object removeVariable(String name) {
+                return null;
+            }
+
+            @Override
+            public Map<String, Object> getVariables() {
+                return Map.of();
+            }
+
+            @Override
+            public boolean hasVariables() {
                 return false;
             }
 
@@ -453,6 +489,11 @@ public class EmailServiceUT extends BaseTestCaseUT {
 
             @Override
             public ExchangeExtension getExchangeExtension() {
+                return null;
+            }
+
+            @Override
+            public Clock getClock() {
                 return null;
             }
         };
