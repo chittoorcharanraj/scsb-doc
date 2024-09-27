@@ -351,6 +351,10 @@ public class ReportsServiceUtil {
                     reportsInstitutionForm.setAccessionSharedCount(numFound);
                 } else if (collectionGroupDesignation.equalsIgnoreCase(ScsbCommonConstants.REPORTS_PRIVATE)) {
                     reportsInstitutionForm.setAccessionPrivateCount(numFound);
+                } else if (collectionGroupDesignation.equalsIgnoreCase(ScsbCommonConstants.REPORTS_COMMITTED)) {
+                    reportsInstitutionForm.setAccessionCommittedCount(numFound);
+                } else if (collectionGroupDesignation.equalsIgnoreCase(ScsbCommonConstants.REPORTS_UNCOMMITTABLE)) {
+                    reportsInstitutionForm.setAccessionUncommittableCount(numFound);
                 }
             }
             reportsResponse.getReportsInstitutionFormList().add(reportsInstitutionForm);
@@ -377,6 +381,10 @@ public class ReportsServiceUtil {
                     reportsInstitutionForm.setDeaccessionSharedCount(numFound);
                 } else if (collectionGroupDesignation.equalsIgnoreCase(ScsbCommonConstants.REPORTS_PRIVATE)) {
                     reportsInstitutionForm.setDeaccessionPrivateCount(numFound);
+                } else if (collectionGroupDesignation.equalsIgnoreCase(ScsbCommonConstants.REPORTS_COMMITTED)) {
+                    reportsInstitutionForm.setDeaccessionCommittedCount(numFound);
+                } else if (collectionGroupDesignation.equalsIgnoreCase(ScsbCommonConstants.REPORTS_UNCOMMITTABLE)) {
+                    reportsInstitutionForm.setDeaccessionUncommittableCount(numFound);
                 }
             }
         }
@@ -430,20 +438,20 @@ public class ReportsServiceUtil {
     public TitleMatchedReport titleMatchCount(TitleMatchedReport titleMatchedReport) throws Exception {
         List<TitleMatchCount> titleMatchCountList = new ArrayList<>();
         String solrFormattedDate = getSolrFormattedDates(convertDateToString(titleMatchedReport.getFromDate()),convertDateToString(titleMatchedReport.getToDate()));
-                String titleMatch = titleMatchedReport.getTitleMatch();
-                String owningInstitution = titleMatchedReport.getOwningInst();
-                for (String cgd : titleMatchedReport.getCgd()) {
-                    TitleMatchCount titleMatchCount = new TitleMatchCount();
-                    String matchingIdentifier = (titleMatch.equals(ScsbConstants.TITLE_MATCHED)) ? "" : "-";
-                    SolrQuery query = solrQueryBuilder.buildQueryTitleMatchCount(solrFormattedDate, owningInstitution, cgd, matchingIdentifier);
-                    QueryResponse queryResponse = solrTemplate.getSolrClient().query(query);
-                    long count = queryResponse.getResults().getNumFound();
-                    titleMatchCount.setCount(count);
-                    titleMatchCount.setTitleMatched(titleMatch);
-                    titleMatchCount.setCgd(cgd);
-                    titleMatchCount.setOwningInst(owningInstitution);
-                    titleMatchCountList.add(titleMatchCount);
-                }
+        String titleMatch = titleMatchedReport.getTitleMatch();
+        String owningInstitution = titleMatchedReport.getOwningInst();
+        for (String cgd : titleMatchedReport.getCgd()) {
+            TitleMatchCount titleMatchCount = new TitleMatchCount();
+            String matchingIdentifier = (titleMatch.equals(ScsbConstants.TITLE_MATCHED)) ? "" : "-";
+            SolrQuery query = solrQueryBuilder.buildQueryTitleMatchCount(solrFormattedDate, owningInstitution, cgd, matchingIdentifier);
+            QueryResponse queryResponse = solrTemplate.getSolrClient().query(query);
+            long count = queryResponse.getResults().getNumFound();
+            titleMatchCount.setCount(count);
+            titleMatchCount.setTitleMatched(titleMatch);
+            titleMatchCount.setCgd(cgd);
+            titleMatchCount.setOwningInst(owningInstitution);
+            titleMatchCountList.add(titleMatchCount);
+        }
         titleMatchedReport.setTitleMatchCounts(titleMatchCountList);
         return titleMatchedReport;
     }
@@ -547,7 +555,7 @@ public class ReportsServiceUtil {
     private static StringBuilder prepareMatchingIdentifierList(List<BibItem> bibItems) {
         StringBuilder matchingIdentifierAppendResult = new StringBuilder();
         for (BibItem bibItem:
-             bibItems) {
+                bibItems) {
             matchingIdentifierAppendResult.append(bibItem.getMatchingIdentifier()+" ");
         }
         return matchingIdentifierAppendResult;
