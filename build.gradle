@@ -59,7 +59,7 @@ dependencies {
 	implementation 'org.apache.camel.springboot:camel-spring-boot-starter:4.8.2'
 	implementation('org.springframework.data:spring-data-solr:4.3.15')
 			{exclude module: 'solr-solrj'; exclude module: 'solr-data-commons'; exclude module: 'spring-data-jpa'}
-	implementation 'org.apache.solr:solr-solrj:9.7.0'
+	implementation 'org.apache.solr:solr-solrj:9.6.1'
 	implementation 'org.apache.camel:camel-solr:4.8.2'
 	implementation 'org.apache.camel:camel-bindy:4.8.2'
 	implementation 'org.apache.camel:camel-metrics:4.8.2'
