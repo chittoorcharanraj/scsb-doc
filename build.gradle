@@ -69,8 +69,8 @@ dependencies {
 	implementation 'org.apache.camel:camel-activemq:4.8.2'
 	implementation('org.apache.camel.springboot:camel-aws-s3-starter:3.8.0')
 	implementation('org.apache.camel:camel-aws-s3:3.8.0')
-//	implementation 'org.apache.activemq:activemq-camel:5.16.7'
-	implementation 'org.apache.camel:camel-activemq:4.8.2'
+	implementation 'org.apache.activemq:activemq-camel:5.16.7'
+//	implementation 'org.apache.camel:camel-activemq:4.8.2'
 	implementation 'org.apache.activemq:activemq-pool:6.1.4'
 	implementation 'org.apache.activemq:activemq-broker:6.1.4'
 	implementation 'org.apache.activemq:activemq-client:6.1.4'
