@@ -22,7 +22,7 @@ import org.springframework.data.domain.Limit;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.ScrollPosition;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.repository.util.ClassUtils;
+import org.springframework.util.ClassUtils;
 import org.springframework.data.repository.util.QueryExecutionConverters;
 import org.springframework.data.repository.util.ReactiveWrapperConverters;
 import org.springframework.data.solr.repository.Boost;
@@ -64,7 +64,7 @@ public class Parameter {
 		// consider Kotlin Coroutines Continuation a special parameter. That parameter is synthetic and should not get
 		// bound to any query.
 
-		ClassUtils.ifPresent("kotlin.coroutines.Continuation", Parameter.class.getClassLoader(), types::add);
+		ClassUtils.isPresent("kotlin.coroutines.Continuation", Parameter.class.getClassLoader());
 
 		TYPES = Collections.unmodifiableList(types);
 	}

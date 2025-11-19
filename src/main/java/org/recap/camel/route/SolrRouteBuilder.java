@@ -10,7 +10,7 @@ import org.recap.camel.processor.MatchingAlgorithmProcessor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-
+import org.apache.camel.component.solr.SolrOperation;
 import static org.recap.ScsbConstants.MATCHING_ALGORITHM_GROUPING_INDEX;
 
 /**
@@ -38,8 +38,8 @@ public class SolrRouteBuilder {
             camelContext.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() throws Exception {
-                    from(ScsbCommonConstants.SOLR_QUEUE).setHeader(SolrConstants.OPERATION, constant(SolrConstants.OPERATION_INSERT))
-                            .setHeader(SolrConstants.FIELD + "id", body())
+                    from(ScsbCommonConstants.SOLR_QUEUE).setHeader(SolrConstants.PARAM_OPERATION, constant(SolrConstants.OPERATION_INSERT))
+                            .setHeader(SolrConstants.HEADER_FIELD_PREFIX + "id", body())
                             .to("solr:" + solrUri + "/" + solrCore);
                 }
             });
