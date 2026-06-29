@@ -7,14 +7,11 @@ import org.apache.solr.client.solrj.SolrRequest;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrDocumentList;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.recap.BaseTestCaseUT;
 import org.recap.ScsbCommonConstants;
 import org.recap.ScsbConstants;
@@ -30,10 +27,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-@PrepareForTest({SolrTemplate.class, SolrClient.class})
 public class SaveMatchingBibsCallableUT extends BaseTestCaseUT {
 
     @Mock
@@ -51,14 +47,12 @@ public class SaveMatchingBibsCallableUT extends BaseTestCaseUT {
     @InjectMocks
     SaveMatchingBibsCallable mockSaveMatchingBibsCallable;
 
-    @Before
-    public void setUp() throws Exception {
-        MockitoAnnotations.openMocks(this);
-    }
+    @BeforeEach
+    public void setUp() throws Exception {    }
 
     @Test
     public void testSaveMatchingBibsCallable() throws Exception {
-        SolrTemplate solrTemplate = PowerMockito.mock(SolrTemplate.class);
+        SolrTemplate solrTemplate = Mockito.mock(SolrTemplate.class);
         String matchCriteria="test";
         long batchSize=2l;
         int pageNum=1;
@@ -69,8 +63,8 @@ public class SaveMatchingBibsCallableUT extends BaseTestCaseUT {
         SaveMatchingBibsCallable saveMatchingBibsCallable=new SaveMatchingBibsCallable(matchingMatchPointsDetailsRepository,matchCriteria,solrTemplate,producer,solrQueryBuilder,batchSize,pageNum,matchingAlgorithmUtil);
         Mockito.when(matchingMatchPointsDetailsRepository.getMatchPointEntityByCriteria(matchCriteria,pageNum*batchSize,batchSize)).thenReturn(matchPointsEntityList);
         Mockito.when(solrQueryBuilder.solrQueryToFetchBibDetails(Mockito.anyList(),Mockito.anyList(),Mockito.anyString())).thenReturn(solrQuery);
-        SolrClient solrClient=PowerMockito.mock(SolrClient.class);
-        PowerMockito.when(solrTemplate.getSolrClient()).thenReturn(solrClient);
+        SolrClient solrClient=Mockito.mock(SolrClient.class);
+        Mockito.when(solrTemplate.getSolrClient()).thenReturn(solrClient);
         QueryResponse queryResponse=Mockito.mock(QueryResponse.class);
         Mockito.doReturn(queryResponse).when(solrClient).query(solrQuery, SolrRequest.METHOD.POST);
         SolrDocumentList solrDocumentList = getSolrDocumentList();

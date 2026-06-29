@@ -1,13 +1,12 @@
 package org.recap.matchingalgorithm.service;
 
 import org.apache.camel.ProducerTemplate;
-import org.junit.Before;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
 import org.recap.BaseTestCaseUT;
 import org.recap.ScsbCommonConstants;
 import org.recap.ScsbConstants;
@@ -116,9 +115,7 @@ public class MatchingAlgorithmHelperServiceUT extends BaseTestCaseUT {
 
 
     @BeforeEach
-    public void setup() throws Exception {
-        MockitoAnnotations.openMocks(this);
-        ReflectionTestUtils.setField(matchingAlgorithmHelperService,"isIndexGrouping",true);
+    public void setup() throws Exception {        ReflectionTestUtils.setField(matchingAlgorithmHelperService,"isIndexGrouping",true);
     }
 
     @Test

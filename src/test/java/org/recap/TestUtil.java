@@ -4,8 +4,6 @@ import org.recap.model.jpa.CollectionGroupEntity;
 import org.recap.model.jpa.ImsLocationEntity;
 import org.recap.model.jpa.InstitutionEntity;
 import org.recap.model.jpa.ItemStatusEntity;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class TestUtil {
 

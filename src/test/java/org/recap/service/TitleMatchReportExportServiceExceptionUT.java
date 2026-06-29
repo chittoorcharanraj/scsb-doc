@@ -1,11 +1,10 @@
 package org.recap.service;
 
 import org.apache.solr.client.solrj.SolrServerException;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
 import org.recap.BaseTestCaseUT;
 import org.recap.model.reports.TitleMatchedReport;
 import org.recap.util.CsvUtil;
@@ -15,7 +14,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 import java.io.IOException;
 import java.text.ParseException;
 
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * @author dinakar on 30/11/21
@@ -31,10 +30,8 @@ public class TitleMatchReportExportServiceExceptionUT extends BaseTestCaseUT {
     @Mock
     ReportsServiceUtil reportsServiceUtil;
 
-    @Before
-    public void setUp() {
-        MockitoAnnotations.openMocks(this);
-    }
+    @BeforeEach
+    public void setUp() {    }
 
     public CsvUtil getCsvUtil() {
         return csvUtil;

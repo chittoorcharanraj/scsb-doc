@@ -1,6 +1,6 @@
 package org.recap.matchingalgorithm.service;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.recap.BaseTestCaseUT;

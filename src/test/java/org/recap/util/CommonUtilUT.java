@@ -6,16 +6,11 @@ import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrDocumentList;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
 import org.recap.*;
 import org.recap.model.jpa.BibliographicEntity;
 import org.recap.model.jpa.CollectionGroupEntity;
@@ -35,14 +30,12 @@ import org.springframework.data.solr.core.SolrTemplate;
 import java.io.IOException;
 import java.util.*;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * Created by AnithaV on 01/10/20.
  */
-
-@PrepareForTest({SolrTemplate.class,SolrClient.class})
 public class CommonUtilUT extends BaseTestCaseUT {
 
     @InjectMocks
@@ -60,10 +53,8 @@ public class CommonUtilUT extends BaseTestCaseUT {
     @Value("${" + PropertyKeyConstants.SCSB_SUPPORT_INSTITUTION + "}")
     private String supportInstitution;
 
-    @Before
-    public  void setup(){
-        MockitoAnnotations.openMocks(this);
-    }
+    @BeforeEach
+    public  void setup(){    }
 
 
     @Test
@@ -183,10 +174,10 @@ public class CommonUtilUT extends BaseTestCaseUT {
         SolrDocument solrDocument = new SolrDocument();
         solrDocumentList.add(solrDocument);
         solrDocumentList.setNumFound(11l);
-        SolrTemplate mocksolrTemplate1 = PowerMockito.mock(SolrTemplate.class);
-        SolrClient solrClient=PowerMockito.mock(SolrClient.class);
+        SolrTemplate mocksolrTemplate1 = Mockito.mock(SolrTemplate.class);
+        SolrClient solrClient=Mockito.mock(SolrClient.class);
         QueryResponse queryResponse=Mockito.mock(QueryResponse.class);
-        PowerMockito.when(mocksolrTemplate1.getSolrClient()).thenReturn(solrClient);
+        Mockito.when(mocksolrTemplate1.getSolrClient()).thenReturn(solrClient);
         Mockito.when(solrClient.query(Mockito.any(SolrQuery.class))).thenReturn(queryResponse);
         Mockito.when(queryResponse.getResults()).thenReturn(solrDocumentList);
         SolrQuery solrQuery = new SolrQuery("testquery");

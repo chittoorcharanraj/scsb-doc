@@ -1,11 +1,10 @@
 package org.recap.controller;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
 import org.recap.BaseTestCaseUT;
 import org.recap.ScsbCommonConstants;
 import org.recap.matchingalgorithm.service.MatchingBibInfoDetailService;
@@ -17,7 +16,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.Date;
 
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * Created by rajeshbabuk on 20/4/17.
@@ -39,10 +38,8 @@ public class OngoingMatchingAlgorithmJobRestControllerUT extends BaseTestCaseUT 
     @Mock
     DateUtil dateUtil;
 
-    @Before
-    public void setUp() throws Exception {
-        MockitoAnnotations.openMocks(this);
-        ReflectionTestUtils.setField(ongoingMatchingAlgorithmJobRestController,"batchSize","1000");
+    @BeforeEach
+    public void setUp() throws Exception {        ReflectionTestUtils.setField(ongoingMatchingAlgorithmJobRestController,"batchSize","1000");
         Mockito.when(dateUtil.getFromDate(Mockito.any())).thenCallRealMethod();
         Mockito.when(dateUtil.getToDate(Mockito.any())).thenCallRealMethod();
     }

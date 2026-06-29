@@ -2,25 +2,31 @@ package org.recap.camel.processor.route;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
-import org.recap.BaseTestCaseUT;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.recap.camel.route.MatchingAlgorithmJobRouteBuilder;
 import org.recap.controller.OngoingMatchingAlgorithmJobRestController;
 import org.slf4j.Logger;
 import org.springframework.context.annotation.Bean;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.TestPropertySource;
 
 /**
  * @author Charan Raj C created on 27/10/23
  */
 
+@ExtendWith(MockitoExtension.class)
 @ContextConfiguration(classes = MatchingAlgorithmJobRouteBuilderUT.Config.class)
-public class MatchingAlgorithmJobRouteBuilderUT extends BaseTestCaseUT {
+@TestPropertySource("classpath:application.properties")
+@MockitoSettings(strictness = Strictness.LENIENT)
+public class MatchingAlgorithmJobRouteBuilderUT {
 
     @InjectMocks
     MatchingAlgorithmJobRouteBuilder matchingAlgorithmJobRouteBuilder;
@@ -28,10 +34,8 @@ public class MatchingAlgorithmJobRouteBuilderUT extends BaseTestCaseUT {
     @Mock
     OngoingMatchingAlgorithmJobRestController ongoingMatchingAlgorithmJobRestController;
 
-    @Before
-    public void setup() {
-        MockitoAnnotations.initMocks(this);
-        camelContext = new DefaultCamelContext();
+    @BeforeEach
+    public void setup() {        camelContext = new DefaultCamelContext();
     }
 
     @Test
@@ -53,6 +57,11 @@ public class MatchingAlgorithmJobRouteBuilderUT extends BaseTestCaseUT {
         @Bean
         public Logger logger() {
             return Mockito.mock(Logger.class);
+        }
+
+        @Bean
+        public OngoingMatchingAlgorithmJobRestController ongoingMatchingAlgorithmJobRestController() {
+            return Mockito.mock(OngoingMatchingAlgorithmJobRestController.class);
         }
     }
 }

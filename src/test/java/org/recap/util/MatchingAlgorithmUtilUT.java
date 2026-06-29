@@ -9,13 +9,11 @@ import org.apache.solr.client.solrj.response.FacetField;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrDocumentList;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
-import org.powermock.api.mockito.PowerMockito;
 import org.recap.BaseTestCaseUT;
 import org.recap.ScsbCommonConstants;
 import org.recap.ScsbConstants;
@@ -38,7 +36,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 
 
@@ -105,10 +103,8 @@ public class MatchingAlgorithmUtilUT extends BaseTestCaseUT {
     @Mock
     CoreAdminRequest coreAdminRequest;
 
-    @Before
-    public void setup() throws Exception {
-        MockitoAnnotations.openMocks(this);
-        ReflectionTestUtils.setField(mockMatchingAlgorithmUtil,"matchingHeaderValueLength",8000);
+    @BeforeEach
+    public void setup() throws Exception {        ReflectionTestUtils.setField(mockMatchingAlgorithmUtil,"matchingHeaderValueLength",8000);
         ReflectionTestUtils.setField(commonUtil,"institutionDetailsRepository",institutionDetailsRepository);
     }
 
@@ -201,10 +197,10 @@ public class MatchingAlgorithmUtilUT extends BaseTestCaseUT {
 
     @Test
     public void getMatchingMatchPointsEntity() throws Exception {
-        SolrTemplate mocksolrTemplate1 = PowerMockito.mock(SolrTemplate.class);
-        SolrClient solrClient=PowerMockito.mock(SolrClient.class);
+        SolrTemplate mocksolrTemplate1 = Mockito.mock(SolrTemplate.class);
+        SolrClient solrClient=Mockito.mock(SolrClient.class);
         ReflectionTestUtils.setField(mockMatchingAlgorithmUtil,"solrTemplate",mocksolrTemplate1);
-        PowerMockito.when(mocksolrTemplate1.getSolrClient()).thenReturn(solrClient);
+        Mockito.when(mocksolrTemplate1.getSolrClient()).thenReturn(solrClient);
         QueryResponse queryResponse= Mockito.mock(QueryResponse.class);
 
         List<FacetField> facetFields=new ArrayList<>();
@@ -274,10 +270,10 @@ public class MatchingAlgorithmUtilUT extends BaseTestCaseUT {
 
     @Test
     public void getBibIdsToRemoveMatchingIdsInSolr() throws Exception {
-        SolrTemplate mocksolrTemplate1 = PowerMockito.mock(SolrTemplate.class);
+        SolrTemplate mocksolrTemplate1 = Mockito.mock(SolrTemplate.class);
         ReflectionTestUtils.setField(mockMatchingAlgorithmUtil, "solrTemplate", mocksolrTemplate1);
-        SolrClient solrClient = PowerMockito.mock(SolrClient.class);
-        PowerMockito.when(mocksolrTemplate1.getSolrClient()).thenReturn(solrClient);
+        SolrClient solrClient = Mockito.mock(SolrClient.class);
+        Mockito.when(mocksolrTemplate1.getSolrClient()).thenReturn(solrClient);
         QueryResponse queryResponse = Mockito.mock(QueryResponse.class);
         Mockito.when(solrClient.query(any(SolrQuery.class))).thenReturn(queryResponse);
         SolrDocumentList solrDocumentList = getSolrDocuments();
@@ -302,10 +298,10 @@ public class MatchingAlgorithmUtilUT extends BaseTestCaseUT {
     @Test
     public void populateMatchingCounter() throws Exception {
         Mockito.when(solrQueryBuilder.buildSolrQueryForCGDReports(Mockito.anyString(),Mockito.anyString())).thenReturn(new SolrQuery());
-        SolrTemplate mocksolrTemplate1 = PowerMockito.mock(SolrTemplate.class);
+        SolrTemplate mocksolrTemplate1 = Mockito.mock(SolrTemplate.class);
         ReflectionTestUtils.setField(mockMatchingAlgorithmUtil, "solrTemplate", mocksolrTemplate1);
-        SolrClient solrClient = PowerMockito.mock(SolrClient.class);
-        PowerMockito.when(mocksolrTemplate1.getSolrClient()).thenReturn(solrClient);
+        SolrClient solrClient = Mockito.mock(SolrClient.class);
+        Mockito.when(mocksolrTemplate1.getSolrClient()).thenReturn(solrClient);
         QueryResponse queryResponse = Mockito.mock(QueryResponse.class);
         Mockito.when(solrClient.query(any(SolrQuery.class))).thenReturn(queryResponse);
         List<String> allInstitutionCodeExceptSupportInstitution=Arrays.asList(ScsbCommonConstants.COLUMBIA,ScsbCommonConstants.PRINCETON,ScsbCommonConstants.NYPL);
@@ -322,14 +318,14 @@ public class MatchingAlgorithmUtilUT extends BaseTestCaseUT {
     public void processPendingMatchingBibs() throws Exception {
         String[] matchpoints={ScsbCommonConstants.MATCH_POINT_FIELD_OCLC,ScsbCommonConstants.MATCH_POINT_FIELD_ISSN,ScsbCommonConstants.MATCH_POINT_FIELD_LCCN,ScsbCommonConstants.MATCH_POINT_FIELD_ISBN};
         for (String re:matchpoints) {
-            SolrTemplate mocksolrTemplate1 = PowerMockito.mock(SolrTemplate.class);
-            SolrClient solrClient = PowerMockito.mock(SolrClient.class);
+            SolrTemplate mocksolrTemplate1 = Mockito.mock(SolrTemplate.class);
+            SolrClient solrClient = Mockito.mock(SolrClient.class);
             QueryResponse queryResponse = Mockito.mock(QueryResponse.class);
             SolrDocumentList solrDocumentList = getSolrDocuments();
             List<MatchingBibEntity> bibEntities = new ArrayList<>();
             bibEntities.addAll(Arrays.asList(getMatchingBibEntity(re, 1, "PUL", "Middleware for 1"), getMatchingBibEntity(re, 2, "CUL", "Middleware for 2"), getMatchingBibEntity(re, 3, "NYPL", "Middleware for 3")));
             ReflectionTestUtils.setField(mockMatchingAlgorithmUtil, "solrTemplate", mocksolrTemplate1);
-            PowerMockito.when(mocksolrTemplate1.getSolrClient()).thenReturn(solrClient);
+            Mockito.when(mocksolrTemplate1.getSolrClient()).thenReturn(solrClient);
             Mockito.when(solrClient.query(any(SolrQuery.class))).thenReturn(queryResponse);
             Mockito.when(queryResponse.getResults()).thenReturn(solrDocumentList);
 //            Mockito.when(solrQueryBuilder.solrQueryForOngoingMatching(re, Arrays.asList("129393"))).thenReturn("test");

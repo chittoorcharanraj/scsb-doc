@@ -2,27 +2,36 @@ package org.recap.camel.processor.route;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
-import org.recap.BaseTestCaseUT;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.recap.PropertyKeyConstants;
 import org.recap.camel.route.S3SolrExceptionRecordRouteBuilder;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.test.context.ContextConfiguration;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
+import org.springframework.test.context.TestPropertySource;
 
 /**
  * @author Charan Raj C created on 27/10/23
  */
 
-@ContextConfiguration(classes = S3OngoingAccessionReportRouteBuilderUT.Config.class)
-public class S3SolrExceptionRecordRouteBuilderUT extends BaseTestCaseUT {
+@ExtendWith(MockitoExtension.class)
+@ContextConfiguration(classes = S3SolrExceptionRecordRouteBuilderUT.Config.class)
+@TestPropertySource("classpath:application.properties")
+@MockitoSettings(strictness = Strictness.LENIENT)
+public class S3SolrExceptionRecordRouteBuilderUT {
 
     private CamelContext camelContext;
 
-    @Before
+    @BeforeEach
     public void setup() {
         camelContext = new DefaultCamelContext();
     }

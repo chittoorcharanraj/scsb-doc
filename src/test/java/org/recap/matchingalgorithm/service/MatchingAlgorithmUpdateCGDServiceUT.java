@@ -1,12 +1,11 @@
 package org.recap.matchingalgorithm.service;
 
 import org.apache.solr.client.solrj.SolrServerException;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
 import org.recap.BaseTestCaseUT;
 import org.recap.BaseTestCaseUT4;
 import org.recap.ScsbCommonConstants;
@@ -27,7 +26,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.recap.ScsbConstants.MATCHING_COUNTER_OPEN;
 import static org.recap.ScsbConstants.MATCHING_COUNTER_SHARED;
 import static org.recap.ScsbConstants.MATCHING_COUNTER_UPDATED_OPEN;
@@ -71,10 +70,8 @@ public class MatchingAlgorithmUpdateCGDServiceUT extends BaseTestCaseUT4 {
     List<String> scsbInstitutions=Arrays.asList("HTC");
 
 
-    @Before
-    public void setUp() throws Exception {
-        MockitoAnnotations.openMocks(this);
-        Map<String,Integer> cgdCounterMap=new HashMap<>();
+    @BeforeEach
+    public void setUp() throws Exception {        Map<String,Integer> cgdCounterMap=new HashMap<>();
         cgdCounterMap.put(MATCHING_COUNTER_SHARED,1);
         cgdCounterMap.put(MATCHING_COUNTER_OPEN,1);
         cgdCounterMap.put(MATCHING_COUNTER_UPDATED_SHARED,0);

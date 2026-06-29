@@ -1,8 +1,9 @@
 package org.recap.service;
 
 
-import org.junit.Ignore;
-import org.junit.Test;
+
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -56,8 +57,7 @@ public class ItemAvailabilityServiceUT extends BaseTestCaseUT {
     @Mock
     ItemStatusEntity itemNotAvailableStatusEntity;
 
-    @Ignore
-    @Test
+   @Disabled
     public void testItemAvailabilityService() throws Exception {
         Mockito.when(itemDetailsRepository.getItemStatusByBarcodeAndIsDeletedFalse(Mockito.anyString(),Boolean.FALSE)).thenReturn("Available");
         String response = itemAvailabilityService.getItemStatusByBarcodeAndIsDeletedFalse("32101045675921");

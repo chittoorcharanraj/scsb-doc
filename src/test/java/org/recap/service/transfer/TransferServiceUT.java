@@ -2,13 +2,13 @@ package org.recap.service.transfer;
 
 import org.apache.camel.ProducerTemplate;
 import org.apache.solr.client.solrj.SolrServerException;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
 import org.recap.*;
 import org.recap.model.jpa.BibliographicEntity;
 import org.recap.model.jpa.HoldingsEntity;
@@ -44,8 +44,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * Created by Anithav on 30/06/20.
@@ -88,15 +88,12 @@ public class TransferServiceUT extends BaseTestCaseUT {
     ProducerTemplate producerTemplate;
 
 
-    @Before
-    public void setUp(){
-        MockitoAnnotations.openMocks(this);
-        ReflectionTestUtils.setField(mockTransferService, "nonHoldingIdInstitutionForTransferApi", nonHoldingIdInstitutionForTransferApi);
+    @BeforeEach
+    public void setUp(){        ReflectionTestUtils.setField(mockTransferService, "nonHoldingIdInstitutionForTransferApi", nonHoldingIdInstitutionForTransferApi);
         ReflectionTestUtils.setField(helperUtil,"producerTemplate",producerTemplate);
     }
 
-    @Ignore
-    @Test
+    @Disabled
     public void processItemTransfer() throws Exception{
         Mockito.when(dummyDataService.getHoldingsWithDummyDetails(Mockito.anyInt(), Mockito.any(), Mockito.anyString(),Mockito.anyString())).thenReturn(getHoldingsEntity());
         Mockito.when(mockTransferService.getBibliographicDetailsRepository().findByOwningInstitutionIdAndOwningInstitutionBibId(1, "1421")).thenReturn(getBibliographicEntity());
@@ -206,7 +203,7 @@ public class TransferServiceUT extends BaseTestCaseUT {
         assertEquals(ScsbConstants.Transfer.DESTINATION_EMPTY,response.get(0).getMessage());
     }
 
-    @Ignore
+    @Disabled
     @Test
     public void processItemTransferException() throws Exception{
         BibliographicEntity bibliographicEntity = getbibliographicEntity();

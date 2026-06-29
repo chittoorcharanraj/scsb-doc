@@ -11,15 +11,11 @@ import org.apache.solr.client.solrj.response.GroupResponse;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrDocumentList;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.recap.BaseTestCaseUT;
 import org.recap.ScsbCommonConstants;
 import org.recap.ScsbConstants;
@@ -43,8 +39,8 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.*;
 
 /**
@@ -52,7 +48,6 @@ import static org.mockito.ArgumentMatchers.*;
  */
 
 
-@PrepareForTest({SolrTemplate.class, SolrClient.class})
 public class ReportsServiceUtilUT extends BaseTestCaseUT {
 
     @InjectMocks
@@ -104,10 +99,8 @@ public class ReportsServiceUtilUT extends BaseTestCaseUT {
     @Mock
     SimpleDateFormat simpleDateFormat;
 
-    @Before
-    public void setup()throws Exception{
-        MockitoAnnotations.openMocks(this);
-        Mockito.when(dateUtil.getFromDateAccession(any())).thenCallRealMethod();
+    @BeforeEach
+    public void setup()throws Exception{        Mockito.when(dateUtil.getFromDateAccession(any())).thenCallRealMethod();
         Mockito.when(dateUtil.getToDateAccession(any())).thenCallRealMethod();
     }
 
@@ -127,11 +120,11 @@ public class ReportsServiceUtilUT extends BaseTestCaseUT {
         Mockito.when(titleMatchedReport.getToDate()).thenReturn(new Date());
         Mockito.when(titleMatchedReport.getPageSize()).thenReturn(1);
         Mockito.when(titleMatchedReport.getPageNumber()).thenReturn(1);
-        SolrTemplate mocksolrTemplate1 = PowerMockito.mock(SolrTemplate.class);
+        SolrTemplate mocksolrTemplate1 = Mockito.mock(SolrTemplate.class);
         ReflectionTestUtils.setField(reportsServiceUtil,"solrTemplate",mocksolrTemplate1);
-        SolrClient solrClient=PowerMockito.mock(SolrClient.class);
+        SolrClient solrClient=Mockito.mock(SolrClient.class);
         QueryResponse queryResponse=Mockito.mock(QueryResponse.class);
-        PowerMockito.when(mocksolrTemplate1.getSolrClient()).thenReturn(solrClient);
+        Mockito.when(mocksolrTemplate1.getSolrClient()).thenReturn(solrClient);
         Mockito.when(solrClient.query(any(SolrQuery.class))).thenReturn(queryResponse);
         Mockito.when(solrQueryBuilder.buildQueryTitleMatchedReport(Mockito.anyString(), any(), any(), any(), Mockito.anyString())).thenCallRealMethod();
 
@@ -194,12 +187,12 @@ public class ReportsServiceUtilUT extends BaseTestCaseUT {
         Mockito.when(titleMatchedReport.getPageSize()).thenReturn(1);
         Mockito.when(titleMatchedReport.getPageNumber()).thenReturn(1);
         Mockito.when(titleMatchedReport.getTotalRecordsCount()).thenReturn(1L);
-        SolrTemplate mocksolrTemplate1 = PowerMockito.mock(SolrTemplate.class);
+        SolrTemplate mocksolrTemplate1 = Mockito.mock(SolrTemplate.class);
 //        ReflectionTestUtils.setField(reportsServiceUtil,"titleReportExportBibsLimitPerFile",1);
         ReflectionTestUtils.setField(reportsServiceUtil,"solrTemplate",mocksolrTemplate1);
-        SolrClient solrClient=PowerMockito.mock(SolrClient.class);
+        SolrClient solrClient=Mockito.mock(SolrClient.class);
         QueryResponse queryResponse=Mockito.mock(QueryResponse.class);
-        PowerMockito.when(mocksolrTemplate1.getSolrClient()).thenReturn(solrClient);
+        Mockito.when(mocksolrTemplate1.getSolrClient()).thenReturn(solrClient);
         Mockito.when(solrClient.query(any(SolrQuery.class))).thenReturn(queryResponse);
         Mockito.when(solrQueryBuilder.buildQueryTitleMatchedReport(Mockito.anyString(), any(), any(), any(),Mockito.anyString())).thenCallRealMethod();
 
@@ -233,11 +226,11 @@ public class ReportsServiceUtilUT extends BaseTestCaseUT {
         Mockito.when(titleMatchedReport.getPageSize()).thenReturn(1);
         Mockito.when(titleMatchedReport.getPageNumber()).thenReturn(1);
         Mockito.when(titleMatchedReport.getTotalRecordsCount()).thenReturn(1L);
-        SolrTemplate mocksolrTemplate1 = PowerMockito.mock(SolrTemplate.class);
+        SolrTemplate mocksolrTemplate1 = Mockito.mock(SolrTemplate.class);
         ReflectionTestUtils.setField(reportsServiceUtil,"solrTemplate",mocksolrTemplate1);
-        SolrClient solrClient=PowerMockito.mock(SolrClient.class);
+        SolrClient solrClient=Mockito.mock(SolrClient.class);
         QueryResponse queryResponse=Mockito.mock(QueryResponse.class);
-        PowerMockito.when(mocksolrTemplate1.getSolrClient()).thenReturn(solrClient);
+        Mockito.when(mocksolrTemplate1.getSolrClient()).thenReturn(solrClient);
         Mockito.when(solrClient.query(any(SolrQuery.class))).thenReturn(queryResponse);
         Mockito.when(solrQueryBuilder.buildQueryTitleMatchedReport(Mockito.anyString(), any(), any(), any(),Mockito.anyString())).thenCallRealMethod();
 
@@ -269,11 +262,11 @@ public class ReportsServiceUtilUT extends BaseTestCaseUT {
         Mockito.when(titleMatchedReport.getCgd()).thenReturn(cgd);
         Mockito.when(titleMatchedReport.getFromDate()).thenReturn(new Date());
         Mockito.when(titleMatchedReport.getToDate()).thenReturn(new Date());
-        SolrTemplate mocksolrTemplate1 = PowerMockito.mock(SolrTemplate.class);
+        SolrTemplate mocksolrTemplate1 = Mockito.mock(SolrTemplate.class);
         ReflectionTestUtils.setField(reportsServiceUtil,"solrTemplate",mocksolrTemplate1);
-        SolrClient solrClient=PowerMockito.mock(SolrClient.class);
+        SolrClient solrClient=Mockito.mock(SolrClient.class);
         QueryResponse queryResponse=Mockito.mock(QueryResponse.class);
-        PowerMockito.when(mocksolrTemplate1.getSolrClient()).thenReturn(solrClient);
+        Mockito.when(mocksolrTemplate1.getSolrClient()).thenReturn(solrClient);
         Mockito.when(solrClient.query(any(SolrQuery.class))).thenReturn(queryResponse);
         Mockito.when(queryResponse.getResults()).thenReturn(solrDocumentList);
         Mockito.when(solrDocumentList.getNumFound()).thenReturn(1l);
@@ -294,11 +287,11 @@ public class ReportsServiceUtilUT extends BaseTestCaseUT {
         reportsRequest.setOwningInstitutions(Arrays.asList("CUL", "PUL", "NYPL"));
         reportsRequest.setCollectionGroupDesignations(Arrays.asList("Private", "Open", "Shared"));
 
-        SolrTemplate mocksolrTemplate1 = PowerMockito.mock(SolrTemplate.class);
+        SolrTemplate mocksolrTemplate1 = Mockito.mock(SolrTemplate.class);
         ReflectionTestUtils.setField(reportsServiceUtil,"solrTemplate",mocksolrTemplate1);
-        SolrClient solrClient=PowerMockito.mock(SolrClient.class);
+        SolrClient solrClient=Mockito.mock(SolrClient.class);
         QueryResponse queryResponse=Mockito.mock(QueryResponse.class);
-        PowerMockito.when(mocksolrTemplate1.getSolrClient()).thenReturn(solrClient);
+        Mockito.when(mocksolrTemplate1.getSolrClient()).thenReturn(solrClient);
         Mockito.when(solrClient.query(any(SolrQuery.class))).thenReturn(queryResponse);
         GroupResponse groupResponse=Mockito.mock(GroupResponse.class);
         Mockito.when(queryResponse.getGroupResponse()).thenReturn(groupResponse);
@@ -331,11 +324,11 @@ public class ReportsServiceUtilUT extends BaseTestCaseUT {
         SolrQuery query=new SolrQuery("testquery");
         Mockito.when(solrQueryBuilder.buildSolrQueryForCGDReports(Mockito.anyString(),Mockito.anyString())).thenReturn(query);
         Mockito.when(solrQueryBuilder.buildSolrQueryForDeaccesionReportInformation(any(),Mockito.anyString(),Mockito.anyBoolean())).thenReturn(query);
-        SolrTemplate mocksolrTemplate1 = PowerMockito.mock(SolrTemplate.class);
+        SolrTemplate mocksolrTemplate1 = Mockito.mock(SolrTemplate.class);
         ReflectionTestUtils.setField(reportsServiceUtil,"solrTemplate",mocksolrTemplate1);
-        SolrClient solrClient=PowerMockito.mock(SolrClient.class);
+        SolrClient solrClient=Mockito.mock(SolrClient.class);
         QueryResponse queryResponse=Mockito.mock(QueryResponse.class);
-        PowerMockito.when(mocksolrTemplate1.getSolrClient()).thenReturn(solrClient);
+        Mockito.when(mocksolrTemplate1.getSolrClient()).thenReturn(solrClient);
         Mockito.when(solrClient.query(any(SolrQuery.class))).thenReturn(queryResponse);
         GroupResponse groupResponse=Mockito.mock(GroupResponse.class);
         Mockito.when(queryResponse.getGroupResponse()).thenReturn(groupResponse);
@@ -369,11 +362,11 @@ public class ReportsServiceUtilUT extends BaseTestCaseUT {
             reportsRequest.setCollectionGroupDesignations(Arrays.asList("Private", "Open", "Shared"));
             SolrQuery query = new SolrQuery("testquery");
             Mockito.when(solrQueryBuilder.buildSolrQueryForIncompleteReports(reportsRequest.getIncompleteRequestingInstitution())).thenReturn(query);
-            SolrTemplate mocksolrTemplate1 = PowerMockito.mock(SolrTemplate.class);
+            SolrTemplate mocksolrTemplate1 = Mockito.mock(SolrTemplate.class);
             ReflectionTestUtils.setField(reportsServiceUtil, "solrTemplate", mocksolrTemplate1);
-            SolrClient solrClient = PowerMockito.mock(SolrClient.class);
+            SolrClient solrClient = Mockito.mock(SolrClient.class);
             QueryResponse queryResponse = Mockito.mock(QueryResponse.class);
-            PowerMockito.when(mocksolrTemplate1.getSolrClient()).thenReturn(solrClient);
+            Mockito.when(mocksolrTemplate1.getSolrClient()).thenReturn(solrClient);
             Mockito.when(solrClient.query(any(SolrQuery.class))).thenReturn(queryResponse);
             Mockito.when(solrClient.query(query, SolrRequest.METHOD.POST)).thenReturn(queryResponse);
             GroupResponse groupResponse = Mockito.mock(GroupResponse.class);
@@ -411,11 +404,11 @@ public class ReportsServiceUtilUT extends BaseTestCaseUT {
         reportsResponse1.setDeaccessionItemResultsRows(deaccessionItemResultsRowList);
         SolrQuery query=new SolrQuery("testquery");
         Mockito.when(solrQueryBuilder.buildSolrQueryForDeaccesionReportInformation(any(),Mockito.anyString(),Mockito.anyBoolean())).thenReturn(query);
-        SolrTemplate mocksolrTemplate1 = PowerMockito.mock(SolrTemplate.class);
+        SolrTemplate mocksolrTemplate1 = Mockito.mock(SolrTemplate.class);
         ReflectionTestUtils.setField(reportsServiceUtil,"solrTemplate",mocksolrTemplate1);
-        SolrClient solrClient=PowerMockito.mock(SolrClient.class);
+        SolrClient solrClient=Mockito.mock(SolrClient.class);
         QueryResponse queryResponse=Mockito.mock(QueryResponse.class);
-        PowerMockito.when(mocksolrTemplate1.getSolrClient()).thenReturn(solrClient);
+        Mockito.when(mocksolrTemplate1.getSolrClient()).thenReturn(solrClient);
         Mockito.when(solrClient.query(any(SolrQuery.class))).thenReturn(queryResponse);
         GroupResponse groupResponse=Mockito.mock(GroupResponse.class);
         Mockito.when(queryResponse.getGroupResponse()).thenReturn(groupResponse);
@@ -475,11 +468,11 @@ public class ReportsServiceUtilUT extends BaseTestCaseUT {
         reportsResponse1.setDeaccessionItemResultsRows(deaccessionItemResultsRowList);
         SolrQuery query=new SolrQuery("testquery");
         Mockito.when(solrQueryBuilder.buildSolrQueryForDeaccesionReportInformation(any(),Mockito.anyString(),Mockito.anyBoolean())).thenReturn(query);
-        SolrTemplate mocksolrTemplate1 = PowerMockito.mock(SolrTemplate.class);
+        SolrTemplate mocksolrTemplate1 = Mockito.mock(SolrTemplate.class);
         ReflectionTestUtils.setField(reportsServiceUtil,"solrTemplate",mocksolrTemplate1);
-        SolrClient solrClient=PowerMockito.mock(SolrClient.class);
+        SolrClient solrClient=Mockito.mock(SolrClient.class);
         QueryResponse queryResponse=Mockito.mock(QueryResponse.class);
-        PowerMockito.when(mocksolrTemplate1.getSolrClient()).thenReturn(solrClient);
+        Mockito.when(mocksolrTemplate1.getSolrClient()).thenReturn(solrClient);
         Mockito.when(solrClient.query(any(SolrQuery.class))).thenReturn(queryResponse);
         GroupResponse groupResponse=Mockito.mock(GroupResponse.class);
         Mockito.when(queryResponse.getGroupResponse()).thenReturn(groupResponse);
@@ -569,15 +562,15 @@ public class ReportsServiceUtilUT extends BaseTestCaseUT {
         query.setRows(Rows);
         query.setStart(start);
 //        ReflectionTestUtils.setField(reportsServiceUtil,"titleReportExportBibsLimitPerFile",1);
-        SolrTemplate mocksolrTemplate1 = PowerMockito.mock(SolrTemplate.class);
+        SolrTemplate mocksolrTemplate1 = Mockito.mock(SolrTemplate.class);
         ReflectionTestUtils.setField(reportsServiceUtil,"solrTemplate",mocksolrTemplate1);
-        SolrClient solrClient=PowerMockito.mock(SolrClient.class);
+        SolrClient solrClient=Mockito.mock(SolrClient.class);
         //QueryResponse queryResponse=Mockito.mock(QueryResponse.class);
         SolrDocumentList solrDocumentList = new SolrDocumentList();
         solrDocumentList.setNumFound(1l);
         Mockito.doNothing().when(bibSolrDocumentRepository).populateBibItem(any(), any());
         Mockito.doNothing().when(bibSolrDocumentRepository).populateItemHoldingsInfo(any(), anyBoolean(), anyString());
-        PowerMockito.when(mocksolrTemplate1.getSolrClient()).thenReturn(solrClient);
+        Mockito.when(mocksolrTemplate1.getSolrClient()).thenReturn(solrClient);
         Mockito.when(solrClient.query(any(SolrQuery.class))).thenReturn(queryResponse);
         Mockito.doReturn(solrDocumentList).when(queryResponse).getResults();
 //        Mockito.when(solrQueryBuilder.buildQueryForTitleMatchReportPreviewAndExport(any()).toString()).thenReturn("test");
@@ -627,15 +620,15 @@ public class ReportsServiceUtilUT extends BaseTestCaseUT {
         query.setRows(Rows);
         query.setStart(start);
 //        ReflectionTestUtils.setField(reportsServiceUtil,"titleReportExportBibsLimitPerFile",1);
-        SolrTemplate mocksolrTemplate1 = PowerMockito.mock(SolrTemplate.class);
+        SolrTemplate mocksolrTemplate1 = Mockito.mock(SolrTemplate.class);
         ReflectionTestUtils.setField(reportsServiceUtil,"solrTemplate",mocksolrTemplate1);
-        SolrClient solrClient=PowerMockito.mock(SolrClient.class);
+        SolrClient solrClient=Mockito.mock(SolrClient.class);
         //QueryResponse queryResponse=Mockito.mock(QueryResponse.class);
         SolrDocumentList solrDocumentList = new SolrDocumentList();
         solrDocumentList.setNumFound(1l);
         Mockito.doNothing().when(bibSolrDocumentRepository).populateBibItem(any(), any());
         Mockito.doNothing().when(bibSolrDocumentRepository).populateItemHoldingsInfo(any(), anyBoolean(), anyString());
-        PowerMockito.when(mocksolrTemplate1.getSolrClient()).thenReturn(solrClient);
+        Mockito.when(mocksolrTemplate1.getSolrClient()).thenReturn(solrClient);
         Mockito.when(solrClient.query(any(SolrQuery.class))).thenReturn(queryResponse);
         Mockito.doReturn(solrDocumentList).when(queryResponse).getResults();
 //        Mockito.when(solrQueryBuilder.buildQueryForTitleMatchReportPreviewAndExport(any()).toString()).thenReturn("test");

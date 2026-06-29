@@ -2,8 +2,9 @@ package org.recap.executors;
 
 
 
-import org.junit.Ignore;
-import org.junit.Test;
+
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.recap.BaseTestCaseUT;
 import org.recap.repository.solr.temp.BibCrudRepositoryMultiCoreSupport;
@@ -12,7 +13,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 import java.util.ArrayList;
 import java.util.List;
 
-@Ignore
+@Disabled
 public class IndexExecutorServiceUT extends BaseTestCaseUT
 
 {

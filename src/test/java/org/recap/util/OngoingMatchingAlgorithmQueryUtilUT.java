@@ -4,12 +4,13 @@ package org.recap.util;
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrRequest;
 import org.apache.solr.client.solrj.response.QueryResponse;
-import org.junit.Ignore;
-import org.junit.Test;
+
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.powermock.api.mockito.PowerMockito;
+
 import org.recap.BaseTestCaseUT;
 import org.recap.model.solr.SolrIndexRequest;
 import org.springframework.data.solr.core.SolrTemplate;
@@ -117,16 +118,16 @@ try {
             ReflectionTestUtils.invokeMethod(ongoingMatchingAlgorithmQueryUtil, "getUTCFormatDateString", date1);
     }
 
-    @Ignore
-    @Test
+
+    @Disabled
     public  void fetchDataByQuery() throws Exception {
         try {
             String query = "test";
             Integer batchSize = 1000;
             Integer start = 1;
-            SolrTemplate mocksolrTemplate1 = PowerMockito.mock(SolrTemplate.class);
-            SolrClient solrClient = PowerMockito.mock(SolrClient.class);
-            PowerMockito.when(mocksolrTemplate1.getSolrClient()).thenReturn(solrClient);
+            SolrTemplate mocksolrTemplate1 = Mockito.mock(SolrTemplate.class);
+            SolrClient solrClient = Mockito.mock(SolrClient.class);
+            Mockito.when(mocksolrTemplate1.getSolrClient()).thenReturn(solrClient);
             QueryResponse queryResponse = Mockito.mock(QueryResponse.class);
             Mockito.when(solrTemplate.getSolrClient().query(any(), SolrRequest.METHOD.POST)).thenReturn(queryResponse);
             ongoingMatchingAlgorithmQueryUtil.fetchDataByQuery(query, batchSize, start);

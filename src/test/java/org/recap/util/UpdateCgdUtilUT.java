@@ -3,15 +3,10 @@ package org.recap.util;
 import org.apache.camel.ProducerTemplate;
 import org.apache.commons.io.FileUtils;
 import org.apache.solr.common.SolrInputDocument;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PowerMockIgnore;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
 import org.recap.BaseTestCaseUT;
 import org.recap.PropertyKeyConstants;
 import org.recap.ScsbCommonConstants;
@@ -27,8 +22,8 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.*;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -37,7 +32,6 @@ import static org.mockito.Mockito.when;
  */
 
 
-@PowerMockIgnore({"com.sun.org.apache.xerces.*", "javax.xml.*", "org.xml.*"})
 public class UpdateCgdUtilUT extends BaseTestCaseUT {
 
     @InjectMocks
@@ -77,7 +71,7 @@ public class UpdateCgdUtilUT extends BaseTestCaseUT {
         Mockito.when(itemDetailsRepository.updateCollectionGroupIdByItemBarcode(Mockito.anyInt(),Mockito.anyString(),Mockito.anyString(),Mockito.any())).thenReturn(1);
 //        Mockito.when(itemDetailsRepository.findByBarcode(Mockito.anyString())).thenReturn(getBibliographicEntity().getItemEntities());
         Mockito.when(scsbService.validateUserRoles(Mockito.anyList(),Mockito.anyString(),Mockito.anyString())).thenReturn(true);
-        SolrTemplate mocksolrTemplate1 = PowerMockito.mock(SolrTemplate.class);
+        SolrTemplate mocksolrTemplate1 = Mockito.mock(SolrTemplate.class);
         SolrInputDocument solrInputDocument=new SolrInputDocument();
         Mockito.when(itemDetailsRepository.findInstitutionCodeByBarcode(Mockito.anyString())).thenReturn("123456");
         Mockito.when(userDetailsRepository.getUserRoles(Mockito.anyString())).thenReturn(Arrays.asList("pul_user"));
@@ -99,7 +93,7 @@ public class UpdateCgdUtilUT extends BaseTestCaseUT {
 //        Mockito.when(collectionGroupDetailsRepository.findByCollectionGroupCode(Mockito.anyString())).thenReturn(getCollectionGroupEntity());
         Mockito.when(itemDetailsRepository.updateCollectionGroupIdByItemBarcode(Mockito.anyInt(),Mockito.anyString(),Mockito.anyString(),Mockito.any())).thenReturn(1);
         Mockito.when(itemDetailsRepository.findByBarcode(Mockito.anyString())).thenThrow(NullPointerException.class);
-        SolrTemplate mocksolrTemplate1 = PowerMockito.mock(SolrTemplate.class);
+        SolrTemplate mocksolrTemplate1 = Mockito.mock(SolrTemplate.class);
         SolrInputDocument solrInputDocument=new SolrInputDocument();
         Mockito.when(mocksolrTemplate1.convertBeanToSolrInputDocument(Mockito.any())).thenReturn(solrInputDocument);
         ReflectionTestUtils.setField(updateCgdUtil,"solrTemplate",mocksolrTemplate1);

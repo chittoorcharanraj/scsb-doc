@@ -1,12 +1,11 @@
 package org.recap.controller;
 
 import org.apache.solr.client.solrj.SolrServerException;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
 import org.recap.BaseTestCaseUT;
 import org.recap.ScsbCommonConstants;
 import org.recap.ScsbConstants;
@@ -83,9 +82,7 @@ public class SolrIndexControllerUT extends BaseTestCaseUT {
     BindingResult result;
 
     @BeforeEach
-    public void setUp()throws Exception {
-        MockitoAnnotations.openMocks(this);
-    }
+    public void setUp()throws Exception {    }
 
     @Test
     public void solrIndexer()throws Exception{

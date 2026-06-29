@@ -2,7 +2,7 @@ package org.recap.activemq;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.activemq.broker.jmx.DestinationViewMBean;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.recap.BaseTestCaseUT;
 import org.recap.camel.activemq.JmxHelper;
 

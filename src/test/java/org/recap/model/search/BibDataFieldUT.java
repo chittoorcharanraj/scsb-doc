@@ -1,7 +1,7 @@
 package org.recap.model.search;
 
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.marc4j.marc.DataField;
 import org.marc4j.marc.Record;
 import org.marc4j.marc.Subfield;

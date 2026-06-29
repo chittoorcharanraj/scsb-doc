@@ -1,12 +1,11 @@
 package org.recap.controller;
 
 import org.apache.commons.io.FileUtils;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
 import org.recap.BaseTestCaseUT;
 import org.recap.model.jpa.BibliographicEntity;
 import org.recap.model.jpa.HoldingsEntity;
@@ -43,9 +42,7 @@ public class UpdateItemStatusControllerUT extends BaseTestCaseUT {
     UpdateCgdUtil updateCgdUtil;
 
     @BeforeEach
-    public void setup()throws Exception{
-        MockitoAnnotations.openMocks(this);
-    }
+    public void setup()throws Exception{    }
 
     @Test
     public void testUpdateCgdForItem() throws Exception {

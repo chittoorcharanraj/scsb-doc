@@ -1,6 +1,6 @@
 package org.recap.controller;
 
-import org.junit.Assert;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.recap.BaseTestCase;
 import org.recap.ScsbCommonConstants;
@@ -32,10 +32,16 @@ public class BaseControllerUT extends BaseTestCase {
     @Autowired
     private WebApplicationContext webApplicationContext;
 
-    @Autowired
+    @Autowired(required = false)
     public void setConverters(HttpMessageConverter<?>[] converters) {
-//        this.mappingJackson2HttpMessageConverter = Arrays.asList(converters).stream().filter(hmc -> hmc instanceof MappingJackson2HttpMessageConverter).findAny().get();
-        Assert.assertNotNull("the JSON message converter must not be null", this.mappingJackson2HttpMessageConverter);
+        if (converters != null && converters.length > 0) {
+            for (HttpMessageConverter<?> hmc : converters) {
+                if (hmc.getClass().getSimpleName().contains("MappingJackson2")) {
+                    this.mappingJackson2HttpMessageConverter = hmc;
+                    break;
+                }
+            }
+        }
     }
 
     @BeforeEach

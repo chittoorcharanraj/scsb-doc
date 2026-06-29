@@ -3,7 +3,7 @@ package org.recap.camel.processor;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.RouteController;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -11,7 +11,7 @@ import org.recap.BaseTestCaseUT;
 import org.recap.BaseTestCaseUT4;
 import org.springframework.test.util.ReflectionTestUtils;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class StopRouteProcessorUT extends BaseTestCaseUT {
 

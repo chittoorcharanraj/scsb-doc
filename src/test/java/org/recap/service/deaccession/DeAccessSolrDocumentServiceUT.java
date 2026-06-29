@@ -5,11 +5,10 @@ import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.response.UpdateResponse;
 import org.apache.solr.common.SolrInputDocument;
 import org.apache.solr.common.SolrInputField;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
 import org.recap.BaseTestCaseUT;
 import org.recap.BaseTestCaseUT4;
 import org.recap.PropertyKeyConstants;
@@ -32,9 +31,7 @@ import java.util.Date;
 import java.util.Optional;
 import java.util.Random;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Created by angelind on 10/11/16.
@@ -69,10 +66,8 @@ public class DeAccessSolrDocumentServiceUT extends BaseTestCaseUT {
     String solrCore;
 
 
-    @Before
-    public void setUp() {
-        MockitoAnnotations.openMocks(this);
-    }
+    @BeforeEach
+    public void setUp() {    }
 
     public DeAccessSolrDocumentService getDeAccessSolrDocumentService() {
         return deAccessSolrDocumentService;

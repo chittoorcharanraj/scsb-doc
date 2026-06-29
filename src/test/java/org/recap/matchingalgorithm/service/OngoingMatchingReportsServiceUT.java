@@ -9,15 +9,12 @@ import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrDocumentList;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
-import org.mockito.junit.MockitoJUnitRunner;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
+
 import org.recap.*;
 import org.recap.matchingalgorithm.MatchingCounter;
 import org.recap.model.jpa.InstitutionEntity;
@@ -36,8 +33,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.recap.ScsbConstants.*;
 import static org.recap.ScsbConstants.MATCHING_COUNTER_UPDATED_OPEN;
 
@@ -45,8 +42,6 @@ import static org.recap.ScsbConstants.MATCHING_COUNTER_UPDATED_OPEN;
  * Created by Anitha on 10/10/20.
  */
 
-
-@PrepareForTest({SolrTemplate.class, SolrClient.class})
 public class OngoingMatchingReportsServiceUT extends BaseTestCaseUT4{
 
     @InjectMocks
@@ -96,10 +91,8 @@ public class OngoingMatchingReportsServiceUT extends BaseTestCaseUT4{
 
     List<String> scsbInstitutions=Arrays.asList("HTC");
 
-    @Before
-    public void setUp() throws Exception {
-        MockitoAnnotations.openMocks(this);
-        Map<String,Integer> cgdCounterMap=new HashMap<>();
+    @BeforeEach
+    public void setUp() throws Exception {        Map<String,Integer> cgdCounterMap=new HashMap<>();
         cgdCounterMap.put(MATCHING_COUNTER_SHARED,1);
         cgdCounterMap.put(MATCHING_COUNTER_OPEN,1);
         cgdCounterMap.put(MATCHING_COUNTER_UPDATED_SHARED,0);
@@ -171,8 +164,8 @@ public class OngoingMatchingReportsServiceUT extends BaseTestCaseUT4{
 
         @Test
         public void generateSerialAndMVMsReportException() throws IOException, SolrServerException {
-        SolrTemplate mocksolrTemplate1 = PowerMockito.mock(SolrTemplate.class);
-        SolrClient solrClient=PowerMockito.mock(SolrClient.class);
+        SolrTemplate mocksolrTemplate1 = Mockito.mock(SolrTemplate.class);
+        SolrClient solrClient=Mockito.mock(SolrClient.class);
         QueryResponse queryResponse= Mockito.mock(QueryResponse.class);
         ReflectionTestUtils.setField(ongoingMatchingReportsService,"solrTemplate",mocksolrTemplate1);
         SolrQuery solrQuery = new SolrQuery("testquery");
@@ -184,7 +177,7 @@ public class OngoingMatchingReportsServiceUT extends BaseTestCaseUT4{
         solrDocument.setField(ScsbConstants.MATERIAL_TYPE, ScsbCommonConstants.MONOGRAPH);
         solrDocumentList.add(solrDocument);
         Mockito.when(mockOngoingMatchingReportsService.getSolrTemplate()).thenReturn(mocksolrTemplate1);
-        PowerMockito.when(mocksolrTemplate1.getSolrClient()).thenReturn(solrClient);
+        Mockito.when(mocksolrTemplate1.getSolrClient()).thenReturn(solrClient);
         Mockito.when(solrClient.query(Mockito.any(SolrQuery.class))).thenReturn(queryResponse);
         Mockito.when(queryResponse.getResults()).thenReturn(solrDocumentList);
         List<Integer> serialMvmBibIds= Arrays.asList(1);
@@ -194,8 +187,8 @@ public class OngoingMatchingReportsServiceUT extends BaseTestCaseUT4{
 
     @Test
     public void generateSerialAndMVMsReportSolrException() throws Exception {
-        SolrTemplate mocksolrTemplate1 = PowerMockito.mock(SolrTemplate.class);
-        SolrClient solrClient=PowerMockito.mock(SolrClient.class);
+        SolrTemplate mocksolrTemplate1 = Mockito.mock(SolrTemplate.class);
+        SolrClient solrClient=Mockito.mock(SolrClient.class);
         QueryResponse queryResponse= Mockito.mock(QueryResponse.class);
         ReflectionTestUtils.setField(ongoingMatchingReportsService,"solrTemplate",mocksolrTemplate1);
         ReflectionTestUtils.setField(ongoingMatchingReportsService,"solrQueryBuilder",solrQueryBuilder);
@@ -216,7 +209,7 @@ public class OngoingMatchingReportsServiceUT extends BaseTestCaseUT4{
         Mockito.when(mockOngoingMatchingReportsService.getProducerTemplate()).thenReturn(producerTemplate);
         Mockito.when(solrQueryBuilder.getSolrQueryForBibItem(Mockito.anyString())).thenReturn(solrQuery);
         Mockito.doNothing().when(producerTemplate).sendBodyAndHeader(String.valueOf(Mockito.anyInt()),Mockito.anyString(),Mockito.anyString(),Mockito.anyString());
-        PowerMockito.when(mocksolrTemplate1.getSolrClient()).thenReturn(solrClient);
+        Mockito.when(mocksolrTemplate1.getSolrClient()).thenReturn(solrClient);
         Mockito.when(solrClient.query(Mockito.any(SolrQuery.class))).thenReturn(queryResponse).thenThrow(NullPointerException.class);
         Mockito.when(queryResponse.getResults()).thenReturn(solrDocumentList);
         List<Integer> serialMvmBibIds= Arrays.asList(1);
@@ -226,8 +219,8 @@ public class OngoingMatchingReportsServiceUT extends BaseTestCaseUT4{
 
     @Test
     public void generateSerialAndMVMsReportCamelException() throws Exception {
-        SolrTemplate mocksolrTemplate1 = PowerMockito.mock(SolrTemplate.class);
-        SolrClient solrClient=PowerMockito.mock(SolrClient.class);
+        SolrTemplate mocksolrTemplate1 = Mockito.mock(SolrTemplate.class);
+        SolrClient solrClient=Mockito.mock(SolrClient.class);
         QueryResponse queryResponse= Mockito.mock(QueryResponse.class);
         ReflectionTestUtils.setField(ongoingMatchingReportsService,"solrTemplate",mocksolrTemplate1);
         ReflectionTestUtils.setField(ongoingMatchingReportsService,"solrQueryBuilder",solrQueryBuilder);
@@ -248,7 +241,7 @@ public class OngoingMatchingReportsServiceUT extends BaseTestCaseUT4{
         Mockito.when(mockOngoingMatchingReportsService.getProducerTemplate()).thenReturn(producerTemplate);
         Mockito.when(solrQueryBuilder.getSolrQueryForBibItem(Mockito.anyString())).thenReturn(solrQuery);
         Mockito.doNothing().when(producerTemplate).sendBodyAndHeader(String.valueOf(Mockito.anyInt()),Mockito.anyString(),Mockito.anyString(),Mockito.anyString());
-        PowerMockito.when(mocksolrTemplate1.getSolrClient()).thenReturn(solrClient);
+        Mockito.when(mocksolrTemplate1.getSolrClient()).thenReturn(solrClient);
         Mockito.when(solrClient.query(Mockito.any(SolrQuery.class))).thenReturn(queryResponse);
         Mockito.when(queryResponse.getResults()).thenReturn(solrDocumentList);
         List<Integer> serialMvmBibIds= Arrays.asList(1);
@@ -259,8 +252,8 @@ public class OngoingMatchingReportsServiceUT extends BaseTestCaseUT4{
 
     @Test
     public void generateSerialAndMVMsReport() throws Exception {
-        SolrTemplate mocksolrTemplate1 = PowerMockito.mock(SolrTemplate.class);
-        SolrClient solrClient=PowerMockito.mock(SolrClient.class);
+        SolrTemplate mocksolrTemplate1 = Mockito.mock(SolrTemplate.class);
+        SolrClient solrClient=Mockito.mock(SolrClient.class);
         QueryResponse queryResponse= Mockito.mock(QueryResponse.class);
         ReflectionTestUtils.setField(ongoingMatchingReportsService,"solrTemplate",mocksolrTemplate1);
         ReflectionTestUtils.setField(ongoingMatchingReportsService,"solrQueryBuilder",solrQueryBuilder);
@@ -283,7 +276,7 @@ public class OngoingMatchingReportsServiceUT extends BaseTestCaseUT4{
         Mockito.doNothing().when(routeController).startRoute(Mockito.anyString());
         Mockito.when(solrQueryBuilder.getSolrQueryForBibItem(Mockito.anyString())).thenReturn(solrQuery);
         Mockito.doNothing().when(producerTemplate).sendBodyAndHeader(String.valueOf(Mockito.anyInt()),Mockito.anyString(),Mockito.anyString(),Mockito.anyString());
-        PowerMockito.when(mocksolrTemplate1.getSolrClient()).thenReturn(solrClient);
+        Mockito.when(mocksolrTemplate1.getSolrClient()).thenReturn(solrClient);
         Mockito.when(solrClient.query(Mockito.any(SolrQuery.class))).thenReturn(queryResponse);
         Mockito.when(queryResponse.getResults()).thenReturn(solrDocumentList);
         List<Integer> serialMvmBibIds= Arrays.asList(1);
@@ -294,8 +287,8 @@ public class OngoingMatchingReportsServiceUT extends BaseTestCaseUT4{
 
     @Test
     public void generateSerialAndMVMsReportForHolding() throws Exception {
-        SolrTemplate mocksolrTemplate1 = PowerMockito.mock(SolrTemplate.class);
-        SolrClient solrClient=PowerMockito.mock(SolrClient.class);
+        SolrTemplate mocksolrTemplate1 = Mockito.mock(SolrTemplate.class);
+        SolrClient solrClient=Mockito.mock(SolrClient.class);
         QueryResponse queryResponse= Mockito.mock(QueryResponse.class);
         ReflectionTestUtils.setField(ongoingMatchingReportsService,"solrTemplate",mocksolrTemplate1);
         ReflectionTestUtils.setField(ongoingMatchingReportsService,"solrQueryBuilder",solrQueryBuilder);
@@ -312,7 +305,7 @@ public class OngoingMatchingReportsServiceUT extends BaseTestCaseUT4{
         Mockito.when(mockOngoingMatchingReportsService.getSolrTemplate()).thenReturn(mocksolrTemplate1);
         Mockito.when(mockOngoingMatchingReportsService.getSolrQueryBuilder()).thenReturn(solrQueryBuilder);
         Mockito.when(solrQueryBuilder.getSolrQueryForBibItem(Mockito.anyString())).thenReturn(solrQuery);
-        PowerMockito.when(mocksolrTemplate1.getSolrClient()).thenReturn(solrClient);
+        Mockito.when(mocksolrTemplate1.getSolrClient()).thenReturn(solrClient);
         Mockito.when(solrClient.query(Mockito.any(SolrQuery.class))).thenReturn(queryResponse);
         Mockito.when(queryResponse.getResults()).thenReturn(solrDocumentList);
         List<Integer> serialMvmBibIds= Arrays.asList(1);
@@ -331,10 +324,10 @@ public class OngoingMatchingReportsServiceUT extends BaseTestCaseUT4{
         SolrQuery solrQuery= new SolrQuery();
         Mockito.when(solrQueryBuilder.getCountQueryForParentAndChildCriteria(Mockito.any())).thenReturn(solrQuery);
         Mockito.when(solrQueryBuilder.getCountQueryForChildAndParentCriteria(Mockito.any())).thenReturn(solrQuery);
-        SolrTemplate mocksolrTemplate1 = PowerMockito.mock(SolrTemplate.class);
+        SolrTemplate mocksolrTemplate1 = Mockito.mock(SolrTemplate.class);
         ReflectionTestUtils.setField(ongoingMatchingReportsService,"solrTemplate",mocksolrTemplate1);
         Mockito.when(mockOngoingMatchingReportsService.getSolrTemplate()).thenReturn(mocksolrTemplate1);
-        SolrClient solrClient=PowerMockito.mock(SolrClient.class);
+        SolrClient solrClient=Mockito.mock(SolrClient.class);
         QueryResponse queryResponse= Mockito.mock(QueryResponse.class);
         SolrDocumentList solrDocumentList =new SolrDocumentList();
         SolrDocument solrDocument = new SolrDocument();
@@ -343,7 +336,7 @@ public class OngoingMatchingReportsServiceUT extends BaseTestCaseUT4{
         solrDocument.setField(ScsbConstants.SUMMARY_HOLDINGS,"45");
         solrDocumentList.add(solrDocument);
         solrDocumentList.setNumFound(11);
-        PowerMockito.when(mocksolrTemplate1.getSolrClient()).thenReturn(solrClient);
+        Mockito.when(mocksolrTemplate1.getSolrClient()).thenReturn(solrClient);
         Mockito.when(solrClient.query(Mockito.any(SolrQuery.class))).thenReturn(queryResponse);
         Mockito.when(queryResponse.getResults()).thenReturn(solrDocumentList);
         Mockito.when(camelContext.getRouteController()).thenReturn(routeController);
@@ -364,10 +357,10 @@ public class OngoingMatchingReportsServiceUT extends BaseTestCaseUT4{
             SolrQuery solrQuery= new SolrQuery();
             Mockito.when(solrQueryBuilder.getCountQueryForParentAndChildCriteria(Mockito.any())).thenReturn(solrQuery);
             Mockito.when(solrQueryBuilder.getCountQueryForChildAndParentCriteria(Mockito.any())).thenReturn(solrQuery);
-            SolrTemplate mocksolrTemplate1 = PowerMockito.mock(SolrTemplate.class);
+            SolrTemplate mocksolrTemplate1 = Mockito.mock(SolrTemplate.class);
             ReflectionTestUtils.setField(ongoingMatchingReportsService,"solrTemplate",mocksolrTemplate1);
             Mockito.when(mockOngoingMatchingReportsService.getSolrTemplate()).thenReturn(mocksolrTemplate1);
-            SolrClient solrClient=PowerMockito.mock(SolrClient.class);
+            SolrClient solrClient=Mockito.mock(SolrClient.class);
             QueryResponse queryResponse= Mockito.mock(QueryResponse.class);
             SolrDocumentList solrDocumentList =new SolrDocumentList();
             SolrDocument solrDocument = new SolrDocument();
@@ -376,7 +369,7 @@ public class OngoingMatchingReportsServiceUT extends BaseTestCaseUT4{
             solrDocument.setField(ScsbConstants.SUMMARY_HOLDINGS,"45");
             solrDocumentList.add(solrDocument);
             solrDocumentList.setNumFound(11);
-            PowerMockito.when(mocksolrTemplate1.getSolrClient()).thenReturn(solrClient);
+            Mockito.when(mocksolrTemplate1.getSolrClient()).thenReturn(solrClient);
             Mockito.when(solrClient.query(Mockito.any(SolrQuery.class))).thenThrow(NullPointerException.class);
             Mockito.when(queryResponse.getResults()).thenReturn(solrDocumentList);
             Mockito.when(propertyUtil.getAllInstitutions()).thenReturn(Arrays.asList("PUL","CUL","NYPL","HL", supportInstitution));

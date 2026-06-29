@@ -1,11 +1,10 @@
 package org.recap.controller.swagger;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
 import org.recap.BaseTestCaseUT;
 import org.recap.controller.SharedCollectionRestController;
 import org.recap.model.BibItemAvailabityStatusRequest;
@@ -32,9 +31,7 @@ public class SharedCollectionRestControllerUT extends BaseTestCaseUT {
     ItemAvailabilityService itemAvailabilityService;
 
     @BeforeEach
-    public void setup()throws Exception{
-        MockitoAnnotations.openMocks(this);
-    }
+    public void setup()throws Exception{    }
 
     @Test
     public void itemAvailabilityStatus() throws Exception {

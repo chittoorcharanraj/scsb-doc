@@ -1,11 +1,10 @@
 package org.recap.executors;
 
 import org.apache.camel.ProducerTemplate;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
 import org.recap.BaseTestCaseUT;
 import org.recap.ScsbCommonConstants;
 import org.recap.matchingalgorithm.MatchingAlgorithmCGDProcessor;
@@ -20,7 +19,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * Created by hemalathas on 5/7/17.
@@ -51,10 +50,8 @@ public class MatchingAlgorithmMonographCGDCallableUT extends BaseTestCaseUT {
     List<String> nonHoldingInstitutionList=new ArrayList<>();
     List<String> ocolcInstitutionList=new ArrayList<>();
 
-    @Before
-    public void setUp() throws Exception {
-        MockitoAnnotations.openMocks(this);
-        from = pageNum * Long.valueOf(batchSize);
+    @BeforeEach
+    public void setUp() throws Exception {        from = pageNum * Long.valueOf(batchSize);
         nonHoldingInstitutionList.add("NYPL");
         Mockito.when(reportDataDetailsRepository.getReportDataEntityForPendingMatchingMonographs(ScsbCommonConstants.BIB_ID, from, batchSize)).thenReturn(getReportDataEntity());
         Mockito.when(reportDataDetailsRepository.getReportDataEntityForMatchingMonographs(ScsbCommonConstants.BIB_ID, from, batchSize)).thenReturn(getReportDataEntity());

@@ -4,22 +4,14 @@ import lombok.SneakyThrows;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang3.time.DateUtils;
 import org.apache.solr.client.solrj.response.UpdateResponse;
 import org.apache.solr.common.SolrInputDocument;
 import org.apache.solr.common.util.NamedList;
-import org.junit.Test;
-import org.junit.Before;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.BeforeEach;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PowerMockIgnore;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
-import org.powermock.modules.junit4.PowerMockRunnerDelegate;
 import org.recap.*;
 import org.recap.admin.SolrAdmin;
 import org.recap.model.jpa.BibliographicEntity;
@@ -37,19 +29,17 @@ import org.recap.util.DateUtil;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.solr.core.SolrTemplate;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.Date;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 
 /**
@@ -57,8 +47,6 @@ import static org.junit.Assert.assertNotNull;
  */
 
 
-@PrepareForTest(SolrTemplate.class)
-@PowerMockIgnore({"com.sun.org.apache.xerces.*", "javax.xml.*", "org.xml.*"})
 public class BibItemIndexExecutorServiceUT extends BaseTestCaseUT {
 
 
@@ -117,10 +105,8 @@ public class BibItemIndexExecutorServiceUT extends BaseTestCaseUT {
     @Value("${" + PropertyKeyConstants.SOLR_PARENT_CORE + "}")
     String solrCore;
 
-    @Before
-    public void setUp() throws Exception {
-        MockitoAnnotations.openMocks(this);
-        ReflectionTestUtils.setField(bibItemIndexExecutorService,"solrServerProtocol",solrServerProtocol);
+    @BeforeEach
+    public void setUp() throws Exception {        ReflectionTestUtils.setField(bibItemIndexExecutorService,"solrServerProtocol",solrServerProtocol);
         ReflectionTestUtils.setField(bibItemIndexExecutorService,"solrUrl",solrUrl);
         ReflectionTestUtils.setField(bibItemIndexExecutorService,"solrCore",solrCore);
         ReflectionTestUtils.setField(bibItemIndexExecutorService,"solrRouterURI",solrRouterURI);
@@ -156,8 +142,8 @@ public class BibItemIndexExecutorServiceUT extends BaseTestCaseUT {
         institutionEntity.setInstitutionName("Princeton");
         Mockito.when(institutionDetailsRepository.findByInstitutionCode(Mockito.anyString())).thenReturn(institutionEntity);
         Mockito.when(mockBibliographicDetailsRepository.countByOwningInstitutionIdAndLastUpdatedDateAfter(Mockito.anyInt(),Mockito.any())).thenReturn(1l);
-        Page bibliographicEntities = PowerMockito.mock(Page.class);
-        SolrTemplate mocksolrTemplate1 = PowerMockito.mock(SolrTemplate.class);
+        Page bibliographicEntities = Mockito.mock(Page.class);
+        SolrTemplate mocksolrTemplate1 = Mockito.mock(SolrTemplate.class);
         ReflectionTestUtils.setField(bibItemIndexExecutorService,"solrTemplate",mocksolrTemplate1);
         Mockito.when(bibliographicEntities.getNumberOfElements()).thenReturn(1);
         Mockito.when(bibliographicEntities.iterator()).thenReturn(getBibliographicEntityIterator());
@@ -171,12 +157,12 @@ public class BibItemIndexExecutorServiceUT extends BaseTestCaseUT {
     @Test
     public void partialIndexBibIdList() throws Exception {
         Mockito.when(commonUtil.findAllInstitutionIdsExceptSupportInstitution()).thenReturn(Arrays.asList(1,2,3));
-        Page bibliographicEntities = PowerMockito.mock(Page.class);
+        Page bibliographicEntities = Mockito.mock(Page.class);
         Mockito.when(bibliographicEntities.getNumberOfElements()).thenReturn(1);
         Mockito.when(bibliographicEntities.iterator()).thenReturn(getBibliographicEntityIterator());
         Mockito.when(mockBibliographicDetailsRepository.findByOwningInstitutionIdAndLastUpdatedDateAfter(Mockito.any(), Mockito.anyInt(), Mockito.any())).thenReturn(bibliographicEntities);
         Mockito.when(bibSolrCrudRepository.countByDocType(Mockito.anyString())).thenReturn(1l);
-        SolrTemplate mocksolrTemplate1 = PowerMockito.mock(SolrTemplate.class);
+        SolrTemplate mocksolrTemplate1 = Mockito.mock(SolrTemplate.class);
         ReflectionTestUtils.setField(bibItemIndexExecutorService, "solrTemplate", mocksolrTemplate1);
         Mockito.when(mocksolrTemplate1.convertBeanToSolrInputDocument(Mockito.any())).thenReturn(getSolrInputFields());
         Mockito.when(mockBibliographicDetailsRepository.getCountOfBibBasedOnBibIds(Mockito.anyList(), Mockito.anyList())).thenReturn(1l);
@@ -187,8 +173,8 @@ public class BibItemIndexExecutorServiceUT extends BaseTestCaseUT {
 
     @Test
     public void partialIndexBibIdRange() throws Exception {
-            Page bibliographicEntities = PowerMockito.mock(Page.class);
-            SolrTemplate mocksolrTemplate1 = PowerMockito.mock(SolrTemplate.class);
+            Page bibliographicEntities = Mockito.mock(Page.class);
+            SolrTemplate mocksolrTemplate1 = Mockito.mock(SolrTemplate.class);
             ReflectionTestUtils.setField(bibItemIndexExecutorService, "solrTemplate", mocksolrTemplate1);
             Mockito.when(bibliographicEntities.getNumberOfElements()).thenReturn(1);
             Mockito.when(bibliographicEntities.iterator()).thenReturn(getBibliographicEntityIterator());
@@ -203,8 +189,8 @@ public class BibItemIndexExecutorServiceUT extends BaseTestCaseUT {
 
     @Test
     public void partialIndexDateRange() throws Exception {
-            Page bibliographicEntities = PowerMockito.mock(Page.class);
-            SolrTemplate mocksolrTemplate1 = PowerMockito.mock(SolrTemplate.class);
+            Page bibliographicEntities = Mockito.mock(Page.class);
+            SolrTemplate mocksolrTemplate1 = Mockito.mock(SolrTemplate.class);
             ReflectionTestUtils.setField(bibItemIndexExecutorService, "solrTemplate", mocksolrTemplate1);
             Mockito.when(bibliographicEntities.getNumberOfElements()).thenReturn(1);
             Mockito.when(bibliographicEntities.iterator()).thenReturn(getBibliographicEntityIterator());
@@ -234,8 +220,8 @@ public class BibItemIndexExecutorServiceUT extends BaseTestCaseUT {
         solrIndexRequest.setDateFrom("01-10-2020 00:00");
         solrIndexRequest.setDateTo("02-10-2020 00:00");
         solrIndexRequest.setCommitInterval(0);
-        Page bibliographicEntities = PowerMockito.mock(Page.class);
-        SolrTemplate mocksolrTemplate1 = PowerMockito.mock(SolrTemplate.class);
+        Page bibliographicEntities = Mockito.mock(Page.class);
+        SolrTemplate mocksolrTemplate1 = Mockito.mock(SolrTemplate.class);
         ReflectionTestUtils.setField(bibItemIndexExecutorService, "solrTemplate", mocksolrTemplate1);
         Mockito.when(bibliographicEntities.getNumberOfElements()).thenReturn(1);
         Mockito.when(bibliographicEntities.iterator()).thenReturn(getIterator());
@@ -258,7 +244,7 @@ public class BibItemIndexExecutorServiceUT extends BaseTestCaseUT {
         solrIndexRequest.setOwningInstitutionCode(null);
         solrIndexRequest.setCommitInterval(10000);
         Mockito.when(mockBibliographicDetailsRepository.count()).thenReturn(1l);
-        SolrTemplate solrTemplate = PowerMockito.mock(SolrTemplate.class);
+        SolrTemplate solrTemplate = Mockito.mock(SolrTemplate.class);
         UpdateResponse updateResponse=new UpdateResponse();
         updateResponse.setResponse(new NamedList<>());
         Mockito.when(solrTemplate.delete(Mockito.any(),Mockito.any())).thenReturn(updateResponse);

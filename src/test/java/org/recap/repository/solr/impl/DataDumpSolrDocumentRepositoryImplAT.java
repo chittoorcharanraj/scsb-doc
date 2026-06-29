@@ -7,17 +7,14 @@ import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrDocumentList;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
-import org.mockito.junit.MockitoJUnitRunner;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
+
 import org.recap.*;
 import org.recap.model.jpa.BibliographicEntity;
 import org.recap.model.jpa.HoldingsEntity;
@@ -39,16 +36,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import static junit.framework.TestCase.assertTrue;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Created by premkb on 27/1/17.
  */
 
-
-@PrepareForTest({SolrTemplate.class, SolrClient.class})
 public class DataDumpSolrDocumentRepositoryImplAT extends BaseTestCaseUT4 {
 
     @InjectMocks
@@ -69,10 +62,8 @@ public class DataDumpSolrDocumentRepositoryImplAT extends BaseTestCaseUT4 {
     @Mock
     private BibliographicDetailsRepository bibliographicDetailsRepository;
 
-    @Before
-    public void setUp() throws Exception {
-        MockitoAnnotations.openMocks(this);
-        ReflectionTestUtils.setField(dataDumpSolrDocumentRepository, "deletedOnlyOrphanInstitution", "PUL,CUL");
+    @BeforeEach
+    public void setUp() throws Exception {        ReflectionTestUtils.setField(dataDumpSolrDocumentRepository, "deletedOnlyOrphanInstitution", "PUL,CUL");
         ReflectionTestUtils.setField(dataDumpSolrDocumentRepository, "incrementalNonFullTreeInstitution", incrementalNonFullTreeInstitution);
     }
 
@@ -85,10 +76,10 @@ public class DataDumpSolrDocumentRepositoryImplAT extends BaseTestCaseUT4 {
         Map<Integer, BibItem> bibItemMap = new HashMap<>();
         SolrQuery queryForChildAndParentCriteria= new SolrQuery();
         Mockito.when(solrQueryBuilder.getDeletedQueryForDataDump(searchRecordsRequest,true)).thenReturn(queryForChildAndParentCriteria);
-        SolrTemplate mocksolrTemplate1 = PowerMockito.mock(SolrTemplate.class);
-        SolrClient solrClient=PowerMockito.mock(SolrClient.class);
+        SolrTemplate mocksolrTemplate1 = Mockito.mock(SolrTemplate.class);
+        SolrClient solrClient=Mockito.mock(SolrClient.class);
         ReflectionTestUtils.setField(dataDumpSolrDocumentRepository,"solrTemplate",mocksolrTemplate1);
-        PowerMockito.when(mocksolrTemplate1.getSolrClient()).thenReturn(solrClient);
+        Mockito.when(mocksolrTemplate1.getSolrClient()).thenReturn(solrClient);
         QueryResponse queryResponse= Mockito.mock(QueryResponse.class);
         Mockito.when(solrClient.query(Mockito.any(SolrQuery.class))).thenReturn(queryResponse);
         SolrDocumentList solrDocumentList = new SolrDocumentList();
@@ -112,10 +103,10 @@ public class DataDumpSolrDocumentRepositoryImplAT extends BaseTestCaseUT4 {
         Mockito.when(solrQueryBuilder.getDeletedQueryForDataDump(searchRecordsRequest,true)).thenReturn(queryForParentAndChildCriteria);
         Mockito.when(solrQueryBuilder.getDeletedQueryForDataDump(searchRecordsRequest,false)).thenReturn(queryForParentAndChildCriteria);
         Mockito.when(solrQueryBuilder.getQueryForParentAndChildCriteriaForDeletedDataDump(searchRecordsRequest)).thenReturn(queryForParentAndChildCriteria);
-        SolrTemplate mocksolrTemplate1 = PowerMockito.mock(SolrTemplate.class);
-        SolrClient solrClient=PowerMockito.mock(SolrClient.class);
+        SolrTemplate mocksolrTemplate1 = Mockito.mock(SolrTemplate.class);
+        SolrClient solrClient=Mockito.mock(SolrClient.class);
         ReflectionTestUtils.setField(dataDumpSolrDocumentRepository,"solrTemplate",mocksolrTemplate1);
-        PowerMockito.when(mocksolrTemplate1.getSolrClient()).thenReturn(solrClient);
+        Mockito.when(mocksolrTemplate1.getSolrClient()).thenReturn(solrClient);
         QueryResponse queryResponse= Mockito.mock(QueryResponse.class);
         Mockito.when(solrClient.query(Mockito.any(SolrQuery.class))).thenReturn(queryResponse);
         SolrDocumentList solrDocumentList = getSolrDocumentList();
@@ -144,10 +135,10 @@ public class DataDumpSolrDocumentRepositoryImplAT extends BaseTestCaseUT4 {
         Mockito.when(solrQueryBuilder.getDeletedQueryForDataDump(searchRecordsRequest,true)).thenReturn(queryForParentAndChildCriteria);
         Mockito.when(solrQueryBuilder.getDeletedQueryForDataDump(searchRecordsRequest,false)).thenReturn(queryForParentAndChildCriteria);
         Mockito.when(solrQueryBuilder.getQueryForParentAndChildCriteriaForDeletedDataDump(searchRecordsRequest)).thenReturn(queryForParentAndChildCriteria);
-        SolrTemplate mocksolrTemplate1 = PowerMockito.mock(SolrTemplate.class);
-        SolrClient solrClient=PowerMockito.mock(SolrClient.class);
+        SolrTemplate mocksolrTemplate1 = Mockito.mock(SolrTemplate.class);
+        SolrClient solrClient=Mockito.mock(SolrClient.class);
         ReflectionTestUtils.setField(dataDumpSolrDocumentRepository,"solrTemplate",mocksolrTemplate1);
-        PowerMockito.when(mocksolrTemplate1.getSolrClient()).thenReturn(solrClient);
+        Mockito.when(mocksolrTemplate1.getSolrClient()).thenReturn(solrClient);
         QueryResponse queryResponse= Mockito.mock(QueryResponse.class);
         Mockito.when(solrClient.query(Mockito.any(SolrQuery.class))).thenReturn(queryResponse);
         SolrDocumentList solrDocumentList = getSolrDocumentList();
@@ -159,8 +150,7 @@ public class DataDumpSolrDocumentRepositoryImplAT extends BaseTestCaseUT4 {
         assertEquals(true,search.containsKey(ScsbCommonConstants.SEARCH_SUCCESS_RESPONSE));
     }
 
-    @Ignore
-    @Test
+    @Disabled
     public void searchByBib() throws Exception{
         SearchRecordsRequest searchRecordsRequest=new SearchRecordsRequest();
         searchRecordsRequest.setRequestingInstitution("NYPL");
@@ -168,10 +158,10 @@ public class DataDumpSolrDocumentRepositoryImplAT extends BaseTestCaseUT4 {
         searchRecordsRequest.setFieldName(ScsbConstants.BIBITEM_LASTUPDATED_DATE);
         SolrQuery queryForParentAndChildCriteria=new SolrQuery();
         Mockito.when(solrQueryBuilder.getQueryForParentAndChildCriteriaForDataDump(Mockito.any())).thenReturn(queryForParentAndChildCriteria);
-        SolrTemplate mocksolrTemplate1 = PowerMockito.mock(SolrTemplate.class);
-        SolrClient solrClient=PowerMockito.mock(SolrClient.class);
+        SolrTemplate mocksolrTemplate1 = Mockito.mock(SolrTemplate.class);
+        SolrClient solrClient=Mockito.mock(SolrClient.class);
         ReflectionTestUtils.setField(dataDumpSolrDocumentRepository,"solrTemplate",mocksolrTemplate1);
-        PowerMockito.when(mocksolrTemplate1.getSolrClient()).thenReturn(solrClient);
+        Mockito.when(mocksolrTemplate1.getSolrClient()).thenReturn(solrClient);
         QueryResponse queryResponse= Mockito.mock(QueryResponse.class);
         Mockito.when(solrClient.query(Mockito.any(SolrQuery.class))).thenReturn(queryResponse);
         SolrDocumentList solrDocumentList = new SolrDocumentList();
@@ -193,10 +183,10 @@ public class DataDumpSolrDocumentRepositoryImplAT extends BaseTestCaseUT4 {
         searchRecordsRequest.setFieldName(ScsbConstants.BIBITEM_LASTUPDATED_DATE);
         SolrQuery queryForParentAndChildCriteria=new SolrQuery();
         Mockito.when(solrQueryBuilder.getQueryForParentAndChildCriteriaForDataDump(Mockito.any())).thenReturn(queryForParentAndChildCriteria);
-        SolrTemplate mocksolrTemplate1 = PowerMockito.mock(SolrTemplate.class);
-        SolrClient solrClient=PowerMockito.mock(SolrClient.class);
+        SolrTemplate mocksolrTemplate1 = Mockito.mock(SolrTemplate.class);
+        SolrClient solrClient=Mockito.mock(SolrClient.class);
         ReflectionTestUtils.setField(dataDumpSolrDocumentRepository,"solrTemplate",mocksolrTemplate1);
-        PowerMockito.when(mocksolrTemplate1.getSolrClient()).thenReturn(solrClient);
+        Mockito.when(mocksolrTemplate1.getSolrClient()).thenReturn(solrClient);
         Mockito.when(solrClient.query(Mockito.any(SolrQuery.class))).thenThrow(SolrServerException.class);
         Map<String, Object> search=dataDumpSolrDocumentRepository.search(searchRecordsRequest);
         assertNull(dataDumpSolrDocumentRepository.getPageNumberOnPageSizeChange(searchRecordsRequest));

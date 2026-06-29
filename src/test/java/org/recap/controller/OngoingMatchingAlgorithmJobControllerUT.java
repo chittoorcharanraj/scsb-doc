@@ -3,11 +3,11 @@ package org.recap.controller;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrDocumentList;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.powermock.api.mockito.PowerMockito;
+
 import org.recap.BaseTestCaseUT;
 import org.recap.ScsbCommonConstants;
 import org.recap.ScsbConstants;
@@ -196,7 +196,7 @@ public class OngoingMatchingAlgorithmJobControllerUT extends BaseTestCaseUT {
 
     @Test
     public void matchingJob(){
-        Model model= PowerMockito.mock(Model.class);
+        Model model= Mockito.mock(Model.class);
         Mockito.when(ongoingMatchingAlgoJobController.matchingJob(model)).thenCallRealMethod();
         String job=ongoingMatchingAlgoJobController.matchingJob(model);
         assertEquals("ongoingMatchingJob",job);

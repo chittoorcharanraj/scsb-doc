@@ -1,11 +1,10 @@
 package org.recap.executors;
 
 import org.apache.camel.ProducerTemplate;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
 import org.recap.BaseTestCaseUT;
 import org.recap.model.jpa.BibliographicEntity;
 import org.recap.model.jpa.HoldingsEntity;
@@ -57,9 +56,7 @@ public class MatchingBibItemIndexCallableUT extends BaseTestCaseUT {
 
 
     @BeforeEach
-    public void setUp() throws Exception {
-        MockitoAnnotations.openMocks(this);
-        bibliographicEntity = saveBibSingleHoldingsSingleItem();
+    public void setUp() throws Exception {        bibliographicEntity = saveBibSingleHoldingsSingleItem();
     }
 
     @Test

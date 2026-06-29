@@ -10,19 +10,12 @@ import org.apache.solr.client.solrj.response.CoreAdminResponse;
 import org.apache.solr.client.solrj.response.UpdateResponse;
 import org.apache.solr.common.params.CoreAdminParams;
 import org.apache.solr.common.util.NamedList;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
-import org.powermock.modules.junit4.PowerMockRunnerDelegate;
 import org.recap.BaseTestCaseUT;
-import org.recap.BaseTestCaseUT4;
 import org.recap.PropertyKeyConstants;
 import org.recap.ScsbCommonConstants;
 import org.recap.admin.SolrAdmin;
@@ -45,17 +38,15 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
 /**
  * Created by pvsubrah on 6/14/16.
  */
 
-@PrepareForTest({SolrTemplate.class,SolrClient.class})
-@PowerMockRunnerDelegate(SpringJUnit4ClassRunner.class)
 public class ExecutorAT extends BaseTestCaseUT {
 
     @InjectMocks
@@ -95,10 +86,8 @@ public class ExecutorAT extends BaseTestCaseUT {
     private int docsPerThread = 10000;
     private int commitInterval = 10000;
 
-    @Before
-    public void setup()throws Exception{
-        MockitoAnnotations.openMocks(this);
-        ReflectionTestUtils.setField(bibItemIndexExecutorService,"solrServerProtocol",solrServerProtocol);
+    @BeforeEach
+    public void setup()throws Exception{        ReflectionTestUtils.setField(bibItemIndexExecutorService,"solrServerProtocol",solrServerProtocol);
         ReflectionTestUtils.setField(bibItemIndexExecutorService,"solrUrl",solrUrl);
     }
 
@@ -108,7 +97,7 @@ public class ExecutorAT extends BaseTestCaseUT {
         CoreAdminRequest coreAdminRequest = solrAdmin.getCoreAdminRequest();
 
         coreAdminRequest.setAction(CoreAdminParams.CoreAdminAction.STATUS);
-        SolrClient solrClient= PowerMockito.mock(SolrClient.class);
+        SolrClient solrClient= Mockito.mock(SolrClient.class);
         long startNanos = System.nanoTime();
         SolrRequest solrRequest=new CoreAdminRequest();
         UpdateResponse res=  new UpdateResponse();
@@ -147,7 +136,7 @@ public class ExecutorAT extends BaseTestCaseUT {
         solrIndexRequest.setOwningInstitutionCode(null);
         solrIndexRequest.setCommitInterval(commitInterval);
         Mockito.when(bibliographicDetailsRepository.count()).thenReturn(1l);
-        SolrTemplate solrTemplate = PowerMockito.mock(SolrTemplate.class);
+        SolrTemplate solrTemplate = Mockito.mock(SolrTemplate.class);
         UpdateResponse updateResponse=new UpdateResponse();
         updateResponse.setResponse(new NamedList<>());
         Mockito.when(solrTemplate.delete(Mockito.any(),Mockito.any())).thenReturn(updateResponse);
@@ -208,7 +197,7 @@ public class ExecutorAT extends BaseTestCaseUT {
         bibSolrCrudRepository.deleteAll();
         itemCrudRepository.deleteAll();
         indexDocuments(solrIndexRequest);
-        SolrTemplate solrTemplate = PowerMockito.mock(SolrTemplate.class);
+        SolrTemplate solrTemplate = Mockito.mock(SolrTemplate.class);
         solrTemplate.commit(solrCore);
         long solrCount = bibSolrCrudRepository.countByDocType("Bib");
         assertEquals(dbCount, solrCount);

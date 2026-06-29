@@ -4,17 +4,13 @@ import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.response.FieldStatsInfo;
 import org.apache.solr.client.solrj.response.QueryResponse;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
+
+
 import org.recap.BaseTestCaseUT;
-import org.recap.BaseTestCaseUT4;
 import org.recap.ScsbCommonConstants;
 import org.springframework.data.solr.core.SolrTemplate;
 import org.springframework.test.util.ReflectionTestUtils;
@@ -24,27 +20,24 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-@PrepareForTest({SolrTemplate.class, SolrClient.class})
 public class AccessionReconcilationRestControllerUT extends BaseTestCaseUT {
 
     @InjectMocks
     AccessionReconcilationRestController accessionReconcilationRestController;
 
-    @Before
-    public void setUp()throws Exception {
-        MockitoAnnotations.openMocks(this);
-    }
+    @BeforeEach
+    public void setUp()throws Exception {    }
 
     @Test
     public void startAccessionReconcilation()throws Exception{
         Map<String,String> barcodesAndCustomerCodes=new HashMap<>();
         barcodesAndCustomerCodes.put("barcode","123456");
-        SolrTemplate mocksolrTemplate1 = PowerMockito.mock(SolrTemplate.class);
-        SolrClient solrClient=PowerMockito.mock(SolrClient.class);
-        PowerMockito.when(mocksolrTemplate1.getSolrClient()).thenReturn(solrClient);
+        SolrTemplate mocksolrTemplate1 = Mockito.mock(SolrTemplate.class);
+        SolrClient solrClient=Mockito.mock(SolrClient.class);
+        Mockito.when(mocksolrTemplate1.getSolrClient()).thenReturn(solrClient);
         QueryResponse queryResponse= Mockito.mock(QueryResponse.class);
         Mockito.when(solrClient.query(Mockito.any(SolrQuery.class),Mockito.any())).thenReturn(queryResponse);
         Map<String, FieldStatsInfo> getFieldStatsInfo=new HashMap<>();

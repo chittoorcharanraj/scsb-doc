@@ -1,11 +1,10 @@
 package org.recap.executors;
 
 import org.apache.camel.ProducerTemplate;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
 import org.recap.BaseTestCaseUT;
 import org.recap.BaseTestCaseUT4;
 import org.recap.ScsbCommonConstants;
@@ -24,8 +23,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * Created by hemalathas on 5/7/17.
@@ -65,10 +64,8 @@ public class MatchingAlgorithmSerialsCGDCallableUT extends BaseTestCaseUT {
 
     List<String> scsbInstitutions=Arrays.asList("HTC");
 
-    @Before
-    public void setUp() throws Exception {
-        MockitoAnnotations.openMocks(this);
-        from = pageNum * Long.valueOf(batchSize);
+    @BeforeEach
+    public void setUp() throws Exception {        from = pageNum * Long.valueOf(batchSize);
         ReflectionTestUtils.setField(matchingCounter,"scsbInstitutions",scsbInstitutions);
         MatchingCounter.reset();
         bibliographicEntity = saveBibSingleHoldingsSingleItem();

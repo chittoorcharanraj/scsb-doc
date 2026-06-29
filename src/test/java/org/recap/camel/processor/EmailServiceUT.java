@@ -4,7 +4,7 @@ import org.apache.camel.*;
 import org.apache.camel.clock.Clock;
 import org.apache.camel.spi.UnitOfWork;
 import org.apache.camel.trait.message.MessageTrait;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;

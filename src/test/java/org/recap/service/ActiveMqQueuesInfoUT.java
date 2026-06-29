@@ -1,6 +1,6 @@
 package org.recap.service;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.recap.BaseTestCaseUT;
@@ -9,7 +9,7 @@ import org.recap.model.queueinfo.QueueSizeInfoJson;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.test.util.ReflectionTestUtils;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
 public class ActiveMqQueuesInfoUT extends BaseTestCaseUT {

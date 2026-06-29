@@ -4,12 +4,8 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.spi.RouteController;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.junit.Test;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
+
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -83,7 +79,7 @@ public class OngoingMatchingAlgorithmServiceUT extends BaseTestCaseUT {
     }
 
 
-    @Ignore
+    @Disabled
     @DisplayName("Test cgd round trip report for Ongoing Matching Algorithm")
     public void testCGDRoundTripReport(){
         String result = ongoingMatchingAlgorithmService.generateCGDRoundTripReport();
@@ -104,7 +100,7 @@ public class OngoingMatchingAlgorithmServiceUT extends BaseTestCaseUT {
     }
 
 
-    @Ignore
+    @Disabled
     @DisplayName("Test NoSuchElementException in CGD Round Trip")
     public void testNoSuchElementFoundException(){
         when(itemDetailsRepository.findById(anyInt())).thenThrow(new NoSuchElementException());
@@ -122,7 +118,7 @@ public class OngoingMatchingAlgorithmServiceUT extends BaseTestCaseUT {
     }
 
 
-    @Ignore
+    @Disabled
     @DisplayName("Test CamelExecutionException in CGD Round Trip")
    public void testForCamelExecutionException(){
         doThrow(CamelExecutionException.class).when(producerTemplate).sendBodyAndHeaders(anyString(), any(),Mockito.anyMap());
@@ -131,7 +127,7 @@ public class OngoingMatchingAlgorithmServiceUT extends BaseTestCaseUT {
     }
 
 
-    @Ignore
+    @Disabled
     @DisplayName("Test for Generic exception in CGD Round Trip")
    public void testForAnyOtherException(){
         doThrow(RuntimeException.class).when(producerTemplate).sendBodyAndHeaders(anyString(), any(),Mockito.anyMap());

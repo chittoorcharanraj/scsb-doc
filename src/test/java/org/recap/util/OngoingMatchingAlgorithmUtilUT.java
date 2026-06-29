@@ -8,11 +8,10 @@ import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrDocumentList;
 import org.apache.solr.common.util.NamedList;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.powermock.api.mockito.PowerMockito;
 import org.recap.BaseTestCaseUT;
 import org.recap.ScsbCommonConstants;
 import org.recap.ScsbConstants;
@@ -126,16 +125,16 @@ public class OngoingMatchingAlgorithmUtilUT extends BaseTestCaseUT {
 
     @Test
     public void fetchUpdatedRecordsByDateRangeAndStartProcess() throws Exception {
-        SolrTemplate mocksolrTemplate1 = PowerMockito.mock(SolrTemplate.class);
+        SolrTemplate mocksolrTemplate1 = Mockito.mock(SolrTemplate.class);
         ReflectionTestUtils.setField(ongoingMatchingAlgorithmUtil, "solrTemplate", mocksolrTemplate1);
         ReflectionTestUtils.setField(ongoingMatchingAlgorithmUtil, "matchingAlgorithmUtil", mockedmatchingAlgorithmUtil);
         ReflectionTestUtils.setField(ongoingMatchingAlgorithmUtil, "commonUtil", commonUtil);
         QueryResponse queryResponse = Mockito.mock(QueryResponse.class);
-        SolrClient solrClient = PowerMockito.mock(SolrClient.class);
+        SolrClient solrClient = Mockito.mock(SolrClient.class);
         String[] matchPoints = {ScsbCommonConstants.OCLC_NUMBER, ScsbCommonConstants.ISBN_CRITERIA, ScsbCommonConstants.ISSN_CRITERIA, ScsbCommonConstants.LCCN_CRITERIA};
         for (String matchPoint : matchPoints) {
             SolrDocumentList solrDocumentList = getSolrDocumentsSingle(matchPoint);
-            PowerMockito.when(mocksolrTemplate1.getSolrClient()).thenReturn(solrClient);
+            Mockito.when(mocksolrTemplate1.getSolrClient()).thenReturn(solrClient);
             Mockito.when(solrClient.query(any(SolrQuery.class))).thenReturn(queryResponse);
             Mockito.when(queryResponse.getResults()).thenReturn(solrDocumentList);
             Mockito.when(solrQueryBuilder.solrQueryForOngoingMatching(ScsbCommonConstants.OCLC_NUMBER, "test")).thenReturn("testquery");
@@ -148,16 +147,16 @@ public class OngoingMatchingAlgorithmUtilUT extends BaseTestCaseUT {
 
     @Test
     public void fetchUpdatedRecordsByBibIdsAndStartProcess() throws Exception {
-        SolrTemplate mocksolrTemplate1 = PowerMockito.mock(SolrTemplate.class);
+        SolrTemplate mocksolrTemplate1 = Mockito.mock(SolrTemplate.class);
         ReflectionTestUtils.setField(ongoingMatchingAlgorithmUtil, "solrTemplate", mocksolrTemplate1);
         ReflectionTestUtils.setField(ongoingMatchingAlgorithmUtil, "matchingAlgorithmUtil", mockedmatchingAlgorithmUtil);
         ReflectionTestUtils.setField(ongoingMatchingAlgorithmUtil, "commonUtil", commonUtil);
         QueryResponse queryResponse = Mockito.mock(QueryResponse.class);
-        SolrClient solrClient = PowerMockito.mock(SolrClient.class);
+        SolrClient solrClient = Mockito.mock(SolrClient.class);
         String[] matchPoints = {ScsbCommonConstants.OCLC_NUMBER, ScsbCommonConstants.ISBN_CRITERIA, ScsbCommonConstants.ISSN_CRITERIA, ScsbCommonConstants.LCCN_CRITERIA};
         for (String matchPoint : matchPoints) {
             SolrDocumentList solrDocumentList = getSolrDocumentsSingle(matchPoint);
-            PowerMockito.when(mocksolrTemplate1.getSolrClient()).thenReturn(solrClient);
+            Mockito.when(mocksolrTemplate1.getSolrClient()).thenReturn(solrClient);
             Mockito.when(solrClient.query(any(SolrQuery.class))).thenReturn(queryResponse);
             Mockito.when(queryResponse.getResults()).thenReturn(solrDocumentList);
             Mockito.when(solrQueryBuilder.solrQueryForOngoingMatching(ScsbCommonConstants.OCLC_NUMBER, "test")).thenReturn("testquery");
@@ -170,8 +169,8 @@ public class OngoingMatchingAlgorithmUtilUT extends BaseTestCaseUT {
 
     @Test
     public void fetchUpdatedRecordsByBibIdRangeAndStartProcess() throws Exception {
-        SolrTemplate mocksolrTemplate1 = PowerMockito.mock(SolrTemplate.class);
-        SolrClient solrClient = PowerMockito.mock(SolrClient.class);
+        SolrTemplate mocksolrTemplate1 = Mockito.mock(SolrTemplate.class);
+        SolrClient solrClient = Mockito.mock(SolrClient.class);
         QueryResponse queryResponse = Mockito.mock(QueryResponse.class);
         ReflectionTestUtils.setField(ongoingMatchingAlgorithmUtil, "matchingAlgorithmUtil", mockedmatchingAlgorithmUtil);
         ReflectionTestUtils.setField(ongoingMatchingAlgorithmUtil, "solrTemplate", mocksolrTemplate1);
@@ -180,7 +179,7 @@ public class OngoingMatchingAlgorithmUtilUT extends BaseTestCaseUT {
         for (String matchPoint : matchPoints) {
             SolrDocumentList solrDocumentList = getSolrDocumentsSingle(matchPoint);
             Mockito.when(solrQueryBuilder.fetchBibsByBibIdRange(Mockito.anyString(), Mockito.anyString())).thenCallRealMethod();
-            PowerMockito.when(mocksolrTemplate1.getSolrClient()).thenReturn(solrClient);
+            Mockito.when(mocksolrTemplate1.getSolrClient()).thenReturn(solrClient);
             Mockito.when(solrClient.query(any(SolrQuery.class))).thenReturn(queryResponse);
             Mockito.when(queryResponse.getResults()).thenReturn(solrDocumentList);
             Mockito.when(commonUtil.getBibItemFromSolrFieldNames(any(SolrDocument.class), Mockito.anyCollection(), any(BibItem.class))).thenReturn(getBibItemSingle("PUL", 1, ScsbCommonConstants.MONOGRAPH)).thenReturn(getBibItemSingle("CUL", 2, ScsbCommonConstants.MONOGRAPH)).thenReturn(getBibItemSingle("NYPL", 3, ScsbCommonConstants.MONOGRAPH));
@@ -192,8 +191,8 @@ public class OngoingMatchingAlgorithmUtilUT extends BaseTestCaseUT {
     @Test
     public void fetchUpdatedRecordsByBibIdRangeAndStartProcessMultiMatch() throws Exception {
         List<String> nonHoldingInstitutionList = new ArrayList<>();
-        SolrTemplate mocksolrTemplate1 = PowerMockito.mock(SolrTemplate.class);
-        SolrClient solrClient = PowerMockito.mock(SolrClient.class);
+        SolrTemplate mocksolrTemplate1 = Mockito.mock(SolrTemplate.class);
+        SolrClient solrClient = Mockito.mock(SolrClient.class);
         QueryResponse queryResponse = Mockito.mock(QueryResponse.class);
         ReflectionTestUtils.setField(ongoingMatchingAlgorithmUtil, "matchingAlgorithmUtil", mockedmatchingAlgorithmUtil);
         ReflectionTestUtils.setField(ongoingMatchingAlgorithmUtil, "solrTemplate", mocksolrTemplate1);
@@ -201,7 +200,7 @@ public class OngoingMatchingAlgorithmUtilUT extends BaseTestCaseUT {
         ReflectionTestUtils.setField(ongoingMatchingAlgorithmUtil, "nonHoldingInstitutionList", nonHoldingInstitutionList);
         SolrDocumentList solrDocumentList = getSolrDocumentsMulti();
         Mockito.when(solrQueryBuilder.fetchBibsByBibIdRange(Mockito.anyString(), Mockito.anyString())).thenReturn("test");
-        PowerMockito.when(mocksolrTemplate1.getSolrClient()).thenReturn(solrClient);
+        Mockito.when(mocksolrTemplate1.getSolrClient()).thenReturn(solrClient);
         Mockito.when(solrClient.query(any(SolrQuery.class))).thenReturn(queryResponse);
         Mockito.when(queryResponse.getResults()).thenReturn(solrDocumentList);
         Mockito.when(commonUtil.getBibItemFromSolrFieldNames(any(SolrDocument.class), Mockito.anyCollection(), any(BibItem.class))).thenReturn(getBibItemSingle("PUL", 1, ScsbCommonConstants.MONOGRAPH)).thenReturn(getBibItemSingle("CUL", 2, ScsbCommonConstants.MONOGRAPH)).thenReturn(getBibItemSingle("NYPL", 3, ScsbCommonConstants.MONOGRAPH));
@@ -225,15 +224,15 @@ public class OngoingMatchingAlgorithmUtilUT extends BaseTestCaseUT {
 
     @Test
     public void fetchDataForOngoingMatchingBasedOnBibIdRangeException() throws Exception {
-        SolrTemplate mocksolrTemplate1 = PowerMockito.mock(SolrTemplate.class);
-        SolrClient solrClient = PowerMockito.mock(SolrClient.class);
+        SolrTemplate mocksolrTemplate1 = Mockito.mock(SolrTemplate.class);
+        SolrClient solrClient = Mockito.mock(SolrClient.class);
         QueryResponse queryResponse = Mockito.mock(QueryResponse.class);
         ReflectionTestUtils.setField(ongoingMatchingAlgorithmUtil, "matchingAlgorithmUtil", mockedmatchingAlgorithmUtil);
         ReflectionTestUtils.setField(ongoingMatchingAlgorithmUtil, "solrTemplate", mocksolrTemplate1);
         ReflectionTestUtils.setField(ongoingMatchingAlgorithmUtil, "commonUtil", commonUtil);
         SolrDocumentList solrDocumentList = getSolrDocumentsMulti();
         Mockito.when(solrQueryBuilder.fetchBibsByBibIdRange(Mockito.anyString(), Mockito.anyString())).thenReturn("test");
-        PowerMockito.when(mocksolrTemplate1.getSolrClient()).thenReturn(solrClient);
+        Mockito.when(mocksolrTemplate1.getSolrClient()).thenReturn(solrClient);
         Mockito.when(solrClient.query(any(SolrQuery.class))).thenThrow(SolrServerException.class);
         Mockito.when(queryResponse.getResults()).thenReturn(solrDocumentList);
         //QueryResponse queryResponses = ongoingMatchingAlgorithmUtil.fetchDataForOngoingMatchingBasedOnBibIdRange("1", "3", 1,0);
@@ -242,15 +241,15 @@ public class OngoingMatchingAlgorithmUtilUT extends BaseTestCaseUT {
 
     @Test
     public void fetchDataForOngoingMatchingBasedOnDateException() throws Exception {
-        SolrTemplate mocksolrTemplate1 = PowerMockito.mock(SolrTemplate.class);
-        SolrClient solrClient = PowerMockito.mock(SolrClient.class);
+        SolrTemplate mocksolrTemplate1 = Mockito.mock(SolrTemplate.class);
+        SolrClient solrClient = Mockito.mock(SolrClient.class);
         QueryResponse queryResponse = Mockito.mock(QueryResponse.class);
         ReflectionTestUtils.setField(ongoingMatchingAlgorithmUtil, "matchingAlgorithmUtil", mockedmatchingAlgorithmUtil);
         ReflectionTestUtils.setField(ongoingMatchingAlgorithmUtil, "solrTemplate", mocksolrTemplate1);
         ReflectionTestUtils.setField(ongoingMatchingAlgorithmUtil, "commonUtil", commonUtil);
         SolrDocumentList solrDocumentList = getSolrDocumentsMulti();
         Mockito.when(solrQueryBuilder.fetchBibsByBibIdRange(Mockito.anyString(), Mockito.anyString())).thenReturn("test");
-        PowerMockito.when(mocksolrTemplate1.getSolrClient()).thenReturn(solrClient);
+        Mockito.when(mocksolrTemplate1.getSolrClient()).thenReturn(solrClient);
         Mockito.when(solrClient.query(any(SolrQuery.class))).thenThrow(SolrServerException.class);
         Mockito.when(queryResponse.getResults()).thenReturn(solrDocumentList);
         //  QueryResponse queryResponses = ongoingMatchingAlgorithmUtil.fetchDataForOngoingMatchingBasedOnDate("date", 1,0,true,true);
@@ -262,14 +261,14 @@ public class OngoingMatchingAlgorithmUtilUT extends BaseTestCaseUT {
         Map<Integer, BibItem> existingBibItemMap = new HashMap<>();
         BibItem bibItem = new BibItem();
         existingBibItemMap.put(1, bibItem);
-        SolrTemplate mocksolrTemplate1 = PowerMockito.mock(SolrTemplate.class);
-        SolrClient solrClient = PowerMockito.mock(SolrClient.class);
+        SolrTemplate mocksolrTemplate1 = Mockito.mock(SolrTemplate.class);
+        SolrClient solrClient = Mockito.mock(SolrClient.class);
         QueryResponse queryResponse = Mockito.mock(QueryResponse.class);
         ReflectionTestUtils.setField(ongoingMatchingAlgorithmUtil, "matchingAlgorithmUtil", mockedmatchingAlgorithmUtil);
         ReflectionTestUtils.setField(ongoingMatchingAlgorithmUtil, "solrTemplate", mocksolrTemplate1);
         SolrDocumentList solrDocumentList = getSolrDocumentsMulti();
         Mockito.when(solrQueryBuilder.fetchBibsByBibIdRange(Mockito.anyString(), Mockito.anyString())).thenReturn("test");
-        PowerMockito.when(mocksolrTemplate1.getSolrClient()).thenReturn(solrClient);
+        Mockito.when(mocksolrTemplate1.getSolrClient()).thenReturn(solrClient);
         Mockito.when(solrClient.query(any(SolrQuery.class))).thenThrow(SolrServerException.class);
         Mockito.when(queryResponse.getResults()).thenReturn(solrDocumentList);
         Set<String> matchPointString = new HashSet<>();
@@ -281,8 +280,8 @@ public class OngoingMatchingAlgorithmUtilUT extends BaseTestCaseUT {
 
     @Test
     public void fetchUpdatedRecordsAndStartProcessSingleMatch() throws Exception {
-        SolrTemplate mocksolrTemplate1 = PowerMockito.mock(SolrTemplate.class);
-        SolrClient solrClient = PowerMockito.mock(SolrClient.class);
+        SolrTemplate mocksolrTemplate1 = Mockito.mock(SolrTemplate.class);
+        SolrClient solrClient = Mockito.mock(SolrClient.class);
         QueryResponse queryResponse = Mockito.mock(QueryResponse.class);
         ReflectionTestUtils.setField(ongoingMatchingAlgorithmUtil, "solrTemplate", mocksolrTemplate1);
         Date processDate = new Date();
@@ -308,7 +307,7 @@ public class OngoingMatchingAlgorithmUtilUT extends BaseTestCaseUT {
             ReflectionTestUtils.setField(ongoingMatchingAlgorithmUtil, "solrQueryBuilder", solrQueryBuilder);
             ReflectionTestUtils.setField(ongoingMatchingAlgorithmUtil, "commonUtil", commonUtil);
             ReflectionTestUtils.setField(ongoingMatchingAlgorithmUtil, "collectionGroupDetailsRepository", collectionGroupDetailsRepository);
-            PowerMockito.when(mocksolrTemplate1.getSolrClient()).thenReturn(solrClient);
+            Mockito.when(mocksolrTemplate1.getSolrClient()).thenReturn(solrClient);
             Mockito.when(solrClient.query(any(SolrQuery.class))).thenReturn(queryResponse);
             Mockito.when(queryResponse.getResults()).thenReturn(solrDocumentList);
             Mockito.when(commonUtil.getBibItemFromSolrFieldNames(any(SolrDocument.class), Mockito.anyCollection(), any(BibItem.class))).thenReturn(getBibItemSingle("PUL", 1, ScsbCommonConstants.MONOGRAPH)).thenReturn(getBibItemSingle("CUL", 2, ScsbCommonConstants.MONOGRAPH)).thenReturn(getBibItemSingle("NYPL", 3, ScsbCommonConstants.MONOGRAPH));
@@ -335,8 +334,8 @@ public class OngoingMatchingAlgorithmUtilUT extends BaseTestCaseUT {
 
     @Test
     public void fetchUpdatedRecordsAndStartProcessSingleMatchForNonMonograph() throws Exception {
-        SolrTemplate mocksolrTemplate1 = PowerMockito.mock(SolrTemplate.class);
-        SolrClient solrClient = PowerMockito.mock(SolrClient.class);
+        SolrTemplate mocksolrTemplate1 = Mockito.mock(SolrTemplate.class);
+        SolrClient solrClient = Mockito.mock(SolrClient.class);
         QueryResponse queryResponse = Mockito.mock(QueryResponse.class);
         ReflectionTestUtils.setField(ongoingMatchingAlgorithmUtil, "solrTemplate", mocksolrTemplate1);
         SolrQuery solrQuery = new SolrQuery("testquery");
@@ -363,7 +362,7 @@ public class OngoingMatchingAlgorithmUtilUT extends BaseTestCaseUT {
         ReflectionTestUtils.setField(ongoingMatchingAlgorithmUtil, "solrQueryBuilder", solrQueryBuilder);
         ReflectionTestUtils.setField(ongoingMatchingAlgorithmUtil, "commonUtil", commonUtil);
         ReflectionTestUtils.setField(ongoingMatchingAlgorithmUtil, "collectionGroupDetailsRepository", collectionGroupDetailsRepository);
-        PowerMockito.when(mocksolrTemplate1.getSolrClient()).thenReturn(solrClient);
+        Mockito.when(mocksolrTemplate1.getSolrClient()).thenReturn(solrClient);
         Mockito.when(solrClient.query(any(SolrQuery.class))).thenReturn(queryResponse);
         Mockito.when(queryResponse.getResults()).thenReturn(solrDocumentList);
         Mockito.when(commonUtil.getBibItemFromSolrFieldNames(any(SolrDocument.class), Mockito.anyCollection(), any(BibItem.class))).thenReturn(getBibItemSingle("PUL", 1, ScsbCommonConstants.MONOGRAPH)).thenReturn(getBibItemSingle("CUL", 2, ScsbCommonConstants.MONOGRAPH)).thenReturn(getBibItemSingle("NYPL", 3, ScsbCommonConstants.MONOGRAPH));
@@ -397,8 +396,8 @@ public class OngoingMatchingAlgorithmUtilUT extends BaseTestCaseUT {
 
     @Test
     public void fetchUpdatedRecordsAndStartProcessSingleMatchForNonMonographException() throws Exception {
-        SolrTemplate mocksolrTemplate1 = PowerMockito.mock(SolrTemplate.class);
-        SolrClient solrClient = PowerMockito.mock(SolrClient.class);
+        SolrTemplate mocksolrTemplate1 = Mockito.mock(SolrTemplate.class);
+        SolrClient solrClient = Mockito.mock(SolrClient.class);
         QueryResponse queryResponse = Mockito.mock(QueryResponse.class);
         ReflectionTestUtils.setField(ongoingMatchingAlgorithmUtil, "solrTemplate", mocksolrTemplate1);
         SolrQuery solrQuery = new SolrQuery("testquery");
@@ -425,7 +424,7 @@ public class OngoingMatchingAlgorithmUtilUT extends BaseTestCaseUT {
         ReflectionTestUtils.setField(ongoingMatchingAlgorithmUtil, "solrQueryBuilder", solrQueryBuilder);
         ReflectionTestUtils.setField(ongoingMatchingAlgorithmUtil, "commonUtil", commonUtil);
         ReflectionTestUtils.setField(ongoingMatchingAlgorithmUtil, "collectionGroupDetailsRepository", collectionGroupDetailsRepository);
-        PowerMockito.when(mocksolrTemplate1.getSolrClient()).thenReturn(solrClient);
+        Mockito.when(mocksolrTemplate1.getSolrClient()).thenReturn(solrClient);
         Mockito.when(solrClient.query(any(SolrQuery.class))).thenReturn(queryResponse);
         Mockito.when(queryResponse.getResults()).thenReturn(solrDocumentList);
         Mockito.when(commonUtil.getBibItemFromSolrFieldNames(any(SolrDocument.class), Mockito.anyCollection(), any(BibItem.class))).thenReturn(getBibItemSingle("PUL", 1, ScsbCommonConstants.MONOGRAPH)).thenReturn(getBibItemSingle("CUL", 2, ScsbCommonConstants.MONOGRAPH)).thenReturn(getBibItemSingle("NYPL", 3, ScsbCommonConstants.MONOGRAPH));
@@ -524,8 +523,8 @@ public class OngoingMatchingAlgorithmUtilUT extends BaseTestCaseUT {
 
     @Test
     public void fetchUpdatedRecordsAndStartProcessSingleMatchSerial() throws Exception {
-        SolrTemplate mocksolrTemplate1 = PowerMockito.mock(SolrTemplate.class);
-        SolrClient solrClient = PowerMockito.mock(SolrClient.class);
+        SolrTemplate mocksolrTemplate1 = Mockito.mock(SolrTemplate.class);
+        SolrClient solrClient = Mockito.mock(SolrClient.class);
         QueryResponse queryResponse = Mockito.mock(QueryResponse.class);
         ReflectionTestUtils.setField(ongoingMatchingAlgorithmUtil, "solrTemplate", mocksolrTemplate1);
         SolrQuery solrQuery = new SolrQuery("testquery");
@@ -554,7 +553,7 @@ public class OngoingMatchingAlgorithmUtilUT extends BaseTestCaseUT {
         Mockito.doNothing().when(ongoingMatchingReportsService).generateSerialAndMVMsReport(serialMvmBibIds);
         Mockito.when(ongoingMatchingReportsService.generateTitleExceptionReport(any(), any())).thenReturn("test");
         Mockito.doNothing().when(ongoingMatchingReportsService).generateSummaryReport(matchingSummaryReports);
-        PowerMockito.when(mocksolrTemplate1.getSolrClient()).thenReturn(solrClient);
+        Mockito.when(mocksolrTemplate1.getSolrClient()).thenReturn(solrClient);
         Mockito.when(solrClient.query(any(SolrQuery.class))).thenReturn(queryResponse);
         Mockito.when(queryResponse.getResults()).thenReturn(solrDocumentList);
         Mockito.when(commonUtil.getBibItemFromSolrFieldNames(any(SolrDocument.class), Mockito.anyCollection(), any(BibItem.class))).thenReturn(getBibItemSingle("PUL", 1, ScsbCommonConstants.SERIAL)).thenReturn(getBibItemSingle("CUL", 2, ScsbCommonConstants.SERIAL)).thenReturn(getBibItemSingle("NYPL", 3, ScsbCommonConstants.SERIAL));
@@ -572,8 +571,8 @@ public class OngoingMatchingAlgorithmUtilUT extends BaseTestCaseUT {
 
     @Test
     public void fetchUpdatedRecordsAndStartProcessSingleMatchSerialException() throws Exception {
-        SolrTemplate mocksolrTemplate1 = PowerMockito.mock(SolrTemplate.class);
-        SolrClient solrClient = PowerMockito.mock(SolrClient.class);
+        SolrTemplate mocksolrTemplate1 = Mockito.mock(SolrTemplate.class);
+        SolrClient solrClient = Mockito.mock(SolrClient.class);
         QueryResponse queryResponse = Mockito.mock(QueryResponse.class);
         ReflectionTestUtils.setField(ongoingMatchingAlgorithmUtil, "solrTemplate", mocksolrTemplate1);
         SolrQuery solrQuery = new SolrQuery("testquery");
@@ -596,7 +595,7 @@ public class OngoingMatchingAlgorithmUtilUT extends BaseTestCaseUT {
         ReflectionTestUtils.setField(ongoingMatchingAlgorithmUtil, "solrQueryBuilder", solrQueryBuilder);
         ReflectionTestUtils.setField(ongoingMatchingAlgorithmUtil, "commonUtil", commonUtil);
         ReflectionTestUtils.setField(ongoingMatchingAlgorithmUtil, "collectionGroupDetailsRepository", collectionGroupDetailsRepository);
-        PowerMockito.when(mocksolrTemplate1.getSolrClient()).thenReturn(solrClient);
+        Mockito.when(mocksolrTemplate1.getSolrClient()).thenReturn(solrClient);
         Mockito.when(solrClient.query(any(SolrQuery.class))).thenReturn(queryResponse);
         Mockito.when(queryResponse.getResults()).thenReturn(solrDocumentList);
         Mockito.when(commonUtil.getBibItemFromSolrFieldNames(any(SolrDocument.class), Mockito.anyCollection(), any(BibItem.class))).thenReturn(getBibItemSingle("PUL", 1, ScsbCommonConstants.SERIAL)).thenReturn(getBibItemSingle("CUL", 2, ScsbCommonConstants.SERIAL)).thenReturn(getBibItemSingle("NYPL", 3, ScsbCommonConstants.SERIAL));
@@ -614,8 +613,8 @@ public class OngoingMatchingAlgorithmUtilUT extends BaseTestCaseUT {
 
     @Test
     public void fetchUpdatedRecordsAndStartProcessMultiMatch() throws Exception {
-        SolrTemplate mocksolrTemplate1 = PowerMockito.mock(SolrTemplate.class);
-        SolrClient solrClient = PowerMockito.mock(SolrClient.class);
+        SolrTemplate mocksolrTemplate1 = Mockito.mock(SolrTemplate.class);
+        SolrClient solrClient = Mockito.mock(SolrClient.class);
         QueryResponse queryResponse = Mockito.mock(QueryResponse.class);
         ReflectionTestUtils.setField(ongoingMatchingAlgorithmUtil, "solrTemplate", mocksolrTemplate1);
         SolrQuery solrQuery = new SolrQuery("testquery");
@@ -636,7 +635,7 @@ public class OngoingMatchingAlgorithmUtilUT extends BaseTestCaseUT {
         ReflectionTestUtils.setField(ongoingMatchingAlgorithmUtil, "solrQueryBuilder", solrQueryBuilder);
         ReflectionTestUtils.setField(ongoingMatchingAlgorithmUtil, "commonUtil", commonUtil);
         ReflectionTestUtils.setField(ongoingMatchingAlgorithmUtil, "collectionGroupDetailsRepository", collectionGroupDetailsRepository);
-        PowerMockito.when(mocksolrTemplate1.getSolrClient()).thenReturn(solrClient);
+        Mockito.when(mocksolrTemplate1.getSolrClient()).thenReturn(solrClient);
         Mockito.when(solrClient.query(any(SolrQuery.class))).thenReturn(queryResponse);
         Mockito.when(queryResponse.getResults()).thenReturn(solrDocumentList);
         Mockito.when(commonUtil.getBibItemFromSolrFieldNames(any(SolrDocument.class), Mockito.anyCollection(), any(BibItem.class))).thenReturn(getBibItemSingle("PUL", 1, ScsbCommonConstants.SERIAL)).thenReturn(getBibItemSingle("CUL", 2, ScsbCommonConstants.SERIAL)).thenReturn(getBibItemSingle("NYPL", 3, ScsbCommonConstants.SERIAL));
@@ -965,8 +964,8 @@ public class OngoingMatchingAlgorithmUtilUT extends BaseTestCaseUT {
         solrDocument.setField(ScsbCommonConstants.ISSN_CRITERIA, MatchScoreUtil.ISSN_SCORE);
         solrDocument.setField(ScsbCommonConstants.LCCN_CRITERIA, MatchScoreUtil.LCCN_SCORE);
         solrDocument.setField(ScsbConstants.TITLE_MATCH_SOLR, MatchScoreUtil.TITLE_SCORE);
-        SolrTemplate mocksolrTemplate1 = PowerMockito.mock(SolrTemplate.class);
-        SolrClient solrClient = PowerMockito.mock(SolrClient.class);
+        SolrTemplate mocksolrTemplate1 = Mockito.mock(SolrTemplate.class);
+        SolrClient solrClient = Mockito.mock(SolrClient.class);
         QueryResponse queryResponse = Mockito.mock(QueryResponse.class);
         List<String> oclc = new ArrayList<>();
         oclc.add("12345");
@@ -1013,12 +1012,12 @@ public class OngoingMatchingAlgorithmUtilUT extends BaseTestCaseUT {
         solrDocument.setField(ScsbCommonConstants.ISSN_CRITERIA, "111111");
         solrDocument.setField(ScsbCommonConstants.LCCN_CRITERIA, "111");
         solrDocument.setField(ScsbConstants.TITLE_MATCH_SOLR, "11111");
-        ongoingMatchingAlgorithmUtil = PowerMockito.mock(OngoingMatchingAlgorithmUtil.class);
-        SolrTemplate mocksolrTemplate1 = PowerMockito.mock(SolrTemplate.class);
-        SolrClient solrClient = PowerMockito.mock(SolrClient.class);
+        ongoingMatchingAlgorithmUtil = Mockito.mock(OngoingMatchingAlgorithmUtil.class);
+        SolrTemplate mocksolrTemplate1 = Mockito.mock(SolrTemplate.class);
+        SolrClient solrClient = Mockito.mock(SolrClient.class);
         QueryResponse queryResponse = Mockito.mock(QueryResponse.class);
         ReflectionTestUtils.setField(ongoingMatchingAlgorithmUtil, "solrTemplate", mocksolrTemplate1);
-        PowerMockito.when(mocksolrTemplate1.getSolrClient()).thenReturn(solrClient);
+        Mockito.when(mocksolrTemplate1.getSolrClient()).thenReturn(solrClient);
         Mockito.when(solrClient.query(any(SolrQuery.class))).thenReturn(queryResponse);
         Mockito.when(queryResponse.getResults()).thenReturn(getSolrDocumentsSingleList("8"));
         List<String> oclc = new ArrayList<>();
@@ -1242,11 +1241,11 @@ public class OngoingMatchingAlgorithmUtilUT extends BaseTestCaseUT {
         matchedBibIds.add(1);
         matchedBibIds.add(2);
         Boolean isCGDProcess = false;
-        SolrTemplate mocksolrTemplate1 = PowerMockito.mock(SolrTemplate.class);
-        SolrClient solrClient = PowerMockito.mock(SolrClient.class);
+        SolrTemplate mocksolrTemplate1 = Mockito.mock(SolrTemplate.class);
+        SolrClient solrClient = Mockito.mock(SolrClient.class);
         QueryResponse queryResponse = Mockito.mock(QueryResponse.class);
         ReflectionTestUtils.setField(ongoingMatchingAlgorithmUtil, "solrTemplate", mocksolrTemplate1);
-        PowerMockito.when(mocksolrTemplate1.getSolrClient()).thenReturn(solrClient);
+        Mockito.when(mocksolrTemplate1.getSolrClient()).thenReturn(solrClient);
         Mockito.when(solrClient.query(any(SolrQuery.class))).thenReturn(queryResponse);
         Mockito.when(queryResponse.getResults()).thenReturn(getSolrDocumentsSingleList("8"));
         Mockito.when(solrQueryBuilder.solrQueryForOngoingMatching(ScsbCommonConstants.OCLC_NUMBER, "test")).thenReturn("testquery");
@@ -1265,11 +1264,11 @@ public class OngoingMatchingAlgorithmUtilUT extends BaseTestCaseUT {
         solrDocument.setField(ScsbCommonConstants.LCCN_CRITERIA, "111");
         solrDocument.setField(ScsbConstants.TITLE_MATCH_SOLR, "11111");
         solrDocument.setField(ScsbConstants.TITLE_MATCH_SOLR, "11111");
-        SolrTemplate mocksolrTemplate1 = PowerMockito.mock(SolrTemplate.class);
-        SolrClient solrClient = PowerMockito.mock(SolrClient.class);
+        SolrTemplate mocksolrTemplate1 = Mockito.mock(SolrTemplate.class);
+        SolrClient solrClient = Mockito.mock(SolrClient.class);
         QueryResponse queryResponse = Mockito.mock(QueryResponse.class);
         ReflectionTestUtils.setField(ongoingMatchingAlgorithmUtil, "solrTemplate", mocksolrTemplate1);
-        PowerMockito.when(mocksolrTemplate1.getSolrClient()).thenReturn(solrClient);
+        Mockito.when(mocksolrTemplate1.getSolrClient()).thenReturn(solrClient);
         Mockito.when(solrClient.query(any(SolrQuery.class))).thenReturn(queryResponse);
         Mockito.when(queryResponse.getResults()).thenReturn(getSolrDocumentsSingleList("8"));
         //Mockito.when(ongoingMatchingAlgorithmUtil.findMatchingBibs(any(),any(),any(),any())).thenReturn();

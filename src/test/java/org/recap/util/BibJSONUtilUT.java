@@ -1,12 +1,9 @@
 package org.recap.util;
 
 import info.freelibrary.marc4j.impl.ControlFieldImpl;
-import info.freelibrary.marc4j.impl.RecordImpl;
 import org.apache.camel.ProducerTemplate;
 import org.apache.solr.common.SolrInputDocument;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
 import org.marc4j.marc.DataField;
 import org.marc4j.marc.Leader;
 import org.marc4j.marc.Record;
@@ -15,10 +12,8 @@ import org.marc4j.marc.VariableField;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.recap.BaseTestCaseUT;
-import org.recap.ScsbCommonConstants;
+
 import org.recap.model.jpa.BibliographicEntity;
 import org.recap.model.jpa.HoldingsEntity;
 import org.recap.model.jpa.InstitutionEntity;
@@ -35,16 +30,17 @@ import java.util.Date;
 import java.util.List;
 import java.util.Random;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static junit.framework.TestCase.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+
 
 /**
  * Created by premkb on 1/8/16.
  */
 
-@PowerMockIgnore({"com.sun.org.apache.xerces.*", "javax.xml.*", "org.xml.*"})
 public class BibJSONUtilUT extends BaseTestCaseUT {
 
     @InjectMocks
@@ -195,7 +191,7 @@ public class BibJSONUtilUT extends BaseTestCaseUT {
     @Test
     public void generateBibAndItemsForIndex()throws Exception {
         BibliographicEntity bibliographicEntity = getBibliographicEntity();
-        SolrTemplate mocksolrTemplate1 = PowerMockito.mock(SolrTemplate.class);
+        SolrTemplate mocksolrTemplate1 = Mockito.mock(SolrTemplate.class);
         SolrInputDocument solrInputDocument=new SolrInputDocument();
         Mockito.when(mocksolrTemplate1.convertBeanToSolrInputDocument(Mockito.any())).thenReturn(solrInputDocument);
         SolrInputDocument solrInputDocument1 = bibJSONUtil.generateBibAndItemsForIndex(bibliographicEntity, mocksolrTemplate1, bibliographicDetailsRepository, holdingsDetailsRepository);

@@ -1,6 +1,6 @@
 package org.recap.matchingalgorithm;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.recap.BaseTestCaseUT;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;

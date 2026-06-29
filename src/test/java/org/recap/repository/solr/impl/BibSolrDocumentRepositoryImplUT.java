@@ -6,17 +6,12 @@ import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrDocumentList;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
-import org.powermock.modules.junit4.PowerMockRunnerDelegate;
+
 import org.recap.BaseTestCaseUT;
-import org.recap.BaseTestCaseUT4;
 import org.recap.ScsbCommonConstants;
 import org.recap.ScsbConstants;
 import org.recap.model.search.SearchRecordsRequest;
@@ -27,14 +22,11 @@ import org.recap.model.solr.Item;
 import org.recap.util.CommonUtil;
 import org.recap.util.SolrQueryBuilder;
 import org.springframework.data.solr.core.SolrTemplate;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.*;
 
-import static junit.framework.TestCase.assertTrue;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Created by hemalathas on 22/2/17.
@@ -70,10 +62,10 @@ public class BibSolrDocumentRepositoryImplUT extends BaseTestCaseUT {
         SolrQuery queryForParentAndChildCriteria=new SolrQuery();
         Mockito.when(solrQueryBuilder.getQueryForParentAndChildCriteria(Mockito.any())).thenReturn(queryForParentAndChildCriteria);
         Mockito.when(solrQueryBuilder.getCountQueryForChildAndParentCriteria(Mockito.any())).thenReturn(queryForParentAndChildCriteria);
-        SolrTemplate mocksolrTemplate1 = PowerMockito.mock(SolrTemplate.class);
-        SolrClient solrClient=PowerMockito.mock(SolrClient.class);
+        SolrTemplate mocksolrTemplate1 = Mockito.mock(SolrTemplate.class);
+        SolrClient solrClient=Mockito.mock(SolrClient.class);
         ReflectionTestUtils.setField(bibSolrDocumentRepository,"solrTemplate",mocksolrTemplate1);
-        PowerMockito.when(mocksolrTemplate1.getSolrClient()).thenReturn(solrClient);
+        Mockito.when(mocksolrTemplate1.getSolrClient()).thenReturn(solrClient);
         QueryResponse queryResponse= Mockito.mock(QueryResponse.class);
         Mockito.when(solrClient.query(Mockito.any(SolrQuery.class))).thenReturn(queryResponse);
         SolrDocumentList solrDocumentList = getSolrDocumentList();
@@ -100,10 +92,10 @@ public class BibSolrDocumentRepositoryImplUT extends BaseTestCaseUT {
         SolrQuery queryForParentAndChildCriteria=new SolrQuery();
         Mockito.when(solrQueryBuilder.getQueryForParentAndChildCriteria(Mockito.any())).thenReturn(queryForParentAndChildCriteria);
         Mockito.when(solrQueryBuilder.getCountQueryForChildAndParentCriteria(Mockito.any())).thenReturn(queryForParentAndChildCriteria);
-        SolrTemplate mocksolrTemplate1 = PowerMockito.mock(SolrTemplate.class);
-        SolrClient solrClient=PowerMockito.mock(SolrClient.class);
+        SolrTemplate mocksolrTemplate1 = Mockito.mock(SolrTemplate.class);
+        SolrClient solrClient=Mockito.mock(SolrClient.class);
         ReflectionTestUtils.setField(bibSolrDocumentRepository,"solrTemplate",mocksolrTemplate1);
-        PowerMockito.when(mocksolrTemplate1.getSolrClient()).thenReturn(solrClient);
+        Mockito.when(mocksolrTemplate1.getSolrClient()).thenReturn(solrClient);
         QueryResponse queryResponse= Mockito.mock(QueryResponse.class);
         Mockito.when(solrClient.query(Mockito.any(SolrQuery.class))).thenReturn(queryResponse);
         SolrDocumentList solrDocumentList = getSolrDocumentList();
@@ -124,10 +116,10 @@ public class BibSolrDocumentRepositoryImplUT extends BaseTestCaseUT {
         SearchRecordsRequest searchRecordsRequest=new SearchRecordsRequest();
         SolrQuery queryForParentAndChildCriteria=new SolrQuery();
         Mockito.when(solrQueryBuilder.getQueryForParentAndChildCriteria(Mockito.any())).thenReturn(queryForParentAndChildCriteria);
-        SolrTemplate mocksolrTemplate1 = PowerMockito.mock(SolrTemplate.class);
-        SolrClient solrClient=PowerMockito.mock(SolrClient.class);
+        SolrTemplate mocksolrTemplate1 = Mockito.mock(SolrTemplate.class);
+        SolrClient solrClient=Mockito.mock(SolrClient.class);
         ReflectionTestUtils.setField(bibSolrDocumentRepository,"solrTemplate",mocksolrTemplate1);
-        PowerMockito.when(mocksolrTemplate1.getSolrClient()).thenReturn(solrClient);
+        Mockito.when(mocksolrTemplate1.getSolrClient()).thenReturn(solrClient);
         QueryResponse queryResponse= Mockito.mock(QueryResponse.class);
         Mockito.when(solrClient.query(Mockito.any(SolrQuery.class))).thenReturn(queryResponse);
         Map<String, Object> search=bibSolrDocumentRepository.search(searchRecordsRequest);
@@ -139,10 +131,10 @@ public class BibSolrDocumentRepositoryImplUT extends BaseTestCaseUT {
         SearchRecordsRequest searchRecordsRequest=new SearchRecordsRequest();
         SolrQuery queryForParentAndChildCriteria=new SolrQuery();
         Mockito.when(solrQueryBuilder.getQueryForParentAndChildCriteria(Mockito.any())).thenReturn(queryForParentAndChildCriteria);
-        SolrTemplate mocksolrTemplate1 = PowerMockito.mock(SolrTemplate.class);
-        SolrClient solrClient=PowerMockito.mock(SolrClient.class);
+        SolrTemplate mocksolrTemplate1 = Mockito.mock(SolrTemplate.class);
+        SolrClient solrClient=Mockito.mock(SolrClient.class);
         ReflectionTestUtils.setField(bibSolrDocumentRepository,"solrTemplate",mocksolrTemplate1);
-        PowerMockito.when(mocksolrTemplate1.getSolrClient()).thenReturn(solrClient);
+        Mockito.when(mocksolrTemplate1.getSolrClient()).thenReturn(solrClient);
         Mockito.when(solrClient.query(Mockito.any(SolrQuery.class))).thenThrow(SolrServerException.class);
         Map<String, Object> search=bibSolrDocumentRepository.search(searchRecordsRequest);
         assertTrue(search.containsKey(ScsbCommonConstants.SEARCH_ERROR_RESPONSE));
@@ -157,10 +149,10 @@ public class BibSolrDocumentRepositoryImplUT extends BaseTestCaseUT {
         searchRecordsRequest.setSortIncompleteRecords(true);
         SolrQuery queryForParentAndChildCriteria=new SolrQuery();
         Mockito.when(solrQueryBuilder.getQueryForParentAndChildCriteria(Mockito.any())).thenReturn(queryForParentAndChildCriteria);
-        SolrTemplate mocksolrTemplate1 = PowerMockito.mock(SolrTemplate.class);
-        SolrClient solrClient=PowerMockito.mock(SolrClient.class);
+        SolrTemplate mocksolrTemplate1 = Mockito.mock(SolrTemplate.class);
+        SolrClient solrClient=Mockito.mock(SolrClient.class);
         ReflectionTestUtils.setField(bibSolrDocumentRepository,"solrTemplate",mocksolrTemplate1);
-        PowerMockito.when(mocksolrTemplate1.getSolrClient()).thenReturn(solrClient);
+        Mockito.when(mocksolrTemplate1.getSolrClient()).thenReturn(solrClient);
         QueryResponse queryResponse= Mockito.mock(QueryResponse.class);
         Mockito.when(solrClient.query(Mockito.any(SolrQuery.class))).thenReturn(queryResponse);
         Mockito.when(solrQueryBuilder.getQueryForChildAndParentCriteria(Mockito.any())).thenReturn(queryForParentAndChildCriteria);
@@ -180,10 +172,10 @@ public class BibSolrDocumentRepositoryImplUT extends BaseTestCaseUT {
         SolrQuery queryForParentAndChildCriteria=new SolrQuery();
         Mockito.when(solrQueryBuilder.getQueryForChildAndParentCriteria(Mockito.any())).thenReturn(queryForParentAndChildCriteria);
         Mockito.when(solrQueryBuilder.getCountQueryForParentAndChildCriteria(Mockito.any())).thenReturn(queryForParentAndChildCriteria);
-        SolrTemplate mocksolrTemplate1 = PowerMockito.mock(SolrTemplate.class);
-        SolrClient solrClient=PowerMockito.mock(SolrClient.class);
+        SolrTemplate mocksolrTemplate1 = Mockito.mock(SolrTemplate.class);
+        SolrClient solrClient=Mockito.mock(SolrClient.class);
         ReflectionTestUtils.setField(bibSolrDocumentRepository,"solrTemplate",mocksolrTemplate1);
-        PowerMockito.when(mocksolrTemplate1.getSolrClient()).thenReturn(solrClient);
+        Mockito.when(mocksolrTemplate1.getSolrClient()).thenReturn(solrClient);
         QueryResponse queryResponse= Mockito.mock(QueryResponse.class);
         Mockito.when(solrClient.query(Mockito.any(SolrQuery.class))).thenReturn(queryResponse);
         SolrDocumentList solrDocumentList = getSolrDocumentList();
@@ -210,10 +202,10 @@ public class BibSolrDocumentRepositoryImplUT extends BaseTestCaseUT {
         SolrQuery queryForParentAndChildCriteria=new SolrQuery();
         Mockito.when(solrQueryBuilder.getQueryForChildAndParentCriteria(Mockito.any())).thenReturn(queryForParentAndChildCriteria);
         Mockito.when(solrQueryBuilder.getCountQueryForParentAndChildCriteria(Mockito.any())).thenReturn(queryForParentAndChildCriteria);
-        SolrTemplate mocksolrTemplate1 = PowerMockito.mock(SolrTemplate.class);
-        SolrClient solrClient=PowerMockito.mock(SolrClient.class);
+        SolrTemplate mocksolrTemplate1 = Mockito.mock(SolrTemplate.class);
+        SolrClient solrClient=Mockito.mock(SolrClient.class);
         ReflectionTestUtils.setField(bibSolrDocumentRepository,"solrTemplate",mocksolrTemplate1);
-        PowerMockito.when(mocksolrTemplate1.getSolrClient()).thenReturn(solrClient);
+        Mockito.when(mocksolrTemplate1.getSolrClient()).thenReturn(solrClient);
         QueryResponse queryResponse= Mockito.mock(QueryResponse.class);
         Mockito.when(solrClient.query(Mockito.any(SolrQuery.class))).thenReturn(queryResponse);
         SolrDocumentList solrDocumentList = getSolrDocumentList();
@@ -253,10 +245,10 @@ public class BibSolrDocumentRepositoryImplUT extends BaseTestCaseUT {
             SolrQuery queryForParentAndChildCriteria = new SolrQuery();
             Mockito.when(solrQueryBuilder.getQueryForChildAndParentCriteria(Mockito.any())).thenReturn(queryForParentAndChildCriteria);
             Mockito.when(solrQueryBuilder.getCountQueryForParentAndChildCriteria(Mockito.any())).thenReturn(queryForParentAndChildCriteria);
-            SolrTemplate mocksolrTemplate1 = PowerMockito.mock(SolrTemplate.class);
-            SolrClient solrClient = PowerMockito.mock(SolrClient.class);
+            SolrTemplate mocksolrTemplate1 = Mockito.mock(SolrTemplate.class);
+            SolrClient solrClient = Mockito.mock(SolrClient.class);
             ReflectionTestUtils.setField(bibSolrDocumentRepository, "solrTemplate", mocksolrTemplate1);
-            PowerMockito.when(mocksolrTemplate1.getSolrClient()).thenReturn(solrClient);
+            Mockito.when(mocksolrTemplate1.getSolrClient()).thenReturn(solrClient);
             QueryResponse queryResponse = Mockito.mock(QueryResponse.class);
             Mockito.when(solrClient.query(Mockito.any(SolrQuery.class))).thenReturn(queryResponse);
             SolrDocumentList solrDocumentList = getSolrDocumentList();

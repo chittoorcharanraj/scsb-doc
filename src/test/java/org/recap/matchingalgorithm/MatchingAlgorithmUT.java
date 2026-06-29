@@ -1,11 +1,10 @@
 package org.recap.matchingalgorithm;
 
 import lombok.extern.slf4j.Slf4j;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
 import org.recap.BaseTestCaseUT;
 import org.recap.controller.MatchingAlgorithmController;
 import org.recap.matchingalgorithm.service.MatchingAlgorithmHelperService;
@@ -51,9 +50,7 @@ public class MatchingAlgorithmUT extends BaseTestCaseUT {
     private Integer batchSize = 1000;
 
     @BeforeEach
-    public void setUp() {
-        MockitoAnnotations.openMocks(this);
-    }
+    public void setUp() {    }
 
     @Test
     public void populateTempMatchingPointsEntity() throws Exception {

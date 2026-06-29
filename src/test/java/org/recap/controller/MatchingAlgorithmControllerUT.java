@@ -2,13 +2,10 @@ package org.recap.controller;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.camel.ProducerTemplate;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
-import org.mockito.junit.MockitoJUnitRunner;
 import org.recap.BaseTestCaseUT;
 import org.recap.ScsbCommonConstants;
 import org.recap.ScsbConstants;
@@ -41,8 +38,7 @@ import java.util.Map;
 import java.util.HashMap;
 import java.util.Random;
 import java.util.function.Function;
-
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.recap.ScsbConstants.*;
 import static org.recap.ScsbConstants.MATCHING_COUNTER_UPDATED_OPEN;
 
@@ -127,10 +123,8 @@ public class MatchingAlgorithmControllerUT extends BaseTestCaseUT {
 
     List<String> scsbInstitutions=Arrays.asList("HTC");
 
-    @Before
-    public void setup() throws Exception {
-        MockitoAnnotations.openMocks(this);
-        Map<String,Integer> cgdCounterMap=new HashMap<>();
+    @BeforeEach
+    public void setup() throws Exception {        Map<String,Integer> cgdCounterMap=new HashMap<>();
         cgdCounterMap.put(MATCHING_COUNTER_SHARED,1);
         cgdCounterMap.put(MATCHING_COUNTER_OPEN,1);
         cgdCounterMap.put(MATCHING_COUNTER_UPDATED_SHARED,0);

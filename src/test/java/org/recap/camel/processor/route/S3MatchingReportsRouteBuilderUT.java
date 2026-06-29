@@ -2,11 +2,12 @@ package org.recap.camel.processor.route;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.recap.BaseTestCaseUT;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.recap.PropertyKeyConstants;
 import org.recap.camel.route.S3MatchingReportsRouteBuilder;
 import org.slf4j.Logger;
@@ -14,16 +15,19 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.TestPropertySource;
 
 /**
  * @author Charan Raj C created on 27/10/23
  */
 @ContextConfiguration(classes = S3MatchingReportsRouteBuilderUT.Config.class)
-public class S3MatchingReportsRouteBuilderUT extends BaseTestCaseUT {
+@TestPropertySource("classpath:application.properties")
+@MockitoSettings(strictness = Strictness.LENIENT)
+public class S3MatchingReportsRouteBuilderUT {
 
     private CamelContext camelContext;
 
-    @Before
+    @BeforeEach
     public void setup() {
         camelContext = new DefaultCamelContext();
     }
@@ -51,6 +55,11 @@ public class S3MatchingReportsRouteBuilderUT extends BaseTestCaseUT {
         @Bean
         public Logger logger() {
             return Mockito.mock(Logger.class);
+        }
+
+        @Bean
+        public ApplicationContext applicationContext() {
+            return Mockito.mock(ApplicationContext.class);
         }
     }
 }

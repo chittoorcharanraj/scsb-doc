@@ -1,7 +1,7 @@
 package org.recap.model.search;
 
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.marc4j.marc.Record;
 import org.recap.BaseTestCaseUT;
 import org.recap.util.BibJSONUtil;

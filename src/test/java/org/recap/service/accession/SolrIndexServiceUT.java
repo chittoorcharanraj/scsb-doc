@@ -5,16 +5,11 @@ import org.apache.commons.io.FileUtils;
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.response.UpdateResponse;
 import org.apache.solr.common.SolrInputDocument;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PowerMockIgnore;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunnerDelegate;
 import org.recap.BaseTestCaseUT4;
 import org.recap.model.jpa.BibliographicEntity;
 import org.recap.model.jpa.HoldingsEntity;
@@ -34,17 +29,13 @@ import java.util.Date;
 import java.util.List;
 import java.util.Random;
 
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * Created by rajeshbabuk on 10/11/16.
  */
 
 
-
-@PrepareForTest({SolrTemplate.class, SolrClient.class})
-@PowerMockRunnerDelegate(SpringJUnit4ClassRunner.class)
-@PowerMockIgnore({"com.sun.org.apache.xerces.*", "javax.xml.*", "org.xml.*"})
 public class SolrIndexServiceUT extends BaseTestCaseUT4 {
 
     @InjectMocks
@@ -56,10 +47,8 @@ public class SolrIndexServiceUT extends BaseTestCaseUT4 {
     @Mock
     ProducerTemplate producerTemplate;
 
-    @Before
-    public  void setup(){
-        MockitoAnnotations.openMocks(this);
-        ReflectionTestUtils.setField(solrIndexService,"submitCollectionOwnInstBibIdListPartitionSize",1000);
+    @BeforeEach
+    public  void setup(){        ReflectionTestUtils.setField(solrIndexService,"submitCollectionOwnInstBibIdListPartitionSize",1000);
     }
 
     @Test
@@ -69,7 +58,7 @@ public class SolrIndexServiceUT extends BaseTestCaseUT4 {
         List<BibliographicEntity> bibliographicEntityList=new ArrayList<>();
       ///  bibliographicEntityList.add(getBibliographicEntity());
         Mockito.when(bibliographicDetailsRepository.findByOwningInstitutionBibIdInAndOwningInstitutionId(Mockito.anyList(),Mockito.anyInt())).thenReturn(bibliographicEntityList);
-        SolrTemplate mocksolrTemplate1 = PowerMockito.mock(SolrTemplate.class);
+        SolrTemplate mocksolrTemplate1 = Mockito.mock(SolrTemplate.class);
         SolrInputDocument solrInputDocument=new SolrInputDocument();
         Mockito.when(mocksolrTemplate1.convertBeanToSolrInputDocument(Mockito.any())).thenReturn(solrInputDocument);
         ReflectionTestUtils.setField(solrIndexService,"solrTemplate",mocksolrTemplate1);
@@ -81,10 +70,10 @@ public class SolrIndexServiceUT extends BaseTestCaseUT4 {
 
     @Test
     public void deleteByDocId() throws Exception {
-        SolrTemplate mocksolrTemplate1 = PowerMockito.mock(SolrTemplate.class);
+        SolrTemplate mocksolrTemplate1 = Mockito.mock(SolrTemplate.class);
         ReflectionTestUtils.setField(solrIndexService,"solrTemplate",mocksolrTemplate1);
-        SolrClient solrClient=PowerMockito.mock(SolrClient.class);
-        PowerMockito.when(mocksolrTemplate1.getSolrClient()).thenReturn(solrClient);
+        SolrClient solrClient=Mockito.mock(SolrClient.class);
+        Mockito.when(mocksolrTemplate1.getSolrClient()).thenReturn(solrClient);
         UpdateResponse updateResponse=new UpdateResponse();
         Mockito.when(solrClient.deleteByQuery(Mockito.any())).thenReturn(updateResponse);
         solrIndexService.deleteByDocId("BibId",String.valueOf(1));

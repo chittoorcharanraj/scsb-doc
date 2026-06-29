@@ -7,16 +7,11 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.jms.JmsQueueEndpoint;
 import org.apache.commons.io.FileUtils;
 import org.apache.solr.common.SolrInputDocument;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PowerMockIgnore;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunnerDelegate;
 import org.recap.BaseTestCaseUT;
 import org.recap.PropertyKeyConstants;
 import org.recap.ScsbConstants;
@@ -44,16 +39,13 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
 /**
  * Created by angelind on 30/1/17.
  */
 
-@PrepareForTest(SolrTemplate.class)
-@PowerMockRunnerDelegate(SpringJUnit4ClassRunner.class)
-@PowerMockIgnore({"com.sun.org.apache.xerces.*", "javax.xml.*", "org.xml.*"})
 public class MatchingBibItemIndexExecutorServiceUT extends BaseTestCaseUT {
 
     @InjectMocks
@@ -87,10 +79,8 @@ public class MatchingBibItemIndexExecutorServiceUT extends BaseTestCaseUT {
     String solrRouterURI;
 
 
-    @Before
-    public void setUp() throws Exception {
-        MockitoAnnotations.openMocks(this);
-        ReflectionTestUtils.setField(matchingBibItemIndexExecutorService,"batchSize",batchSize);
+    @BeforeEach
+    public void setUp() throws Exception {        ReflectionTestUtils.setField(matchingBibItemIndexExecutorService,"batchSize",batchSize);
         ReflectionTestUtils.setField(matchingBibItemIndexExecutorService,"commitInterval",0);
         ReflectionTestUtils.setField(matchingBibItemIndexExecutorService,"solrCore",solrCore);
         ReflectionTestUtils.setField(matchingBibItemIndexExecutorService,"solrUrl",solrUrl);
@@ -100,12 +90,12 @@ public class MatchingBibItemIndexExecutorServiceUT extends BaseTestCaseUT {
     @Test
     public void indexingForMatchingAlgorithmTest() throws URISyntaxException, IOException, InterruptedException, ExecutionException {
         Mockito.when(bibliographicDetailsRepository.getCountOfBibliographicEntitiesForChangedItems(Mockito.anyString(),Mockito.any(), Mockito.any())).thenReturn(10000l);
-        Page bibliographicEntities = PowerMockito.mock(Page.class);
+        Page bibliographicEntities = Mockito.mock(Page.class);
         Mockito.when(bibliographicDetailsRepository.getBibliographicEntitiesForChangedItems(Mockito.any(),Mockito.anyString(),Mockito.any(),Mockito.any())).thenReturn(bibliographicEntities);
         Iterator<BibliographicEntity> iterator = getBibliographicEntityIterator();
         Mockito.when(bibliographicEntities.getNumberOfElements()).thenReturn(1);
         Mockito.when(bibliographicEntities.iterator()).thenReturn(iterator);
-        SolrTemplate mocksolrTemplate1 = PowerMockito.mock(SolrTemplate.class);
+        SolrTemplate mocksolrTemplate1 = Mockito.mock(SolrTemplate.class);
         ReflectionTestUtils.setField(matchingBibItemIndexExecutorService,"solrTemplate",mocksolrTemplate1);
         SolrInputDocument solrInputDocument=new SolrInputDocument();
         Mockito.when(mocksolrTemplate1.convertBeanToSolrInputDocument(Mockito.any())).thenReturn(solrInputDocument);

@@ -1,13 +1,13 @@
 package org.recap.exception;
 
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.recap.BaseTestCaseUT;
 
 import java.sql.Timestamp;
 
 
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class ExceptionResponseUT extends BaseTestCaseUT {
 

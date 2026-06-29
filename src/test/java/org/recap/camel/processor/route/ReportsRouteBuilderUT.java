@@ -2,12 +2,11 @@ package org.recap.camel.processor.route;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
 import org.recap.BaseTestCaseUT;
 import org.recap.camel.processor.ReportProcessor;
 import org.recap.camel.route.ReportsRouteBuilder;
@@ -26,10 +25,8 @@ public class ReportsRouteBuilderUT extends BaseTestCaseUT {
     @InjectMocks
     ReportsRouteBuilder reportsRouteBuilder;
 
-    @Before
-    public void setup() {
-        MockitoAnnotations.initMocks(this);
-        camelContext = new DefaultCamelContext();
+    @BeforeEach
+    public void setup() {        camelContext = new DefaultCamelContext();
     }
 
     @Test
