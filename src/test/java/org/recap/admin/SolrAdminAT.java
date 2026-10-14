@@ -1,10 +1,8 @@
-
 package org.recap.admin;
 
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.request.CoreAdminRequest;
 import org.apache.solr.client.solrj.response.CoreAdminResponse;
-import org.apache.solr.common.util.NamedList;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -14,16 +12,14 @@ import org.mockito.Mockito;
 import org.recap.BaseTestCaseUT;
 import org.recap.PropertyKeyConstants;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.solr.core.SolrTemplate;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.util.ReflectionTestUtils;
 
-import java.util.ArrayList;
+import java.io.IOException;
 import java.util.List;
 
 import static java.util.Arrays.asList;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 
 /**
@@ -56,18 +52,34 @@ public class SolrAdminAT extends BaseTestCaseUT {
 
     @Test
     public void createSolrCoresTest() throws Exception {
-        List<String> tempCores = new ArrayList<>();
-        CoreAdminResponse cores=new CoreAdminResponse();
-        cores.setResponse(new NamedList<>());
-        SolrClient solrAdminClient= Mockito.mock(SolrClient.class);
-        CoreAdminRequest coreAdminRequest= Mockito.mock(CoreAdminRequest.class);
-        SolrClient solrClient= Mockito.mock(SolrClient.class);
-        ReflectionTestUtils.setField(solrAdmin,"solrAdminClient",solrAdminClient);
-        ReflectionTestUtils.setField(solrAdmin,"solrClient",solrClient);
-        ReflectionTestUtils.setField(solrAdmin,"coreAdminRequest",coreAdminRequest);
-        CoreAdminResponse coreAdminResponse = solrAdmin.createSolrCores(tempCores);
-        assertNull(coreAdminResponse);
+        SolrAdmin spySolrAdmin = Mockito.spy(solrAdmin);
+        SolrClient solrAdminClient = Mockito.mock(SolrClient.class);
+        CoreAdminRequest.Create coreAdminRequestCreate = Mockito.mock(CoreAdminRequest.Create.class);
+        CoreAdminResponse successResponse = Mockito.mock(CoreAdminResponse.class);
+        CoreAdminResponse failureResponse = Mockito.mock(CoreAdminResponse.class);
 
+        ReflectionTestUtils.setField(spySolrAdmin, "solrAdminClient", solrAdminClient);
+        ReflectionTestUtils.setField(spySolrAdmin, "solrClient", Mockito.mock(SolrClient.class));
+        Mockito.doReturn(coreAdminRequestCreate).when(spySolrAdmin).getCoreAdminCreateRequest();
+        Mockito.doReturn(false).when(spySolrAdmin).isCoreExist("temp0");
+        Mockito.doReturn(true).when(spySolrAdmin).isCoreExist("temp1");
+        Mockito.doReturn(false).when(spySolrAdmin).isCoreExist("temp2");
+        Mockito.doReturn(false).when(spySolrAdmin).isCoreExist("temp3");
+        Mockito.when(successResponse.getStatus()).thenReturn(0);
+        Mockito.when(failureResponse.getStatus()).thenReturn(1);
+        Mockito.when(coreAdminRequestCreate.process(solrAdminClient))
+                .thenReturn(successResponse)
+                .thenReturn(failureResponse)
+                .thenThrow(new IOException("create failed"));
+
+        List<String> tempCores = asList("temp0", "temp1", "temp2", "temp3");
+        CoreAdminResponse coreAdminResponse = spySolrAdmin.createSolrCores(tempCores);
+
+        assertSame(failureResponse, coreAdminResponse);
+        Mockito.verify(coreAdminRequestCreate).setCoreName("temp0");
+        Mockito.verify(coreAdminRequestCreate).setCoreName("temp2");
+        Mockito.verify(coreAdminRequestCreate).setCoreName("temp3");
+        Mockito.verify(coreAdminRequestCreate, Mockito.times(3)).process(solrAdminClient);
     }
 
    @Test
